@@ -15,10 +15,17 @@ const eslintConfig = [
     ignores: [
       "node_modules/**",
       ".next/**",
+      ".next/static/**",
+      "src/api/**",
+      "src/**/client.gen.*",
+      "src/**/*.gen.*",
       "out/**",
       "build/**",
       "next-env.d.ts",
     ],
+  },
+  {
+    files: ["src/**/*.{js,ts,jsx,tsx}", "app/**/*.{js,ts,jsx,tsx}"],
     rules: {
       "no-console": "off",
     },
