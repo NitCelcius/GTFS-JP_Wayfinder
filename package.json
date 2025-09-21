@@ -1,0 +1,23 @@
+{
+  "name": "gtfs-jp-wayfinder",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "turbo run dev",
+    "start": "turbo run start",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "openapi-generate": "node ./scripts/generate-openapi.js",
+    "preinstall": "npx only-allow pnpm"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.14.0",
+  "devDependencies": {
+    "@hey-api/openapi-ts": "^0.83.1",
+    "concurrently": "^9.2.1",
+    "turbo": "^2.5.6"
+  }
+}

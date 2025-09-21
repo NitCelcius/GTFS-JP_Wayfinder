@@ -1,0 +1,19 @@
+{
+  "name": "gtfs-jp-wayfinder-api",
+  "version": "0.0.1",
+  "description": "",
+  "private": true,
+  "scripts": {
+    "install": "uv sync",
+    "start": "uv run python -m uvicorn src.gtfs_jp_wayfinder.main:app --host 0.0.0.0 --port 8002",
+    "build": "uv build",
+    "lint": "uv run ruff check",
+    "lint:fix": "uv run ruff --fix",
+    "test": "uv run pytest",
+    "dev": "uv run python -m uvicorn src.gtfs_jp_wayfinder.main:app --host 0.0.0.0 --port 8002 --reload"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.14.0"
+}

@@ -1,0 +1,11 @@
+packages:
+  - web/
+  - api/
+
+ignoredBuiltDependencies:
+  - sharp
+  - unrs-resolver
+
+onlyBuiltDependencies:
+  - esbuild
+  - msw

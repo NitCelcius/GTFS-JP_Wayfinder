@@ -1,0 +1,14 @@
+version: "3"
+services:
+  fastapi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/src
+      - python-lib-data:/usr/local/lib
+    ports:
+      - 8002:8002
+
+volumes:
+  python-lib-data:

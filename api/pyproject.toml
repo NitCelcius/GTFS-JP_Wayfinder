@@ -1,0 +1,59 @@
+[project]
+name = "gtfs-jp-wayfinder"
+version = "0.1.0"
+description = "Add your description here"
+authors = [
+    { name = "NitCelcius", email = "nitcelcius@nitcelcius.me" }
+]
+dependencies = [
+    "numpy>=2.2.3",
+    "uvicorn>=0.34.0",
+    "fastapi>=0.115.11",
+    "networkx>=3.4.2",
+    "pandas>=2.2.3",
+    "requests>=2.32.5",
+    "pytest>=8.4.2",
+]
+readme = "README.md"
+requires-python = ">= 3.13"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/gtfs_jp_wayfinder"]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.13.1",
+]
+
+[tool.ruff.lint]
+select = ["F"] # TODO: 可能になればAllを導入する
+
+ignore = [
+    "D203",
+    "D212",
+    "COM812",
+    "T201", # TODO: print によるログ出力を許可する (ruff 移行完了したら消す)
+    "E501", # TODO: 行の長さは長くてもよい (ruff 移行完了したら消す)
+    "D1",   # docstring をすべてに書かなくてよい
+    "D200", # """ で1行使ってdocstringを囲う
+    "D400", # 行末がピリオドで終わってもよい
+    "D401", # docstring の最初の行をですます調にしてもよい
+    "D415", # 行末が? . ! のいずれか以外で終わってもよい
+    "RUF001", # 全角かっこを使ってもよい
+    "ERA001", # TODO: コメントアウトしたコードを残してもよい (ruff 移行完了したら消す)
+    "ANN", # TODO: 型アノテーションを強制しない (ruff 移行完了したら消す)
+    "RUF003", # TODO: 全角記号を使ってもよい (ruff 移行完了したら消す)
+    "TD", # TODO コメントに issue を紐づけなくてもよい
+]
+
+unfixable = [
+    "F401", # unused import を消さない
+    "F841"  # unused variable を消さない
+]
