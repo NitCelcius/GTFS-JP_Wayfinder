@@ -31,5 +31,6 @@
     "eslint-config-next": "15.5.3",
     "msw": "^2.11.3",
     "typescript": "^5"
-  }
+  },
+  "packageManager": "pnpm@10.14.0"
 }
