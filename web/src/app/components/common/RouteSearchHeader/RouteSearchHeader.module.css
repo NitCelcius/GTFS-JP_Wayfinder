@@ -1,0 +1,41 @@
+.container {
+  position: relative;
+  flex-shrink: 0;
+  width: 100%;
+}
+.content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  position: relative;
+  width: 100%;
+}
+.inner {
+  box-sizing: border-box;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-top: 0;
+  padding-bottom: 0;
+  position: relative;
+  width: 100%;
+}
+.title {
+  display: flex;
+  flex-direction: column;
+  font-family: Inter, "Noto Sans JP", sans-serif;
+  font-weight: 400;
+  height: 53px;
+  justify-content: center;
+  line-height: 0;
+  font-style: normal;
+  flex-shrink: 0;
+  font-size: 28px;
+  color: var(--color-text, #000);
+  width: 329px;
+}
+.titleText {
+  line-height: normal;
+}

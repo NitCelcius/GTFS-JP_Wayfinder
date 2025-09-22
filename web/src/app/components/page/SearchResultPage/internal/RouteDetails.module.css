@@ -1,0 +1,16 @@
+.container {
+  flex: 1 1 auto;
+  padding-left: var(--size-spacing-lg);
+  padding-right: var(--size-spacing-lg);
+  padding-top: var(--size-spacing-md);
+  padding-bottom: var(--size-spacing-md);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.stationsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-spacing-md);
+  width: 100%;
+}

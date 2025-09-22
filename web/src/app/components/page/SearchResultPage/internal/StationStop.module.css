@@ -1,0 +1,104 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.stationRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.leftSection {
+  display: flex;
+  align-items: center;
+  gap: var(--size-spacing-sm);
+}
+
+.stationIcon {
+  width: 1.25rem;
+  height: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconSvg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.stationName {
+  display: flex;
+  flex-direction: column;
+  font-family: Inter, "Noto Sans JP", sans-serif;
+  font-weight: 400;
+  justify-content: center;
+  line-height: 0;
+  position: relative;
+  flex-shrink: 0;
+  color: black;
+  white-space: nowrap;
+}
+
+.stationNameText {
+  line-height: normal;
+  white-space: pre;
+  font-size: 1.125rem;
+}
+
+.rightSection {
+  display: flex;
+  align-items: center;
+  gap: var(--size-spacing-md);
+}
+
+.timesContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--size-spacing-xs);
+}
+
+.timeText,
+.costText {
+  display: flex;
+  flex-direction: column;
+  font-family: Inter, "Noto Sans JP", sans-serif;
+  font-weight: 400;
+  justify-content: center;
+  line-height: 0;
+  position: relative;
+  flex-shrink: 0;
+  color: black;
+  white-space: nowrap;
+}
+
+.timeTextContent,
+.costTextContent {
+  line-height: normal;
+  white-space: pre;
+}
+
+.costContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.transferArrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding-top: var(--size-spacing-xs);
+  padding-bottom: var(--size-spacing-xs);
+}
+
+.arrowIcon {
+  width: 1.5rem;
+  height: 1.5rem;
+}

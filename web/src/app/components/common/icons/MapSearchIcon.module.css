@@ -1,0 +1,11 @@
+.icon {
+  position: relative;
+  flex-shrink: 0;
+  width: var(--size-icon-md);
+  height: var(--size-icon-md);
+}
+.svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}

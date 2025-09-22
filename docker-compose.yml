@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  backend:
+    extends:
+      file: ./Backend/docker-compose.yml
+      service: fastapi
+  web:
+    extends:
+      file: ./Web/docker-compose.yml
+      service: 'php-apache'
+
+volumes:
+  python-lib-data:
+  mysql80:

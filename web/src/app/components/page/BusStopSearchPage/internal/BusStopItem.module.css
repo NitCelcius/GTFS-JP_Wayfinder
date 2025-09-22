@@ -1,0 +1,92 @@
+.cardContainer {
+  width: 100%;
+  background: white;
+  border: 1px solid rgba(229, 231, 235, 1); /* gray-200 fallback */
+  border-radius: var(--radius-lg);
+  padding: var(--size-spacing-lg);
+  margin-bottom: var(--size-spacing-md);
+  cursor: pointer;
+  transition: box-shadow 0.15s ease, border-color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.cardContainer:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.06);
+  border-color: rgba(209, 213, 219, 1); /* gray-300 fallback */
+}
+
+.cardContainer:active {
+  transform: scale(0.98);
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.leftSection {
+  display: flex;
+  align-items: center;
+  gap: var(--size-spacing-md);
+  flex: 1 1 auto;
+}
+
+.icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+}
+
+.iconSvg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.busStopInfo {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+}
+
+.busStopName {
+  font-size: 1.125rem;
+  margin-bottom: var(--size-spacing-xs);
+}
+
+.distance {
+  font-size: 1rem;
+  color: #6b7280;
+}
+
+.rightSection {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.selectButton {
+  background-color: var(--color-route-primary);
+  color: white;
+  padding-left: var(--size-spacing-lg);
+  padding-right: var(--size-spacing-lg);
+  padding-top: var(--size-spacing-sm);
+  padding-bottom: var(--size-spacing-sm);
+  border-radius: var(--radius-md);
+  transition: background-color 0.15s ease;
+  min-width: 4rem;
+  text-align: center;
+}
+
+.selectButton:hover {
+  background-color: var(--color-route-primary-dark);
+}
+
+.selectButtonText {
+  font-size: 0.875rem;
+}

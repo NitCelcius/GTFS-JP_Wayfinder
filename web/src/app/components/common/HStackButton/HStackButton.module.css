@@ -1,0 +1,35 @@
+.searchButton {
+  box-sizing: border-box;
+  display: flex;
+  gap: var(--size-spacing-xs);
+  align-items: center;
+  justify-content: center;
+  padding-left: var(--size-spacing-lg);
+  padding-right: var(--size-spacing-lg);
+  padding-top: var(--size-spacing-sm);
+  padding-bottom: var(--size-spacing-sm);
+  position: relative;
+  border-radius: var(--radius-md);
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+.searchButton:hover {
+  opacity: 0.9;
+}
+.searchText {
+  display: flex;
+  flex-direction: column;
+  font-family: Inter, "Noto Sans JP", sans-serif;
+  font-weight: 400;
+  justify-content: center;
+  line-height: 0;
+  font-style: normal;
+  flex-shrink: 0;
+  color: var(--color-text, #000);
+  white-space: nowrap;
+}
+.searchTextContent {
+  line-height: normal;
+  white-space: pre;
+}

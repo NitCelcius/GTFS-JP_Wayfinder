@@ -1,0 +1,18 @@
+.container {
+  width: 100%;
+}
+
+.header {
+  border-bottom: 1px solid black;
+  padding-bottom: var(--size-spacing-xs);
+  margin-bottom: var(--size-spacing-lg);
+}
+
+.headerText {
+  font-size: 0.875rem;
+}
+
+.list {
+  display: block;
+  gap: var(--size-spacing-lg);
+}
