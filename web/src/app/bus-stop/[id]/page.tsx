@@ -1,6 +1,6 @@
 "use client";
 
-import { BusStopInfoPage } from "../../components/page/BusStopInfoPage/BusStopInfoPage";
+import { BusStopInfoPage } from "../../../domains/bus-stop";
 import { useRouter, useParams } from "next/navigation";
 
 export default function BusStopInfoPageRoute() {

@@ -1,0 +1,77 @@
+from typing import Optional
+
+from fastapi import APIRouter, HTTPException, Query
+
+from gtfs_jp_wayfinder import models
+from gtfs_jp_wayfinder.services import wayfinder_adapter as adapter
+
+router = APIRouter()
+
+
+@router.get(
+    "/search",
+    response_model=models.PathResponse,
+    summary="経路検索",
+    description="出発停留所から到着停留所への最短経路（停留所ID配列）を返します。",
+)
+async def search_path(
+    from_stop: str = Query(..., description="出発停留所ID"),
+    to_stop: str = Query(..., description="到着停留所ID"),
+    service_id: Optional[str] = Query(None, description="サービスIDで絞り込み"),
+):
+    try:
+        path = adapter.get_shortest_path(from_stop, to_stop, service_id)
+        return models.PathResponse(path=path)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.get(
+    "/timed_search",
+    response_model=models.TimedTravelResponse,
+    summary="時刻考慮経路検索",
+    description="開始時刻に基づいた時刻付き経路検索を行い、travels を返します。",
+)
+async def timed_search(
+    from_stop: str = Query(..., description="出発停留所ID"),
+    to_stop: str = Query(..., description="到着停留所ID"),
+    service_id: Optional[str] = Query(None, description="サービスID"),
+    begin_time: Optional[str] = Query(None, description="開始時刻 (HH:MM:SS)"),
+):
+    try:
+        path = adapter.get_shortest_path(from_stop, to_stop, service_id)
+        # adapter expects begin_time as numpy.datetime64 or compatible; pass through
+        travels = adapter.get_timed_travels_from_path(path, service_id, begin_time)
+        return models.TimedTravelResponse(travels=travels)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.get("/travels")
+async def path_travels(
+    from_stop: str = Query(...),
+    to_stop: str = Query(...),
+    service_id: Optional[str] = Query(None),
+):
+    try:
+        path = adapter.get_shortest_path(from_stop, to_stop, service_id)
+        travels = adapter.get_travels_from_path(path, service_id)
+        # convert TravelOnce objects to dicts if needed
+        records = []
+        for t in travels:
+            if hasattr(t, "trip_id"):
+                records.append(
+                    {
+                        "trip_id": t.trip_id,
+                        "fare": t.fare,
+                        "arrival_time": None,
+                        "departure_time": None,
+                        "from_stop_id": t.from_stop_id,
+                        "to_stop_id": t.to_stop_id,
+                    }
+                )
+            else:
+                records.append(t)
+        return {"travels": records}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))

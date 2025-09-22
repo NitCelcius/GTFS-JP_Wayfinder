@@ -6,6 +6,7 @@ import requests
 
 BUSLOC_ENDPOINT = "https://akita.bustei.net/buslocation/IchigoMap.txt"
 
+
 class BusLocGrabber:
     # get_time_param: str
     #   バスロケ用、時間指定のフォーマットを取得
@@ -26,7 +27,7 @@ class BusLocGrabber:
     #   query_time: datetime.time
     #    - GPS情報を取得したい時刻
     def fetch_busloc_raw(self, query_time: datetime.time):
-        req = requests.get( BusLocGrabber.get_busloc_URI(query_time))
+        req = requests.get(BusLocGrabber.get_busloc_URI(query_time))
         resp_str = req.content.decode("utf-8-sig")
         return resp_str
 
@@ -35,9 +36,36 @@ class BusLocGrabber:
     #   resp_str: str
     #    - APIの応答
     def convert_busloc_raw_to_df(self, resp_str: str):
-        df = pd.read_csv(StringIO(resp_str), header=None, names=[
-            "gps_id","keito","bus_operator_id","gps_time_raw","gps_time_epoch","latitude","longitude","minusOne","konzatu_192","client_version","bus_dest","keito_display_name","late_minutes","taxi_souls","ninzuu","mitu","bus_stop_name","bus_stop_route_prefix","unused_18","route_id","icon_modify","memo","keito_number","extra"
-        ])
+        df = pd.read_csv(
+            StringIO(resp_str),
+            header=None,
+            names=[
+                "gps_id",
+                "keito",
+                "bus_operator_id",
+                "gps_time_raw",
+                "gps_time_epoch",
+                "latitude",
+                "longitude",
+                "minusOne",
+                "konzatu_192",
+                "client_version",
+                "bus_dest",
+                "keito_display_name",
+                "late_minutes",
+                "taxi_souls",
+                "ninzuu",
+                "mitu",
+                "bus_stop_name",
+                "bus_stop_route_prefix",
+                "unused_18",
+                "route_id",
+                "icon_modify",
+                "memo",
+                "keito_number",
+                "extra",
+            ],
+        )
         # Header を消す (変な名前がついているので)
-        df = df.drop(index=df.index[[df.shape[0]-1]])
+        df = df.drop(index=df.index[[df.shape[0] - 1]])
         return df
