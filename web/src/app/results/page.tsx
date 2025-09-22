@@ -1,7 +1,7 @@
 "use client";
 
-import { SearchResultPage } from "../components/page/SearchResultPage/SearchResultPage";
-import type { TripDetails } from "../components/page/SearchResultPage/types";
+import { SearchResultPage } from "@/components/page/SearchResultPage/SearchResultPage";
+import type { TripDetails } from "@/components/page/SearchResultPage/types";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import mockTripDetails from "../mock/data";

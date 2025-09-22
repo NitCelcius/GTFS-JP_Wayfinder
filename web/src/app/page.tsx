@@ -1,6 +1,6 @@
 "use client";
 
-import { RouteSearchPage } from "./components/page/RouteSearchPage/RouteSearchPage";
+import { RouteSearchPage } from "@/components/page/RouteSearchPage/RouteSearchPage";
 import { useRouter } from "next/navigation";
 
 export default function HomePage() {

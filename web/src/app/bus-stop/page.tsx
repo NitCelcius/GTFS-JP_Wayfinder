@@ -1,6 +1,6 @@
 "use client";
 
-import { BusStopSearchPage } from "../components/page/BusStopSearchPage/BusStopSearchPage";
+import { BusStopSearchPage } from "@/components/page/BusStopSearchPage/BusStopSearchPage";
 import { useRouter } from "next/navigation";
 
 export default function BusStopSearchPageRoute() {

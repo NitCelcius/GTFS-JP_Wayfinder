@@ -1,0 +1,21 @@
+.container {
+  display: flex;
+  gap: var(--size-spacing-md);
+  padding: var(--size-spacing-sm);
+}
+.tab {
+  padding: var(--size-spacing-sm) var(--size-spacing-md);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+.tabActive {
+  background: var(--color-route-primary);
+  color: white;
+}
+.tabInactive {
+  background: transparent;
+  color: var(--color-text);
+}
+.tabTextContent {
+  font-size: 0.875rem;
+}

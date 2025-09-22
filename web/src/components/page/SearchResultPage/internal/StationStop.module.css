@@ -1,0 +1,31 @@
+.container {
+  padding: var(--size-spacing-sm);
+}
+.stationRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.leftSection {
+  display: flex;
+  gap: var(--size-spacing-md);
+  align-items: center;
+}
+.stationIcon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+.stationNameText {
+  font-size: 1rem;
+}
+.rightSection {
+  display: flex;
+  gap: var(--size-spacing-md);
+  align-items: center;
+}
+.timeTextContent {
+  font-size: 0.9rem;
+}
+.transferArrow {
+  padding-left: 1.5rem;
+}

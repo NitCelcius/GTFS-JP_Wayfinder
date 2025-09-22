@@ -1,0 +1,12 @@
+.container {
+  padding: var(--size-spacing-sm);
+}
+.titleText {
+  font-size: 0.875rem;
+}
+.divider {
+  margin-top: var(--size-spacing-sm);
+}
+.departureTimeText {
+  font-size: 0.9rem;
+}

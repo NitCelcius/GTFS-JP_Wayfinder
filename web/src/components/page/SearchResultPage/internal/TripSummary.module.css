@@ -1,0 +1,9 @@
+.container {
+  padding: var(--size-spacing-md);
+}
+.timeTextContent {
+  font-size: 0.95rem;
+}
+.detailsTextContent {
+  font-size: 0.875rem;
+}

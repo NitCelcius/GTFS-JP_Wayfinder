@@ -1,0 +1,6 @@
+.container {
+  padding: var(--size-spacing-md);
+}
+.textContent {
+  font-size: 0.875rem;
+}

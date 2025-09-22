@@ -4,6 +4,7 @@ from typing import Any, List, Optional
 from gtfs_jp_wayfinder.models import (
     TripInfoList,
 )
+import pandas as pd
 from gtfs_jp_wayfinder.services import wayfinder as wf_service
 
 _initialized = False
@@ -46,7 +47,37 @@ def get_trips_from_stop(stop_id: str, service_id: Optional[str] = None):
 
 
 def get_time_from_trip_and_stop(trip_id: str, stop_id: str):
-    return wf_service.get_time_from_trip_and_stop(trip_id, stop_id)
+    """Return dict with trip_id, arrival_time and departure_time.
+
+    Underlying implementation may return numpy.datetime64 / pandas.Timestamp
+    values; convert them to HH:MM:SS strings so Pydantic models expecting
+    strings can validate correctly.
+    """
+    res = wf_service.get_time_from_trip_and_stop(trip_id, stop_id)
+    # try to use an underlying conversion helper if available
+    conv = None
+    try:
+        conv = wf_service._wf.np_datetime_truncate_to_str
+    except Exception:
+        conv = None
+
+    for k in ("arrival_time", "departure_time"):
+        v = res.get(k)
+        if v is None:
+            continue
+        try:
+            if conv is not None:
+                res[k] = conv(v)
+            else:
+                # pandas.Timestamp handles numpy.datetime64 and many other types
+                res[k] = pd.Timestamp(v).strftime("%H:%M:%S")
+        except Exception:
+            # best-effort fallback to string() so we don't return raw numpy types
+            try:
+                res[k] = str(v)
+            except Exception:
+                res[k] = None
+    return res
 
 
 def get_route_id_from_trip(trip_id: str):
