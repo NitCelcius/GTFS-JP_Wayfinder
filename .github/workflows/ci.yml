@@ -1,14 +1,15 @@
 name: CI
 
 on:
-  push:
-    branches: [main, master]
   pull_request:
-    branches: [main, master]
+    branches: ["*"]
+    types: [opened, synchronize, reopened, ready_for_review]
 
 jobs:
   turbo-checks:
     runs-on: ubuntu-latest
+    # Skip draft PRs and branches starting with "wip"
+    if: github.event.pull_request.draft == false && !startsWith(github.head_ref, 'wip')
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -21,6 +22,14 @@ jobs:
       - name: Install pnpm
         run: npm i -g pnpm@10.14.0
 
+      - name: Cache pnpm dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
@@ -30,6 +39,15 @@ jobs:
         uses: astral-sh/setup-uv@v4
         with:
           enable-cache: true
+          cache-dependency-glob: "**/requirements*.txt"
+
+      - name: Cache Turbo
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
