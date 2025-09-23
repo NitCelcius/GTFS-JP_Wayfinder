@@ -9,10 +9,12 @@ interface RouteSearchButtonProps {
 }
 
 const STYLES = {
-  button:
-    "w-full bg-[color:var(--route-origin-bg)] rounded-[var(--border-radius-md)] px-[var(--spacing-lg)] py-[var(--spacing-xl)] flex items-center justify-center gap-[var(--spacing-md)] cursor-pointer hover:opacity-80 transition-opacity",
+  buttonBase:
+    "w-full rounded-[var(--border-radius-md)] px-[var(--spacing-lg)] py-[var(--spacing-xl)] flex items-center justify-center gap-[var(--spacing-md)] transition-opacity",
+  buttonEnabled:
+    "bg-[color:var(--route-origin-bg)] cursor-pointer hover:opacity-80",
   buttonDisabled:
-    "w-full bg-gray-300 rounded-[var(--border-radius-md)] px-[var(--spacing-lg)] py-[var(--spacing-xl)] flex items-center justify-center gap-[var(--spacing-md)] cursor-not-allowed opacity-50",
+    "bg-gray-300 cursor-not-allowed opacity-50",
   icon: "w-[1.5rem] h-[1.5rem] flex items-center justify-center",
   text: "text-[1rem]",
 } as const;
@@ -43,10 +45,10 @@ export function RouteSearchButton({
   disabled = false,
 }: RouteSearchButtonProps) {
   const isDisabled = isLoading || disabled;
-  const baseButtonClass = disabled ? STYLES.buttonDisabled : STYLES.button;
+  const buttonStateClass = isDisabled ? STYLES.buttonDisabled : STYLES.buttonEnabled;
   const buttonClass = className
-    ? `${baseButtonClass} ${className}`
-    : baseButtonClass;
+    ? `${STYLES.buttonBase} ${buttonStateClass} ${className}`
+    : `${STYLES.buttonBase} ${buttonStateClass}`;
 
   return (
     <button className={buttonClass} onClick={onClick} disabled={isDisabled}>

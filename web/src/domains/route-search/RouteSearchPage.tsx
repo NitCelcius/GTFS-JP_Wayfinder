@@ -21,7 +21,7 @@ function MainContent({
   onOriginChange, 
   onDestinationChange 
 }: MainContentProps) {
-  const isSearchDisabled = !originValue.trim() || !destinationValue.trim();
+  const isSearchEnabled = originValue.trim() && destinationValue.trim();
 
   return (
     <div className="basis-0 box-border content-stretch flex flex-col gap-[var(--size-spacing-xl)] grow items-center justify-center min-h-px min-w-px px-[var(--size-spacing-lg)] py-[var(--size-spacing-sm)] relative shrink-0 w-full">
@@ -34,7 +34,7 @@ function MainContent({
       <SearchConditions />
       <RouteSearchButton 
         onClick={onSearch || (() => {})} 
-        disabled={isSearchDisabled}
+        disabled={!isSearchEnabled}
       />
     </div>
   );
