@@ -111,68 +111,69 @@ export function BusStopInfoPage({
   );
 
   return (
-    <div className="bg-white min-h-screen w-full max-w-[var(--max-w-mobile)] mx-auto flex flex-col relative pb-[var(--size-container-md)]">
-      <TopNavigation
-        icon={<InfoIcon />}
-        title="バス停情報"
-        showBackButton={true}
-        onBack={onBack}
-      />
-
-      <div className="flex-1 flex flex-col px-[var(--size-spacing-lg)] overflow-auto">
-        <BusStopHeader
-          name={mockBusStopData.name}
-          distance={mockBusStopData.distance}
+    <>
+      <div className="bg-white min-h-screen w-full max-w-[var(--max-w-mobile)] mx-auto flex flex-col relative pb-[calc(var(--size-container-md)+6rem)]">
+        <TopNavigation
+          icon={<InfoIcon />}
+          title="バス停情報"
+          showBackButton={true}
+          onBack={onBack}
         />
 
-        <div className="pt-[var(--size-spacing-2xl)]">
-          {isNextBusLoading ? (
-            <div className="w-full bg-white border border-gray-200 rounded-[var(--radius-lg)] p-[var(--size-spacing-2xl)] flex items-center justify-center">
-              <div className="flex flex-col items-center gap-[var(--size-spacing-md)]">
-                <LoadingSpinner size="sm" />
-                <span className="text-[0.875rem] text-gray-600">
-                  次のバス情報を読み込み中...
-                </span>
-              </div>
-            </div>
-          ) : (
-            <NextBusInfo busInfo={mockBusStopData.nextBus} />
-          )}
-        </div>
+        <div className="flex-1 flex flex-col px-[var(--size-spacing-lg)] overflow-auto">
+          <BusStopHeader
+            name={mockBusStopData.name}
+            distance={mockBusStopData.distance}
+          />
 
-        <div className="pt-[var(--size-spacing-2xl)] flex-1 min-h-0">
-          {isRouteJourneyLoading ? (
-            <div className="h-full flex flex-col">
-              <h3 className="text-[1.125rem] mb-[var(--size-spacing-lg)]">
-                このバスの行き先
-              </h3>
-              <div className="flex-1 bg-white border border-gray-200 rounded-[var(--radius-lg)] p-[var(--size-spacing-2xl)] flex items-center justify-center">
+          <div className="pt-[var(--size-spacing-2xl)]">
+            {isNextBusLoading ? (
+              <div className="w-full bg-white border border-gray-200 rounded-[var(--radius-lg)] p-[var(--size-spacing-2xl)] flex items-center justify-center">
                 <div className="flex flex-col items-center gap-[var(--size-spacing-md)]">
                   <LoadingSpinner size="sm" />
                   <span className="text-[0.875rem] text-gray-600">
-                    経路情報を読み込み中...
+                    次のバス情報を読み込み中...
                   </span>
                 </div>
               </div>
-            </div>
-          ) : (
-            <JourneyTimeline
-              title="このバスの行き先"
-              stops={mockBusStopData.routeJourney}
-              variant="bus-info"
-            />
-          )}
+            ) : (
+              <NextBusInfo busInfo={mockBusStopData.nextBus} />
+            )}
+          </div>
+
+          <div className="pt-[var(--size-spacing-2xl)] flex-1 min-h-0 mb-[var(--size-spacing-lg)]">
+            {isRouteJourneyLoading ? (
+              <div className="h-full flex flex-col">
+                <h3 className="text-[1.125rem] mb-[var(--size-spacing-lg)]">
+                  このバスの行き先
+                </h3>
+                <div className="flex-1 bg-white border border-gray-200 rounded-[var(--radius-lg)] p-[var(--size-spacing-2xl)] flex items-center justify-center">
+                  <div className="flex flex-col items-center gap-[var(--size-spacing-md)]">
+                    <LoadingSpinner size="sm" />
+                    <span className="text-[0.875rem] text-gray-600">
+                      経路情報を読み込み中...
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <JourneyTimeline
+                title="このバスの行き先"
+                stops={mockBusStopData.routeJourney}
+                variant="bus-info"
+              />
+            )}
+          </div>
         </div>
 
-        <div className="pt-[var(--size-spacing-2xl)] pb-[var(--size-spacing-lg)]">
-          <TransferButton onClick={handleTransferClick} />
-        </div>
+        <BottomNavigation
+          activeTab="bus-stop"
+          onTabClick={handleBottomNavClick}
+        />
       </div>
-
-      <BottomNavigation
-        activeTab="bus-stop"
-        onTabClick={handleBottomNavClick}
-      />
-    </div>
+      
+      {/* Floating Transfer Button */}
+      <TransferButton onClick={handleTransferClick} floating={true} />
+    </>
   );
 }

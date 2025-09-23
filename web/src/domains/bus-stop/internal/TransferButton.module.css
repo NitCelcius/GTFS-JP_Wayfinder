@@ -10,6 +10,28 @@
   cursor: pointer;
   transition: opacity 0.15s;
 }
+
+/* Fixed floating button container */
+.floatingContainer {
+  position: fixed;
+  bottom: var(--size-container-md);
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 99; /* Just below BottomNavigation (z-index: 100) */
+  padding: var(--size-spacing-lg);
+  /* iOS safe area support */
+  padding-bottom: calc(var(--size-spacing-lg) + env(safe-area-inset-bottom, 0));
+  background: transparent;
+  pointer-events: none; /* Allow clicks to pass through the container */
+}
+
+.floatingContainer .button {
+  pointer-events: all; /* Re-enable clicks on the button itself */
+  max-width: var(--max-w-mobile);
+  margin: 0 auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Add shadow for better visibility */
+}
 .button:hover {
   opacity: 0.8;
 }
