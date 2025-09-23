@@ -84,8 +84,13 @@ export function BusStopSearchPage({
       />
 
       <div className="flex-1 flex flex-col px-[var(--size-spacing-lg)] overflow-auto">
-        {/* Nearest Bus Stop Section */}
+        {/* Search Input */}
         <div className="pt-[var(--size-spacing-lg)]">
+          <SearchInput onSearch={handleSearch} />
+        </div>
+
+        {/* Nearest Bus Stop Section */}
+        <div className="pt-[var(--size-spacing-2xl)]">
           <h3 className="text-[0.875rem] mb-[var(--size-spacing-sm)]">
             一番近くのバス停
           </h3>
@@ -103,11 +108,6 @@ export function BusStopSearchPage({
               onBusStopSelect={handleBusStopSelect}
             />
           )}
-        </div>
-
-        {/* Search Input */}
-        <div className="pt-[var(--size-spacing-2xl)]">
-          <SearchInput onSearch={handleSearch} />
         </div>
 
         {/* Search Results Section */}
