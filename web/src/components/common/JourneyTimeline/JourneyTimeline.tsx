@@ -23,20 +23,23 @@ const STYLES = {
   container: "w-full h-full flex flex-col bg-white p-[var(--size-spacing-lg)]",
   title: "text-[0.875rem] mb-[var(--size-spacing-sm)]",
   scrollContainer: "flex-1 overflow-y-auto",
-  journey: "flex flex-col relative",
-  stopContainer: "flex items-start relative py-[var(--size-spacing-lg)]",
+  journey: "flex flex-col relative items-center",
+  stopContainer:
+    "flex relative py-[var(--size-spacing-lg)] w-full items-center",
   leftSection: "flex items-center gap-[var(--size-spacing-md)] flex-1",
-  icon: "w-[1.5rem] h-[1.5rem] flex items-center justify-center relative z-20 bg-white rounded-full border border-gray-300 shadow-sm",
+  icon: "w-[1.5rem] h-[1.5rem] flex items-center justify-center relative z-20 bg-white rounded-full border border-gray-300 shadow-sm flex-none",
   stopInfo: "flex flex-col",
   stopName: "text-[1.25rem]",
   stopLabel: "text-[0.875rem] text-gray-600",
-  rightSection: "flex items-center gap-[var(--size-spacing-sm)]",
+  rightSection:
+    "flex flex-row items-end gap-[var(--size-spacing-sm)] flex-0 self-center flex-col flex-1 flex-wrap items-end justify-end",
   costContainer: "flex items-center justify-center",
   costValue: "text-[1.375rem]",
   costCurrency: "text-[0.875rem]",
   timeValue: "text-[1.375rem]",
-  timesContainer: "flex flex-col items-end gap-[var(--size-spacing-xs)]",
-  timeText: "text-[1rem]",
+  timesContainer: "flex flex-col items-end gap-[var(--size-spacing-xs)] flex-0",
+  timeWrapper: "flex-0 whitespace-nowrap items-end",
+  timeText: "text-[1rem] whitespace-nowrap",
   status: "text-[0.875rem]",
   fullConnector:
     "absolute left-[0.75rem] top-0 bottom-0 w-[2px] bg-gray-300 z-10",
@@ -108,10 +111,14 @@ export function JourneyTimeline({
       return (
         <div className={STYLES.timesContainer}>
           {stop.arrivalTime && (
-            <span className={STYLES.timeText}>{stop.arrivalTime} 着</span>
+            <div className={STYLES.timeWrapper}>
+              <span className={STYLES.timeText}>{stop.arrivalTime} 着</span>
+            </div>
           )}
           {stop.departureTime && (
-            <span className={STYLES.timeText}>{stop.departureTime} 発</span>
+            <div className={STYLES.timeWrapper}>
+              <span className={STYLES.timeText}>{stop.departureTime} 発</span>
+            </div>
           )}
         </div>
       );
@@ -119,8 +126,10 @@ export function JourneyTimeline({
       // bus-info variant
       return (
         <>
-          <span className={STYLES.timeValue}>{stop.time}</span>
-          <span className={STYLES.status}>着</span>
+          <div className={STYLES.timeWrapper}>
+            <span className={STYLES.timeValue}>{stop.time}</span>
+            <span className={STYLES.status}>着</span>
+          </div>
         </>
       );
     }
