@@ -4,13 +4,10 @@ node_modules/
 # Build outputs
 .next/
 out/
-build/
 dist/
 
 # Generated files
 src/api/**
-src/**/client.gen.*
-src/**/*.gen.*
 openapi.json
 
 # Config files
