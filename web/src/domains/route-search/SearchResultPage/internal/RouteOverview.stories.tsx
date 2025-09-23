@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { RouteOverview } from './RouteOverview';
 
 const meta: Meta<typeof RouteOverview> = {
-  title: 'Internal/Route Search/RouteOverview',
+  title: 'RouteSearch/SearchResultPage/Internal/RouteOverview',
   component: RouteOverview,
   parameters: {
     layout: 'centered',
@@ -28,12 +28,5 @@ export const LongStationNames: Story = {
   args: {
     fromStation: 'あきた芸術劇場ミルハス・にぎわい交流館 AU 前',
     toStation: '大学病院',
-  },
-};
-
-export const ShortStationNames: Story = {
-  args: {
-    fromStation: '西口',
-    toStation: '南町',
   },
 };
