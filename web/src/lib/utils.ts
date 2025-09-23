@@ -29,17 +29,16 @@ export const formatDepartureTime = (timeStr: string): string => {
       date.getDate() === today.getDate();
     
     if (isSameDay) {
-      // Format as HH:mm
-      return date.toLocaleTimeString("ja-JP", {
-        hour: "2-digit",
-        minute: "2-digit",
-      });
+      // Format as HH:mm (fixed format, no locale dependency)
+      const hours = date.getHours().toString().padStart(2, '0');
+      const minutes = date.getMinutes().toString().padStart(2, '0');
+      return `${hours}:${minutes}`;
     } else {
-      // Format as MM/dd HH:mm
-      return date.toLocaleDateString("ja-JP", {
+      // Format as locale-based format (absolute, except for the year)
+      return date.toLocaleDateString(undefined, {
         month: "2-digit",
         day: "2-digit",
-      }) + " " + date.toLocaleTimeString("ja-JP", {
+      }) + " " + date.toLocaleTimeString(undefined, {
         hour: "2-digit",
         minute: "2-digit",
       });
