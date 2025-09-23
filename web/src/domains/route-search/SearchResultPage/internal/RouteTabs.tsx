@@ -22,7 +22,7 @@ export function RouteTabs({
   onTabChange,
 }: RouteTabsProps) {
   return (
-    <div className={STYLES.container} data-name="RouteTabs">
+    <div className={STYLES.container}>
       {routes.map((route, index) => (
         <div
           key={route.id}
@@ -30,7 +30,6 @@ export function RouteTabs({
             index === selectedIndex ? STYLES.tabActive : STYLES.tabInactive
           }`}
           onClick={() => onTabChange(index)}
-          data-name="RouteTab"
         >
           <p className={STYLES.tabText}>{route.name}</p>
         </div>

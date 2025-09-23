@@ -1,8 +1,8 @@
+import styles from "./TransferButton.module.css";
+
 interface TransferButtonProps {
   onClick: () => void;
 }
-
-import styles from "./TransferButton.module.css";
 
 function TransferIcon() {
   return (

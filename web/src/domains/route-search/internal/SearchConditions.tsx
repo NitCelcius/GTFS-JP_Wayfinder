@@ -30,7 +30,7 @@ const STYLES = {
 
 function SearchHeader() {
   return (
-    <div className={STYLES.searchHeader} data-name="SearchHeader">
+    <div className={STYLES.searchHeader}>
       <div className={STYLES.searchHeaderTitle}>
         <p className={STYLES.searchHeaderText}>検索条件</p>
       </div>
@@ -41,7 +41,7 @@ function SearchHeader() {
 
 function Divider() {
   return (
-    <div className={STYLES.divider} data-name="Divider">
+    <div className={STYLES.divider}>
       <div className={STYLES.dividerSvg}>
         <svg
           className={STYLES.dividerSvgElement}
@@ -66,7 +66,7 @@ function Divider() {
 
 function DepartureTime() {
   return (
-    <div className={STYLES.departureTime} data-name="departureTime">
+    <div className={STYLES.departureTime}>
       <div className={STYLES.departureTimeContent}>
         <div className={STYLES.departureTimeInner}>
           <div className={STYLES.departureTimeLabel}>
@@ -83,7 +83,7 @@ function DepartureTime() {
 
 export function SearchConditions() {
   return (
-    <div className={STYLES.container} data-name="SearchConditions">
+    <div className={STYLES.container}>
       <div className={STYLES.content}>
         <div className={STYLES.inner}>
           <SearchHeader />
@@ -94,6 +94,3 @@ export function SearchConditions() {
     </div>
   );
 }
-
-// Maintain default export for backward compatibility during migration
-export default SearchConditions;

@@ -29,7 +29,7 @@ const INPUT_BACKGROUNDS = {
 
 function LocationIcon() {
   return (
-    <div className={STYLES.icon} data-name="Icon">
+    <div className={STYLES.icon}>
       <svg
         className={STYLES.iconSvg}
         fill="none"
@@ -57,7 +57,7 @@ function LocationIcon() {
 
 function FlagIcon() {
   return (
-    <div className={STYLES.icon} data-name="Icon">
+    <div className={STYLES.icon}>
       <svg
         className={STYLES.iconSvg}
         fill="none"
@@ -85,7 +85,7 @@ function FlagIcon() {
 
 function ArrowIcon() {
   return (
-    <div className={STYLES.arrowIcon} data-name="arrow_range">
+    <div className={STYLES.arrowIcon}>
       <svg
         className={STYLES.iconSvg}
         fill="none"
@@ -143,10 +143,7 @@ function RouteInput({ type, placeholder, value, onChange }: RouteInputProps) {
       : INPUT_BACKGROUNDS.destination;
   const Icon = type === "origin" ? LocationIcon : FlagIcon;
   return (
-    <div
-      className={`${STYLES.routeInput} ${bgClass}`}
-      data-name={`${type}PointInput`}
-    >
+    <div className={`${STYLES.routeInput} ${bgClass}`}>
       <Icon />
       <input
         type="text"

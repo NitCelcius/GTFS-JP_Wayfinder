@@ -3,7 +3,6 @@ import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
 import { BottomNavigation } from "@/components/common/BottomNavigation/BottomNavigation";
 import { BusStopList } from "./internal/BusStopList";
 import { SearchInput } from "./internal/SearchInput";
-import { RouteSearchButton } from "@/components/common/RouteSearchButton/RouteSearchButton";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner/LoadingSpinner";
 import mockBusStopsList from "@/mocks/busStops";
 
@@ -70,11 +69,6 @@ export function BusStopSearchPage({
   const handleSearch = (query: string) => {
     // Placeholder for search functionality
     console.log("Searching for:", query);
-  };
-
-  const handleRouteSearch = () => {
-    // Placeholder for route search functionality
-    console.log("Navigate to route search");
   };
 
   const handleBusStopSelect = (busStopId: string) => {

@@ -33,7 +33,7 @@ export function SearchInput({ onSearch }: SearchInputProps) {
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
-      handleSubmit(e as unknown as React.FormEvent);
+      onSearch(query);
     }
   };
 

@@ -1,9 +1,9 @@
+import styles from "./BusStopHeader.module.css";
+
 interface BusStopHeaderProps {
   name: string;
   distance: string;
 }
-
-import styles from "./BusStopHeader.module.css";
 
 function LocationIcon() {
   return (

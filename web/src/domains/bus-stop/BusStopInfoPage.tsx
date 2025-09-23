@@ -52,7 +52,7 @@ const mockBusStopData = {
 };
 
 export function BusStopInfoPage({
-  busStopId,
+  busStopId: _busStopId,
   onBack,
   onNavigateToRoute,
   onNavigateToRecent,

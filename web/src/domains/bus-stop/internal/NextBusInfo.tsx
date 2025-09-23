@@ -1,3 +1,5 @@
+import styles from "./NextBusInfo.module.css";
+
 interface BusInfo {
   line: string;
   system: string;
@@ -12,8 +14,6 @@ interface NextBusInfoProps {
   showPreviousIndicator?: boolean;
   showNextIndicator?: boolean;
 }
-
-import styles from "./NextBusInfo.module.css";
 
 export function NextBusInfo({
   busInfo,

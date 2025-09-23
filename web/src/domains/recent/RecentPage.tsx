@@ -114,10 +114,7 @@ export function RecentPage({
     console.log("Navigate to more route search history");
 
   return (
-    <div
-      className="w-full max-w-[var(--max-w-mobile)] flex flex-col relative min-h-screen pb-[var(--size-container-md)]"
-      data-name="Recent"
-    >
+    <div className="w-full max-w-[var(--max-w-mobile)] flex flex-col relative min-h-screen  pb-[var(--size-container-md)]">
       <TopNavigation icon={<ClockIcon />} title="最近" />
 
       <div className="flex-1 px-[var(--size-spacing-lg)] py-[var(--size-spacing-md)] overflow-y-auto">
