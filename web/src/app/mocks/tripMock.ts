@@ -1,4 +1,4 @@
-import type { TripDetails } from "@/components/page/SearchResultPage/types";
+import type { TripDetails } from "@/domains/route-search/SearchResultPage/types";
 
 export const mockTripDetails: TripDetails = {
   fromStation: "hoge駅",

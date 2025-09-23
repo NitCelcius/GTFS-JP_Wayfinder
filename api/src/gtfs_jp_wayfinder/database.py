@@ -8,22 +8,17 @@ import pandas as pd
 logger = logging.getLogger(__name__)
 
 
+from dataclasses import dataclass
+
+
+@dataclass
 class TravelOnce:
-    def __init__(
-        self,
-        trip_id,
-        fare,
-        arrival_time: np.datetime64 | None,
-        departure_time: np.datetime64 | None,
-        from_stop_id,
-        to_stop_id,
-    ):
-        self.trip_id = trip_id
-        self.fare = fare
-        self.arrival_time = arrival_time
-        self.departure_time = departure_time
-        self.from_stop_id = from_stop_id
-        self.to_stop_id = to_stop_id
+    trip_id: str | list[str]
+    fare: int
+    arrival_time: np.datetime64 | None
+    departure_time: np.datetime64 | None
+    from_stop_id: str
+    to_stop_id: str
 
 
 class AkitaBusWayFinder:
@@ -372,7 +367,8 @@ class AkitaBusWayFinder:
             if prev_stop is None:
                 prev_stop = current_stop
                 continue
-            trips = self.get_trips_from_stops(current_stop, current_stop, service_id)
+            # find trips that go from the previous stop to the current stop
+            trips = self.get_trips_from_stops(prev_stop, current_stop, service_id)
             travel_list.append(
                 TravelOnce(
                     trip_id=trips,
@@ -555,8 +551,9 @@ class AkitaBusWayFinder:
     def get_destination_id_from_trip(self, trip_id) -> str:
         df_stop = self.get_stops_from_trip(trip_id)
         max_seq = max(df_stop["stop_sequence"].values.tolist())
-        res = df_stop[df_stop["stop_sequence"] == max_seq].index.values[0]
-        return str(res.item())
+        # return the stop_id for the row with the maximum sequence
+        res = df_stop[df_stop["stop_sequence"] == max_seq]["stop_id"].values[0]
+        return str(res)
 
     # route_id に関連する情報をぜんぶ取得する
     def get_route_info(self, route_id):

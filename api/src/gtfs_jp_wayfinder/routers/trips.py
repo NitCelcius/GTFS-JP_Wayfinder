@@ -34,56 +34,6 @@ async def batch_trips(
 
 
 @router.get(
-    "/{trip_id}",
-    response_model=models.TripInfo,
-    summary="運行情報の取得",
-    description="単一の運行IDから TripInfo を取得します。",
-)
-async def get_trip(trip_id: str):
-    info = adapter.get_trip_info_batch([trip_id]).trips
-    if not info:
-        raise HTTPException(status_code=404, detail="trip not found")
-    return info[0]
-
-
-@router.get(
-    "/{trip_id}/stops",
-    response_model=List[models.TripTimedStop],
-    summary="運行の停留所一覧取得",
-    description="運行に紐づく停留所と時刻の一覧を返します。",
-)
-async def trip_stops(trip_id: str):
-    try:
-        records = adapter.get_stops_from_trip(trip_id)
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
-    return records
-
-
-@router.get(
-    "/{trip_id}/passing",
-    response_model=models.TripRecord,
-    summary="通過時刻の取得",
-    description="指定運行が指定停留所を通過する到着/出発時刻と運賃を返します。",
-)
-async def trip_passing(trip_id: str, stop_id: str = Query(..., description="停留所ID")):
-    try:
-        res = adapter.get_time_from_trip_and_stop(trip_id, stop_id)
-        # res should be dict-like with arrival_time/departure_time/fare
-        return models.TripRecord(
-            trip_id=trip_id,
-            stop_id=stop_id,
-            fare=(res.get("fare") if isinstance(res, dict) else 0) or 0,
-            departure_time=(
-                res.get("departure_time") if isinstance(res, dict) else None
-            ),
-            arrival_time=(res.get("arrival_time") if isinstance(res, dict) else None),
-        )
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-
-@router.get(
     "/fare",
     response_model=models.FareResponse,
     summary="運賃取得",
@@ -155,5 +105,55 @@ async def get_journey(
         return journey
     except HTTPException:
         raise
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.get(
+    "/{trip_id}",
+    response_model=models.TripInfo,
+    summary="運行情報の取得",
+    description="単一の運行IDから TripInfo を取得します。",
+)
+async def get_trip(trip_id: str):
+    info = adapter.get_trip_info_batch([trip_id]).trips
+    if not info:
+        raise HTTPException(status_code=404, detail="trip not found")
+    return info[0]
+
+
+@router.get(
+    "/{trip_id}/stops",
+    response_model=List[models.TripTimedStop],
+    summary="運行の停留所一覧取得",
+    description="運行に紐づく停留所と時刻の一覧を返します。",
+)
+async def trip_stops(trip_id: str):
+    try:
+        records = adapter.get_stops_from_trip(trip_id)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    return records
+
+
+@router.get(
+    "/{trip_id}/passing",
+    response_model=models.TripRecord,
+    summary="通過時刻の取得",
+    description="指定運行が指定停留所を通過する到着/出発時刻と運賃を返します。",
+)
+async def trip_passing(trip_id: str, stop_id: str = Query(..., description="停留所ID")):
+    try:
+        res = adapter.get_time_from_trip_and_stop(trip_id, stop_id)
+        # res should be dict-like with arrival_time/departure_time/fare
+        return models.TripRecord(
+            trip_id=trip_id,
+            stop_id=stop_id,
+            fare=(res.get("fare") if isinstance(res, dict) else 0) or 0,
+            departure_time=(
+                res.get("departure_time") if isinstance(res, dict) else None
+            ),
+            arrival_time=(res.get("arrival_time") if isinstance(res, dict) else None),
+        )
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))

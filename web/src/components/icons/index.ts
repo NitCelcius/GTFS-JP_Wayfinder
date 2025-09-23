@@ -1,3 +1,2 @@
 // Icons barrel (placeholder)
-export * from "../common/common/icons/SearchIcon";
-export * from "../common/common/icons/MapSearchIcon";
+export * from "../common/icons/MapSearchIcon";

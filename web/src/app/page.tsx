@@ -1,6 +1,6 @@
 "use client";
 
-import { RouteSearchPage } from "@/components/page/RouteSearchPage/RouteSearchPage";
+import { RouteSearchPage } from "@/domains/route-search";
 import { useRouter } from "next/navigation";
 
 export default function HomePage() {
@@ -12,10 +12,12 @@ export default function HomePage() {
   };
 
   return (
-    <RouteSearchPage
-      onSearch={handleSearch}
-      onNavigateToBusStop={() => router.push("/bus-stop")}
-      onNavigateToRecent={() => router.push("/recent")}
-    />
+    <div className="bg-white min-h-screen flex items-center justify-center">
+      <RouteSearchPage
+        onSearch={handleSearch}
+        onNavigateToBusStop={() => router.push("/bus-stop")}
+        onNavigateToRecent={() => router.push("/recent")}
+      />
+    </div>
   );
 }

@@ -1,4 +1,4 @@
-import type { TripDetails } from "@/components/page/SearchResultPage/types";
+import type { TripDetails } from "@/domains/route-search/SearchResultPage/types";
 
 // Mock bus stops for the city (IDs are simple slugs)
 export const mockBusStops = [

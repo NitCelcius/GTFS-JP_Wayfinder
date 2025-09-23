@@ -135,3 +135,21 @@ def get_trip_info_batch(trip_ids: List[str]) -> TripInfoList:
         )
 
     return TripInfoList(trips=trips)
+
+
+def format_np_datetime(value) -> str:
+    """Utility to format numpy.datetime64 or pandas.Timestamp to HH:MM:SS.
+
+    This helper is exposed so adapters can convert underlying numpy/pandas
+    datetime types to plain strings for Pydantic models.
+    """
+    try:
+        # import locally to avoid heavy dependency at module import time
+        import pandas as pd
+
+        return pd.Timestamp(value).strftime("%H:%M:%S")
+    except Exception:
+        try:
+            return str(value)
+        except Exception:
+            return None

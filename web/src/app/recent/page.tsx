@@ -1,6 +1,6 @@
 "use client";
 
-import { RecentPage } from "@/components/page/RecentPage/RecentPage";
+import { RecentPage } from "@/domains/recent";
 import { useRouter } from "next/navigation";
 
 export default function RecentSearchPage() {

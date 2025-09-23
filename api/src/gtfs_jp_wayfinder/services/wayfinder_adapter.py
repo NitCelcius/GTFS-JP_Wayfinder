@@ -1,10 +1,11 @@
 import asyncio
 from typing import Any, List, Optional
 
+import pandas as pd
+
 from gtfs_jp_wayfinder.models import (
     TripInfoList,
 )
-import pandas as pd
 from gtfs_jp_wayfinder.services import wayfinder as wf_service
 
 _initialized = False
@@ -54,12 +55,8 @@ def get_time_from_trip_and_stop(trip_id: str, stop_id: str):
     strings can validate correctly.
     """
     res = wf_service.get_time_from_trip_and_stop(trip_id, stop_id)
-    # try to use an underlying conversion helper if available
-    conv = None
-    try:
-        conv = wf_service._wf.np_datetime_truncate_to_str
-    except Exception:
-        conv = None
+    # use public formatter when available
+    conv = getattr(wf_service, "format_np_datetime", None)
 
     for k in ("arrival_time", "departure_time"):
         v = res.get(k)
@@ -69,7 +66,6 @@ def get_time_from_trip_and_stop(trip_id: str, stop_id: str):
             if conv is not None:
                 res[k] = conv(v)
             else:
-                # pandas.Timestamp handles numpy.datetime64 and many other types
                 res[k] = pd.Timestamp(v).strftime("%H:%M:%S")
         except Exception:
             # best-effort fallback to string() so we don't return raw numpy types
@@ -100,12 +96,8 @@ def get_stops_from_trip(trip_id: str) -> List[dict]:
     """Return list of dicts representing timed stops, converting numpy datetime to HH:MM:SS strings."""
     df = wf_service.get_stops_from_trip(trip_id)
     records = df.to_dict("records")
-    # try to convert datetimes using underlying wayfinder helper if available
-    conv = None
-    try:
-        conv = wf_service._wf.np_datetime_truncate_to_str
-    except Exception:
-        conv = None
+    # try to convert datetimes using public helper
+    conv = getattr(wf_service, "format_np_datetime", None)
     for r in records:
         if conv is not None and r.get("arrival_time") is not None:
             try:
