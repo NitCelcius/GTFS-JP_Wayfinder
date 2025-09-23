@@ -6,7 +6,6 @@
 ## What an AI agent should know first
 
 - The API is in `api/src/gtfs_jp_wayfinder/` — key files: `main.py`, `database.py`, `busloc_grabber.py`, `busstop_grabber.py`.
-
   - `main.py` constructs FastAPI app and calls `AkitaBusWayFinder.initialize("./data/gtfs-akita-chuo-kotsu/")` during startup (see lifespan/context manager).
   - `database.py` contains `AkitaBusWayFinder` and `TravelOnce`; it reads GTFS CSVs with pandas and builds NetworkX graphs (`generate_graph`) and a date->service_id map (`generate_calendar`). Many functions return numpy datetime64 and expect conversion via `np_datetime_truncate_to_str`.
 
@@ -15,19 +14,16 @@
 ## Dev / run commands (how maintainers run the project)
 
 - Root (recommended workspace orchestration): requires pnpm. Root scripts (uses turbo):
-
   - pnpm dev -> runs turbo run dev (starts both workspaces if configured)
   - pnpm build
   - pnpm test
 
 - API service (local development):
-
   - From workspace root: pnpm --filter api dev (pnpm workspace filter) or cd api && pnpm dev
   - The package.json in `api/` runs `uv run python -m uvicorn src.gtfs_jp_wayfinder.main:app --host 0.0.0.0 --port 8002` (there is a small wrapper/tool named `uv` used in scripts).
   - Important: the API expects the GTFS CSV directory to be at `./data/gtfs-akita-chuo-kotsu/` relative to the process cwd. Starting the API from the repo root (or adjusting the path) is required.
 
 - Web frontend:
-
   - cd web && pnpm dev (Next.js dev server, uses turbopack flag in package.json)
 
 - Docker/composition: a root `docker-compose.yml` references `api` and `web` compose files. Use Docker Compose for containerized runs.

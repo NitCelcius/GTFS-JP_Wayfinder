@@ -19,8 +19,5 @@
       "source.organizeImports.ruff": "always"
     }
   },
-  "cSpell.words": [
-    "GTFS",
-    "Wayfinder"
-  ]
+  "cSpell.words": ["GTFS", "Wayfinder"]
 }

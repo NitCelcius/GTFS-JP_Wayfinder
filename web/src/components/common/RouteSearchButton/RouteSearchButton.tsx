@@ -38,7 +38,6 @@ function SearchIcon() {
 
 export function RouteSearchButton({
   onClick,
-  variant = "primary",
   className,
   isLoading = false,
   disabled = false,
