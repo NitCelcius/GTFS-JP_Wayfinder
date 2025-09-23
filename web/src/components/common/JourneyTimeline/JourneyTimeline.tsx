@@ -26,7 +26,7 @@ const STYLES = {
   journey: "flex flex-col relative",
   stopContainer: "flex items-center relative py-[var(--size-spacing-lg)]",
   leftSection: "flex items-center gap-[var(--size-spacing-md)] flex-1",
-  icon: "w-[1.5rem] h-[1.5rem] flex items-center justify-center relative z-20 bg-white rounded-full border-[3px] border-white shadow-sm",
+  icon: "w-[1.5rem] h-[1.5rem] flex items-center justify-center relative z-20 bg-white rounded-full border border-gray-300 shadow-sm",
   stopInfo: "flex flex-col",
   stopName: "text-[1.25rem]",
   stopLabel: "text-[0.875rem] text-gray-600",
