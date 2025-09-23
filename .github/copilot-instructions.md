@@ -30,7 +30,6 @@ For detailed setup instructions, see `CONTRIBUTING.md`.
 ## What an AI agent should know first
 
 - The API is in `api/src/gtfs_jp_wayfinder/` — key files: `main.py`, `database.py`, `busloc_grabber.py`, `busstop_grabber.py`.
-
   - `main.py` constructs FastAPI app and calls `AkitaBusWayFinder.initialize("./data/gtfs-akita-chuo-kotsu/")` during startup (see lifespan/context manager).
   - `database.py` contains `AkitaBusWayFinder` and `TravelOnce`; it reads GTFS CSVs with pandas and builds NetworkX graphs (`generate_graph`) and a date->service_id map (`generate_calendar`). Many functions return numpy datetime64 and expect conversion via `np_datetime_truncate_to_str`.
 

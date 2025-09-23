@@ -96,7 +96,7 @@ export function JourneyTimeline({
   variant = "bus-info",
   showCosts = true,
 }: JourneyTimelineProps) {
-  const getStopIcon = (stop: JourneyStop, index: number) => {
+  const getStopIcon = (stop: JourneyStop) => {
     if (stop.type === "current" || stop.type === "origin") {
       return <LocationIcon />;
     } else if (stop.type === "destination") {
@@ -147,7 +147,7 @@ export function JourneyTimeline({
           {stops.map((stop, index) => (
             <div key={stop.id || index} className={STYLES.stopContainer}>
               <div className={STYLES.leftSection}>
-                <div className={STYLES.icon}>{getStopIcon(stop, index)}</div>
+                <div className={STYLES.icon}>{getStopIcon(stop)}</div>
                 <div className={STYLES.stopInfo}>
                   <span className={STYLES.stopName}>{stop.name}</span>
                   {stop.label && (
