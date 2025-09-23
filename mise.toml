@@ -1,3 +1,5 @@
 [tools]
+node = "20"
+python = "3.13"
 pnpm = "10.14.0"
 uv = "0.8.20"
