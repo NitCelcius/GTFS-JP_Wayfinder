@@ -54,8 +54,8 @@
   --route-primary-dark: #22c55e;
   --route-card-bg: #ffffff;
   --route-card-border: #e5e7eb;
-  --route-card-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1),
-    0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --route-card-shadow:
+    0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
 
   /* Accessibility-focused sizing (rem-based) */
   --spacing-xs: 0.25rem; /* 4px at 16px base */

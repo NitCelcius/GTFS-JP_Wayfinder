@@ -1,6 +1,8 @@
 import React from "react";
-import { BusStop } from "./BusStopList";
+
 import { BusStopCard } from "@/components/common";
+
+import { BusStop } from "./BusStopList";
 
 interface BusStopItemProps {
   busStop: BusStop;

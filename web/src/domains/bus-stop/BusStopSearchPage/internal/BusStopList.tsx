@@ -1,4 +1,5 @@
 import { BusStopItem } from "./BusStopItem";
+import styles from "./BusStopList.module.css";
 
 export interface BusStop {
   id: string;
@@ -13,8 +14,6 @@ interface BusStopListProps {
   headerText?: string;
   onBusStopSelect?: (busStopId: string) => void;
 }
-
-import styles from "./BusStopList.module.css";
 
 export function BusStopList({
   busStops,

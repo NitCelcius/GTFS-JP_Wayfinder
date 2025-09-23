@@ -54,7 +54,9 @@ export function SearchConditionsSummary({
 
         <div className={STYLES.departureTime}>
           <div className={STYLES.departureTimeLabel}>
-            <p className={STYLES.departureTimeText}>出発時刻 {formatDepartureTime(departureTime)}</p>
+            <p className={STYLES.departureTimeText}>
+              出発時刻 {formatDepartureTime(departureTime)}
+            </p>
           </div>
         </div>
       </div>

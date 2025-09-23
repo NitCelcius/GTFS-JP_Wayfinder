@@ -1,5 +1,7 @@
-import type { Metadata } from "next";
 import React from "react";
+
+import type { Metadata } from "next";
+
 import AppLayout from "./App";
 import "./globals.css";
 

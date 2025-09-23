@@ -1,15 +1,16 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { SearchInput } from './SearchInput';
+import type { Meta, StoryObj } from "@storybook/react";
+
+import { SearchInput } from "./SearchInput";
 
 const meta: Meta<typeof SearchInput> = {
-  title: 'BusStop/BusStopSearchPage/Internal/SearchInput',
+  title: "BusStop/BusStopSearchPage/Internal/SearchInput",
   component: SearchInput,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
-    onSearch: { action: 'search' },
+    onSearch: { action: "search" },
   },
 };
 
@@ -19,7 +20,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     onSearch: (query: string) => {
-      console.log('Search query:', query);
+      console.log("Search query:", query);
     },
   },
 };
@@ -27,7 +28,7 @@ export const Default: Story = {
 export const Interactive: Story = {
   args: {
     onSearch: (query: string) => {
-      console.log('Search query:', query);
+      console.log("Search query:", query);
     },
   },
 };

@@ -1,6 +1,8 @@
 import React from "react";
-import { RecentBusStopSearch } from "../types";
+
 import { BusStopCard } from "@/components/common";
+
+import { RecentBusStopSearch } from "../types";
 
 interface RecentBusStopSearchesProps {
   recentBusStops: RecentBusStopSearch[];

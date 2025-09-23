@@ -1,8 +1,10 @@
-import { useState, useEffect } from "react";
-import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
+import { useEffect, useState } from "react";
+
 import { BottomNavigation } from "@/components/common/BottomNavigation/BottomNavigation";
 import { JourneyTimeline } from "@/components/common/JourneyTimeline/JourneyTimeline";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner/LoadingSpinner";
+import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
+
 import { BusStopHeader } from "./internal/BusStopHeader";
 import { NextBusInfo } from "./internal/NextBusInfo";
 import { TransferButton } from "./internal/TransferButton";
@@ -171,7 +173,7 @@ export function BusStopInfoPage({
           onTabClick={handleBottomNavClick}
         />
       </div>
-      
+
       {/* Floating Transfer Button */}
       <TransferButton onClick={handleTransferClick} floating={true} />
     </>

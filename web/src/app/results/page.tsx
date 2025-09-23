@@ -1,9 +1,11 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
+import { useRouter } from "next/navigation";
+
 import { SearchResultPage } from "@/domains/route-search";
 import type { TripDetails } from "@/domains/route-search/SearchResultPage/types";
-import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
 import mockTripDetails from "@/mocks/data";
 
 // Disable static generation for this dynamic page

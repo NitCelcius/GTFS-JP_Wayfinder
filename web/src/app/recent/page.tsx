@@ -1,7 +1,8 @@
 "use client";
 
-import { RecentPage } from "@/domains/recent";
 import { useRouter } from "next/navigation";
+
+import { RecentPage } from "@/domains/recent";
 
 export default function RecentSearchPage() {
   const router = useRouter();

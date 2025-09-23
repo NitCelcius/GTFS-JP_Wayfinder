@@ -1,7 +1,8 @@
 "use client";
 
-import { RouteSearchPage } from "@/domains/route-search";
 import { useRouter } from "next/navigation";
+
+import { RouteSearchPage } from "@/domains/route-search";
 
 export default function HomePage() {
   const router = useRouter();

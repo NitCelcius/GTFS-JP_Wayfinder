@@ -1,4 +1,5 @@
 import { faker } from "@faker-js/faker";
+
 import type { FareResponse } from "@/api/types.gen";
 
 export const createMockFare = (

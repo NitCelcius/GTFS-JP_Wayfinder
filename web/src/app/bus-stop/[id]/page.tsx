@@ -1,7 +1,8 @@
 "use client";
 
+import { useParams, useRouter } from "next/navigation";
+
 import { BusStopInfoPage } from "@/domains/bus-stop";
-import { useRouter, useParams } from "next/navigation";
 
 export default function BusStopInfoPageRoute() {
   const router = useRouter();

@@ -1,4 +1,5 @@
-import { MapPin, Route, Clock } from "lucide-react";
+import { Clock, MapPin, Route } from "lucide-react";
+
 import styles from "./BottomNavigation.module.css";
 
 function BusStopIcon() {

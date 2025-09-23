@@ -1,5 +1,6 @@
-import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
 import { BottomNavigation } from "@/components/common/BottomNavigation/BottomNavigation";
+import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
+
 import { RecentBusStopSearches } from "./internal/RecentBusStopSearches";
 import { RecentRouteSearches } from "./internal/RecentRouteSearches";
 import { RecentBusStopSearch, RecentRouteSearch } from "./types";

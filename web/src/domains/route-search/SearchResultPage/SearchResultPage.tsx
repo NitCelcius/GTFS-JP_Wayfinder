@@ -1,11 +1,12 @@
-import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
 import { BottomNavigation } from "@/components/common/BottomNavigation/BottomNavigation";
 import { JourneyTimeline } from "@/components/common/JourneyTimeline/JourneyTimeline";
-import { RouteOverview } from "./internal/RouteOverview";
-import { SearchConditionsSummary } from "./internal/SearchConditionsSummary";
-import { RouteTabs } from "./internal/RouteTabs";
-import { TripSummary } from "./internal/TripSummary";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner/LoadingSpinner";
+import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
+
+import { RouteOverview } from "./internal/RouteOverview";
+import { RouteTabs } from "./internal/RouteTabs";
+import { SearchConditionsSummary } from "./internal/SearchConditionsSummary";
+import { TripSummary } from "./internal/TripSummary";
 import { SearchResultPageProps } from "./types";
 
 export function SearchResultPage({
@@ -41,8 +42,8 @@ export function SearchResultPage({
       index === 0
         ? ("origin" as const)
         : index === selectedRoute.stations.length - 1
-        ? ("destination" as const)
-        : ("intermediate" as const),
+          ? ("destination" as const)
+          : ("intermediate" as const),
     arrivalTime: station.arrivalTime,
     departureTime: station.departureTime,
     cost: station.cost,
