@@ -8,8 +8,8 @@ on:
 jobs:
   turbo-checks:
     runs-on: ubuntu-latest
-    # Skip draft PRs and branches starting with "wip"
-    if: github.event.pull_request.draft == false && !startsWith(github.head_ref, 'wip')
+    # Skip branches starting with "wip"
+    if: "!startsWith(github.head_ref, 'wip')"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
