@@ -9,7 +9,7 @@ interface RouteTabsProps {
 // Style constants for better maintainability
 const STYLES = {
   container:
-    "content-stretch flex justify-center gap-[var(--size-spacing-sm)] overflow-clip relative shrink-0 w-full px-[var(--size-spacing-lg)] py-[var(--size-spacing-sm)]",
+    "content-stretch flex justify-start gap-[var(--size-spacing-sm)] overflow-x-auto relative shrink-0 w-full px-[var(--size-spacing-lg)] py-[var(--size-spacing-sm)]",
   tab: "h-[var(--size-container-xs)] relative rounded-tl-[var(--radius-md)] rounded-tr-[var(--radius-md)] shrink-0 w-[8.6875rem] cursor-pointer transition-colors flex items-center justify-center font-['Inter',_'Noto_Sans_JP',_sans-serif] text-black text-center",
   tabActive: "bg-[var(--color-route-roundtrip-bg)]",
   tabInactive: "bg-[var(--color-route-inactive-bg)]",
