@@ -14,21 +14,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-
-      - name: Install pnpm
-        run: npm i -g pnpm@10.14.0
-
-      - name: Cache pnpm dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-
+          cache: "pnpm"
 
       - name: Setup Python
         uses: actions/setup-python@v4
@@ -39,7 +34,10 @@ jobs:
         uses: astral-sh/setup-uv@v4
         with:
           enable-cache: true
-          cache-dependency-glob: "**/requirements*.txt"
+          cache-dependency-glob: |
+            **/pyproject.toml
+            **/requirements*.lock
+            **/uv.lock
 
       - name: Cache Turbo
         uses: actions/cache@v4
