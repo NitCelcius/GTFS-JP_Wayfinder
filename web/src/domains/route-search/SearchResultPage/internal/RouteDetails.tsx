@@ -1,6 +1,6 @@
 import { RouteOption } from "../types";
-import { StationStop } from "./StationStop";
 import styles from "./RouteDetails.module.css";
+import { StationStop } from "./StationStop";
 
 interface RouteDetailsProps {
   route: RouteOption;

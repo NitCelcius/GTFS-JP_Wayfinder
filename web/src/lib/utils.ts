@@ -14,20 +14,20 @@ export const formatTime = (timeStr: string): string => {
 export const formatDepartureTime = (timeStr: string): string => {
   try {
     const date = new Date(timeStr);
-    
+
     // Check if the date is valid
     if (isNaN(date.getTime())) {
       return timeStr;
     }
-    
+
     const today = new Date();
-    
+
     // Check if the date is the same as today
-    const isSameDay = 
+    const isSameDay =
       date.getFullYear() === today.getFullYear() &&
       date.getMonth() === today.getMonth() &&
       date.getDate() === today.getDate();
-    
+
     if (isSameDay) {
       // Format as HH:mm (fixed format, no locale dependency)
       const hours = date.getHours().toString();
@@ -35,13 +35,17 @@ export const formatDepartureTime = (timeStr: string): string => {
       return `${hours}:${minutes}`;
     } else {
       // Format as locale-based format (absolute, except for the year)
-      return date.toLocaleDateString(undefined, {
-        month: "2-digit",
-        day: "2-digit",
-      }) + " " + date.toLocaleTimeString(undefined, {
-        hour: "2-digit",
-        minute: "2-digit",
-      });
+      return (
+        date.toLocaleDateString(undefined, {
+          month: "2-digit",
+          day: "2-digit",
+        }) +
+        " " +
+        date.toLocaleTimeString(undefined, {
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+      );
     }
   } catch {
     return timeStr;

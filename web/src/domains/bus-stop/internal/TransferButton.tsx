@@ -23,7 +23,10 @@ function TransferIcon() {
   );
 }
 
-export function TransferButton({ onClick, floating = false }: TransferButtonProps) {
+export function TransferButton({
+  onClick,
+  floating = false,
+}: TransferButtonProps) {
   const buttonElement = (
     <button className={styles.button} onClick={onClick}>
       <div className={styles.icon}>
@@ -34,11 +37,7 @@ export function TransferButton({ onClick, floating = false }: TransferButtonProp
   );
 
   if (floating) {
-    return (
-      <div className={styles.floatingContainer}>
-        {buttonElement}
-      </div>
-    );
+    return <div className={styles.floatingContainer}>{buttonElement}</div>;
   }
 
   return buttonElement;

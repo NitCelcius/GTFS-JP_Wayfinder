@@ -162,11 +162,11 @@ interface RouteInputsProps {
   onDestinationChange: (value: string) => void;
 }
 
-export function RouteInputs({ 
-  originValue, 
-  destinationValue, 
-  onOriginChange, 
-  onDestinationChange 
+export function RouteInputs({
+  originValue,
+  destinationValue,
+  onOriginChange,
+  onDestinationChange,
 }: RouteInputsProps) {
   const handleSwap = () => {
     onOriginChange(destinationValue);

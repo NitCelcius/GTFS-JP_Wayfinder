@@ -1,10 +1,12 @@
-import { useState, useEffect } from "react";
-import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
+import { useEffect, useState } from "react";
+
 import { BottomNavigation } from "@/components/common/BottomNavigation/BottomNavigation";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner/LoadingSpinner";
+import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
+import mockBusStopsList from "@/mocks/busStops";
+
 import { BusStopList } from "./internal/BusStopList";
 import { SearchInput } from "./internal/SearchInput";
-import { LoadingSpinner } from "@/components/common/LoadingSpinner/LoadingSpinner";
-import mockBusStopsList from "@/mocks/busStops";
 
 interface BusStopSearchPageProps {
   onNavigateToRoute?: () => void;

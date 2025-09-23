@@ -1,8 +1,8 @@
 // API client wrapper with error handling and request configuration
 import {
-  searchStopsStopsGet,
   getUpcomingStopsStopIdUpcomingGet,
   searchPathPathSearchGet,
+  searchStopsStopsGet,
 } from "@/api";
 
 export class ApiClient {

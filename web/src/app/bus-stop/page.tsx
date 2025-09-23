@@ -1,7 +1,8 @@
 "use client";
 
-import { BusStopSearchPage } from "@/domains/bus-stop";
 import { useRouter } from "next/navigation";
+
+import { BusStopSearchPage } from "@/domains/bus-stop";
 
 export default function BusStopSearchPageRoute() {
   const router = useRouter();
