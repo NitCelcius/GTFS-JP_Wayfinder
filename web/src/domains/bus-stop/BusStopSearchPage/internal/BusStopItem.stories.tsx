@@ -3,7 +3,7 @@ import { BusStopItem } from './BusStopItem';
 import { BusStop } from './BusStopList';
 
 const meta: Meta<typeof BusStopItem> = {
-  title: 'Internal/Bus Stop Search/BusStopItem',
+  title: 'BusStop/BusStopSearchPage/Internal/BusStopItem',
   component: BusStopItem,
   parameters: {
     layout: 'centered',
@@ -38,18 +38,6 @@ export const LongName: Story = {
       name: 'あきた芸術劇場ミルハス・にぎわい交流館 AU 前',
       distance: '500m',
       selectUrl: '/bus-stop/2',
-    },
-    onSelect: (busStopId: string) => console.log('Selected:', busStopId),
-  },
-};
-
-export const FarDistance: Story = {
-  args: {
-    busStop: {
-      id: '3',
-      name: '東駅',
-      distance: '1.2km',
-      selectUrl: '/bus-stop/3',
     },
     onSelect: (busStopId: string) => console.log('Selected:', busStopId),
   },

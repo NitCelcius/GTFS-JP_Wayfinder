@@ -32,54 +32,11 @@ The built files will be output to `web/storybook-static/`.
 
 ## Story Organization
 
-Stories are organized by domain and component type:
-
-- **Internal/Route Search/**: Components for route search functionality
-  - RouteOverview
-  - StationStop
-  
-- **Internal/Bus Stop/**: Components for bus stop search and display
-  - BusStopHeader
-  
-- **Internal/Bus Stop Search/**: Components for searching bus stops
-  - SearchInput
-  - BusStopItem
-  
-- **Internal/Recent/**: Components for recent searches
-  - RecentBusStopSearches
-
-## Component Categories
-
-As per the project structure, components are classified as:
-- **Page components**: Full page layouts
-- **Common components**: Reusable across domains (in `/components/common/`)
-- **Internal components**: Domain-specific internal components (in `*/internal/` directories)
-
-This Storybook setup focuses on the internal components to provide isolated development and testing environments.
-
-## Configuration
-
-### Key Files
-
-- `.storybook/main.ts`: Main Storybook configuration
-- `.storybook/preview.ts`: Global preview settings and decorators
-- `*.stories.tsx`: Individual component stories
-
-### Features Enabled
-
-- **Auto-docs**: Automatic documentation generation from JSDoc and TypeScript
-- **Controls**: Interactive controls for component props
-- **Actions**: Logging of component events
-- **Viewport**: Responsive design testing
-- **Backgrounds**: Different background options
-
-### Styling
-
-Storybook is configured to use the same Tailwind CSS setup as the main application, ensuring visual consistency.
+Stories are organized by domain and component type using the naming convention described below.
 
 ## Adding New Stories
 
-To add a story for a new internal component:
+To add a story for a new component:
 
 1. Create a `ComponentName.stories.tsx` file next to your component
 2. Use the established pattern:
@@ -89,7 +46,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { YourComponent } from './YourComponent';
 
 const meta: Meta<typeof YourComponent> = {
-  title: 'Internal/Domain/YourComponent',
+  title: 'Domain/YourComponent', // Follow naming convention below
   component: YourComponent,
   parameters: {
     layout: 'centered',
@@ -107,15 +64,11 @@ export const Default: Story = {
 };
 ```
 
-3. Follow the naming convention: `Internal/[Domain]/[ComponentName]`
-
-## CI/CD Integration
-
-The Storybook build can be integrated with Vercel or other static hosting platforms by:
-
-1. Adding build scripts to CI pipeline
-2. Publishing the `storybook-static` output
-3. Configuring automatic deployments
+3. Follow the naming convention:
+- If the component is internal and intended for use with only a particular parent component, name it `[Domain]/[ParentComponentName]/Internal/[ComponentName]`
+- If the component is located at common directory and intended for generic use, name it `Common/[ComponentName]`
+- If the component is a page component, name it `Page/[Path/to/page]`
+- Otherwise, name it `[Domain]/[ComponentName]`
 
 ## Troubleshooting
 

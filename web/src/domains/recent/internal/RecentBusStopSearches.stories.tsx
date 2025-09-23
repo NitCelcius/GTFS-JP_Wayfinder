@@ -3,7 +3,7 @@ import { RecentBusStopSearches } from './RecentBusStopSearches';
 import { RecentBusStopSearch } from '../types';
 
 const meta: Meta<typeof RecentBusStopSearches> = {
-  title: 'Internal/Recent/RecentBusStopSearches',
+  title: 'Recent/Internal/RecentBusStopSearches',
   component: RecentBusStopSearches,
   parameters: {
     layout: 'centered',

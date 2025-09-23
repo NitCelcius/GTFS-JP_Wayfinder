@@ -3,7 +3,7 @@ import { StationStop } from './StationStop';
 import { Station } from '../types';
 
 const meta: Meta<typeof StationStop> = {
-  title: 'Internal/Route Search/StationStop',
+  title: 'RouteSearch/SearchResultPage/Internal/StationStop',
   component: StationStop,
   parameters: {
     layout: 'centered',
