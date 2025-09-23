@@ -8,20 +8,7 @@ This project uses [mise](https://mise.jdx.dev/) to manage development tools. Mis
 
 ### Installing mise
 
-Follow the installation instructions on the [mise website](https://mise.jdx.dev/getting-started.html). For most systems:
-
-```bash
-# macOS (via Homebrew)
-brew install mise
-
-# Linux/WSL (via curl)
-curl https://mise.run | sh
-
-# Or via cargo
-cargo install mise
-```
-
-After installation, add mise to your shell configuration (follow the instructions provided by mise).
+Follow the installation instructions on the [mise website](https://mise.jdx.dev/getting-started.html).
 
 ### Setting up the development environment
 
@@ -97,37 +84,6 @@ mise exec pnpm build
 ### Generate OpenAPI client:
 ```bash
 # From workspace root
-mise exec node ./scripts/generate-openapi.js
+mise exec pnpm run openapi-generate
 ```
 
-## Why mise?
-
-We use mise because:
-- **Consistent tool versions**: Everyone uses the exact same versions of pnpm, uv, Node.js, and Python
-- **Simplified setup**: One command (`mise install`) installs all required tools
-- **GitHub Copilot friendly**: Automated tools and AI assistants can easily install and use the development environment
-- **Cross-platform**: Works consistently across macOS, Linux, and Windows (WSL)
-
-## Repository Structure
-
-- `api/` - Python FastAPI service using uv for dependency management
-- `web/` - Next.js application 
-- `data/gtfs-akita-chuo-kotsu/` - GTFS CSV data files
-- `scripts/` - Build and utility scripts
-- `mise.toml` - Tool version configuration
-
-## Important Notes
-
-- The API expects GTFS CSV data to be at `./data/gtfs-akita-chuo-kotsu/` relative to the process working directory
-- Always run the API from the repository root to ensure correct data path resolution
-- Use `mise exec` prefix for all tool commands to ensure version consistency
-
-## Getting Help
-
-If you encounter issues:
-1. Check that mise is properly installed and configured
-2. Ensure all tools are installed with `mise install`
-3. Verify you're running commands from the correct directory
-4. Check the `.github/copilot-instructions.md` file for additional context
-
-For questions about the codebase, see the detailed documentation in `.github/copilot-instructions.md`.
