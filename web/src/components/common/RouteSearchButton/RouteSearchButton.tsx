@@ -5,11 +5,14 @@ interface RouteSearchButtonProps {
   variant?: "primary" | "secondary";
   className?: string;
   isLoading?: boolean;
+  disabled?: boolean;
 }
 
 const STYLES = {
   button:
     "w-full bg-[color:var(--route-origin-bg)] rounded-[var(--border-radius-md)] px-[var(--spacing-lg)] py-[var(--spacing-xl)] flex items-center justify-center gap-[var(--spacing-md)] cursor-pointer hover:opacity-80 transition-opacity",
+  buttonDisabled:
+    "w-full bg-gray-300 rounded-[var(--border-radius-md)] px-[var(--spacing-lg)] py-[var(--spacing-xl)] flex items-center justify-center gap-[var(--spacing-md)] cursor-not-allowed opacity-50",
   icon: "w-[1.5rem] h-[1.5rem] flex items-center justify-center",
   text: "text-[1rem]",
 } as const;
@@ -37,13 +40,16 @@ export function RouteSearchButton({
   variant = "primary",
   className,
   isLoading = false,
+  disabled = false,
 }: RouteSearchButtonProps) {
+  const isDisabled = isLoading || disabled;
+  const baseButtonClass = disabled ? STYLES.buttonDisabled : STYLES.button;
   const buttonClass = className
-    ? `${STYLES.button} ${className}`
-    : STYLES.button;
+    ? `${baseButtonClass} ${className}`
+    : baseButtonClass;
 
   return (
-    <button className={buttonClass} onClick={onClick} disabled={isLoading}>
+    <button className={buttonClass} onClick={onClick} disabled={isDisabled}>
       <div className={STYLES.icon}>
         {isLoading ? <LoadingSpinner size="sm" /> : <SearchIcon />}
       </div>

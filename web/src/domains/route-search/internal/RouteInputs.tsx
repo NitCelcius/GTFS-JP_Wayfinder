@@ -1,4 +1,3 @@
-import { useState } from "react";
 import svgPaths from "@/app/imports/svg-uqfc70duf5";
 
 // Design-reference style constants
@@ -156,13 +155,22 @@ function RouteInput({ type, placeholder, value, onChange }: RouteInputProps) {
   );
 }
 
-export function RouteInputs() {
-  const [originValue, setOriginValue] = useState("");
-  const [destinationValue, setDestinationValue] = useState("");
+interface RouteInputsProps {
+  originValue: string;
+  destinationValue: string;
+  onOriginChange: (value: string) => void;
+  onDestinationChange: (value: string) => void;
+}
 
+export function RouteInputs({ 
+  originValue, 
+  destinationValue, 
+  onOriginChange, 
+  onDestinationChange 
+}: RouteInputsProps) {
   const handleSwap = () => {
-    setOriginValue(destinationValue);
-    setDestinationValue(originValue);
+    onOriginChange(destinationValue);
+    onDestinationChange(originValue);
   };
 
   return (
@@ -171,7 +179,7 @@ export function RouteInputs() {
         type="origin"
         placeholder="出発するバス停・場所"
         value={originValue}
-        onChange={setOriginValue}
+        onChange={onOriginChange}
       />
       <div className={STYLES.swapButtonContainer}>
         <div className={STYLES.arrowContainer}>
@@ -190,7 +198,7 @@ export function RouteInputs() {
         type="destination"
         placeholder="行きたいバス停・場所"
         value={destinationValue}
-        onChange={setDestinationValue}
+        onChange={onDestinationChange}
       />
     </div>
   );
