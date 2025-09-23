@@ -32,13 +32,13 @@ const STYLES = {
   stopName: "text-[1.25rem]",
   stopLabel: "text-[0.875rem] text-gray-600",
   rightSection:
-    "flex flex-row items-end gap-[var(--size-spacing-sm)] flex-0 self-center flex-col flex-1 flex-wrap items-end justify-end",
+    "flex flex-row items-end gap-[var(--size-spacing-sm)] self-center flex-1 flex-wrap justify-end",
   costContainer: "flex items-center justify-center",
   costValue: "text-[1.375rem]",
   costCurrency: "text-[0.875rem]",
   timeValue: "text-[1.375rem]",
   timesContainer: "flex flex-col items-end gap-[var(--size-spacing-xs)] flex-0",
-  timeWrapper: "flex-0 whitespace-nowrap items-end",
+  timeWrapper: "flex flex-0 whitespace-nowrap items-end",
   timeText: "text-[1rem] whitespace-nowrap",
   status: "text-[0.875rem]",
   fullConnector:
