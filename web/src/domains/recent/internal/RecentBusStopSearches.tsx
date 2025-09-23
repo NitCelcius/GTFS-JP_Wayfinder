@@ -1,4 +1,5 @@
 import { RecentBusStopSearch } from "../types";
+import { BusStopCard } from "@/components/common";
 
 interface RecentBusStopSearchesProps {
   recentBusStops: RecentBusStopSearch[];
@@ -37,45 +38,21 @@ function RecentBusStopItem({
   onSelect?: (id: string) => void;
 }) {
   const handleCardClick = () => onSelect?.(busStop.id);
-  const handleButtonClick = (e: React.MouseEvent) => {
+  const handleActionClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     onSelect?.(busStop.id);
   };
 
   return (
-    <div
-      className="w-full bg-white border border-gray-200 rounded-[var(--radius-lg)] p-[var(--size-spacing-lg)] mb-[var(--size-spacing-md)] cursor-pointer hover:shadow-md hover:border-gray-300 transition-all duration-200 active:scale-[0.98]"
+    <BusStopCard
+      title={busStop.name}
+      subtitle={busStop.distance}
+      icon={<LocationIcon />}
+      actionLabel="選択"
       onClick={handleCardClick}
-    >
-      <div className="flex items-center justify-between w-full">
-        <div className="flex items-center gap-[var(--size-spacing-md)] flex-1">
-          <div className="w-[1.5rem] h-[1.5rem] flex items-center justify-center text-gray-600">
-            <LocationIcon />
-          </div>
-          <div className="flex flex-col flex-1">
-            <span className="text-[1.125rem] mb-[var(--size-spacing-xs)]">
-              {busStop.name}
-            </span>
-            <div className="flex items-center gap-[var(--size-spacing-md)]">
-              <span className="text-[1rem] text-gray-600">
-                {busStop.distance}
-              </span>
-              <span className="text-[0.875rem] text-gray-500">
-                ・{busStop.searchedAt}
-              </span>
-            </div>
-          </div>
-        </div>
-        <div className="flex items-center justify-center">
-          <button
-            className="bg-[var(--color-route-primary)] text-white px-[var(--size-spacing-lg)] py-[var(--size-spacing-sm)] rounded-[var(--radius-md)] hover:bg-[var(--color-route-primary-dark)] transition-colors duration-200 min-w-[4rem] text-center"
-            onClick={handleButtonClick}
-          >
-            <span className="text-[0.875rem]">選択</span>
-          </button>
-        </div>
-      </div>
-    </div>
+      onActionClick={handleActionClick}
+      secondaryInfo={busStop.searchedAt}
+    />
   );
 }
 

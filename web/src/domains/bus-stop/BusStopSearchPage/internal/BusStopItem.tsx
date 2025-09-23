@@ -1,5 +1,5 @@
 import { BusStop } from "./BusStopList";
-import styles from "./BusStopItem.module.css";
+import { BusStopCard } from "@/components/common";
 
 interface BusStopItemProps {
   busStop: BusStop;
@@ -9,7 +9,7 @@ interface BusStopItemProps {
 function LocationIcon() {
   return (
     <svg
-      className={styles.iconSvg}
+      className="block size-full"
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"
@@ -34,30 +34,19 @@ export function BusStopItem({ busStop, onSelect }: BusStopItemProps) {
     onSelect?.(busStop.id);
   };
 
-  const handleButtonClick = (e: React.MouseEvent) => {
+  const handleActionClick = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent card click when button is clicked
     onSelect?.(busStop.id);
   };
 
   return (
-    <div className={styles.cardContainer} onClick={handleCardClick}>
-      <div className={styles.content}>
-        <div className={styles.leftSection}>
-          <div className={styles.icon}>
-            <LocationIcon />
-          </div>
-          <div className={styles.busStopInfo}>
-            <span className={styles.busStopName}>{busStop.name}</span>
-            <span className={styles.distance}>{busStop.distance}</span>
-          </div>
-        </div>
-
-        <div className={styles.rightSection}>
-          <button className={styles.selectButton} onClick={handleButtonClick}>
-            <span className={styles.selectButtonText}>選択</span>
-          </button>
-        </div>
-      </div>
-    </div>
+    <BusStopCard
+      title={busStop.name}
+      subtitle={busStop.distance}
+      icon={<LocationIcon />}
+      actionLabel="選択"
+      onClick={handleCardClick}
+      onActionClick={handleActionClick}
+    />
   );
 }
