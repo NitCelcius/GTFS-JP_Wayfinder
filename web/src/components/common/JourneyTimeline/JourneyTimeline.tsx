@@ -27,7 +27,7 @@ const STYLES = {
   stopContainer:
     "flex relative py-[var(--size-spacing-lg)] w-full items-center",
   leftSection: "flex items-center gap-[var(--size-spacing-md)] flex-1",
-  icon: "w-[1.5rem] h-[1.5rem] flex items-center justify-center relative z-20 bg-white rounded-full border border-gray-300 shadow-sm flex-none",
+  icon: "w-[1.5rem] h-[1.5rem] flex items-center justify-center relative z-20 bg-white rounded-full border border-gray-300 shadow-sm",
   stopInfo: "flex flex-col",
   stopName: "text-[1.25rem]",
   stopLabel: "text-[0.875rem] text-gray-600",
