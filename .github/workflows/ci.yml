@@ -19,11 +19,42 @@ jobs:
         with:
           version: 2025.9.16
 
+      - name: Cache mise tools
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/share/mise
+          key: ${{ runner.os }}-mise-${{ hashFiles('**/.mise.toml', '**/.tool-versions') }}
+          restore-keys: |
+            ${{ runner.os }}-mise-
+
+      # 'mise install' を実行するステップ
+      - name: Install tools with mise
+        run: mise install
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "pnpm_store_path=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
+
+      - name: Cache pnpm dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-cache.outputs.pnpm_store_path }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Cache uv
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/uv
+          key: ${{ runner.os }}-uv-${{ hashFiles('**/requirements.txt', '**/pyproject.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-uv-
+
       - name: Bootstrap repository dependencies
         run: |
-          # Install all tools defined in mise.toml
-          mise install
-          # Install pnpm dependencies (this bootstraps the monorepo)
           pnpm install --frozen-lockfile
 
       - name: Cache Turbo
