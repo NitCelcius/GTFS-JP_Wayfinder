@@ -1,0 +1,33 @@
+import type { Meta, StoryObj } from '@storybook/react';
+import { SearchInput } from './SearchInput';
+
+const meta: Meta<typeof SearchInput> = {
+  title: 'Internal/Bus Stop Search/SearchInput',
+  component: SearchInput,
+  parameters: {
+    layout: 'centered',
+  },
+  tags: ['autodocs'],
+  argTypes: {
+    onSearch: { action: 'search' },
+  },
+};
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {
+  args: {
+    onSearch: (query: string) => {
+      console.log('Search query:', query);
+    },
+  },
+};
+
+export const Interactive: Story = {
+  args: {
+    onSearch: (query: string) => {
+      console.log('Search query:', query);
+    },
+  },
+};
