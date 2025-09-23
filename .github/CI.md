@@ -15,7 +15,6 @@ CI will run automatically when:
 
 ### When CI is Skipped
 CI will be skipped for:
-- ❌ **Draft pull requests** (until marked ready for review)
 - ❌ **Branches starting with "wip"** (e.g., `wip`, `wip-feature`, `wiptest`)
 - ❌ **Direct pushes to main/master** (PRs are required)
 
@@ -51,6 +50,6 @@ To ensure proper CI behavior:
 - `wip/new-api`
 
 ### Draft PR behavior:
-- Draft PR created → ❌ CI skipped
-- Draft PR updated → ❌ CI skipped  
+- Draft PR created → ✅ CI runs
+- Draft PR updated → ✅ CI runs  
 - Draft marked ready → ✅ CI runs
