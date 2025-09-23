@@ -36,7 +36,6 @@ export function middleware(req: NextRequest) {
   return NextResponse.json(
     { error: "Basic Auth Required" },
     {
-      // eslint-disable-next-line quotes
       headers: { "WWW-Authenticate": 'Basic realm="Secure Area"' },
       status: 401,
     }
