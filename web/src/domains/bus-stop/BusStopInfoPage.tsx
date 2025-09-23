@@ -54,6 +54,8 @@ const mockBusStopData = {
 };
 
 export function BusStopInfoPage({
+  // TODO: use id params when implementing real data fetching
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- will use this param later
   busStopId: _busStopId,
   onBack,
   onNavigateToRoute,
