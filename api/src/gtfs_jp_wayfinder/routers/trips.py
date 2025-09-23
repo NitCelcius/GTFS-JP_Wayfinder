@@ -1,12 +1,20 @@
+import datetime
 import os
 from typing import List, Optional
 
+import numpy as np
 from fastapi import APIRouter, HTTPException, Query
 
 from gtfs_jp_wayfinder import models
 from gtfs_jp_wayfinder.services import wayfinder_adapter as adapter
 
 router = APIRouter()
+
+
+def np_datetime_to_datetime_time(val: np.datetime64) -> datetime.time:
+    pyobj = val.astype("datetime64[ms]").astype(object)
+    if isinstance(pyobj, datetime.datetime):
+        return pyobj.time()
 
 
 @router.post(
@@ -87,22 +95,19 @@ async def get_journey(
         )
         if journey is None:
             raise HTTPException(status_code=404, detail="not found")
-        # journey may be a DataFrame
-        if hasattr(journey, "to_dict"):
-            records = []
-            for x in journey.to_dict("records"):
-                records.append(
-                    models.TripRecord(
-                        trip_id=x["trip_id"],
-                        stop_id=x["stop_id"],
-                        fare=x.get("fare", 0),
-                        arrival_time=x.get("arrival_time"),
-                        departure_time=x.get("departure_time"),
-                    )
+
+        records = []
+        for x in journey.itertuples():
+            records.append(
+                models.TripRecord(
+                    trip_id=x.trip_id,
+                    stop_id=x.stop_id,
+                    fare=x.fare,
+                    arrival_time=x.arrival_time.time(),
+                    departure_time=x.departure_time.time(),
                 )
-            return records
-        # otherwise assume list/dict
-        return journey
+            )
+        return records
     except HTTPException:
         raise
     except Exception as e:
