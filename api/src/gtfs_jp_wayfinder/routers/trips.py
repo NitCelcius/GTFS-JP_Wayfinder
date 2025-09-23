@@ -12,6 +12,12 @@ router = APIRouter()
 
 
 def np_datetime_to_datetime_time(val: np.datetime64) -> datetime.time:
+    """
+    Convert numpy.datetime64 or datetime to datetime.time
+    """
+    if isinstance(val, datetime.datetime):
+        return val.time()
+
     pyobj = val.astype("datetime64[ms]").astype(object)
     if isinstance(pyobj, datetime.datetime):
         return pyobj.time()
@@ -103,8 +109,8 @@ async def get_journey(
                     trip_id=x.trip_id,
                     stop_id=x.stop_id,
                     fare=x.fare,
-                    arrival_time=x.arrival_time.time(),
-                    departure_time=x.departure_time.time(),
+                    arrival_time=np_datetime_to_datetime_time(x.arrival_time),
+                    departure_time=np_datetime_to_datetime_time(x.departure_time),
                 )
             )
         return records
