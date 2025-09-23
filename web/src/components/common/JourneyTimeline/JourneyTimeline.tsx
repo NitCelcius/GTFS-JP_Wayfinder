@@ -24,7 +24,7 @@ const STYLES = {
   title: "text-[0.875rem] mb-[var(--size-spacing-sm)]",
   scrollContainer: "flex-1 overflow-y-auto",
   journey: "flex flex-col relative",
-  stopContainer: "flex items-center relative py-[var(--size-spacing-lg)]",
+  stopContainer: "flex items-start relative py-[var(--size-spacing-lg)]",
   leftSection: "flex items-center gap-[var(--size-spacing-md)] flex-1",
   icon: "w-[1.5rem] h-[1.5rem] flex items-center justify-center relative z-20 bg-white rounded-full border border-gray-300 shadow-sm",
   stopInfo: "flex flex-col",
