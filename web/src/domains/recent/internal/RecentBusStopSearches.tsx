@@ -1,3 +1,4 @@
+import React from "react";
 import { RecentBusStopSearch } from "../types";
 import { BusStopCard } from "@/components/common";
 
