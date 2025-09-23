@@ -30,8 +30,8 @@ export const formatDepartureTime = (timeStr: string): string => {
     
     if (isSameDay) {
       // Format as HH:mm (fixed format, no locale dependency)
-      const hours = date.getHours().toString().padStart(2, '0');
-      const minutes = date.getMinutes().toString().padStart(2, '0');
+      const hours = date.getHours().toString();
+      const minutes = date.getMinutes().toString();
       return `${hours}:${minutes}`;
     } else {
       // Format as locale-based format (absolute, except for the year)
