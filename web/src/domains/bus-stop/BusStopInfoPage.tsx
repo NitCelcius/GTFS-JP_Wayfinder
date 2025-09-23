@@ -141,7 +141,7 @@ export function BusStopInfoPage({
             )}
           </div>
 
-          <div className="pt-[var(--size-spacing-2xl)] flex-1 min-h-0 mb-[var(--size-spacing-lg)]">
+          <div className="pt-[var(--size-spacing-2xl)] flex-1 min-h-0">
             {isRouteJourneyLoading ? (
               <div className="h-full flex flex-col">
                 <h3 className="text-[1.125rem] mb-[var(--size-spacing-lg)]">
