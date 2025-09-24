@@ -22,9 +22,5 @@
   "installCommand": "cd web && pnpm install",
   "buildCommand": "cd web && pnpm build",
   "devCommand": "cd web && pnpm dev",
-  "outputDirectory": "web/.next",
-  "regions": [
-    "hnd1",
-    "nrt1"
-  ]
+  "outputDirectory": "web/.next"
 }
