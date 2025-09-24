@@ -10,7 +10,7 @@ import { RouteInputs } from "./internal/RouteInputs";
 import { SearchConditions } from "./internal/SearchConditions";
 
 interface MainContentProps {
-  onSearch?: (originValue: string, destinationValue: string) => void;
+  onSearch: (originValue: string, destinationValue: string) => void;
   originValue: string;
   destinationValue: string;
   onOriginChange: (value: string) => void;
@@ -28,7 +28,7 @@ function MainContent({
 
   const handleSearch = () => {
     if (isSearchEnabled) {
-      onSearch?.(originValue, destinationValue);
+      onSearch(originValue, destinationValue);
     }
   };
 

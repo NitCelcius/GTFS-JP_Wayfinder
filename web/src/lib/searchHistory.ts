@@ -21,14 +21,12 @@ class SearchHistoryService {
     searchedAt: string;
   } {
     const now = new Date(timestamp);
-    const timeString = now.toLocaleTimeString("ja-JP", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    });
+    const hours = now.getHours().toString().padStart(2, "0");
+    const minutes = now.getMinutes().toString().padStart(2, "0");
+
     return {
       timestamp,
-      searchedAt: `今日 ${timeString}`,
+      searchedAt: `今日 ${hours}:${minutes}`,
     };
   }
 
@@ -89,14 +87,19 @@ class SearchHistoryService {
     const search: RecentBusStopSearch = {
       id: `${stopId}-${timestamp}`, // Make unique with timestamp
       name,
-      distance: "", // Distance not saved as it varies by user location
+      distance: "", // UI expects distance field, but not stored in DB
       searchedAt,
     };
 
     return new Promise((resolve, reject) => {
       const transaction = db.transaction([BUS_STOP_STORE], "readwrite");
       const store = transaction.objectStore(BUS_STOP_STORE);
-      const request = store.add({ ...search, timestamp });
+      const request = store.add({
+        id: search.id,
+        name: search.name,
+        searchedAt: search.searchedAt,
+        timestamp,
+      });
 
       request.onsuccess = () => {
         resolve();
@@ -108,26 +111,25 @@ class SearchHistoryService {
     });
   }
 
-  async getBusStopSearches(limit: number = 10): Promise<RecentBusStopSearch[]> {
+  private async getSearchHistory<T>(
+    storeName: string,
+    limit: number,
+    mapRecord: (record: Record<string, unknown>) => T,
+  ): Promise<T[]> {
     const db = await this.getDB();
 
     return new Promise((resolve, reject) => {
-      const transaction = db.transaction([BUS_STOP_STORE], "readonly");
-      const store = transaction.objectStore(BUS_STOP_STORE);
+      const transaction = db.transaction([storeName], "readonly");
+      const store = transaction.objectStore(storeName);
       const index = store.index("searchedAt");
       const request = index.openCursor(null, "prev"); // Most recent first
-      const results: RecentBusStopSearch[] = [];
+      const results: T[] = [];
 
       request.onsuccess = (event) => {
         const cursor = (event.target as IDBRequest).result;
         if (cursor && results.length < limit) {
           const record = cursor.value;
-          results.push({
-            id: record.id,
-            name: record.name,
-            distance: record.distance,
-            searchedAt: record.searchedAt,
-          });
+          results.push(mapRecord(record));
           cursor.continue();
         } else {
           resolve(results);
@@ -138,6 +140,15 @@ class SearchHistoryService {
         reject(request.error);
       };
     });
+  }
+
+  async getBusStopSearches(limit: number = 10): Promise<RecentBusStopSearch[]> {
+    return this.getSearchHistory(BUS_STOP_STORE, limit, (record) => ({
+      id: record.id,
+      name: record.name,
+      distance: "", // Distance not stored in DB
+      searchedAt: record.searchedAt,
+    }));
   }
 
   // Route search history methods
@@ -168,35 +179,12 @@ class SearchHistoryService {
   }
 
   async getRouteSearches(limit: number = 10): Promise<RecentRouteSearch[]> {
-    const db = await this.getDB();
-
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction([ROUTE_SEARCH_STORE], "readonly");
-      const store = transaction.objectStore(ROUTE_SEARCH_STORE);
-      const index = store.index("searchedAt");
-      const request = index.openCursor(null, "prev"); // Most recent first
-      const results: RecentRouteSearch[] = [];
-
-      request.onsuccess = (event) => {
-        const cursor = (event.target as IDBRequest).result;
-        if (cursor && results.length < limit) {
-          const record = cursor.value;
-          results.push({
-            id: record.id,
-            fromStation: record.fromStation,
-            toStation: record.toStation,
-            searchedAt: record.searchedAt,
-          });
-          cursor.continue();
-        } else {
-          resolve(results);
-        }
-      };
-
-      request.onerror = () => {
-        reject(request.error);
-      };
-    });
+    return this.getSearchHistory(ROUTE_SEARCH_STORE, limit, (record) => ({
+      id: record.id,
+      fromStation: record.fromStation,
+      toStation: record.toStation,
+      searchedAt: record.searchedAt,
+    }));
   }
 
   async clearBusStopSearchHistory(): Promise<void> {

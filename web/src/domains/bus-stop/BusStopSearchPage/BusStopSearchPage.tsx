@@ -81,14 +81,12 @@ export function BusStopSearchPage({
     const allBusStops = [mockNearestBusStop, ...mockSearchResults];
     const selectedBusStop = allBusStops.find((stop) => stop.id === busStopId);
 
-    if (selectedBusStop) {
-      try {
-        // Save to search history (without distance as it can change based on user location)
-        await addBusStopSearch(selectedBusStop.id, selectedBusStop.name);
-      } catch (error) {
-        console.error("Failed to save bus stop search history:", error);
-        // Continue with navigation even if history save fails
-      }
+    // Trust busStopId is valid, save to search history
+    try {
+      await addBusStopSearch(busStopId, selectedBusStop?.name || "Unknown");
+    } catch (error) {
+      console.error("Failed to save bus stop search history:", error);
+      // Continue with navigation even if history save fails
     }
 
     onNavigateToBusStopInfo?.(busStopId);
