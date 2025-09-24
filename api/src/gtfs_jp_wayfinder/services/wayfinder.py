@@ -138,6 +138,17 @@ def get_trip_info_batch(trip_ids: List[str]) -> TripInfoList:
 
 
 def format_np_datetime(value) -> str:
+    """Format numpy datetime64 to string."""
+    if value is None:
+        return ""
+    return str(value)[:19]  # YYYY-MM-DD HH:MM:SS format
+
+
+def get_nearby_stops(lat: float, lon: float, limit: int = 10):
+    """Get nearby bus stops sorted by distance."""
+    if _wf is None:
+        raise RuntimeError("Wayfinder not initialized")
+    return _wf.get_nearby_stops(lat, lon, limit)
     """Utility to format numpy.datetime64 or pandas.Timestamp to HH:MM:SS.
 
     This helper is exposed so adapters can convert underlying numpy/pandas

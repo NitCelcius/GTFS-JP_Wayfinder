@@ -178,3 +178,76 @@ async def get_upcoming(
 
     # default
     return models.UpcomingBusEnriched(stop_id=stop_id, buses=buses)
+
+
+@router.get(
+    "/nearby",
+    response_model=models.NearbyStopsResponse,
+    summary="近隣停留所の検索",
+    description="緯度・経度から近い順に停留所を返します。距離はキロメートル単位で計算されます。",
+    responses={
+        200: {
+            "description": "成功",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "stops": [
+                            {
+                                "stop_id": "1021_01",
+                                "stop_name": "中央公園",
+                                "distance_km": 0.25,
+                                "lat": 39.71676,
+                                "lon": 140.13113,
+                            }
+                        ]
+                    }
+                }
+            },
+        }
+    },
+)
+async def get_nearby_stops(
+    lat: float = Query(..., description="緯度 (度単位)", ge=-90, le=90),
+    lon: float = Query(..., description="経度 (度単位)", ge=-180, le=180), 
+    limit: Optional[int] = Query(None, description="取得する最大件数"),
+):
+    """Get nearby bus stops based on latitude and longitude coordinates."""
+    # Get max limit from environment variable, default 20
+    max_limit = int(__import__("os").environ.get("API_NEARBY_STOPS_MAX_LIMIT", "20"))
+    
+    # Use environment default if limit not specified
+    if limit is None:
+        limit = int(__import__("os").environ.get("API_NEARBY_STOPS_DEFAULT_LIMIT", "10"))
+    
+    # Enforce maximum limit
+    if limit > max_limit:
+        raise HTTPException(
+            status_code=400, 
+            detail=f"limit too large; max is {max_limit}"
+        )
+    
+    if limit <= 0:
+        raise HTTPException(
+            status_code=400,
+            detail="limit must be positive"
+        )
+    
+    try:
+        from gtfs_jp_wayfinder.services import wayfinder
+        nearby_stops = wayfinder.get_nearby_stops(lat, lon, limit)
+        
+        stops = [
+            models.NearbyStop(
+                stop_id=stop_id,
+                stop_name=stop_name,
+                distance_km=round(distance, 3),
+                lat=stop_lat,
+                lon=stop_lon,
+            )
+            for stop_id, stop_name, distance, stop_lat, stop_lon in nearby_stops
+        ]
+        
+        return models.NearbyStopsResponse(stops=stops)
+        
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))

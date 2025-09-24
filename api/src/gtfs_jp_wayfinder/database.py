@@ -1,9 +1,12 @@
 import logging
 import warnings
+from typing import List, Tuple
 
 import networkx as nx
 import numpy as np
 import pandas as pd
+
+from gtfs_jp_wayfinder.utils.distance import haversine_distance
 
 logger = logging.getLogger(__name__)
 
@@ -585,3 +588,35 @@ class AkitaBusWayFinder:
         return self.df_routes[self.df_routes["route_id"] == route_id][
             "route_long_name"
         ].values[0]
+
+    def get_nearby_stops(self, lat: float, lon: float, limit: int = 10) -> List[Tuple[str, str, float, float, float]]:
+        """
+        Get nearby bus stops sorted by distance from given coordinates.
+        
+        Args:
+            lat: Latitude in decimal degrees
+            lon: Longitude in decimal degrees  
+            limit: Maximum number of stops to return (default: 10)
+            
+        Returns:
+            List of tuples (stop_id, stop_name, distance_km, stop_lat, stop_lon)
+            sorted by distance from nearest to farthest
+        """
+        if limit <= 0:
+            raise ValueError("limit must be positive")
+            
+        # Calculate distances for all stops
+        stop_distances = []
+        
+        for _, row in self.df_stops.iterrows():
+            stop_id = row["stop_id"]
+            stop_name = row.get("stop_name", "")
+            stop_lat = float(row["stop_lat"])
+            stop_lon = float(row["stop_lon"])
+            
+            distance_km = haversine_distance(lat, lon, stop_lat, stop_lon)
+            stop_distances.append((stop_id, stop_name, distance_km, stop_lat, stop_lon))
+        
+        # Sort by distance and return only the requested limit
+        stop_distances.sort(key=lambda x: x[2])  # Sort by distance (3rd element)
+        return stop_distances[:limit]
