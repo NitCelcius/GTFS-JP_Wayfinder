@@ -13,11 +13,7 @@
     },
     {
       "src": "api/index.py",
-      "use": "@vercel/python",
-      "config": {
-        "maxLambdaSize": "50mb",
-        "includeFiles": "data/**"
-      }
+      "use": "@vercel/python"
     }
   ],
   "routes": [
@@ -33,12 +29,12 @@
   "functions": {
     "api/index.py": {
       "runtime": "python3.12",
-      "maxDuration": 30,
-      "memory": 1024
+      "maxDuration": 30
     }
   },
   "env": {
-    "PYTHONPATH": "api"
+    "PYTHONPATH": "api",
+    "GTFS_DATA_DIR": "/tmp/gtfs-data"
   },
   "installCommand": "cd web && pnpm install",
   "buildCommand": "cd web && pnpm build",

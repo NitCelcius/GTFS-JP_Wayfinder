@@ -1,5 +1,0 @@
-route_id,route_short_name,route_long_name,route_type
-001,001,都心循環線,3
-002,002,青葉台線,3
-003,003,文教医療線,3
-004,004,南北縦断線,3

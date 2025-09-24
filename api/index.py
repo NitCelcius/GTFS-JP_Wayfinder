@@ -2,25 +2,19 @@
 Vercel entry point for the GTFS-JP Wayfinder API.
 
 This module provides a Vercel-compatible entry point for the FastAPI application.
+The API expects GTFS data to be available via environment variables or external storage.
 """
 
 import os
 import logging
-from pathlib import Path
 
 # Configure logging for Vercel
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 try:
-    # Try to import the main app
+    # Import the main app
     from src.gtfs_jp_wayfinder.main import app
-    
-    # Check if data directory exists, if not, create a fallback
-    data_dir = Path("data/gtfs-akita-chuo-kotsu")
-    if not data_dir.exists():
-        logger.warning(f"GTFS data directory not found at {data_dir}")
-        logger.info("API will run with limited functionality")
     
     # Vercel expects the app to be available as a callable
     handler = app
