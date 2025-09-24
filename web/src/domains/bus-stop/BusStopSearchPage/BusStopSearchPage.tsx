@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { BottomNavigation } from "@/components/common/BottomNavigation/BottomNavigation";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner/LoadingSpinner";
 import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
+import { useSearchHistory } from "@/hooks";
 import mockBusStopsList from "@/mocks/busStops";
 
 import { BusStopList } from "./internal/BusStopList";
@@ -24,6 +25,7 @@ export function BusStopSearchPage({
   onNavigateToBusStopInfo,
 }: BusStopSearchPageProps) {
   const [isLoadingNearestBusStop, setIsLoadingNearestBusStop] = useState(true);
+  const { addBusStopSearch } = useSearchHistory();
 
   // Simulate loading for nearest bus stop
   useEffect(() => {
@@ -33,6 +35,7 @@ export function BusStopSearchPage({
 
     return () => clearTimeout(timer);
   }, []);
+
   const handleBottomNavClick = (tab: "bus-stop" | "route" | "recent") => {
     switch (tab) {
       case "route":
@@ -73,7 +76,25 @@ export function BusStopSearchPage({
     console.log("Searching for:", query);
   };
 
-  const handleBusStopSelect = (busStopId: string) => {
+  const handleBusStopSelect = async (busStopId: string) => {
+    // Find the selected bus stop to get its details for search history
+    const allBusStops = [mockNearestBusStop, ...mockSearchResults];
+    const selectedBusStop = allBusStops.find((stop) => stop.id === busStopId);
+
+    if (selectedBusStop) {
+      try {
+        // Save to search history
+        await addBusStopSearch(
+          selectedBusStop.id,
+          selectedBusStop.name,
+          selectedBusStop.distance
+        );
+      } catch (error) {
+        console.error("Failed to save bus stop search history:", error);
+        // Continue with navigation even if history save fails
+      }
+    }
+
     onNavigateToBusStopInfo?.(busStopId);
   };
 
