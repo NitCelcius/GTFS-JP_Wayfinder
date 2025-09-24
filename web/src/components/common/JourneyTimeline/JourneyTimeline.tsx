@@ -1,3 +1,26 @@
+/**
+ * JourneyTimeline Component
+ *
+ * A unified timeline component for displaying bus stop information with consistent design.
+ * Supports flexible right content through props or custom render functions.
+ *
+ * Usage Examples:
+ *
+ * 1. Basic usage (default behavior):
+ *    <JourneyTimeline stops={stops} title="Route Details" showCosts={true} />
+ *
+ * 2. Custom right content per stop:
+ *    const stopsWithCustomContent = stops.map(stop => ({
+ *      ...stop,
+ *      rightContent: <CustomComponent data={stop.customData} />
+ *    }));
+ *
+ * 3. Custom render function for all stops:
+ *    <JourneyTimeline
+ *      stops={stops}
+ *      renderRightContent={(stop) => <MyCustomRightSection stop={stop} />}
+ *    />
+ */
 import React from "react";
 
 interface JourneyStop {
