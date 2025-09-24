@@ -36,7 +36,12 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="GTFS-JP Wayfinder API", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:8000"],
+    allow_origins=[
+        "http://localhost:3000", 
+        "http://localhost:8000",
+        "https://*.vercel.app",
+        "https://gtfs-jp-wayfinder.vercel.app",  # Replace with actual domain
+    ],
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],

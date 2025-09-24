@@ -1,0 +1,9 @@
+route_id,service_id,trip_id
+001,weekday,001_001
+001,weekend,001_002
+002,weekday,002_001
+002,weekend,002_002
+003,weekday,003_001
+003,weekend,003_002
+004,weekday,004_001
+004,weekend,004_002

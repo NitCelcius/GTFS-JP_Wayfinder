@@ -1,0 +1,9 @@
+fare_id,route_id,origin_id,destination_id
+adult,001,006,001
+adult,002,006,003
+adult,003,007,009
+adult,004,005,010
+child,001,006,001
+child,002,006,003
+child,003,007,009
+child,004,005,010
