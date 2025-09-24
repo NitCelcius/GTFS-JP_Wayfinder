@@ -15,8 +15,7 @@ interface JourneyStop {
 interface JourneyTimelineProps {
   stops: JourneyStop[];
   title?: string;
-  variant?: string;
-  showCosts?: boolean;
+  renderRightContent?: (stop: JourneyStop) => React.ReactNode; // Optional custom render function for right section
 }
 
 const STYLES = {
@@ -33,15 +32,6 @@ const STYLES = {
   stopLabel: "text-[0.875rem] text-gray-600",
   rightSection:
     "flex flex-row items-end gap-[var(--size-spacing-sm)] self-center flex-1 flex-wrap justify-end",
-  costContainer: "flex items-center justify-center",
-  costValue: "text-[1.375rem]",
-  costCurrency: "text-[0.875rem]",
-  timeValue: "text-[1.375rem]",
-  timesContainer:
-    "flex flex-col items-baseline gap-[var(--size-spacing-xs)] flex-0",
-  timeWrapper: "flex flex-0 whitespace-nowrap items-baseline",
-  timeText: "text-[1rem] whitespace-nowrap",
-  status: "text-[0.875rem]",
   fullConnector:
     "absolute left-[0.75rem] top-0 bottom-0 w-[2px] bg-gray-300 z-10",
 } as const;
@@ -94,8 +84,7 @@ function CircleIcon() {
 export function JourneyTimeline({
   stops,
   title,
-  variant = "bus-info",
-  showCosts = true,
+  renderRightContent,
 }: JourneyTimelineProps) {
   const getStopIcon = (stop: JourneyStop) => {
     if (stop.type === "current" || stop.type === "origin") {
@@ -104,35 +93,6 @@ export function JourneyTimeline({
       return <FlagIcon />;
     } else {
       return <CircleIcon />;
-    }
-  };
-
-  const renderTimeInfo = (stop: JourneyStop) => {
-    if (variant === "search-result") {
-      return (
-        <div className={STYLES.timesContainer}>
-          {stop.arrivalTime && (
-            <div className={STYLES.timeWrapper}>
-              <span className={STYLES.timeText}>{stop.arrivalTime} 着</span>
-            </div>
-          )}
-          {stop.departureTime && (
-            <div className={STYLES.timeWrapper}>
-              <span className={STYLES.timeText}>{stop.departureTime} 発</span>
-            </div>
-          )}
-        </div>
-      );
-    } else {
-      // bus-info variant
-      return (
-        <>
-          <div className={STYLES.timeWrapper}>
-            <span className={STYLES.timeValue}>{stop.time}</span>
-            <span className={STYLES.status}>着</span>
-          </div>
-        </>
-      );
     }
   };
 
@@ -158,15 +118,7 @@ export function JourneyTimeline({
               </div>
 
               <div className={STYLES.rightSection}>
-                {showCosts && stop.cost !== undefined && stop.cost > 0 && (
-                  <div className={STYLES.costContainer}>
-                    <span className="flex items-baseline gap-1">
-                      <span className={STYLES.costValue}>{stop.cost}</span>
-                      <span className={STYLES.costCurrency}>円</span>
-                    </span>
-                  </div>
-                )}
-                {renderTimeInfo(stop)}
+                {renderRightContent && renderRightContent(stop)}
               </div>
             </div>
           ))}
