@@ -191,7 +191,7 @@ export function RouteInputs({
           <div className={STYLES.swapIcon}>
             <SwapIcon />
           </div>
-          <span className={STYLES.swapText}>切り替え</span>
+          <span className={STYLES.swapText}>入れ替え</span>
         </button>
       </div>
       <RouteInput

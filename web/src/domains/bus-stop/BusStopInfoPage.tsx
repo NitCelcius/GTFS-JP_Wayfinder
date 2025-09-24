@@ -155,7 +155,7 @@ export function BusStopInfoPage({
                   <div className="flex flex-col items-center gap-[var(--size-spacing-md)]">
                     <LoadingSpinner size="sm" />
                     <span className="text-[0.875rem] text-gray-600">
-                      経路情報を読み込み中...
+                      行き方情報を読み込み中...
                     </span>
                   </div>
                 </div>

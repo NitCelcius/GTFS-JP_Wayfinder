@@ -11,7 +11,7 @@ router = APIRouter()
 @router.get(
     "/search",
     response_model=models.PathResponse,
-    summary="経路検索",
+    summary="行き方検索",
     description="出発停留所から到着停留所への最短経路（停留所ID配列）を返します。",
 )
 async def search_path(
@@ -29,8 +29,8 @@ async def search_path(
 @router.get(
     "/timed_search",
     response_model=models.TimedTravelResponse,
-    summary="時刻考慮経路検索",
-    description="開始時刻に基づいた時刻付き経路検索を行い、travels を返します。",
+    summary="時刻考慮行き方検索",
+    description="開始時刻に基づいた時刻付き行き方検索を行い、travels を返します。",
 )
 async def timed_search(
     from_stop: str = Query(..., description="出発停留所ID"),

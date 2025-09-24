@@ -53,8 +53,8 @@ async def fare(
 @router.get(
     "/connections",
     response_model=models.TimedTravelResponse,
-    summary="経路と便の取得",
-    description="最短経路とその経路に沿った便（travels）を返します。",
+    summary="行き方と便の取得",
+    description="最短行き方とその行き方に沿った便（travels）を返します。",
 )
 async def get_connections(
     from_stop: str = Query(..., description="出発停留所ID"),
