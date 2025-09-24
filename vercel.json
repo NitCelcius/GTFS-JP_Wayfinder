@@ -1,0 +1,48 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "web/package.json",
+      "use": "@vercel/next",
+      "config": {
+        "projectSettings": {
+          "framework": "nextjs",
+          "rootDirectory": "web"
+        }
+      }
+    },
+    {
+      "src": "api/index.py",
+      "use": "@vercel/python",
+      "config": {
+        "maxLambdaSize": "50mb",
+        "includeFiles": "data/**"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/index.py"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/web/$1"
+    }
+  ],
+  "functions": {
+    "api/index.py": {
+      "runtime": "python3.12",
+      "maxDuration": 30,
+      "memory": 1024
+    }
+  },
+  "env": {
+    "PYTHONPATH": "api"
+  },
+  "installCommand": "cd web && pnpm install",
+  "buildCommand": "cd web && pnpm build",
+  "devCommand": "cd web && pnpm dev",
+  "outputDirectory": "web/.next",
+  "regions": ["hnd1", "nrt1"]
+}
