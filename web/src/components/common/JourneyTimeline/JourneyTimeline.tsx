@@ -37,8 +37,9 @@ const STYLES = {
   costValue: "text-[1.375rem]",
   costCurrency: "text-[0.875rem]",
   timeValue: "text-[1.375rem]",
-  timesContainer: "flex flex-col items-end gap-[var(--size-spacing-xs)] flex-0",
-  timeWrapper: "flex flex-0 whitespace-nowrap items-end",
+  timesContainer:
+    "flex flex-col items-baseline gap-[var(--size-spacing-xs)] flex-0",
+  timeWrapper: "flex flex-0 whitespace-nowrap items-baseline",
   timeText: "text-[1rem] whitespace-nowrap",
   status: "text-[0.875rem]",
   fullConnector:
