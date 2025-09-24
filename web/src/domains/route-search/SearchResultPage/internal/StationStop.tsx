@@ -1,4 +1,5 @@
 import React from "react";
+
 import { Station } from "../types";
 import styles from "./StationStop.module.css";
 
@@ -87,7 +88,10 @@ export function StationStop({
           {station.cost !== undefined && station.cost > 0 && (
             <div className={styles.costContainer}>
               <div className={styles.costText}>
-                <p className={styles.costTextContent}>{station.cost}円</p>
+                <p className={styles.costTextContent}>
+                  <span className={styles.costValue}>{station.cost}</span>
+                  <span className={styles.costCurrency}>円</span>
+                </p>
               </div>
             </div>
           )}
@@ -97,14 +101,20 @@ export function StationStop({
             {station.arrivalTime && (
               <div className={styles.timeText}>
                 <p className={styles.timeTextContent}>
-                  {station.arrivalTime} 着
+                  <span className={styles.timeValue}>
+                    {station.arrivalTime}
+                  </span>
+                  <span className={styles.timeStatus}> 着</span>
                 </p>
               </div>
             )}
             {station.departureTime && (
               <div className={styles.timeText}>
                 <p className={styles.timeTextContent}>
-                  {station.departureTime} 発
+                  <span className={styles.timeValue}>
+                    {station.departureTime}
+                  </span>
+                  <span className={styles.timeStatus}> 発</span>
                 </p>
               </div>
             )}
