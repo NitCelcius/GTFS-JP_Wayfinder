@@ -1,4 +1,5 @@
 import logging
+import os
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -18,7 +19,7 @@ async def lifespan(app: FastAPI):
     This allows the turborepo "uv run python -m ..." wrapper to start the
     process without blocking the event loop while heavy I/O (pandas read) runs.
     """
-    data_dir = "./data/gtfs-akita-chuo-kotsu/"
+    data_dir = os.getenv("GTFS_DATA_DIR", "./data/gtfs-akita-chuo-kotsu/")
     try:
         # Use adapter's async initialize which delegates to the blocking initializer
         await wayfinder_adapter.initialize(data_dir)
