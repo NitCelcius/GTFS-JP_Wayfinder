@@ -26,11 +26,11 @@
 .timeTextContent {
   font-size: 0.9rem;
   display: flex;
-  align-items: baseline;
+  align-items: flex-end;
 }
 .costTextContent {
   display: flex;
-  align-items: baseline;
+  align-items: flex-end;
   gap: 0.125rem;
 }
 .costValue {
