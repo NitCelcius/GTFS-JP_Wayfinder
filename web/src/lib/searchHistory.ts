@@ -16,6 +16,22 @@ interface SearchHistoryDB extends IDBDatabase {
 class SearchHistoryService {
   private db: SearchHistoryDB | null = null;
 
+  private formatSearchTimestamp(timestamp: number = Date.now()): {
+    timestamp: number;
+    searchedAt: string;
+  } {
+    const now = new Date(timestamp);
+    const timeString = now.toLocaleTimeString("ja-JP", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    });
+    return {
+      timestamp,
+      searchedAt: `今日 ${timeString}`,
+    };
+  }
+
   async initDB(): Promise<SearchHistoryDB> {
     if (this.db) {
       return this.db;
@@ -65,22 +81,16 @@ class SearchHistoryService {
   }
 
   // Bus stop search history methods
-  async addBusStopSearch(
-    stopId: string,
-    name: string,
-    distance: string = ""
-  ): Promise<void> {
+  async addBusStopSearch(stopId: string, name: string): Promise<void> {
     const db = await this.getDB();
-    const timestamp = Date.now();
-    const now = new Date(timestamp);
-    const timeString = `${now.getHours()}:${now.getMinutes().toString().padStart(2, "0")}`;
+    const { timestamp, searchedAt } = this.formatSearchTimestamp();
 
     // Create a unique search record
     const search: RecentBusStopSearch = {
       id: `${stopId}-${timestamp}`, // Make unique with timestamp
       name,
-      distance,
-      searchedAt: `今日 ${timeString}`,
+      distance: "", // Distance not saved as it varies by user location
+      searchedAt,
     };
 
     return new Promise((resolve, reject) => {
@@ -133,15 +143,13 @@ class SearchHistoryService {
   // Route search history methods
   async addRouteSearch(fromStation: string, toStation: string): Promise<void> {
     const db = await this.getDB();
-    const timestamp = Date.now();
-    const now = new Date(timestamp);
-    const timeString = `${now.getHours()}:${now.getMinutes().toString().padStart(2, "0")}`;
+    const { timestamp, searchedAt } = this.formatSearchTimestamp();
 
     const search: RecentRouteSearch = {
       id: `${fromStation}-${toStation}-${timestamp}`, // Make unique with timestamp
       fromStation,
       toStation,
-      searchedAt: `今日 ${timeString}`,
+      searchedAt,
     };
 
     return new Promise((resolve, reject) => {
@@ -191,46 +199,39 @@ class SearchHistoryService {
     });
   }
 
-  async clearAllHistory(): Promise<void> {
+  async clearBusStopSearchHistory(): Promise<void> {
     const db = await this.getDB();
 
     return new Promise((resolve, reject) => {
-      const transaction = db.transaction(
-        [BUS_STOP_STORE, ROUTE_SEARCH_STORE],
-        "readwrite"
-      );
-      let completed = 0;
-      const errors: Error[] = [];
-
-      const checkComplete = () => {
-        completed++;
-        if (completed === 2) {
-          if (errors.length > 0) {
-            reject(errors[0]);
-          } else {
-            resolve();
-          }
-        }
-      };
-
-      // Clear bus stop searches
+      const transaction = db.transaction([BUS_STOP_STORE], "readwrite");
       const busStopStore = transaction.objectStore(BUS_STOP_STORE);
-      const busStopRequest = busStopStore.clear();
-      busStopRequest.onsuccess = () => checkComplete();
-      busStopRequest.onerror = () => {
-        errors.push(new Error("Failed to clear bus stop searches"));
-        checkComplete();
-      };
+      const request = busStopStore.clear();
 
-      // Clear route searches
-      const routeStore = transaction.objectStore(ROUTE_SEARCH_STORE);
-      const routeRequest = routeStore.clear();
-      routeRequest.onsuccess = () => checkComplete();
-      routeRequest.onerror = () => {
-        errors.push(new Error("Failed to clear route searches"));
-        checkComplete();
-      };
+      request.onsuccess = () => resolve();
+      request.onerror = () =>
+        reject(new Error("Failed to clear bus stop searches"));
     });
+  }
+
+  async clearRouteSearchHistory(): Promise<void> {
+    const db = await this.getDB();
+
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction([ROUTE_SEARCH_STORE], "readwrite");
+      const routeStore = transaction.objectStore(ROUTE_SEARCH_STORE);
+      const request = routeStore.clear();
+
+      request.onsuccess = () => resolve();
+      request.onerror = () =>
+        reject(new Error("Failed to clear route searches"));
+    });
+  }
+
+  async clearAllHistory(): Promise<void> {
+    await Promise.all([
+      this.clearBusStopSearchHistory(),
+      this.clearRouteSearchHistory(),
+    ]);
   }
 }
 

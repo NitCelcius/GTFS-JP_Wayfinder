@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { BottomNavigation } from "@/components/common/BottomNavigation/BottomNavigation";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner/LoadingSpinner";
 import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
-import { useSearchHistory } from "@/hooks";
+import { useBusStopSearchHistory } from "@/hooks";
 import mockBusStopsList from "@/mocks/busStops";
 
 import { BusStopList } from "./internal/BusStopList";
@@ -25,7 +25,7 @@ export function BusStopSearchPage({
   onNavigateToBusStopInfo,
 }: BusStopSearchPageProps) {
   const [isLoadingNearestBusStop, setIsLoadingNearestBusStop] = useState(true);
-  const { addBusStopSearch } = useSearchHistory();
+  const { addBusStopSearch } = useBusStopSearchHistory();
 
   // Simulate loading for nearest bus stop
   useEffect(() => {
@@ -76,19 +76,15 @@ export function BusStopSearchPage({
     console.log("Searching for:", query);
   };
 
-  const handleBusStopSelect = async (busStopId: string) => {
+  const saveBusStopSearchHistory = async (busStopId: string) => {
     // Find the selected bus stop to get its details for search history
     const allBusStops = [mockNearestBusStop, ...mockSearchResults];
     const selectedBusStop = allBusStops.find((stop) => stop.id === busStopId);
 
     if (selectedBusStop) {
       try {
-        // Save to search history
-        await addBusStopSearch(
-          selectedBusStop.id,
-          selectedBusStop.name,
-          selectedBusStop.distance
-        );
+        // Save to search history (without distance as it can change based on user location)
+        await addBusStopSearch(selectedBusStop.id, selectedBusStop.name);
       } catch (error) {
         console.error("Failed to save bus stop search history:", error);
         // Continue with navigation even if history save fails
@@ -128,7 +124,7 @@ export function BusStopSearchPage({
             <BusStopList
               busStops={[mockNearestBusStop]}
               showHeader={false}
-              onBusStopSelect={handleBusStopSelect}
+              onBusStopSelect={saveBusStopSearchHistory}
             />
           )}
         </div>
@@ -139,7 +135,7 @@ export function BusStopSearchPage({
             busStops={mockSearchResults}
             showHeader={false}
             headerText="検索結果"
-            onBusStopSelect={handleBusStopSelect}
+            onBusStopSelect={saveBusStopSearchHistory}
           />
         </div>
       </div>

@@ -4,7 +4,7 @@ import { BottomNavigation } from "@/components/common/BottomNavigation/BottomNav
 import { RouteSearchButton } from "@/components/common/RouteSearchButton/RouteSearchButton";
 import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
 import { MapSearchIcon } from "@/components/common/icons/MapSearchIcon";
-import { useSearchHistory } from "@/hooks";
+import { useRouteSearchHistory } from "@/hooks";
 
 import { RouteInputs } from "./internal/RouteInputs";
 import { SearchConditions } from "./internal/SearchConditions";
@@ -47,7 +47,7 @@ function MainContent({
 }
 
 interface RouteSearchPageProps {
-  onSearch?: () => void;
+  onSearch: () => void;
   onNavigateToBusStop?: () => void;
   onNavigateToRecent?: () => void;
 }
@@ -59,7 +59,7 @@ export function RouteSearchPage({
 }: RouteSearchPageProps) {
   const [originValue, setOriginValue] = useState("");
   const [destinationValue, setDestinationValue] = useState("");
-  const { addRouteSearch } = useSearchHistory();
+  const { addRouteSearch } = useRouteSearchHistory();
 
   const handleSearch = async (origin: string, destination: string) => {
     try {
@@ -71,7 +71,7 @@ export function RouteSearchPage({
     }
 
     // Call the original search handler
-    onSearch?.();
+    onSearch();
   };
 
   const handleBottomNavClick = (tab: "bus-stop" | "route" | "recent") => {
