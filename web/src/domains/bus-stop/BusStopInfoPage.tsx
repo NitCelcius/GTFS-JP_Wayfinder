@@ -164,7 +164,6 @@ export function BusStopInfoPage({
               <JourneyTimeline
                 title="このバスの行き先"
                 stops={mockBusStopData.routeJourney}
-                variant="bus-info"
               />
             )}
           </div>

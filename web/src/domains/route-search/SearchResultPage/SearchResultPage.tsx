@@ -96,7 +96,6 @@ export function SearchResultPage({
               <JourneyTimeline
                 title="経路詳細"
                 stops={journeyStops}
-                variant="search-result"
                 showCosts={showCosts}
               />
             </div>
