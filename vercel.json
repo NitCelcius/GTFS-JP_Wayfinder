@@ -1,49 +1,30 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
-  "builds": [
+  "framework": "nextjs",
+  "rewrites": [
     {
-      "src": "web/package.json",
-      "use": "@vercel/next",
-      "config": {
-        "projectSettings": {
-          "framework": "nextjs",
-          "rootDirectory": "web"
-        }
-      }
+      "source": "/api/:path*",
+      "destination": "/api/index.py"
     },
     {
-      "src": "api/index.py",
-      "use": "@vercel/python",
-      "config": {
-        "pythonPath": "api",
-        "includeFiles": "api/**"
-      }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/index.py"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/web/$1"
+      "source": "/:path*",
+      "destination": "/web/:path*"
     }
   ],
   "functions": {
     "api/index.py": {
       "runtime": "python3.12",
-      "maxDuration": 30
+      "maxDuration": 60,
+      "includeFiles": "api/**"
     }
-  },
-  "env": {
-    "PYTHONPATH": "api",
-    "GTFS_DATA_DIR": "/tmp/gtfs-data",
-    "CORS_ORIGINS": "http://localhost:3000,http://localhost:8000"
   },
   "installCommand": "cd web && pnpm install",
   "buildCommand": "cd web && pnpm build",
   "devCommand": "cd web && pnpm dev",
   "outputDirectory": "web/.next",
-  "regions": ["hnd1", "nrt1"]
+  "regions": [
+    "hnd1",
+    "nrt1"
+  ]
 }
