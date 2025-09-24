@@ -1,5 +1,6 @@
 import threading
 from typing import Dict, List, Optional
+import pandas as pd
 
 from gtfs_jp_wayfinder.database import AkitaBusWayFinder
 from gtfs_jp_wayfinder.models import (
@@ -146,12 +147,18 @@ def format_np_datetime(value) -> str:
     if value is None:
         return ""
     try:
-        # import locally to avoid heavy dependency at module import time
-        import pandas as pd
-        return pd.Timestamp(value).strftime("%H:%M:%S")
+        # Use pandas Timestamp for consistent formatting, avoiding locale issues
+        timestamp = pd.Timestamp(value)
+        return timestamp.strftime("%H:%M:%S")
     except Exception:
         try:
-            return str(value)[:19]  # YYYY-MM-DD HH:MM:SS format
+            # Fallback: extract time part from ISO string format
+            iso_str = str(value)
+            if len(iso_str) >= 19:
+                # Extract HH:MM:SS from YYYY-MM-DD HH:MM:SS format
+                time_part = iso_str[11:19] if ' ' in iso_str else iso_str[:8]
+                return time_part if ':' in time_part else ""
+            return ""
         except Exception:
             return ""
 

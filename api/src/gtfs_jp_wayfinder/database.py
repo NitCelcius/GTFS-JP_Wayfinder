@@ -624,7 +624,7 @@ class AkitaBusWayFinder:
         
         # Extract data as numpy arrays for better performance than iterrows()
         stop_ids = self.df_stops["stop_id"].values
-        stop_names = self.df_stops.get("stop_name", self.df_stops["stop_id"]).values  # fallback to stop_id if name missing
+        stop_names = self.df_stops["stop_name"].values  # stop_name is required in GTFS spec
         stop_lats = self.df_stops["stop_lat"].values.astype(float)
         stop_lons = self.df_stops["stop_lon"].values.astype(float)
         

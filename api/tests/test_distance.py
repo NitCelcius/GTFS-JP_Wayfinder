@@ -19,6 +19,7 @@ def test_haversine_distance_known_values():
     
     distance = calculator.calculate_distance(tokyo_lat, tokyo_lon, osaka_lat, osaka_lon)
     # Tokyo to Osaka is approximately 400-450 km
+    # TODO: Verify exact distance value since it's deterministic and doesn't fluctuate at runtime
     assert 350 < distance < 500
 
 
