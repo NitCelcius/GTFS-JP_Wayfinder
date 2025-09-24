@@ -15,7 +15,7 @@ interface JourneyStop {
 interface JourneyTimelineProps {
   stops: JourneyStop[];
   title?: string;
-  renderRightContent: (stop: JourneyStop) => React.ReactNode; // Required custom render function for right section
+  renderRightContent?: (stop: JourneyStop) => React.ReactNode; // Optional custom render function for right section
 }
 
 const STYLES = {
@@ -118,7 +118,7 @@ export function JourneyTimeline({
               </div>
 
               <div className={STYLES.rightSection}>
-                {renderRightContent(stop)}
+                {renderRightContent && renderRightContent(stop)}
               </div>
             </div>
           ))}
