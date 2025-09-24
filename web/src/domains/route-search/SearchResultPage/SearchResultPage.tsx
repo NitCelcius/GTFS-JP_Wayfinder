@@ -96,7 +96,34 @@ export function SearchResultPage({
               <JourneyTimeline
                 title="経路詳細"
                 stops={journeyStops}
-                showCosts={showCosts}
+                renderRightContent={(stop) => (
+                  <>
+                    {showCosts && stop.cost !== undefined && stop.cost > 0 && (
+                      <div className="flex items-center justify-center">
+                        <span className="flex items-baseline gap-1">
+                          <span className="text-[1.375rem]">{stop.cost}</span>
+                          <span className="text-[0.875rem]">円</span>
+                        </span>
+                      </div>
+                    )}
+                    <div className="flex flex-col items-end gap-[var(--size-spacing-xs)] flex-0">
+                      {(stop.arrivalTime || stop.time) && (
+                        <div className="flex flex-0 whitespace-nowrap items-end">
+                          <span className="text-[1rem] whitespace-nowrap">
+                            {stop.arrivalTime || stop.time} 着
+                          </span>
+                        </div>
+                      )}
+                      {stop.departureTime && (
+                        <div className="flex flex-0 whitespace-nowrap items-end">
+                          <span className="text-[1rem] whitespace-nowrap">
+                            {stop.departureTime} 発
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
               />
             </div>
           </>

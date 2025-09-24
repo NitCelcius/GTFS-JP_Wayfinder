@@ -1,26 +1,3 @@
-/**
- * JourneyTimeline Component
- *
- * A unified timeline component for displaying bus stop information with consistent design.
- * Supports flexible right content through props or custom render functions.
- *
- * Usage Examples:
- *
- * 1. Basic usage (default behavior):
- *    <JourneyTimeline stops={stops} title="Route Details" showCosts={true} />
- *
- * 2. Custom right content per stop:
- *    const stopsWithCustomContent = stops.map(stop => ({
- *      ...stop,
- *      rightContent: <CustomComponent data={stop.customData} />
- *    }));
- *
- * 3. Custom render function for all stops:
- *    <JourneyTimeline
- *      stops={stops}
- *      renderRightContent={(stop) => <MyCustomRightSection stop={stop} />}
- *    />
- */
 import React from "react";
 
 interface JourneyStop {
@@ -33,14 +10,12 @@ interface JourneyStop {
   type?: "origin" | "intermediate" | "destination" | "current";
   label?: string;
   isActive?: boolean;
-  rightContent?: React.ReactNode; // Custom right section content
 }
 
 interface JourneyTimelineProps {
   stops: JourneyStop[];
   title?: string;
-  showCosts?: boolean;
-  renderRightContent?: (stop: JourneyStop) => React.ReactNode; // Custom render function for right section
+  renderRightContent: (stop: JourneyStop) => React.ReactNode; // Required custom render function for right section
 }
 
 const STYLES = {
@@ -57,12 +32,6 @@ const STYLES = {
   stopLabel: "text-[0.875rem] text-gray-600",
   rightSection:
     "flex flex-row items-end gap-[var(--size-spacing-sm)] self-center flex-1 flex-wrap justify-end",
-  costContainer: "flex items-center justify-center",
-  costValue: "text-[1.375rem]",
-  costCurrency: "text-[0.875rem]",
-  timesContainer: "flex flex-col items-end gap-[var(--size-spacing-xs)] flex-0",
-  timeWrapper: "flex flex-0 whitespace-nowrap items-end",
-  timeText: "text-[1rem] whitespace-nowrap",
   fullConnector:
     "absolute left-[0.75rem] top-0 bottom-0 w-[2px] bg-gray-300 z-10",
 } as const;
@@ -115,7 +84,6 @@ function CircleIcon() {
 export function JourneyTimeline({
   stops,
   title,
-  showCosts = true,
   renderRightContent,
 }: JourneyTimelineProps) {
   const getStopIcon = (stop: JourneyStop) => {
@@ -126,55 +94,6 @@ export function JourneyTimeline({
     } else {
       return <CircleIcon />;
     }
-  };
-
-  const renderTimeInfo = (stop: JourneyStop) => {
-    // Use consistent design for both variants - prioritizing search-result style
-    return (
-      <div className={STYLES.timesContainer}>
-        {/* Handle arrivalTime or time field for arrival */}
-        {(stop.arrivalTime || stop.time) && (
-          <div className={STYLES.timeWrapper}>
-            <span className={STYLES.timeText}>
-              {stop.arrivalTime || stop.time} 着
-            </span>
-          </div>
-        )}
-        {/* Show departure time if available */}
-        {stop.departureTime && (
-          <div className={STYLES.timeWrapper}>
-            <span className={STYLES.timeText}>{stop.departureTime} 発</span>
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  const renderRightSection = (stop: JourneyStop) => {
-    // Use custom right content if provided
-    if (stop.rightContent) {
-      return stop.rightContent;
-    }
-
-    // Use custom render function if provided
-    if (renderRightContent) {
-      return renderRightContent(stop);
-    }
-
-    // Default behavior: show costs and times
-    return (
-      <>
-        {showCosts && stop.cost !== undefined && stop.cost > 0 && (
-          <div className={STYLES.costContainer}>
-            <span className="flex items-baseline gap-1">
-              <span className={STYLES.costValue}>{stop.cost}</span>
-              <span className={STYLES.costCurrency}>円</span>
-            </span>
-          </div>
-        )}
-        {renderTimeInfo(stop)}
-      </>
-    );
   };
 
   return (
@@ -199,7 +118,7 @@ export function JourneyTimeline({
               </div>
 
               <div className={STYLES.rightSection}>
-                {renderRightSection(stop)}
+                {renderRightContent(stop)}
               </div>
             </div>
           ))}
