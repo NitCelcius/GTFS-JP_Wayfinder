@@ -25,6 +25,27 @@
 }
 .timeTextContent {
   font-size: 0.9rem;
+  display: flex;
+  align-items: baseline;
+}
+.costTextContent {
+  display: flex;
+  align-items: baseline;
+  gap: 0.125rem;
+}
+.costValue {
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+.costCurrency {
+  font-size: 0.75rem;
+}
+.timeValue {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+.timeStatus {
+  font-size: 0.75rem;
 }
 .transferArrow {
   padding-left: 1.5rem;
