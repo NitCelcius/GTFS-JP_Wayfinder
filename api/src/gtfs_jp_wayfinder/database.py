@@ -631,8 +631,8 @@ class AkitaBusWayFinder:
         # Create result objects using array indexing
         results = [
             NearbyStopResult(
-                stop_id=str(stop_ids[i]),
-                stop_name=str(stop_names[i]),
+                stop_id=stop_ids[i],
+                stop_name=stop_names[i],
                 distance_km=distances[i],
                 stop_lat=stop_lats[i],
                 stop_lon=stop_lons[i]

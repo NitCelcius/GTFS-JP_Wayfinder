@@ -32,6 +32,7 @@ def test_haversine_distance_short_distance():
     
     distance = calculator.calculate_distance(lat1, lon1, lat2, lon2)
     # Should be less than 1 km
+    # TODO: Measure precise distance for exact verification
     assert distance < 1.0
     assert distance > 0
 

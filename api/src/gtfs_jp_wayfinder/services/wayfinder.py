@@ -1,5 +1,5 @@
 import threading
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any
 import pandas as pd
 
 from gtfs_jp_wayfinder.database import AkitaBusWayFinder
@@ -138,7 +138,7 @@ def get_trip_info_batch(trip_ids: List[str]) -> TripInfoList:
     return TripInfoList(trips=trips)
 
 
-def format_np_datetime(value) -> str:
+def format_np_datetime(value: Any) -> str:
     """Utility to format numpy.datetime64 or pandas.Timestamp to HH:MM:SS.
 
     This helper is exposed so adapters can convert underlying numpy/pandas
@@ -146,21 +146,10 @@ def format_np_datetime(value) -> str:
     """
     if value is None:
         return ""
-    try:
-        # Use pandas Timestamp for consistent formatting, avoiding locale issues
-        timestamp = pd.Timestamp(value)
-        return timestamp.strftime("%H:%M:%S")
-    except Exception:
-        try:
-            # Fallback: extract time part from ISO string format
-            iso_str = str(value)
-            if len(iso_str) >= 19:
-                # Extract HH:MM:SS from YYYY-MM-DD HH:MM:SS format
-                time_part = iso_str[11:19] if ' ' in iso_str else iso_str[:8]
-                return time_part if ':' in time_part else ""
-            return ""
-        except Exception:
-            return ""
+    
+    # Use pandas Timestamp for consistent formatting
+    timestamp = pd.Timestamp(value)
+    return timestamp.strftime("%H:%M:%S")
 
 
 def get_nearby_stops(lat: float, lon: float, limit: int = 10):
