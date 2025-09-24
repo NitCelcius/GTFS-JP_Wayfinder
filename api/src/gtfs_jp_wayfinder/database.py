@@ -622,17 +622,23 @@ class AkitaBusWayFinder:
         # Use batch calculation for better performance with large datasets
         distances = self.distance_calculator.calculate_distances_batch(lat, lon, self.df_stops)
         
-        # Create result objects
-        results = []
-        for i, (_, row) in enumerate(self.df_stops.iterrows()):
-            stop_result = NearbyStopResult(
-                stop_id=row["stop_id"],
-                stop_name=row.get("stop_name", ""),
+        # Extract data as numpy arrays for better performance than iterrows()
+        stop_ids = self.df_stops["stop_id"].values
+        stop_names = self.df_stops.get("stop_name", self.df_stops["stop_id"]).values  # fallback to stop_id if name missing
+        stop_lats = self.df_stops["stop_lat"].values.astype(float)
+        stop_lons = self.df_stops["stop_lon"].values.astype(float)
+        
+        # Create result objects using array indexing
+        results = [
+            NearbyStopResult(
+                stop_id=str(stop_ids[i]),
+                stop_name=str(stop_names[i]),
                 distance_km=distances[i],
-                stop_lat=float(row["stop_lat"]),
-                stop_lon=float(row["stop_lon"])
+                stop_lat=stop_lats[i],
+                stop_lon=stop_lons[i]
             )
-            results.append(stop_result)
+            for i in range(len(distances))
+        ]
         
         # Sort by distance and return only the requested limit
         results.sort(key=lambda x: x.distance_km)

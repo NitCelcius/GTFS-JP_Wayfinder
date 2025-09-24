@@ -1,3 +1,0 @@
-route_id,agency_id,route_short_name,route_long_name,route_desc,route_type,route_url,route_color,route_text_color
-001,1,001,都心循環線,City Loop,3,,0075BE,FFFFFF
-002,1,002,青葉台線,Aobadai Line,3,,008000,FFFFFF

@@ -239,7 +239,7 @@ async def get_nearby_stops(
             models.NearbyStop(
                 stop_id=stop.stop_id,
                 stop_name=stop.stop_name,
-                distance_km=round(stop.distance_km, 3),
+                distance_km=stop.distance_km,
                 lat=stop.stop_lat,
                 lon=stop.stop_lon,
             )
