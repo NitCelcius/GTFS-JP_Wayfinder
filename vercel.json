@@ -13,7 +13,11 @@
     },
     {
       "src": "api/index.py",
-      "use": "@vercel/python"
+      "use": "@vercel/python",
+      "config": {
+        "pythonPath": "api",
+        "includeFiles": "api/**"
+      }
     }
   ],
   "routes": [
@@ -34,7 +38,8 @@
   },
   "env": {
     "PYTHONPATH": "api",
-    "GTFS_DATA_DIR": "/tmp/gtfs-data"
+    "GTFS_DATA_DIR": "/tmp/gtfs-data",
+    "CORS_ORIGINS": "http://localhost:3000,http://localhost:8000"
   },
   "installCommand": "cd web && pnpm install",
   "buildCommand": "cd web && pnpm build",

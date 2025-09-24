@@ -35,14 +35,13 @@ async def lifespan(app: FastAPI):
 
 # Create FastAPI app with async lifespan and include routers
 app = FastAPI(title="GTFS-JP Wayfinder API", lifespan=lifespan)
+# Get CORS origins from environment variable, default to local development
+cors_origins_env = os.getenv("CORS_ORIGINS", "http://localhost:3000,http://localhost:8000")
+cors_origins = [origin.strip() for origin in cors_origins_env.split(",")]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000", 
-        "http://localhost:8000",
-        "https://*.vercel.app",
-        "https://gtfs-jp-wayfinder.vercel.app",  # Replace with actual domain
-    ],
+    allow_origins=cors_origins,
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
