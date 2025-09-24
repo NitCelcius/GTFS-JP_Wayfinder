@@ -233,18 +233,17 @@ async def get_nearby_stops(
         )
     
     try:
-        from gtfs_jp_wayfinder.services import wayfinder
-        nearby_stops = wayfinder.get_nearby_stops(lat, lon, limit)
+        nearby_stops = adapter.get_nearby_stops(lat, lon, limit)
         
         stops = [
             models.NearbyStop(
-                stop_id=stop_id,
-                stop_name=stop_name,
-                distance_km=round(distance, 3),
-                lat=stop_lat,
-                lon=stop_lon,
+                stop_id=stop.stop_id,
+                stop_name=stop.stop_name,
+                distance_km=round(stop.distance_km, 3),
+                lat=stop.stop_lat,
+                lon=stop.stop_lon,
             )
-            for stop_id, stop_name, distance, stop_lat, stop_lon in nearby_stops
+            for stop in nearby_stops
         ]
         
         return models.NearbyStopsResponse(stops=stops)

@@ -138,10 +138,22 @@ def get_trip_info_batch(trip_ids: List[str]) -> TripInfoList:
 
 
 def format_np_datetime(value) -> str:
-    """Format numpy datetime64 to string."""
+    """Utility to format numpy.datetime64 or pandas.Timestamp to HH:MM:SS.
+
+    This helper is exposed so adapters can convert underlying numpy/pandas
+    datetime types to plain strings for Pydantic models.
+    """
     if value is None:
         return ""
-    return str(value)[:19]  # YYYY-MM-DD HH:MM:SS format
+    try:
+        # import locally to avoid heavy dependency at module import time
+        import pandas as pd
+        return pd.Timestamp(value).strftime("%H:%M:%S")
+    except Exception:
+        try:
+            return str(value)[:19]  # YYYY-MM-DD HH:MM:SS format
+        except Exception:
+            return ""
 
 
 def get_nearby_stops(lat: float, lon: float, limit: int = 10):
@@ -149,18 +161,3 @@ def get_nearby_stops(lat: float, lon: float, limit: int = 10):
     if _wf is None:
         raise RuntimeError("Wayfinder not initialized")
     return _wf.get_nearby_stops(lat, lon, limit)
-    """Utility to format numpy.datetime64 or pandas.Timestamp to HH:MM:SS.
-
-    This helper is exposed so adapters can convert underlying numpy/pandas
-    datetime types to plain strings for Pydantic models.
-    """
-    try:
-        # import locally to avoid heavy dependency at module import time
-        import pandas as pd
-
-        return pd.Timestamp(value).strftime("%H:%M:%S")
-    except Exception:
-        try:
-            return str(value)
-        except Exception:
-            return None

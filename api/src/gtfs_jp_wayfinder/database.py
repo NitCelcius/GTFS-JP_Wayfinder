@@ -6,7 +6,7 @@ import networkx as nx
 import numpy as np
 import pandas as pd
 
-from gtfs_jp_wayfinder.utils.distance import haversine_distance
+from gtfs_jp_wayfinder.utils.distance import HaversineDistanceCalculator, EuclideanDistanceCalculator, DistanceCalculator
 
 logger = logging.getLogger(__name__)
 
@@ -24,8 +24,18 @@ class TravelOnce:
     to_stop_id: str
 
 
+@dataclass
+class NearbyStopResult:
+    """Result for a single nearby bus stop."""
+    stop_id: str
+    stop_name: str
+    distance_km: float
+    stop_lat: float
+    stop_lon: float
+
+
 class AkitaBusWayFinder:
-    def __init__(self):
+    def __init__(self, use_haversine: bool = True):
         self.df_stops = None
         self.df_stop_times = None
         self.df_fare_id_route = None
@@ -36,6 +46,11 @@ class AkitaBusWayFinder:
         self.graph = None
         self.graph_via_service_id = dict()
         self.default_date = "2021-01-01"
+        
+        # Distance calculator - can be switched between Haversine and Euclidean
+        self.distance_calculator: DistanceCalculator = (
+            HaversineDistanceCalculator() if use_haversine else EuclideanDistanceCalculator()
+        )
 
     # 文字列の時刻情報を numpy の datetime64 に変換する
     # 簡便な比較用のため日付を default_date にしているが無意味なので注意
@@ -589,7 +604,7 @@ class AkitaBusWayFinder:
             "route_long_name"
         ].values[0]
 
-    def get_nearby_stops(self, lat: float, lon: float, limit: int = 10) -> List[Tuple[str, str, float, float, float]]:
+    def get_nearby_stops(self, lat: float, lon: float, limit: int = 10) -> List[NearbyStopResult]:
         """
         Get nearby bus stops sorted by distance from given coordinates.
         
@@ -599,24 +614,26 @@ class AkitaBusWayFinder:
             limit: Maximum number of stops to return (default: 10)
             
         Returns:
-            List of tuples (stop_id, stop_name, distance_km, stop_lat, stop_lon)
-            sorted by distance from nearest to farthest
+            List of NearbyStopResult dataclasses sorted by distance from nearest to farthest
         """
         if limit <= 0:
             raise ValueError("limit must be positive")
             
-        # Calculate distances for all stops
-        stop_distances = []
+        # Use batch calculation for better performance with large datasets
+        distances = self.distance_calculator.calculate_distances_batch(lat, lon, self.df_stops)
         
-        for _, row in self.df_stops.iterrows():
-            stop_id = row["stop_id"]
-            stop_name = row.get("stop_name", "")
-            stop_lat = float(row["stop_lat"])
-            stop_lon = float(row["stop_lon"])
-            
-            distance_km = haversine_distance(lat, lon, stop_lat, stop_lon)
-            stop_distances.append((stop_id, stop_name, distance_km, stop_lat, stop_lon))
+        # Create result objects
+        results = []
+        for i, (_, row) in enumerate(self.df_stops.iterrows()):
+            stop_result = NearbyStopResult(
+                stop_id=row["stop_id"],
+                stop_name=row.get("stop_name", ""),
+                distance_km=distances[i],
+                stop_lat=float(row["stop_lat"]),
+                stop_lon=float(row["stop_lon"])
+            )
+            results.append(stop_result)
         
         # Sort by distance and return only the requested limit
-        stop_distances.sort(key=lambda x: x[2])  # Sort by distance (3rd element)
-        return stop_distances[:limit]
+        results.sort(key=lambda x: x.distance_km)
+        return results[:limit]
