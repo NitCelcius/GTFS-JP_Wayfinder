@@ -1,0 +1,2 @@
+﻿feed_publisher_name,feed_publisher_url,feed_contact_url,feed_contact_email,feed_lang,feed_start_date,feed_end_date,feed_version
+秋田中央交通,https://www.akita-chuoukotsu.co.jp/,https://www.akita-chuoukotsu.co.jp/,sonosujiya@gmail.com,ja,20241204,20251203,20241201_2024年12月01日（市立病院　正月） その筋屋 1.623
