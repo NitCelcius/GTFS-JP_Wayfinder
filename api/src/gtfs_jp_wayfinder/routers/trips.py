@@ -22,6 +22,8 @@ def np_datetime_to_datetime_time(val: np.datetime64) -> datetime.time:
     if isinstance(pyobj, datetime.datetime):
         return pyobj.time()
 
+    raise TypeError(f"Cannot convert value of type {type(val)} to datetime.time")
+
 
 @router.post(
     "/batch",
