@@ -7,7 +7,7 @@ RUN apt-get update && \
   apt-get install -y sqlite3
 
 # uvのインストール
-RUN pip install uv
+RUN pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org uv
 
 WORKDIR /app
 
@@ -16,6 +16,8 @@ COPY ./pyproject.toml .
 COPY ./uv.lock .
 
 # uvを使って依存関係のインストール
+# For environments with SSL certificate issues, uncomment the next line:
+# ENV UV_VERIFY_SSL=false
 RUN uv sync --frozen
 
 EXPOSE 8002
