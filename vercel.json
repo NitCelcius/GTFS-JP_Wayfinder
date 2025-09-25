@@ -19,8 +19,8 @@
       "includeFiles": "api/**"
     }
   },
-  "installCommand": "cd web && pnpm install",
-  "buildCommand": "cd web && pnpm build",
-  "devCommand": "cd web && pnpm dev",
+  "installCommand": "pnpm install",
+  "buildCommand": "pnpm build",
+  "devCommand": "pnpm dev",
   "outputDirectory": "web/.next"
 }
