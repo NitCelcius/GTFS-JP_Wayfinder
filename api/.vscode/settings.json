@@ -19,10 +19,7 @@
       "source.organizeImports.ruff": "always"
     }
   },
-  "cSpell.words": [
-    "GTFS",
-    "Wayfinder"
-  ],
+  "cSpell.words": ["GTFS", "Wayfinder"],
   "python.analysis.typeCheckingMode": "off",
   "python.analysis.diagnosticSeverityOverrides": {
     "strictListInference": "none",
@@ -33,6 +30,6 @@
     "enableTypeIgnoreComments": "none",
     "reportMissingModuleSource": "none",
     "reportMissingImports": "none",
-    "reportUndefinedVariable": "none",
-  },
+    "reportUndefinedVariable": "none"
+  }
 }
