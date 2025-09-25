@@ -5,8 +5,8 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from gtfs_jp_wayfinder.routers import path, stops, trips
-from gtfs_jp_wayfinder.services import wayfinder_adapter
+from src.gtfs_jp_wayfinder.routers import path, stops, trips
+from src.gtfs_jp_wayfinder.services import wayfinder_adapter
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -36,7 +36,9 @@ async def lifespan(app: FastAPI):
 # Create FastAPI app with async lifespan and include routers
 app = FastAPI(title="GTFS-JP Wayfinder API", lifespan=lifespan)
 # Get CORS origins from environment variable, default to local development
-cors_origins_env = os.getenv("CORS_ORIGINS", "http://localhost:3000,http://localhost:8000")
+cors_origins_env = os.getenv(
+    "CORS_ORIGINS", "http://localhost:3000,http://localhost:8000"
+)
 cors_origins = [origin.strip() for origin in cors_origins_env.split(",")]
 
 app.add_middleware(

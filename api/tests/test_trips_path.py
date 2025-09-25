@@ -1,7 +1,7 @@
 from fastapi.testclient import TestClient
 
-from gtfs_jp_wayfinder import models
 from gtfs_jp_wayfinder.main import app
+from src.gtfs_jp_wayfinder import models
 
 client = TestClient(app)
 
