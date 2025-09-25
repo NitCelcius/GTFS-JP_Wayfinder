@@ -3,10 +3,10 @@ from typing import Any, List, Optional
 
 import pandas as pd
 
-from gtfs_jp_wayfinder.models import (
+from src.gtfs_jp_wayfinder.models import (
     TripInfoList,
 )
-from gtfs_jp_wayfinder.services import wayfinder as wf_service
+from src.gtfs_jp_wayfinder.services import wayfinder as wf_service
 
 _initialized = False
 

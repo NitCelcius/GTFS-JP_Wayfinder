@@ -1,6 +1,6 @@
 from fastapi.testclient import TestClient
 
-from gtfs_jp_wayfinder.main import app
+from src.gtfs_jp_wayfinder.main import app
 
 client = TestClient(app)
 
@@ -9,7 +9,7 @@ def test_upcoming_variants(monkeypatch):
     stop_id = "S100"
 
     monkeypatch.setattr(
-        "gtfs_jp_wayfinder.services.wayfinder_adapter.get_trips_from_stop",
+        "src.gtfs_jp_wayfinder.services.wayfinder_adapter.get_trips_from_stop",
         lambda stop, s=None: None,
     )
     resp = client.get(f"/stops/{stop_id}/upcoming")
@@ -17,11 +17,11 @@ def test_upcoming_variants(monkeypatch):
     assert resp.json() == {"stop_id": stop_id, "buses": []}
 
     monkeypatch.setattr(
-        "gtfs_jp_wayfinder.services.wayfinder_adapter.get_trips_from_stop",
+        "src.gtfs_jp_wayfinder.services.wayfinder_adapter.get_trips_from_stop",
         lambda stop, s=None: ["tA", "tB"],
     )
     monkeypatch.setattr(
-        "gtfs_jp_wayfinder.services.wayfinder_adapter.get_time_from_trip_and_stop",
+        "src.gtfs_jp_wayfinder.services.wayfinder_adapter.get_time_from_trip_and_stop",
         lambda trip, stop: {"arrival_time": "07:00:00", "departure_time": "07:05:00"},
     )
 

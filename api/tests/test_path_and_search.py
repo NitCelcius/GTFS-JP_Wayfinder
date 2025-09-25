@@ -1,6 +1,6 @@
 from fastapi.testclient import TestClient
 
-from gtfs_jp_wayfinder.main import app
+from src.gtfs_jp_wayfinder.main import app
 
 client = TestClient(app)
 
@@ -15,7 +15,7 @@ def test_search_stops(monkeypatch):
         def get_stop_id(self, name, exact):
             return FakeRes()
 
-    monkeypatch.setattr("gtfs_jp_wayfinder.services.wayfinder._wf", FakeWF())
+    monkeypatch.setattr("src.gtfs_jp_wayfinder.services.wayfinder._wf", FakeWF())
 
     resp = client.get("/stops/?name=中央公園&exact=true")
     assert resp.status_code == 200
@@ -27,13 +27,13 @@ def test_search_stops(monkeypatch):
 def test_path_timed_search(monkeypatch):
     # shortest path
     monkeypatch.setattr(
-        "gtfs_jp_wayfinder.services.wayfinder_adapter.get_shortest_path",
+        "src.gtfs_jp_wayfinder.services.wayfinder_adapter.get_shortest_path",
         lambda a, b, s=None: ["S1", "S2"],
     )
 
     # timed travels from path
     monkeypatch.setattr(
-        "gtfs_jp_wayfinder.services.wayfinder_adapter.get_timed_travels_from_path",
+        "src.gtfs_jp_wayfinder.services.wayfinder_adapter.get_timed_travels_from_path",
         lambda path, s=None, begin_time=None: [
             {
                 "trip_id": "t1",

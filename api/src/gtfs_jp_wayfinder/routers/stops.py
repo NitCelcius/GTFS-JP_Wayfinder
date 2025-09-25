@@ -2,8 +2,8 @@ from typing import List, Optional
 
 from fastapi import APIRouter, HTTPException, Query
 
-from gtfs_jp_wayfinder.services import wayfinder_adapter as adapter
 from src.gtfs_jp_wayfinder import models
+from src.gtfs_jp_wayfinder.services import wayfinder_adapter as adapter
 
 router = APIRouter()
 
@@ -72,7 +72,7 @@ async def search_stops(
 ):
     try:
         # underlying function is wf.get_stop_id
-        from gtfs_jp_wayfinder.services.wayfinder import _wf
+        from src.gtfs_jp_wayfinder.services.wayfinder import _wf
 
         if _wf is None:
             raise RuntimeError("Wayfinder not initialized")

@@ -1,18 +1,18 @@
 from fastapi.testclient import TestClient
 
-from gtfs_jp_wayfinder.main import app
+from src.gtfs_jp_wayfinder.main import app
 
 client = TestClient(app)
 
 
 def test_path_search_and_travels(monkeypatch):
     monkeypatch.setattr(
-        "gtfs_jp_wayfinder.services.wayfinder_adapter.get_shortest_path",
+        "src.gtfs_jp_wayfinder.services.wayfinder_adapter.get_shortest_path",
         lambda a, b, s=None: ["A", "B", "C"],
     )
 
     monkeypatch.setattr(
-        "gtfs_jp_wayfinder.services.wayfinder_adapter.get_travels_from_path",
+        "src.gtfs_jp_wayfinder.services.wayfinder_adapter.get_travels_from_path",
         lambda path, s=None: [
             {
                 "trip_id": "t-1",

@@ -1,6 +1,6 @@
 from fastapi.testclient import TestClient
 
-from gtfs_jp_wayfinder.main import app
+from src.gtfs_jp_wayfinder.main import app
 
 client = TestClient(app)
 
@@ -11,7 +11,7 @@ def test_get_stop_names_monkeypatch(monkeypatch):
         return ["中央公園"]
 
     monkeypatch.setattr(
-        "gtfs_jp_wayfinder.services.wayfinder_adapter.get_stop_names",
+        "src.gtfs_jp_wayfinder.services.wayfinder_adapter.get_stop_names",
         fake_get_stop_names,
     )
 

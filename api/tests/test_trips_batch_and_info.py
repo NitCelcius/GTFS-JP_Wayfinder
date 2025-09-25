@@ -1,7 +1,7 @@
 from fastapi.testclient import TestClient
 
-from gtfs_jp_wayfinder.main import app
 from src.gtfs_jp_wayfinder import models
+from src.gtfs_jp_wayfinder.main import app
 
 client = TestClient(app)
 
@@ -21,7 +21,7 @@ def test_trips_batch_and_get_trip(monkeypatch):
         )
 
     monkeypatch.setattr(
-        "gtfs_jp_wayfinder.services.wayfinder_adapter.get_trip_info_batch",
+        "src.gtfs_jp_wayfinder.services.wayfinder_adapter.get_trip_info_batch",
         fake_batch,
     )
 

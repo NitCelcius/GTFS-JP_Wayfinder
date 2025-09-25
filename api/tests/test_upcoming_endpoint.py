@@ -1,9 +1,9 @@
-from fastapi.testclient import TestClient
-
 import json
 from pathlib import Path
 
-from gtfs_jp_wayfinder.main import app
+from fastapi.testclient import TestClient
+
+from src.gtfs_jp_wayfinder.main import app
 
 client = TestClient(app)
 
@@ -16,7 +16,7 @@ def test_upcoming_hardcoded(monkeypatch):
 
     # patch adapter functions to return the trips and their times from `expected`
     monkeypatch.setattr(
-        "gtfs_jp_wayfinder.services.wayfinder_adapter.get_trips_from_stop",
+        "src.gtfs_jp_wayfinder.services.wayfinder_adapter.get_trips_from_stop",
         lambda stop_id, service_id=None: trips,
     )
 
@@ -30,7 +30,7 @@ def test_upcoming_hardcoded(monkeypatch):
     }
 
     monkeypatch.setattr(
-        "gtfs_jp_wayfinder.services.wayfinder_adapter.get_time_from_trip_and_stop",
+        "src.gtfs_jp_wayfinder.services.wayfinder_adapter.get_time_from_trip_and_stop",
         lambda trip_id, stop_id: time_map[trip_id],
     )
 

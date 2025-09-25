@@ -1,7 +1,7 @@
 from fastapi.testclient import TestClient
 
-from gtfs_jp_wayfinder.main import app
 from src.gtfs_jp_wayfinder import models
+from src.gtfs_jp_wayfinder.main import app
 
 client = TestClient(app)
 
@@ -22,7 +22,7 @@ def test_trips_batch_and_get_trip(monkeypatch):
         )
 
     monkeypatch.setattr(
-        "gtfs_jp_wayfinder.services.wayfinder_adapter.get_trip_info_batch",
+        "src.gtfs_jp_wayfinder.services.wayfinder_adapter.get_trip_info_batch",
         fake_batch,
     )
 
@@ -43,7 +43,7 @@ def test_trips_batch_and_get_trip(monkeypatch):
         return models.TripInfoList(trips=[])
 
     monkeypatch.setattr(
-        "gtfs_jp_wayfinder.services.wayfinder_adapter.get_trip_info_batch",
+        "src.gtfs_jp_wayfinder.services.wayfinder_adapter.get_trip_info_batch",
         fake_empty,
     )
     resp3 = client.get("/trips/nope")
@@ -53,13 +53,13 @@ def test_trips_batch_and_get_trip(monkeypatch):
 def test_path_search_and_travels(monkeypatch):
     # shortest path
     monkeypatch.setattr(
-        "gtfs_jp_wayfinder.services.wayfinder_adapter.get_shortest_path",
+        "src.gtfs_jp_wayfinder.services.wayfinder_adapter.get_shortest_path",
         lambda a, b, s=None: ["A", "B", "C"],
     )
 
     # travels: return a list of dicts (adapter may return objects; dicts should be passed through)
     monkeypatch.setattr(
-        "gtfs_jp_wayfinder.services.wayfinder_adapter.get_travels_from_path",
+        "src.gtfs_jp_wayfinder.services.wayfinder_adapter.get_travels_from_path",
         lambda path, s=None: [
             {
                 "trip_id": "t-1",
@@ -88,7 +88,7 @@ def test_upcoming_variants(monkeypatch):
 
     # no trips
     monkeypatch.setattr(
-        "gtfs_jp_wayfinder.services.wayfinder_adapter.get_trips_from_stop",
+        "src.gtfs_jp_wayfinder.services.wayfinder_adapter.get_trips_from_stop",
         lambda stop, s=None: None,
     )
     resp = client.get(f"/stops/{stop_id}/upcoming")
@@ -97,11 +97,11 @@ def test_upcoming_variants(monkeypatch):
 
     # with trips and times
     monkeypatch.setattr(
-        "gtfs_jp_wayfinder.services.wayfinder_adapter.get_trips_from_stop",
+        "src.gtfs_jp_wayfinder.services.wayfinder_adapter.get_trips_from_stop",
         lambda stop, s=None: ["tA", "tB"],
     )
     monkeypatch.setattr(
-        "gtfs_jp_wayfinder.services.wayfinder_adapter.get_time_from_trip_and_stop",
+        "src.gtfs_jp_wayfinder.services.wayfinder_adapter.get_time_from_trip_and_stop",
         lambda trip, stop: {"arrival_time": "07:00:00", "departure_time": "07:05:00"},
     )
 
@@ -127,7 +127,7 @@ def test_upcoming_variants(monkeypatch):
         )
 
     monkeypatch.setattr(
-        "gtfs_jp_wayfinder.services.wayfinder_adapter.get_trip_info_batch",
+        "src.gtfs_jp_wayfinder.services.wayfinder_adapter.get_trip_info_batch",
         fake_info,
     )
 

@@ -1,8 +1,8 @@
 import threading
 from typing import Dict, List, Optional
 
-from gtfs_jp_wayfinder.database import AkitaBusWayFinder
-from gtfs_jp_wayfinder.models import (
+from src.gtfs_jp_wayfinder.database import AkitaBusWayFinder
+from src.gtfs_jp_wayfinder.models import (
     TripInfo,
     TripInfoList,
 )

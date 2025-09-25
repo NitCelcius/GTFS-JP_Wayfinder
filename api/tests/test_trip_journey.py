@@ -1,6 +1,6 @@
 from fastapi.testclient import TestClient
 
-from gtfs_jp_wayfinder.main import app
+from src.gtfs_jp_wayfinder.main import app
 
 client = TestClient(app)
 
@@ -8,7 +8,7 @@ client = TestClient(app)
 def test_get_journey_list_and_dataframe(monkeypatch):
     # Case 1: adapter returns list of dicts
     monkeypatch.setattr(
-        "gtfs_jp_wayfinder.services.wayfinder_adapter.get_trip_journey",
+        "src.gtfs_jp_wayfinder.services.wayfinder_adapter.get_trip_journey",
         lambda trip_id, from_stop: [
             {
                 "trip_id": trip_id,
@@ -41,7 +41,7 @@ def test_get_journey_list_and_dataframe(monkeypatch):
             ]
 
     monkeypatch.setattr(
-        "gtfs_jp_wayfinder.services.wayfinder_adapter.get_trip_journey",
+        "src.gtfs_jp_wayfinder.services.wayfinder_adapter.get_trip_journey",
         lambda trip_id, from_stop: FakeDF(),
         raising=False,
     )

@@ -2,8 +2,8 @@ from typing import Optional
 
 from fastapi import APIRouter, HTTPException, Query
 
-from gtfs_jp_wayfinder.services import wayfinder_adapter as adapter
 from src.gtfs_jp_wayfinder import models
+from src.gtfs_jp_wayfinder.services import wayfinder_adapter as adapter
 
 router = APIRouter()
 

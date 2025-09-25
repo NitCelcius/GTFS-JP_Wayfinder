@@ -1,6 +1,6 @@
 from fastapi.testclient import TestClient
 
-from gtfs_jp_wayfinder.main import app
+from src.gtfs_jp_wayfinder.main import app
 
 client = TestClient(app)
 
@@ -20,7 +20,7 @@ def test_trip_stops(monkeypatch):
         ]
 
     monkeypatch.setattr(
-        "gtfs_jp_wayfinder.services.wayfinder_adapter.get_stops_from_trip",
+        "src.gtfs_jp_wayfinder.services.wayfinder_adapter.get_stops_from_trip",
         fake_stops,
     )
 
@@ -34,7 +34,7 @@ def test_trip_stops(monkeypatch):
 def test_trip_passing_and_fare(monkeypatch):
     # get_time_from_trip_and_stop -> TripRecord fields
     monkeypatch.setattr(
-        "gtfs_jp_wayfinder.services.wayfinder_adapter.get_time_from_trip_and_stop",
+        "src.gtfs_jp_wayfinder.services.wayfinder_adapter.get_time_from_trip_and_stop",
         lambda trip_id, stop_id: {
             "arrival_time": "09:00:00",
             "departure_time": "09:05:00",
@@ -51,7 +51,7 @@ def test_trip_passing_and_fare(monkeypatch):
 
     # fare endpoint
     monkeypatch.setattr(
-        "gtfs_jp_wayfinder.services.wayfinder_adapter.get_fare_by_stops",
+        "src.gtfs_jp_wayfinder.services.wayfinder_adapter.get_fare_by_stops",
         lambda f, t: 170,
     )
     resp2 = client.get("/trips/fare?from_id=S1&to_id=S2")
