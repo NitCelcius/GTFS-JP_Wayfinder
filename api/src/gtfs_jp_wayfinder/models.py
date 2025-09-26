@@ -1,3 +1,4 @@
+import datetime
 from typing import List, Optional
 
 from pydantic import BaseModel
@@ -85,8 +86,8 @@ class TripRecord(BaseModel):
     trip_id: str
     stop_id: str
     fare: int
-    departure_time: str
-    arrival_time: str
+    departure_time: datetime.time
+    arrival_time: datetime.time
     model_config = {
         "json_schema_extra": {
             "examples": [

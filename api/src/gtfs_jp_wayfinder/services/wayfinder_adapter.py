@@ -137,3 +137,7 @@ def get_timed_travels_from_path(
     return wf_service._wf.get_timed_travels_from_path(
         path, service_id, begin_time, change_time
     )
+
+
+def get_trip_journey(trip_id: str, from_stop_id: str):
+    return wf_service._wf.get_trip_journey(trip_id, from_stop_id)
