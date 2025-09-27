@@ -76,17 +76,23 @@ export function BusStopSearchPage({
     console.log("Searching for:", query);
   };
 
-  const saveBusStopSearchHistory = async (busStopId: string) => {
-    // Find the selected bus stop to get its details for search history
+  const handleBusStopSelect = async (busStopId: string) => {
+    // Find the selected bus stop to get its name for search history
     const allBusStops = [mockNearestBusStop, ...mockSearchResults];
     const selectedBusStop = allBusStops.find((stop) => stop.id === busStopId);
 
-    // Trust busStopId is valid, save to search history
+    if (selectedBusStop) {
+      await saveBusStopSearchHistory(busStopId, selectedBusStop.name);
+    } else {
+      // Navigate without saving history if bus stop not found
+      onNavigateToBusStopInfo?.(busStopId);
+    }
+  };
+
+  const saveBusStopSearchHistory = async (busStopId: string, name: string) => {
+    // Trust busStopId and name are valid, save to search history
     try {
-      if (!selectedBusStop) {
-        throw new Error(`Bus stop not found for ID: ${busStopId}`);
-      }
-      await addBusStopSearch(busStopId, selectedBusStop.name);
+      await addBusStopSearch(busStopId, name);
     } catch (error) {
       console.error("Failed to save bus stop search history:", error);
       // Continue with navigation even if history save fails
@@ -125,7 +131,7 @@ export function BusStopSearchPage({
             <BusStopList
               busStops={[mockNearestBusStop]}
               showHeader={false}
-              onBusStopSelect={saveBusStopSearchHistory}
+              onBusStopSelect={handleBusStopSelect}
             />
           )}
         </div>
@@ -136,7 +142,7 @@ export function BusStopSearchPage({
             busStops={mockSearchResults}
             showHeader={false}
             headerText="検索結果"
-            onBusStopSelect={saveBusStopSearchHistory}
+            onBusStopSelect={handleBusStopSelect}
           />
         </div>
       </div>

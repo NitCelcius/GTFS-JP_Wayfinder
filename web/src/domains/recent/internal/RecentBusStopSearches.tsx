@@ -4,6 +4,13 @@ import { BusStopCard } from "@/components/common";
 
 import { RecentBusStopSearch } from "../types";
 
+// Utility function to format Date to Japanese time string
+function formatSearchedAt(date: Date): string {
+  const hours = date.getHours().toString().padStart(2, "0");
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+  return `今日 ${hours}:${minutes}`;
+}
+
 interface RecentBusStopSearchesProps {
   recentBusStops: RecentBusStopSearch[];
   onBusStopSelect?: (busStopId: string) => void;
@@ -49,12 +56,12 @@ function RecentBusStopItem({
   return (
     <BusStopCard
       title={busStop.name}
-      subtitle="" // Distance will be calculated dynamically in UI if needed
+      subtitle="TODO: Distance calculation" // TODO: Calculate distance dynamically in UI
       icon={<LocationIcon />}
       actionLabel="選択"
       onClick={handleCardClick}
       onActionClick={handleActionClick}
-      secondaryInfo={busStop.searchedAt}
+      secondaryInfo={formatSearchedAt(busStop.searchedAt)}
     />
   );
 }

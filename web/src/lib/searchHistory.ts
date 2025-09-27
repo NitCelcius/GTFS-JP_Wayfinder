@@ -16,13 +16,6 @@ interface SearchHistoryDB extends IDBDatabase {
 class SearchHistoryService {
   private db: SearchHistoryDB | null = null;
 
-  private formatTimestamp(timestamp: number): string {
-    const now = new Date(timestamp);
-    const hours = now.getHours().toString().padStart(2, "0");
-    const minutes = now.getMinutes().toString().padStart(2, "0");
-    return `今日 ${hours}:${minutes}`;
-  }
-
   async initDB(): Promise<SearchHistoryDB> {
     if (this.db) {
       return this.db;
@@ -48,7 +41,7 @@ class SearchHistoryService {
           const busStopStore = db.createObjectStore(BUS_STOP_STORE, {
             keyPath: "id",
           });
-          busStopStore.createIndex("timestamp", "timestamp", {
+          busStopStore.createIndex("searchedAt", "searchedAt", {
             unique: false,
           });
         }
@@ -58,7 +51,7 @@ class SearchHistoryService {
           const routeStore = db.createObjectStore(ROUTE_SEARCH_STORE, {
             keyPath: "id",
           });
-          routeStore.createIndex("timestamp", "timestamp", { unique: false });
+          routeStore.createIndex("searchedAt", "searchedAt", { unique: false });
         }
       };
     });
@@ -74,13 +67,13 @@ class SearchHistoryService {
   // Bus stop search history methods
   async addBusStopSearch(stopId: string, name: string): Promise<void> {
     const db = await this.getDB();
-    const timestamp = Date.now();
+    const now = new Date();
 
     // Create a unique search record - only save essential data
     const search = {
-      id: `${stopId}-${timestamp}`, // Make unique with timestamp
+      id: `${stopId}-${now.getTime()}`, // Make unique with timestamp
       name,
-      timestamp, // Save raw timestamp for formatting in UI
+      searchedAt: now, // Save JS Date object
     };
 
     return new Promise((resolve, reject) => {
@@ -101,23 +94,37 @@ class SearchHistoryService {
   private async getSearchHistory<T>(
     storeName: string,
     limit: number,
-    mapRecord: (record: Record<string, unknown>) => T
+    mapRecord: (record: Record<string, unknown>) => T,
+    startIndex: number = 0
   ): Promise<T[]> {
     const db = await this.getDB();
 
     return new Promise((resolve, reject) => {
       const transaction = db.transaction([storeName], "readonly");
       const store = transaction.objectStore(storeName);
-      const index = store.index("timestamp");
+      const index = store.index("searchedAt");
       const request = index.openCursor(null, "prev"); // Most recent first
       const results: T[] = [];
+      let currentIndex = 0;
 
       request.onsuccess = (event) => {
         const cursor = (event.target as IDBRequest).result;
-        if (cursor && results.length < limit) {
-          const record = cursor.value;
-          results.push(mapRecord(record));
-          cursor.continue();
+        if (cursor) {
+          // Skip records before startIndex
+          if (currentIndex < startIndex) {
+            currentIndex++;
+            cursor.continue();
+            return;
+          }
+
+          // Collect records within the limit
+          if (results.length < limit) {
+            const record = cursor.value;
+            results.push(mapRecord(record));
+            cursor.continue();
+          } else {
+            resolve(results);
+          }
         } else {
           resolve(results);
         }
@@ -129,25 +136,33 @@ class SearchHistoryService {
     });
   }
 
-  async getBusStopSearches(limit: number = 10): Promise<RecentBusStopSearch[]> {
-    return this.getSearchHistory(BUS_STOP_STORE, limit, (record) => ({
-      id: record.id,
-      name: record.name,
-      searchedAt: this.formatTimestamp(record.timestamp as number),
-    }));
+  async getBusStopSearches(
+    limit: number = 10,
+    startIndex: number = 0
+  ): Promise<RecentBusStopSearch[]> {
+    return this.getSearchHistory(
+      BUS_STOP_STORE,
+      limit,
+      (record) => ({
+        id: record.id,
+        name: record.name,
+        searchedAt: record.searchedAt as Date, // Pass timestamp as-is
+      }),
+      startIndex
+    );
   }
 
   // Route search history methods
   async addRouteSearch(fromStation: string, toStation: string): Promise<void> {
     const db = await this.getDB();
-    const timestamp = Date.now();
+    const now = new Date();
 
     // Create a unique search record - only save essential data
     const search = {
-      id: `${fromStation}-${toStation}-${timestamp}`, // Make unique with timestamp
+      id: `${fromStation}-${toStation}-${now.getTime()}`, // Make unique with timestamp
       fromStation,
       toStation,
-      timestamp, // Save raw timestamp for formatting in UI
+      searchedAt: now, // Save JS Date object
     };
 
     return new Promise((resolve, reject) => {
@@ -165,13 +180,21 @@ class SearchHistoryService {
     });
   }
 
-  async getRouteSearches(limit: number = 10): Promise<RecentRouteSearch[]> {
-    return this.getSearchHistory(ROUTE_SEARCH_STORE, limit, (record) => ({
-      id: record.id,
-      fromStation: record.fromStation,
-      toStation: record.toStation,
-      searchedAt: this.formatTimestamp(record.timestamp as number),
-    }));
+  async getRouteSearches(
+    limit: number = 10,
+    startIndex: number = 0
+  ): Promise<RecentRouteSearch[]> {
+    return this.getSearchHistory(
+      ROUTE_SEARCH_STORE,
+      limit,
+      (record) => ({
+        id: record.id,
+        fromStation: record.fromStation,
+        toStation: record.toStation,
+        searchedAt: record.searchedAt as Date, // Pass timestamp as-is
+      }),
+      startIndex
+    );
   }
 
   async clearBusStopSearchHistory(): Promise<void> {

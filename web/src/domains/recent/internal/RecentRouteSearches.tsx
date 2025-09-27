@@ -1,5 +1,12 @@
 import { RecentRouteSearch } from "../types";
 
+// Utility function to format Date to Japanese time string
+function formatSearchedAt(date: Date): string {
+  const hours = date.getHours().toString().padStart(2, "0");
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+  return `今日 ${hours}:${minutes}`;
+}
+
 interface RecentRouteSearchesProps {
   recentRoutes: RecentRouteSearch[];
   // call with (fromStation, toStation) to match RecentPage handler
@@ -46,7 +53,7 @@ function RecentRouteItem({
         <div className="flex flex-col">
           <span className="text-[1.125rem]">{`${route.fromStation} → ${route.toStation}`}</span>
           <div className="text-[0.875rem] text-gray-600">
-            {route.searchedAt}
+            {formatSearchedAt(route.searchedAt)}
           </div>
         </div>
       </div>
