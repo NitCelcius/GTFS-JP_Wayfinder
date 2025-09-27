@@ -11,6 +11,10 @@ import { client as generatedClient } from "@/api/client.gen";
 const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8002";
 generatedClient.setConfig({ baseUrl });
 
+export function getCurrentApiBaseUrl(): string {
+  return baseUrl;
+}
+
 export class ApiClient {
   private static instance: ApiClient;
 
