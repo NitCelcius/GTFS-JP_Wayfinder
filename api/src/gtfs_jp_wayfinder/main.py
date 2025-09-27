@@ -1,4 +1,5 @@
 import logging
+import os
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -9,6 +10,33 @@ from gtfs_jp_wayfinder.services import wayfinder_adapter
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
+
+
+def get_cors_origins():
+    """Get CORS origins from environment variable with sensible defaults."""
+    cors_origins = os.getenv("CORS_ORIGINS")
+
+    if cors_origins:
+        # Split comma-separated origins and strip whitespace
+        origins = [origin.strip() for origin in cors_origins.split(",")]
+        logger.info(f"CORS origins from environment: {origins}")
+        return origins
+
+    # Default origins for development
+    default_origins = [
+        "http://localhost:3000",  # Next.js default
+        "http://localhost:8000",  # Alternative port
+        "http://localhost:8002",  # API port (for testing)
+        "http://127.0.0.1:3000",  # Localhost alternative
+        "http://127.0.0.1:8000",  # Localhost alternative
+        "http://127.0.0.1:8002",  # Localhost alternative
+    ]
+
+    logger.warning(
+        f"CORS_ORIGINS not set, using defaults: {default_origins}. "
+        "Set CORS_ORIGINS environment variable for production."
+    )
+    return default_origins
 
 
 @asynccontextmanager
@@ -36,7 +64,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="GTFS-JP Wayfinder API", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:8000"],
+    allow_origins=get_cors_origins(),
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
