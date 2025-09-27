@@ -28,6 +28,7 @@ function MainContent({
 
   const handleSearch = () => {
     if (isSearchEnabled) {
+      // TODO: implement real search page
       onSearch(originValue, destinationValue);
     }
   };
@@ -63,6 +64,7 @@ export function RouteSearchPage({
 
   const handleSearch = async (origin: string, destination: string) => {
     try {
+      // TODO: consider adding to search history after search completes
       // Save to search history
       await addRouteSearch(origin, destination);
     } catch (error) {

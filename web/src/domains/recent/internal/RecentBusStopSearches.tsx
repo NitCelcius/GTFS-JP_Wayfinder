@@ -49,7 +49,7 @@ function RecentBusStopItem({
   return (
     <BusStopCard
       title={busStop.name}
-      subtitle={busStop.distance}
+      subtitle="" // Distance will be calculated dynamically in UI if needed
       icon={<LocationIcon />}
       actionLabel="選択"
       onClick={handleCardClick}

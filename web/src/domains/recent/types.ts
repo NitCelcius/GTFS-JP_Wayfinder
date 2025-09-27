@@ -1,7 +1,6 @@
 export interface RecentBusStopSearch {
   id: string;
   name: string;
-  distance: string;
   searchedAt: string;
 }
 

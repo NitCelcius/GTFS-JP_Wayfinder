@@ -83,7 +83,10 @@ export function BusStopSearchPage({
 
     // Trust busStopId is valid, save to search history
     try {
-      await addBusStopSearch(busStopId, selectedBusStop?.name || "Unknown");
+      if (!selectedBusStop) {
+        throw new Error(`Bus stop not found for ID: ${busStopId}`);
+      }
+      await addBusStopSearch(busStopId, selectedBusStop.name);
     } catch (error) {
       console.error("Failed to save bus stop search history:", error);
       // Continue with navigation even if history save fails

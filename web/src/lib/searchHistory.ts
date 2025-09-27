@@ -16,18 +16,11 @@ interface SearchHistoryDB extends IDBDatabase {
 class SearchHistoryService {
   private db: SearchHistoryDB | null = null;
 
-  private formatSearchTimestamp(timestamp: number = Date.now()): {
-    timestamp: number;
-    searchedAt: string;
-  } {
+  private formatTimestamp(timestamp: number): string {
     const now = new Date(timestamp);
     const hours = now.getHours().toString().padStart(2, "0");
     const minutes = now.getMinutes().toString().padStart(2, "0");
-
-    return {
-      timestamp,
-      searchedAt: `今日 ${hours}:${minutes}`,
-    };
+    return `今日 ${hours}:${minutes}`;
   }
 
   async initDB(): Promise<SearchHistoryDB> {
@@ -55,7 +48,7 @@ class SearchHistoryService {
           const busStopStore = db.createObjectStore(BUS_STOP_STORE, {
             keyPath: "id",
           });
-          busStopStore.createIndex("searchedAt", "searchedAt", {
+          busStopStore.createIndex("timestamp", "timestamp", {
             unique: false,
           });
         }
@@ -65,7 +58,7 @@ class SearchHistoryService {
           const routeStore = db.createObjectStore(ROUTE_SEARCH_STORE, {
             keyPath: "id",
           });
-          routeStore.createIndex("searchedAt", "searchedAt", { unique: false });
+          routeStore.createIndex("timestamp", "timestamp", { unique: false });
         }
       };
     });
@@ -81,25 +74,19 @@ class SearchHistoryService {
   // Bus stop search history methods
   async addBusStopSearch(stopId: string, name: string): Promise<void> {
     const db = await this.getDB();
-    const { timestamp, searchedAt } = this.formatSearchTimestamp();
+    const timestamp = Date.now();
 
-    // Create a unique search record
-    const search: RecentBusStopSearch = {
+    // Create a unique search record - only save essential data
+    const search = {
       id: `${stopId}-${timestamp}`, // Make unique with timestamp
       name,
-      distance: "", // UI expects distance field, but not stored in DB
-      searchedAt,
+      timestamp, // Save raw timestamp for formatting in UI
     };
 
     return new Promise((resolve, reject) => {
       const transaction = db.transaction([BUS_STOP_STORE], "readwrite");
       const store = transaction.objectStore(BUS_STOP_STORE);
-      const request = store.add({
-        id: search.id,
-        name: search.name,
-        searchedAt: search.searchedAt,
-        timestamp,
-      });
+      const request = store.add(search);
 
       request.onsuccess = () => {
         resolve();
@@ -114,14 +101,14 @@ class SearchHistoryService {
   private async getSearchHistory<T>(
     storeName: string,
     limit: number,
-    mapRecord: (record: Record<string, unknown>) => T,
+    mapRecord: (record: Record<string, unknown>) => T
   ): Promise<T[]> {
     const db = await this.getDB();
 
     return new Promise((resolve, reject) => {
       const transaction = db.transaction([storeName], "readonly");
       const store = transaction.objectStore(storeName);
-      const index = store.index("searchedAt");
+      const index = store.index("timestamp");
       const request = index.openCursor(null, "prev"); // Most recent first
       const results: T[] = [];
 
@@ -146,27 +133,27 @@ class SearchHistoryService {
     return this.getSearchHistory(BUS_STOP_STORE, limit, (record) => ({
       id: record.id,
       name: record.name,
-      distance: "", // Distance not stored in DB
-      searchedAt: record.searchedAt,
+      searchedAt: this.formatTimestamp(record.timestamp as number),
     }));
   }
 
   // Route search history methods
   async addRouteSearch(fromStation: string, toStation: string): Promise<void> {
     const db = await this.getDB();
-    const { timestamp, searchedAt } = this.formatSearchTimestamp();
+    const timestamp = Date.now();
 
-    const search: RecentRouteSearch = {
+    // Create a unique search record - only save essential data
+    const search = {
       id: `${fromStation}-${toStation}-${timestamp}`, // Make unique with timestamp
       fromStation,
       toStation,
-      searchedAt,
+      timestamp, // Save raw timestamp for formatting in UI
     };
 
     return new Promise((resolve, reject) => {
       const transaction = db.transaction([ROUTE_SEARCH_STORE], "readwrite");
       const store = transaction.objectStore(ROUTE_SEARCH_STORE);
-      const request = store.add({ ...search, timestamp });
+      const request = store.add(search);
 
       request.onsuccess = () => {
         resolve();
@@ -183,7 +170,7 @@ class SearchHistoryService {
       id: record.id,
       fromStation: record.fromStation,
       toStation: record.toStation,
-      searchedAt: record.searchedAt,
+      searchedAt: this.formatTimestamp(record.timestamp as number),
     }));
   }
 
