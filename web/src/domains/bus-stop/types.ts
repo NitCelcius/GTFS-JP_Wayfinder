@@ -19,7 +19,9 @@ export interface JourneyStop {
   id: string;
   name: string;
   type: "current" | "intermediate" | "destination";
-  time: string;
+  time: string; // For backward compatibility, typically arrival_time
+  arrivalTime?: string;
+  departureTime?: string;
   cost?: number;
   label?: string;
 }

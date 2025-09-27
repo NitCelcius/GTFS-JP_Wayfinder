@@ -67,9 +67,11 @@ export function convertTripStopsToJourneyStops(
 
     journeyStops.push({
       id: stop.stop_id,
-      name: stop.stop_headsign || stop.stop_id,
+      name: stop.stop_name || "不明",
       type,
-      time: formatTime(stop.arrival_time),
+      time: formatTime(stop.arrival_time), // Backward compatibility
+      arrivalTime: formatTime(stop.arrival_time),
+      departureTime: formatTime(stop.departure_time),
       cost: cost && cost >= 0 ? cost : undefined,
       label,
     });
