@@ -117,8 +117,8 @@ async def get_upcoming(
     expand: Optional[str] = Query(
         None, description="展開トークン (例: trip_info, stops)"
     ),
-    limit: int = Query(
-        100,
+    limit: Optional[int] = Query(
+        None,
         ge=1,
         description="クライアント側の最大件数",
     ),
@@ -126,9 +126,13 @@ async def get_upcoming(
     # validate expand tokens
     tokens = parse_expand(expand)
 
-    # enforce limit if provided via environment
-    max_batch = int(__import__("os").environ.get("API_BATCH_MAX_TRIP_IDS", "10"))
-    if limit is not None and limit > max_batch:
+    # Get max batch limit from environment
+    max_batch = int(__import__("os").environ.get("API_BATCH_MAX_TRIP_IDS", "100"))
+
+    # If no limit provided, use max_batch as default; otherwise validate it
+    if limit is None:
+        limit = max_batch
+    elif limit > max_batch:
         raise HTTPException(
             status_code=400, detail=f"limit too large; max is {max_batch}"
         )
