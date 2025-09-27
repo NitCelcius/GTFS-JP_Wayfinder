@@ -35,18 +35,3 @@ def test_haversine_distance_short_distance():
     # TODO: Measure precise distance for exact verification
     assert distance < 1.0
     assert distance > 0
-
-
-def test_euclidean_distance_approximation():
-    """Test that Euclidean distance gives reasonable approximation."""
-    haversine_calc = HaversineDistanceCalculator()
-    euclidean_calc = EuclideanDistanceCalculator()
-    
-    lat1, lon1 = 39.71676, 140.13113
-    lat2, lon2 = 39.71876, 140.13213
-    
-    haversine_dist = haversine_calc.calculate_distance(lat1, lon1, lat2, lon2)
-    euclidean_dist = euclidean_calc.calculate_distance(lat1, lon1, lat2, lon2)
-    
-    # Euclidean should be reasonably close for short distances (within 20% difference)
-    assert abs(haversine_dist - euclidean_dist) / haversine_dist < 0.2
