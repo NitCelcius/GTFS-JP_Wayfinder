@@ -5,7 +5,7 @@ from gtfs_jp_wayfinder.main import app
 client = TestClient(app)
 
 
-def test_upcoming_stops_expansion(monkeypatch):
+def test_upcoming_stops_expansion(monkeypatch, client):
     """Test that expand=stops properly populates the stops field"""
     stop_id = "S100"
 
@@ -18,6 +18,19 @@ def test_upcoming_stops_expansion(monkeypatch):
     monkeypatch.setattr(
         "gtfs_jp_wayfinder.services.wayfinder_adapter.get_time_from_trip_and_stop",
         lambda trip, stop: {"arrival_time": "07:00:00", "departure_time": "07:05:00"},
+    )
+
+    # Mock the new batch function
+    monkeypatch.setattr(
+        "gtfs_jp_wayfinder.services.wayfinder_adapter.get_times_from_trips_and_stop_batch",
+        lambda trip_ids, stop_id, **kwargs: {
+            trip_id: {
+                "trip_id": trip_id,
+                "arrival_time": "07:00:00",
+                "departure_time": "07:05:00",
+            }
+            for trip_id in trip_ids
+        },
     )
 
     # Mock stops from trip with stop names
@@ -63,7 +76,7 @@ def test_upcoming_stops_expansion(monkeypatch):
     assert body2["buses"][0]["stops"][1]["stop_name"] == "Next Stop Name"
 
 
-def test_upcoming_combined_expansion(monkeypatch):
+def test_upcoming_combined_expansion(monkeypatch, client):
     """Test that expand=trip_info,stops works correctly together"""
     stop_id = "S100"
 
@@ -76,6 +89,19 @@ def test_upcoming_combined_expansion(monkeypatch):
     monkeypatch.setattr(
         "gtfs_jp_wayfinder.services.wayfinder_adapter.get_time_from_trip_and_stop",
         lambda trip, stop: {"arrival_time": "07:00:00", "departure_time": "07:05:00"},
+    )
+
+    # Mock the new batch function
+    monkeypatch.setattr(
+        "gtfs_jp_wayfinder.services.wayfinder_adapter.get_times_from_trips_and_stop_batch",
+        lambda trip_ids, stop_id, **kwargs: {
+            trip_id: {
+                "trip_id": trip_id,
+                "arrival_time": "07:00:00",
+                "departure_time": "07:05:00",
+            }
+            for trip_id in trip_ids
+        },
     )
 
     # Mock trip info

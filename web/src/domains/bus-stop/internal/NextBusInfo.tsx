@@ -63,6 +63,7 @@ export function NextBusInfo({
           >
             ← 前のバス
           </button>
+          {/* TODO: implement navButton feature, but now it's disabled */}
           <button className={styles.navButtonDisabled} onClick={handleNextBus}>
             次のバス →
           </button>

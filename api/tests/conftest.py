@@ -9,7 +9,7 @@ from fastapi.testclient import TestClient
 from gtfs_jp_wayfinder.main import app
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="class")
 def client():
     """Create a TestClient with initialized wayfinder."""
     # Initialize wayfinder synchronously for the TestClient
@@ -35,7 +35,7 @@ def client():
 def setup_test_environment():
     """Setup environment variables for testing."""
     # Set test environment variables
-    os.environ.setdefault("API_NEARBY_STOPS_MAX_LIMIT", "100")
+    os.environ.setdefault("API_NEARBY_STOPS_MAX_LIMIT", "20")
     os.environ.setdefault("API_BATCH_MAX_TRIP_IDS", "10")
 
     yield
