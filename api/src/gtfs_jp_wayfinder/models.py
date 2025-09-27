@@ -132,6 +132,7 @@ class TripTimedStop(BaseModel):
     stop_id: str
     stop_sequence: int
     stop_headsign: str
+    stop_name: Optional[str] = None
 
     model_config = {
         "json_schema_extra": {
@@ -143,6 +144,7 @@ class TripTimedStop(BaseModel):
                     "stop_id": "1021_01",
                     "stop_sequence": 1,
                     "stop_headsign": "中央公園",
+                    "stop_name": "中央公園",
                 }
             ]
         }

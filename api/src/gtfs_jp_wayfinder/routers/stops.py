@@ -161,7 +161,7 @@ async def get_upcoming(
         if "trip_info" in tokens:
             info = adapter.get_trip_info_batch(trip_ids).trips
             info_map = {t.trip_id: t for t in info}
-        
+
         # Fetch stops data if requested
         stops_map = {}
         if "stops" in tokens:

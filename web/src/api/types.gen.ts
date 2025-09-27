@@ -234,6 +234,10 @@ export type TripTimedStop = {
      * Stop Headsign
      */
     stop_headsign: string;
+    /**
+     * Stop Name
+     */
+    stop_name?: string | null;
 };
 
 /**
@@ -417,103 +421,6 @@ export type BatchTripsTripsBatchPostResponses = {
 
 export type BatchTripsTripsBatchPostResponse = BatchTripsTripsBatchPostResponses[keyof BatchTripsTripsBatchPostResponses];
 
-export type GetTripTripsTripIdGetData = {
-    body?: never;
-    path: {
-        /**
-         * Trip Id
-         */
-        trip_id: string;
-    };
-    query?: never;
-    url: '/trips/{trip_id}';
-};
-
-export type GetTripTripsTripIdGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type GetTripTripsTripIdGetError = GetTripTripsTripIdGetErrors[keyof GetTripTripsTripIdGetErrors];
-
-export type GetTripTripsTripIdGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: TripInfo;
-};
-
-export type GetTripTripsTripIdGetResponse = GetTripTripsTripIdGetResponses[keyof GetTripTripsTripIdGetResponses];
-
-export type TripStopsTripsTripIdStopsGetData = {
-    body?: never;
-    path: {
-        /**
-         * Trip Id
-         */
-        trip_id: string;
-    };
-    query?: never;
-    url: '/trips/{trip_id}/stops';
-};
-
-export type TripStopsTripsTripIdStopsGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type TripStopsTripsTripIdStopsGetError = TripStopsTripsTripIdStopsGetErrors[keyof TripStopsTripsTripIdStopsGetErrors];
-
-export type TripStopsTripsTripIdStopsGetResponses = {
-    /**
-     * Response Trip Stops Trips  Trip Id  Stops Get
-     * Successful Response
-     */
-    200: Array<TripTimedStop>;
-};
-
-export type TripStopsTripsTripIdStopsGetResponse = TripStopsTripsTripIdStopsGetResponses[keyof TripStopsTripsTripIdStopsGetResponses];
-
-export type TripPassingTripsTripIdPassingGetData = {
-    body?: never;
-    path: {
-        /**
-         * Trip Id
-         */
-        trip_id: string;
-    };
-    query: {
-        /**
-         * Stop Id
-         * 停留所ID
-         */
-        stop_id: string;
-    };
-    url: '/trips/{trip_id}/passing';
-};
-
-export type TripPassingTripsTripIdPassingGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type TripPassingTripsTripIdPassingGetError = TripPassingTripsTripIdPassingGetErrors[keyof TripPassingTripsTripIdPassingGetErrors];
-
-export type TripPassingTripsTripIdPassingGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: TripRecord;
-};
-
-export type TripPassingTripsTripIdPassingGetResponse = TripPassingTripsTripIdPassingGetResponses[keyof TripPassingTripsTripIdPassingGetResponses];
-
 export type FareTripsFareGetData = {
     body?: never;
     path?: never;
@@ -627,6 +534,103 @@ export type GetJourneyTripsJourneyGetResponses = {
 };
 
 export type GetJourneyTripsJourneyGetResponse = GetJourneyTripsJourneyGetResponses[keyof GetJourneyTripsJourneyGetResponses];
+
+export type GetTripTripsTripIdGetData = {
+    body?: never;
+    path: {
+        /**
+         * Trip Id
+         */
+        trip_id: string;
+    };
+    query?: never;
+    url: '/trips/{trip_id}';
+};
+
+export type GetTripTripsTripIdGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetTripTripsTripIdGetError = GetTripTripsTripIdGetErrors[keyof GetTripTripsTripIdGetErrors];
+
+export type GetTripTripsTripIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: TripInfo;
+};
+
+export type GetTripTripsTripIdGetResponse = GetTripTripsTripIdGetResponses[keyof GetTripTripsTripIdGetResponses];
+
+export type TripStopsTripsTripIdStopsGetData = {
+    body?: never;
+    path: {
+        /**
+         * Trip Id
+         */
+        trip_id: string;
+    };
+    query?: never;
+    url: '/trips/{trip_id}/stops';
+};
+
+export type TripStopsTripsTripIdStopsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type TripStopsTripsTripIdStopsGetError = TripStopsTripsTripIdStopsGetErrors[keyof TripStopsTripsTripIdStopsGetErrors];
+
+export type TripStopsTripsTripIdStopsGetResponses = {
+    /**
+     * Response Trip Stops Trips  Trip Id  Stops Get
+     * Successful Response
+     */
+    200: Array<TripTimedStop>;
+};
+
+export type TripStopsTripsTripIdStopsGetResponse = TripStopsTripsTripIdStopsGetResponses[keyof TripStopsTripsTripIdStopsGetResponses];
+
+export type TripPassingTripsTripIdPassingGetData = {
+    body?: never;
+    path: {
+        /**
+         * Trip Id
+         */
+        trip_id: string;
+    };
+    query: {
+        /**
+         * Stop Id
+         * 停留所ID
+         */
+        stop_id: string;
+    };
+    url: '/trips/{trip_id}/passing';
+};
+
+export type TripPassingTripsTripIdPassingGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type TripPassingTripsTripIdPassingGetError = TripPassingTripsTripIdPassingGetErrors[keyof TripPassingTripsTripIdPassingGetErrors];
+
+export type TripPassingTripsTripIdPassingGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: TripRecord;
+};
+
+export type TripPassingTripsTripIdPassingGetResponse = TripPassingTripsTripIdPassingGetResponses[keyof TripPassingTripsTripIdPassingGetResponses];
 
 export type SearchPathPathSearchGetData = {
     body?: never;
