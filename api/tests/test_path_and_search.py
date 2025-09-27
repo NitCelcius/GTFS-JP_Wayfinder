@@ -1,11 +1,4 @@
-from fastapi.testclient import TestClient
-
-from gtfs_jp_wayfinder.main import app
-
-client = TestClient(app)
-
-
-def test_search_stops(monkeypatch):
+def test_search_stops(monkeypatch, client):
     # fake _wf with get_stop_id that returns an object with to_dict
     class FakeRes:
         def to_dict(self, _):
@@ -24,7 +17,7 @@ def test_search_stops(monkeypatch):
     }
 
 
-def test_path_timed_search(monkeypatch):
+def test_path_timed_search(monkeypatch, client):
     # shortest path
     monkeypatch.setattr(
         "gtfs_jp_wayfinder.services.wayfinder_adapter.get_shortest_path",
