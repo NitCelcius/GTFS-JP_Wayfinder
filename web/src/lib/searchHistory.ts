@@ -146,7 +146,7 @@ class SearchHistoryService {
       (record) => ({
         id: record.id,
         name: record.name,
-        searchedAt: record.searchedAt as Date, // Pass timestamp as-is
+        searchedAt: record.searchedAt, // No assertion needed - already Date object
       }),
       startIndex
     );
@@ -191,7 +191,7 @@ class SearchHistoryService {
         id: record.id,
         fromStation: record.fromStation,
         toStation: record.toStation,
-        searchedAt: record.searchedAt as Date, // Pass timestamp as-is
+        searchedAt: record.searchedAt, // No assertion needed - already Date object
       }),
       startIndex
     );

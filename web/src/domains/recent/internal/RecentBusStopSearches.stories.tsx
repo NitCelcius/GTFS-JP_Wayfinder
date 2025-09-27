@@ -23,20 +23,17 @@ const sampleBusStops: RecentBusStopSearch[] = [
   {
     id: "1",
     name: "中央公園",
-    distance: "120m",
-    searchedAt: "2時間前",
+    searchedAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
   },
   {
     id: "2",
     name: "東駅",
-    distance: "300m",
-    searchedAt: "昨日",
+    searchedAt: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
   },
   {
     id: "3",
     name: "あきた芸術劇場ミルハス・にぎわい交流館 AU 前",
-    distance: "500m",
-    searchedAt: "3日前",
+    searchedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
   },
 ];
 
