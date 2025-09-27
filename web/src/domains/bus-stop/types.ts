@@ -34,6 +34,8 @@ export interface BusStopInfo {
 
 // Re-exported API types for internal use
 export type {
+  NearbyStop,
+  NearbyStopsResponse,
   UpcomingBusEnriched as UpcomingBusEnrichedData,
   EnrichedTrip as EnrichedTripData,
   TripTimedStop as TripTimedStopData,

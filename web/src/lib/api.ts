@@ -1,5 +1,6 @@
 // API client wrapper with error handling and request configuration
 import {
+  getNearbyStopsStopsNearbyGet,
   getStopStopsStopIdGet,
   getUpcomingStopsStopIdUpcomingGet,
   searchPathPathSearchGet,
@@ -89,6 +90,21 @@ export class ApiClient {
     } catch (error) {
       console.error("API Error:", error);
       throw new Error("Failed to search routes");
+    }
+  }
+
+  async getNearbyStops(lat: number, lon: number, limit?: number) {
+    try {
+      return await getNearbyStopsStopsNearbyGet({
+        query: {
+          lat,
+          lon,
+          ...(limit && { limit }),
+        },
+      });
+    } catch (error) {
+      console.error("API Error:", error);
+      throw new Error("Failed to fetch nearby stops");
     }
   }
 }

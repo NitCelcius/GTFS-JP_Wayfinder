@@ -1,6 +1,7 @@
 // Conversion logic for transforming API responses to domain types
 import type {
   EnrichedTripData,
+  NearbyStop,
   TripTimedStopData,
   UpcomingBusEnrichedData,
 } from "./types";
@@ -116,4 +117,25 @@ export function convertUpcomingBusToBusStopInfo(
  */
 export function calculateDistance(): string {
   return "";
+}
+
+/**
+ * Convert NearbyStop from API to BusStop domain type
+ */
+export function convertNearbyStopToBusStop(nearbyStop: NearbyStop): BusStop {
+  return {
+    id: nearbyStop.stop_id,
+    name: nearbyStop.stop_name,
+    distance: formatDistance(nearbyStop.distance_km),
+  };
+}
+
+/**
+ * Format distance in km to a user-friendly string
+ */
+function formatDistance(distanceKm: number): string {
+  if (distanceKm < 1) {
+    return `${Math.round(distanceKm * 1000)}m`;
+  }
+  return `${distanceKm.toFixed(1)}km`;
 }
