@@ -60,6 +60,7 @@ export class ApiClient {
         path: { stop_id: stopId },
         query: {
           expand: "trip_info,stops",
+          limit: 1,
           ...(serviceId && { service_id: serviceId }),
           ...(limit && { limit }),
         },
