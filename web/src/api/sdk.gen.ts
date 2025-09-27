@@ -42,7 +42,7 @@ export const searchStopsStopsGet = <ThrowOnError extends boolean = false>(option
 
 /**
  * 停留所の発着予定取得
- * 指定停留所に来るバスの運行IDと到着/出発時刻を返します。`expand=trip_info` で行き方情報を付与します。
+ * 指定停留所に来るバスの運行IDと到着/出発時刻を返します。`expand=trip_info` で経路情報を付与します。
  */
 export const getUpcomingStopsStopIdUpcomingGet = <ThrowOnError extends boolean = false>(options: Options<GetUpcomingStopsStopIdUpcomingGetData, ThrowOnError>) => {
     return (options.client ?? client).get<GetUpcomingStopsStopIdUpcomingGetResponses, GetUpcomingStopsStopIdUpcomingGetErrors, ThrowOnError>({
@@ -111,8 +111,8 @@ export const fareTripsFareGet = <ThrowOnError extends boolean = false>(options: 
 };
 
 /**
- * 行き方と便の取得
- * 最短行き方とその行き方に沿った便（travels）を返します。
+ * 経路と便の取得
+ * 最短経路とその経路に沿った便（travels）を返します。
  */
 export const getConnectionsTripsConnectionsGet = <ThrowOnError extends boolean = false>(options: Options<GetConnectionsTripsConnectionsGetData, ThrowOnError>) => {
     return (options.client ?? client).get<GetConnectionsTripsConnectionsGetResponses, GetConnectionsTripsConnectionsGetErrors, ThrowOnError>({
@@ -133,7 +133,7 @@ export const getJourneyTripsJourneyGet = <ThrowOnError extends boolean = false>(
 };
 
 /**
- * 行き方検索
+ * 経路検索
  * 出発停留所から到着停留所への最短経路（停留所ID配列）を返します。
  */
 export const searchPathPathSearchGet = <ThrowOnError extends boolean = false>(options: Options<SearchPathPathSearchGetData, ThrowOnError>) => {
@@ -144,8 +144,8 @@ export const searchPathPathSearchGet = <ThrowOnError extends boolean = false>(op
 };
 
 /**
- * 時刻考慮行き方検索
- * 開始時刻に基づいた時刻付き行き方検索を行い、travels を返します。
+ * 時刻考慮経路検索
+ * 開始時刻に基づいた時刻付き経路検索を行い、travels を返します。
  */
 export const timedSearchPathTimedSearchGet = <ThrowOnError extends boolean = false>(options: Options<TimedSearchPathTimedSearchGetData, ThrowOnError>) => {
     return (options.client ?? client).get<TimedSearchPathTimedSearchGetResponses, TimedSearchPathTimedSearchGetErrors, ThrowOnError>({

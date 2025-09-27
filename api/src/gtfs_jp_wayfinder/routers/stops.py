@@ -88,7 +88,7 @@ async def search_stops(
     "/{stop_id}/upcoming",
     response_model=models.UpcomingBusEnriched,
     summary="停留所の発着予定取得",
-    description="指定停留所に来るバスの運行IDと到着/出発時刻を返します。`expand=trip_info` で行き方情報を付与します。",
+    description="指定停留所に来るバスの運行IDと到着/出発時刻を返します。`expand=trip_info` で経路情報を付与します。",
     responses={
         200: {
             "description": "成功",
