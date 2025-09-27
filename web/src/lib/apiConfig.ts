@@ -5,11 +5,14 @@ import { getCurrentApiBaseUrl } from "./api";
  * Debug utility to log current API configuration
  */
 export function logApiConfig(): void {
-  if (process.env.NODE_ENV === 'development') {
-    console.group('🔧 API Configuration');
-    console.log('Base URL:', getCurrentApiBaseUrl());
-    console.log('Environment:', process.env.NODE_ENV);
-    console.log('NEXT_PUBLIC_API_BASE_URL:', process.env.NEXT_PUBLIC_API_BASE_URL);
+  if (process.env.NODE_ENV === "development") {
+    console.group("🔧 API Configuration");
+    console.log("Base URL:", getCurrentApiBaseUrl());
+    console.log("Environment:", process.env.NODE_ENV);
+    console.log(
+      "NEXT_PUBLIC_API_BASE_URL:",
+      process.env.NEXT_PUBLIC_API_BASE_URL
+    );
     console.groupEnd();
   }
 }
@@ -19,7 +22,7 @@ export function logApiConfig(): void {
  */
 export function validateApiConfig(): boolean {
   const baseUrl = getCurrentApiBaseUrl();
-  
+
   try {
     new URL(baseUrl);
     return true;
