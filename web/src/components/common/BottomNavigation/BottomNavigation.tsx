@@ -69,13 +69,13 @@ export function BottomNavigation({
           />
           <NavItem
             icon={<RouteIcon />}
-            label="経路"
+            label="行き方"
             isActive={activeTab === "route"}
             onClick={() => onTabClick?.("route")}
           />
           <NavItem
             icon={<RecentIcon />}
-            label="最近"
+            label="履歴"
             isActive={activeTab === "recent"}
             onClick={() => onTabClick?.("recent")}
           />
