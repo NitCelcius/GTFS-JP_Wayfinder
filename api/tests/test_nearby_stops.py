@@ -1,13 +1,7 @@
 """Test the nearby stops endpoint functionality."""
 
-from fastapi.testclient import TestClient
 
-from gtfs_jp_wayfinder.main import app
-
-client = TestClient(app)
-
-
-def test_nearby_stops_endpoint():
+def test_nearby_stops_endpoint(client):
     """Test the nearby stops endpoint with mock data."""
     # TODO: test with mock data for wayfinder
     # Test coordinates near 中央公園 (Central Park)
@@ -31,7 +25,7 @@ def test_nearby_stops_endpoint():
         assert "lon" in stop
 
 
-def test_nearby_stops_parameter_validation():
+def test_nearby_stops_parameter_validation(client):
     """Test parameter validation for the nearby stops endpoint."""
     # Test invalid latitude
     response = client.get("/stops/nearby?lat=91&lon=140&limit=5")
@@ -46,7 +40,7 @@ def test_nearby_stops_parameter_validation():
     assert response.status_code == 422
 
 
-def test_nearby_stops_limit_enforcement(monkeypatch):
+def test_nearby_stops_limit_enforcement(monkeypatch, client):
     """Test that limit enforcement works."""
     # Set a very high limit to test max enforcement
     monkeypatch.setenv("API_NEARBY_STOPS_MAX_LIMIT", "5")
