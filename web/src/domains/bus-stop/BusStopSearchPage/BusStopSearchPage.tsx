@@ -89,12 +89,13 @@ export function BusStopSearchPage({
   // Prepare the nearby stops to display
   const nearbyStopsToDisplay =
     hasLocationPermission && nearbyStops.length > 0
-      ? [...nearbyStops] // Show fallback + fetched stops
+      ? [...nearbyStops] // Show fetched stops
       : [fallbackNearestBusStop]; // Only show fallback when location is denied or no stops found
 
   const componentNearbyStops = nearbyStopsToDisplay.map(
     convertToComponentBusStop
   );
+  // TODO: remove mock from here if possible
   // Show mock search results only when location permission is not granted
   const componentSearchResults = hasLocationPermission ? [] : mockSearchResults;
 
