@@ -1,9 +1,15 @@
 // API client wrapper with error handling and request configuration
 import {
+  getStopStopsStopIdGet,
   getUpcomingStopsStopIdUpcomingGet,
   searchPathPathSearchGet,
   searchStopsStopsGet,
 } from "@/api";
+import { client as generatedClient } from "@/api/client.gen";
+
+// Configure the generated client to use the correct base URL
+const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8002";
+generatedClient.setConfig({ baseUrl });
 
 export class ApiClient {
   private static instance: ApiClient;
@@ -37,6 +43,33 @@ export class ApiClient {
     } catch (error) {
       console.error("API Error:", error);
       throw new Error(`Failed to fetch bus stop info for ${stopId}`);
+    }
+  }
+
+  async getBusStopInfoExpanded(stopId: string, serviceId?: string) {
+    try {
+      return await getUpcomingStopsStopIdUpcomingGet({
+        path: { stop_id: stopId },
+        query: {
+          expand: "trip_info,stops",
+          ...(serviceId && { service_id: serviceId }),
+        },
+      });
+    } catch (error) {
+      console.error("API Error:", error);
+      throw new Error(`Failed to fetch expanded bus stop info for ${stopId}`);
+    }
+  }
+
+  async getStopNames(stopId: string, fields?: string) {
+    try {
+      return await getStopStopsStopIdGet({
+        path: { stop_id: stopId },
+        ...(fields && { query: { fields } }),
+      });
+    } catch (error) {
+      console.error("API Error:", error);
+      throw new Error(`Failed to fetch stop names for ${stopId}`);
     }
   }
 

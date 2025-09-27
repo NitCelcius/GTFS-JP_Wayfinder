@@ -63,7 +63,7 @@ export function NextBusInfo({
           >
             ← 前のバス
           </button>
-          <button className={styles.navButton} onClick={handleNextBus}>
+          <button className={styles.navButtonDisabled} onClick={handleNextBus}>
             次のバス →
           </button>
         </div>
