@@ -9,6 +9,7 @@ client = TestClient(app)
 
 def test_nearby_stops_endpoint():
     """Test the nearby stops endpoint with mock data."""
+    # TODO: test with mock data for wayfinder
     # Test coordinates near 中央公園 (Central Park)
     response = client.get("/stops/nearby?lat=39.71676&lon=140.13113&limit=5")
     

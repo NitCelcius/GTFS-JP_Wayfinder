@@ -139,7 +139,7 @@ def get_trip_info_batch(trip_ids: List[str]) -> TripInfoList:
     return TripInfoList(trips=trips)
 
 
-def format_np_datetime(value: Union[pd.Timestamp, np.datetime64, str, None]) -> str:
+def format_np_datetime(value: Union[pd.Timestamp, np.datetime64, str]) -> str:
     """Utility to format numpy.datetime64 or pandas.Timestamp to HH:MM:SS.
 
     This helper is exposed so adapters can convert underlying numpy/pandas
