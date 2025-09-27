@@ -1,5 +1,5 @@
 import asyncio
-from typing import Any, Dict, List, Optional
+from typing import Any, List, Optional
 
 import pandas as pd
 
@@ -437,7 +437,7 @@ async def get_stops_from_trips_parallel(trip_ids: List[str]) -> dict:  # type: i
             # Run the synchronous function in a thread to avoid blocking
             result = await asyncio.to_thread(get_stops_from_trip, trip_id)
             return trip_id, result
-        except Exception as e:
+        except Exception:
             # Return trip_id with None on error for graceful degradation
             return trip_id, None
 
