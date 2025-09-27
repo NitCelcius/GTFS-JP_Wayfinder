@@ -1,4 +1,5 @@
 import asyncio
+import logging
 from typing import Any, List, Optional
 
 import pandas as pd
@@ -9,6 +10,8 @@ from gtfs_jp_wayfinder.models import (
 from gtfs_jp_wayfinder.services import wayfinder as wf_service
 
 _initialized = False
+
+logger = logging.getLogger(__name__)
 
 
 async def initialize(data_dir: str):
@@ -114,8 +117,7 @@ def get_times_from_trips_and_stop_batch(
             try:
                 min_arrival_seconds = _time_string_to_seconds(min_arrival_time)
             except Exception:
-                # Invalid time format, ignore filter
-                print(f"Warning: Invalid min_arrival_time format: {min_arrival_time}")
+                raise
 
         for _, row in filtered.iterrows():  # type: ignore
             trip_id = row["trip_id"]  # type: ignore
@@ -137,7 +139,9 @@ def get_times_from_trips_and_stop_batch(
                         continue  # Skip this trip as it's too early
                 except Exception:
                     # If parsing fails, include the trip (don't filter out due to parsing errors)
-                    print(f"Warning: Could not parse arrival time for trip {trip_id}")
+                    logger.warning(
+                        f"Warning: Could not parse arrival time for trip {trip_id}. Given value: {arrival_time}"
+                    )
                     pass
 
             # Convert times using the same logic as the original function
@@ -211,7 +215,9 @@ def _get_effective_max_items(max_items: Optional[int]) -> Optional[int]:
         try:
             return int(env_max)
         except ValueError:
-            print(f"Warning: Invalid GTFS_BATCH_MAX_ITEMS value: {env_max}")
+            logger.warning(
+                f"Warning: Invalid GTFS_BATCH_MAX_ITEMS env value: {env_max}"
+            )
 
     return None  # No limit
 
