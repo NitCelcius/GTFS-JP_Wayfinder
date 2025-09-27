@@ -55,6 +55,42 @@ export type HttpValidationError = {
 };
 
 /**
+ * NearbyStop
+ */
+export type NearbyStop = {
+    /**
+     * Stop Id
+     */
+    stop_id: string;
+    /**
+     * Stop Name
+     */
+    stop_name: string;
+    /**
+     * Distance Km
+     */
+    distance_km: number;
+    /**
+     * Lat
+     */
+    lat: number;
+    /**
+     * Lon
+     */
+    lon: number;
+};
+
+/**
+ * NearbyStopsResponse
+ */
+export type NearbyStopsResponse = {
+    /**
+     * Stops
+     */
+    stops: Array<NearbyStop>;
+};
+
+/**
  * PathResponse
  */
 export type PathResponse = {
@@ -271,6 +307,47 @@ export type ValidationError = {
      */
     type: string;
 };
+
+export type GetNearbyStopsStopsNearbyGetData = {
+    body?: never;
+    path?: never;
+    query: {
+        /**
+         * Lat
+         * 緯度 (度単位)
+         */
+        lat: number;
+        /**
+         * Lon
+         * 経度 (度単位)
+         */
+        lon: number;
+        /**
+         * Limit
+         * 取得する最大件数
+         */
+        limit?: number | null;
+    };
+    url: '/stops/nearby';
+};
+
+export type GetNearbyStopsStopsNearbyGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetNearbyStopsStopsNearbyGetError = GetNearbyStopsStopsNearbyGetErrors[keyof GetNearbyStopsStopsNearbyGetErrors];
+
+export type GetNearbyStopsStopsNearbyGetResponses = {
+    /**
+     * 成功
+     */
+    200: NearbyStopsResponse;
+};
+
+export type GetNearbyStopsStopsNearbyGetResponse = GetNearbyStopsStopsNearbyGetResponses[keyof GetNearbyStopsStopsNearbyGetResponses];
 
 export type GetStopStopsStopIdGetData = {
     body?: never;

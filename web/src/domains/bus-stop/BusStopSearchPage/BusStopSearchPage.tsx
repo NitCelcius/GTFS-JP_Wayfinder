@@ -1,10 +1,12 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { BottomNavigation } from "@/components/common/BottomNavigation/BottomNavigation";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner/LoadingSpinner";
 import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
 import mockBusStopsList from "@/mocks/busStops";
 
+import { useNearbyStops } from "../hooks/useNearbyStops";
+import type { BusStop } from "../types";
 import { BusStopList } from "./internal/BusStopList";
 import { SearchInput } from "./internal/SearchInput";
 
@@ -14,25 +16,24 @@ interface BusStopSearchPageProps {
   onNavigateToBusStopInfo?: (busStopId: string) => void;
 }
 
-// Use the centralized mock bus stops for the demo page
-const mockNearestBusStop = mockBusStopsList[5]; // 東駅 as nearest
-const mockSearchResults = mockBusStopsList.slice(0, 3);
+// Fallback bus stop (秋田駅東口) when location is unavailable
+const fallbackNearestBusStop: BusStop = {
+  id: "1021_01",
+  name: "秋田駅東口",
+  distance: "位置情報無効",
+};
 
 export function BusStopSearchPage({
   onNavigateToRoute,
   onNavigateToRecent,
   onNavigateToBusStopInfo,
 }: BusStopSearchPageProps) {
-  const [isLoadingNearestBusStop, setIsLoadingNearestBusStop] = useState(true);
-
-  // Simulate loading for nearest bus stop
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoadingNearestBusStop(false);
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, []);
+  const [mockSearchResults] = useState(() => mockBusStopsList.slice(0, 3));
+  const {
+    nearbyStops,
+    isLoading: isLoadingNearby,
+    hasLocationPermission,
+  } = useNearbyStops();
   const handleBottomNavClick = (tab: "bus-stop" | "route" | "recent") => {
     switch (tab) {
       case "route":
@@ -77,6 +78,27 @@ export function BusStopSearchPage({
     onNavigateToBusStopInfo?.(busStopId);
   };
 
+  // Convert domain BusStop to component BusStop format
+  const convertToComponentBusStop = (busStop: BusStop) => ({
+    id: busStop.id,
+    name: busStop.name,
+    distance: busStop.distance || "",
+    selectUrl: `/bus-stop/${busStop.id}`,
+  });
+
+  // Prepare the nearby stops to display
+  const nearbyStopsToDisplay =
+    hasLocationPermission && nearbyStops.length > 0
+      ? [...nearbyStops] // Show fetched stops
+      : [fallbackNearestBusStop]; // Only show fallback when location is denied or no stops found
+
+  const componentNearbyStops = nearbyStopsToDisplay.map(
+    convertToComponentBusStop
+  );
+  // TODO: remove mock from here if possible
+  // Show mock search results only when location permission is not granted
+  const componentSearchResults = hasLocationPermission ? [] : mockSearchResults;
+
   return (
     <div className="bg-white min-h-screen w-full max-w-[var(--max-w-mobile)] mx-auto flex flex-col relative pb-[var(--size-container-md)]">
       <TopNavigation
@@ -96,7 +118,7 @@ export function BusStopSearchPage({
           <h3 className="text-[0.875rem] mb-[var(--size-spacing-sm)]">
             一番近くのバス停
           </h3>
-          {isLoadingNearestBusStop ? (
+          {isLoadingNearby ? (
             <div className="w-full bg-white border border-gray-200 rounded-[var(--radius-lg)] p-[var(--size-spacing-lg)] mb-[var(--size-spacing-md)] flex items-center justify-center">
               <div className="flex items-center gap-[var(--size-spacing-md)]">
                 <LoadingSpinner size="sm" />
@@ -105,22 +127,24 @@ export function BusStopSearchPage({
             </div>
           ) : (
             <BusStopList
-              busStops={[mockNearestBusStop]}
+              busStops={componentNearbyStops}
               showHeader={false}
               onBusStopSelect={handleBusStopSelect}
             />
           )}
         </div>
 
-        {/* Search Results Section */}
-        <div className="pt-[var(--size-spacing-2xl)] flex-1">
-          <BusStopList
-            busStops={mockSearchResults}
-            showHeader={false}
-            headerText="検索結果"
-            onBusStopSelect={handleBusStopSelect}
-          />
-        </div>
+        {/* Search Results Section (mock data only shown when location is disabled) */}
+        {componentSearchResults.length > 0 && (
+          <div className="pt-[var(--size-spacing-2xl)] flex-1">
+            <BusStopList
+              busStops={componentSearchResults}
+              showHeader={false}
+              headerText="検索結果"
+              onBusStopSelect={handleBusStopSelect}
+            />
+          </div>
+        )}
       </div>
 
       <BottomNavigation
