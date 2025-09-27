@@ -1,6 +1,7 @@
 import threading
-from typing import Dict, List, Optional, Any
+from typing import Dict, List, Optional, Any, Union
 import pandas as pd
+import numpy as np
 
 from gtfs_jp_wayfinder.database import AkitaBusWayFinder, NearbyStopResult
 from gtfs_jp_wayfinder.models import (
@@ -138,7 +139,7 @@ def get_trip_info_batch(trip_ids: List[str]) -> TripInfoList:
     return TripInfoList(trips=trips)
 
 
-def format_np_datetime(value: Any) -> str:
+def format_np_datetime(value: Union[pd.Timestamp, np.datetime64, str, None]) -> str:
     """Utility to format numpy.datetime64 or pandas.Timestamp to HH:MM:SS.
 
     This helper is exposed so adapters can convert underlying numpy/pandas
