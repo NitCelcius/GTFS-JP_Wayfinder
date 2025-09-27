@@ -1,3 +1,5 @@
+import { Analytics } from "@vercel/analytics/next";
+
 import React from "react";
 
 import type { Metadata } from "next";
@@ -17,6 +19,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <Analytics />
       <body>
         <AppLayout>{children}</AppLayout>
       </body>
