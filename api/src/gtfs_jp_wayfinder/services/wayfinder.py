@@ -140,14 +140,11 @@ def get_trip_info_batch(trip_ids: List[str]) -> TripInfoList:
 
 
 def format_np_datetime(value: Union[pd.Timestamp, np.datetime64, str]) -> str:
-    """Utility to format numpy.datetime64 or pandas.Timestamp to HH:MM:SS.
+    """Utility to format numpy.datetime64 or pandas.Timestamp to HH:MM:S.
 
     This helper is exposed so adapters can convert underlying numpy/pandas
     datetime types to plain strings for Pydantic models.
     """
-    if value is None:
-        return ""
-    
     # Use pandas Timestamp for consistent formatting
     timestamp = pd.Timestamp(value)
     return timestamp.strftime("%H:%M:%S")
