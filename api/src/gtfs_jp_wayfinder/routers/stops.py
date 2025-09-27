@@ -88,7 +88,7 @@ async def search_stops(
     "/{stop_id}/upcoming",
     response_model=models.UpcomingBusEnriched,
     summary="停留所の発着予定取得",
-    description="指定停留所に来るバスの運行IDと到着/出発時刻を返します。`expand=trip_info` で経路情報を付与します。",
+    description="指定停留所に来るバスの運行IDと到着/出発時刻を返します。`expand=trip_info` で経路情報を付与、`expand=stops` で各便の停留所情報を付与します。",
     responses={
         200: {
             "description": "成功",
@@ -154,14 +154,29 @@ async def get_upcoming(
         )
         trip_ids.append(trip)
 
-    # If expand=trip_info or expand=stops, fetch batch info
-    if "trip_info" in tokens:
-        info = adapter.get_trip_info_batch(trip_ids).trips
-        # map trip_id -> info
-        info_map = {t.trip_id: t for t in info}
+    # Handle expansions: trip_info and/or stops
+    if "trip_info" in tokens or "stops" in tokens:
+        # Fetch trip info if requested
+        info_map = {}
+        if "trip_info" in tokens:
+            info = adapter.get_trip_info_batch(trip_ids).trips
+            info_map = {t.trip_id: t for t in info}
+        
+        # Fetch stops data if requested
+        stops_map = {}
+        if "stops" in tokens:
+            for trip_id in trip_ids:
+                try:
+                    stops_data = adapter.get_stops_from_trip(trip_id)
+                    stops_map[trip_id] = stops_data
+                except Exception:
+                    # If stops data can't be fetched, leave as None
+                    stops_map[trip_id] = None
+
         enriched = []
         for b in buses:
             tinfo = info_map.get(b.trip_id)
+            stops_data = stops_map.get(b.trip_id)
             enriched.append(
                 models.EnrichedTrip(
                     trip_id=b.trip_id,
@@ -172,6 +187,7 @@ async def get_upcoming(
                     if tinfo
                     else None,
                     destination_stop_id=tinfo.destination_stop_id if tinfo else None,
+                    stops=stops_data,
                 )
             )
         return models.UpcomingBusEnriched(stop_id=stop_id, buses=enriched)
