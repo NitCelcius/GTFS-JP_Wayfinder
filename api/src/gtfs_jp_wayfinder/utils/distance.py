@@ -1,7 +1,7 @@
 """Distance calculation utilities for geospatial operations."""
 import math
 from abc import ABC, abstractmethod
-from typing import List, Tuple
+from typing import List
 import pandas as pd
 
 
