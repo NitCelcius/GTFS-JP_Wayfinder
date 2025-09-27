@@ -105,9 +105,11 @@ def get_stops_from_trip(trip_id: str) -> List[dict]:
 
     # Collect all unique stop_ids from the records for batch processing
     stop_ids_in_trip = []
+    seen_stop_ids = set()
     for r in records:
         stop_id = r.get("stop_id")
-        if stop_id and stop_id not in stop_ids_in_trip:
+        if stop_id and stop_id not in seen_stop_ids:
+            seen_stop_ids.add(stop_id)
             stop_ids_in_trip.append(stop_id)
 
     # Batch fetch stop names to avoid N individual DataFrame queries

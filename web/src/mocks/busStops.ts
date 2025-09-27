@@ -1,10 +1,10 @@
 // Hard-coded bus stop mocks for testing
 export const mockBusStopsList = [
   {
-    id: "chuou-koen",
-    name: "中央公園",
+    id: "1021_01",
+    name: "秋田駅東口",
     distance: "徒歩3分",
-    selectUrl: "/bus-stop/chuou-koen",
+    selectUrl: "/bus-stop/1021_01",
   },
   {
     id: "shiyakusho-mae",

@@ -72,7 +72,7 @@ export function convertTripStopsToJourneyStops(
       time: formatTime(stop.arrival_time), // Backward compatibility
       arrivalTime: formatTime(stop.arrival_time),
       departureTime: formatTime(stop.departure_time),
-      cost: cost && cost >= 0 ? cost : undefined,
+      cost: cost && cost >= 0 ? cost : undefined, // TODO: currently zero due to API being WIP
       label,
     });
   }
