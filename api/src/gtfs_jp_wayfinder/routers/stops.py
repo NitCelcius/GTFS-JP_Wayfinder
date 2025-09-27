@@ -117,7 +117,11 @@ async def get_upcoming(
     expand: Optional[str] = Query(
         None, description="展開トークン (例: trip_info, stops)"
     ),
-    limit: Optional[int] = Query(None, description="クライアント側の最大件数"),
+    limit: int = Query(
+        100,
+        ge=1,
+        description="クライアント側の最大件数",
+    ),
 ):
     # validate expand tokens
     tokens = parse_expand(expand)
@@ -138,13 +142,19 @@ async def get_upcoming(
     if limit is not None:
         trips_list = trips_list[:limit]
 
-    # Default response: use EnrichedTrip (minimal fields) so the endpoint can return enriched or plain lists
+    # OPTIMIZATION 1: Batch fetch all arrival/departure times at once instead of N individual queries
+    # Use the new max_items parameter to apply limit at the batch level for better performance
+    time_map = adapter.get_times_from_trips_and_stop_batch(
+        trips_list, stop_id, max_items=limit
+    )
+
+    # Build base buses list using batch-fetched times
     buses = []
     trip_ids = []
     for trip in trips_list:
-        time_obj = adapter.get_time_from_trip_and_stop(trip, stop_id)
-        arrival = time_obj and time_obj.get("arrival_time")
-        departure = time_obj and time_obj.get("departure_time")
+        time_obj = time_map.get(trip, {})
+        arrival = time_obj.get("arrival_time")
+        departure = time_obj.get("departure_time")
         buses.append(
             models.EnrichedTrip(
                 trip_id=trip,
@@ -156,22 +166,26 @@ async def get_upcoming(
 
     # Handle expansions: trip_info and/or stops
     if "trip_info" in tokens or "stops" in tokens:
-        # Fetch trip info if requested
+        # Fetch trip info if requested (this is already batched in the original code)
         info_map = {}
         if "trip_info" in tokens:
             info = adapter.get_trip_info_batch(trip_ids).trips
             info_map = {t.trip_id: t for t in info}
 
-        # Fetch stops data if requested
+        # OPTIMIZATION 2: Parallel fetch stops data instead of sequential
         stops_map = {}
         if "stops" in tokens:
-            for trip_id in trip_ids:
-                try:
-                    stops_data = adapter.get_stops_from_trip(trip_id)
-                    stops_map[trip_id] = stops_data
-                except Exception:
-                    # If stops data can't be fetched, leave as None
-                    stops_map[trip_id] = None
+            try:
+                # Use parallel fetching for better performance
+                stops_map = await adapter.get_stops_from_trips_parallel(trip_ids)
+            except Exception:
+                # Fallback to sequential if parallel approach fails
+                for trip_id in trip_ids:
+                    try:
+                        stops_data = adapter.get_stops_from_trip(trip_id)
+                        stops_map[trip_id] = stops_data
+                    except Exception:
+                        stops_map[trip_id] = None
 
         enriched = []
         for b in buses:
