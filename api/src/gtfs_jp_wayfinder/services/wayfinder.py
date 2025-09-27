@@ -2,7 +2,7 @@ import threading
 from typing import Dict, List, Optional, Any
 import pandas as pd
 
-from gtfs_jp_wayfinder.database import AkitaBusWayFinder
+from gtfs_jp_wayfinder.database import AkitaBusWayFinder, NearbyStopResult
 from gtfs_jp_wayfinder.models import (
     TripInfo,
     TripInfoList,
@@ -152,7 +152,7 @@ def format_np_datetime(value: Any) -> str:
     return timestamp.strftime("%H:%M:%S")
 
 
-def get_nearby_stops(lat: float, lon: float, limit: int = 10):
+def get_nearby_stops(lat: float, lon: float, limit: int = 10) -> List[NearbyStopResult]:
     """Get nearby bus stops sorted by distance."""
     if _wf is None:
         raise RuntimeError("Wayfinder not initialized")
