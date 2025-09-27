@@ -1,10 +1,3 @@
-from fastapi.testclient import TestClient
-
-from gtfs_jp_wayfinder.main import app
-
-client = TestClient(app)
-
-
 def test_get_stop_names_monkeypatch(monkeypatch, client):
     # patch adapter get_stop_names
     def fake_get_stop_names(stop_id: str):

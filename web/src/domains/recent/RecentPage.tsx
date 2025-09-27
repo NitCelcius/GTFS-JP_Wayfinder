@@ -116,7 +116,7 @@ export function RecentPage({
 
   return (
     <div className="w-full max-w-[var(--max-w-mobile)] flex flex-col relative min-h-screen  pb-[var(--size-container-md)]">
-      <TopNavigation icon={<ClockIcon />} title="最近" />
+      <TopNavigation icon={<ClockIcon />} title="履歴" />
 
       <div className="flex-1 px-[var(--size-spacing-lg)] py-[var(--size-spacing-md)] overflow-y-auto">
         <div className="flex flex-col gap-[var(--size-spacing-2xl)]">

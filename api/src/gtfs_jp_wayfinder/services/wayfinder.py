@@ -1,7 +1,9 @@
 import threading
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
+import pandas as pd
+import numpy as np
 
-from gtfs_jp_wayfinder.database import AkitaBusWayFinder
+from gtfs_jp_wayfinder.database import AkitaBusWayFinder, NearbyStopResult
 from gtfs_jp_wayfinder.models import (
     TripInfo,
     TripInfoList,
@@ -137,19 +139,19 @@ def get_trip_info_batch(trip_ids: List[str]) -> TripInfoList:
     return TripInfoList(trips=trips)
 
 
-def format_np_datetime(value) -> str:
-    """Utility to format numpy.datetime64 or pandas.Timestamp to HH:MM:SS.
+def format_np_datetime(value: Union[pd.Timestamp, np.datetime64, str]) -> str:
+    """Utility to format numpy.datetime64 or pandas.Timestamp to HH:MM:S.
 
     This helper is exposed so adapters can convert underlying numpy/pandas
     datetime types to plain strings for Pydantic models.
     """
-    try:
-        # import locally to avoid heavy dependency at module import time
-        import pandas as pd
+    # Use pandas Timestamp for consistent formatting
+    timestamp = pd.Timestamp(value)
+    return timestamp.strftime("%H:%M:%S")
 
-        return pd.Timestamp(value).strftime("%H:%M:%S")
-    except Exception:
-        try:
-            return str(value)
-        except Exception:
-            return None
+
+def get_nearby_stops(lat: float, lon: float, limit: int = 10) -> List[NearbyStopResult]:
+    """Get nearby bus stops sorted by distance."""
+    if _wf is None:
+        raise RuntimeError("Wayfinder not initialized")
+    return _wf.get_nearby_stops(lat, lon, limit)

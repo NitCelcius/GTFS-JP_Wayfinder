@@ -1,3 +1,4 @@
+import datetime
 from typing import List, Optional
 
 from pydantic import BaseModel
@@ -85,8 +86,8 @@ class TripRecord(BaseModel):
     trip_id: str
     stop_id: str
     fare: int
-    departure_time: str
-    arrival_time: str
+    departure_time: datetime.time
+    arrival_time: datetime.time
     model_config = {
         "json_schema_extra": {
             "examples": [
@@ -318,6 +319,55 @@ class UpcomingBusEnriched(BaseModel):
                             "route_name": "太平線",
                         }
                     ],
+                }
+            ]
+        }
+    }
+
+
+class NearbyStop(BaseModel):
+    stop_id: str
+    stop_name: str
+    distance_km: float
+    lat: float
+    lon: float
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "stop_id": "1021_01",
+                    "stop_name": "中央公園",
+                    "distance_km": 0.25,
+                    "lat": 39.71676,
+                    "lon": 140.13113,
+                }
+            ]
+        }
+    }
+
+
+class NearbyStopsResponse(BaseModel):
+    stops: List[NearbyStop]
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "stops": [
+                        {
+                            "stop_id": "1021_01",
+                            "stop_name": "中央公園",
+                            "distance_km": 0.25,
+                            "lat": 39.71676,
+                            "lon": 140.13113,
+                        },
+                        {
+                            "stop_id": "2001_01",
+                            "stop_name": "市役所前",
+                            "distance_km": 0.45,
+                            "lat": 39.71876,
+                            "lon": 140.13213,
+                        },
+                    ]
                 }
             ]
         }

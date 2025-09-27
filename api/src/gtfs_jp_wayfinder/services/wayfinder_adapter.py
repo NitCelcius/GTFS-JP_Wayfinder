@@ -491,3 +491,12 @@ def get_timed_travels_from_path(
     return wf_service._wf.get_timed_travels_from_path(
         path, service_id, begin_time, change_time
     )
+
+
+
+def get_nearby_stops(lat: float, lon: float, limit: int = 10):
+    """Get nearby bus stops sorted by distance."""
+    return wf_service.get_nearby_stops(lat, lon, limit)
+
+def get_trip_journey(trip_id: str, from_stop_id: str):
+    return wf_service._wf.get_trip_journey(trip_id, from_stop_id)

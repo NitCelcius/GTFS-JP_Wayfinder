@@ -62,7 +62,7 @@ export function RecentRouteSearches({
   return (
     <div>
       <div className="flex items-center justify-between mb-[var(--size-spacing-lg)]">
-        <h2 className="text-[1.25rem]">経路</h2>
+        <h2 className="text-[1.25rem]">行き方</h2>
         {recentRoutes.length > 0 && (
           <button
             className="text-[var(--color-route-primary)] hover:text-[var(--color-route-primary-dark)] text-[0.875rem] transition-colors"
@@ -74,7 +74,7 @@ export function RecentRouteSearches({
       </div>
       {recentRoutes.length === 0 ? (
         <div className="text-center py-[var(--size-spacing-2xl)] text-gray-500">
-          <p>最近検索した経路はありません</p>
+          <p>履歴に検索した行き方はありません</p>
         </div>
       ) : (
         <div>
