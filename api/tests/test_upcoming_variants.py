@@ -1,10 +1,3 @@
-from fastapi.testclient import TestClient
-
-from gtfs_jp_wayfinder.main import app
-
-client = TestClient(app)
-
-
 def test_upcoming_variants(monkeypatch, client):
     stop_id = "S100"
 
