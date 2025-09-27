@@ -57,7 +57,9 @@ export function useBusStopData(busStopId?: string): UseBusStopDataResult {
         } catch (stopError) {
           console.warn("Failed to fetch stop name:", stopError);
           // Continue with fallback name
-        } // Calculate distance using geolocation
+        }
+
+        // Calculate distance using geolocation
         const distance = calculateDistance();
 
         // Convert API data to domain format
