@@ -93,22 +93,82 @@ def get_destination_id_from_trip(trip_id: str):
 
 
 def get_stops_from_trip(trip_id: str) -> List[dict]:
-    """Return list of dicts representing timed stops, converting numpy datetime to HH:MM:SS strings."""
+    """Return list of dicts representing timed stops, converting numpy datetime to HH:MM:SS strings.
+
+    Optimized version that reduces the number of individual DataFrame queries by batching
+    stop name lookups.
+    """
     df = wf_service.get_stops_from_trip(trip_id)
+
+    # Convert to records first
     records = df.to_dict("records")
-    # try to convert datetimes using public helper
-    conv = getattr(wf_service, "format_np_datetime", None)
+
+    # Collect all unique stop_ids from the records for batch processing
+    stop_ids_in_trip = []
+    seen_stop_ids = set()
     for r in records:
-        if conv is not None and r.get("arrival_time") is not None:
-            try:
-                r["arrival_time"] = conv(r["arrival_time"])
-            except Exception:
-                pass
-        if conv is not None and r.get("departure_time") is not None:
-            try:
-                r["departure_time"] = conv(r["departure_time"])
-            except Exception:
-                pass
+        stop_id = r.get("stop_id")
+        if stop_id and stop_id not in seen_stop_ids:
+            seen_stop_ids.add(stop_id)
+            stop_ids_in_trip.append(stop_id)
+
+    # Batch fetch stop names to avoid N individual DataFrame queries
+    stop_name_cache = {}
+    if stop_ids_in_trip:
+        # Try bulk lookup via direct DataFrame access (much faster than individual calls)
+        try:
+            # Access the underlying AkitaBusWayFinder instance for direct DataFrame query
+            wayfinder = getattr(wf_service, "_wf", None)
+            if wayfinder and hasattr(wayfinder, "df_stops"):
+                stops_df = wayfinder.df_stops
+                # Filter stops DataFrame once for all stop_ids in this trip
+                filtered_stops = stops_df[stops_df["stop_id"].isin(stop_ids_in_trip)]
+
+                # Build cache from bulk query result
+                for _, row in filtered_stops.iterrows():
+                    stop_id = row["stop_id"]
+                    stop_name = row["stop_name"]
+                    if stop_id not in stop_name_cache:
+                        stop_name_cache[stop_id] = []
+                    stop_name_cache[stop_id].append(stop_name)
+        except Exception:
+            # Fallback to individual queries if bulk approach fails
+            pass
+
+    # Get datetime conversion function once
+    conv = getattr(wf_service, "format_np_datetime", None)
+
+    # Process each record efficiently
+    for r in records:
+        # Convert datetime fields using the helper function
+        if conv is not None:
+            for time_field in ("arrival_time", "departure_time"):
+                time_value = r.get(time_field)
+                if time_value is not None:
+                    try:
+                        r[time_field] = conv(time_value)
+                    except Exception:
+                        pass
+
+        # Add stop name using cache or individual lookup as fallback
+        stop_id = r.get("stop_id")
+        if stop_id:
+            if stop_id in stop_name_cache:
+                # Use cached result (this is the optimization - avoids repeated DataFrame queries)
+                stop_names = stop_name_cache[stop_id]
+                r["stop_name"] = (
+                    stop_names[0] if stop_names and len(stop_names) > 0 else None
+                )
+            else:
+                # Fallback for stops not found in cache
+                try:
+                    stop_names = get_stop_names(stop_id)
+                    r["stop_name"] = (
+                        stop_names[0] if stop_names and len(stop_names) > 0 else None
+                    )
+                except Exception:
+                    r["stop_name"] = None
+
     return records
 
 
@@ -139,6 +199,10 @@ def get_timed_travels_from_path(
     )
 
 
+
 def get_nearby_stops(lat: float, lon: float, limit: int = 10):
     """Get nearby bus stops sorted by distance."""
     return wf_service.get_nearby_stops(lat, lon, limit)
+
+def get_trip_journey(trip_id: str, from_stop_id: str):
+    return wf_service._wf.get_trip_journey(trip_id, from_stop_id)

@@ -1,0 +1,2 @@
+﻿agency_id,agency_name,agency_url,agency_timezone,agency_lang,agency_phone,agency_fare_url
+3410001000459,秋田中央交通,https://www.akita-chuoukotsu.co.jp/,Asia/Tokyo,ja,,

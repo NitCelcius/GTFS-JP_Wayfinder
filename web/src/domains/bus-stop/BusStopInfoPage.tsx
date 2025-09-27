@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react";
-
 import { BottomNavigation } from "@/components/common/BottomNavigation/BottomNavigation";
 import { JourneyTimeline } from "@/components/common/JourneyTimeline/JourneyTimeline";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner/LoadingSpinner";
 import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
 
+import { useBusStopData } from "./hooks";
 import { BusStopHeader } from "./internal/BusStopHeader";
 import { NextBusInfo } from "./internal/NextBusInfo";
 import { TransferButton } from "./internal/TransferButton";
@@ -16,71 +15,14 @@ interface BusStopInfoPageProps {
   onNavigateToRecent?: () => void;
 }
 
-// Mock data for the bus stop
-const mockBusStopData = {
-  name: "上ノ橋駅",
-  distance: "約10m",
-  nextBus: {
-    line: "篠山線",
-    system: "系統400",
-    destination: "篠山駅前",
-    direction: "行",
-    arrivalTime: "13:05",
-    status: "当バス停着",
-  },
-  routeJourney: [
-    {
-      id: "stop1",
-      name: "上ノ橋駅",
-      type: "current" as const,
-      time: "13:05",
-      label: "現在地",
-    },
-    {
-      id: "stop2",
-      name: "一本杉",
-      type: "intermediate" as const,
-      time: "13:12",
-      cost: 140,
-    },
-    {
-      id: "stop3",
-      name: "篠山駅前",
-      type: "destination" as const,
-      time: "13:18",
-      cost: 180,
-    },
-  ],
-};
-
 export function BusStopInfoPage({
-  // TODO: use id params when implementing real data fetching
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- will use this param later
-  busStopId: _busStopId,
+  busStopId,
   onBack,
   onNavigateToRoute,
   onNavigateToRecent,
 }: BusStopInfoPageProps) {
-  const [isNextBusLoading, setIsNextBusLoading] = useState(true);
-  const [isRouteJourneyLoading, setIsRouteJourneyLoading] = useState(true);
+  const { data, isLoading, error } = useBusStopData(busStopId);
 
-  // Simulate loading for next bus info
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsNextBusLoading(false);
-    }, 1500);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Simulate loading for route journey (slightly longer)
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsRouteJourneyLoading(false);
-    }, 2000);
-
-    return () => clearTimeout(timer);
-  }, []);
   const handleBottomNavClick = (tab: "bus-stop" | "route" | "recent") => {
     switch (tab) {
       case "route":
@@ -96,7 +38,7 @@ export function BusStopInfoPage({
   };
 
   const handleTransferClick = () => {
-    // Placeholder for transfer functionality
+    // TODO: Implement transfer functionality
     console.log("Navigate to transfer options");
   };
 
@@ -114,6 +56,34 @@ export function BusStopInfoPage({
     </svg>
   );
 
+  // Handle error state
+  if (error && !isLoading) {
+    return (
+      <div className="bg-white min-h-screen w-full max-w-[var(--max-w-mobile)] mx-auto flex flex-col relative pb-[calc(var(--size-container-md)+6rem)]">
+        <TopNavigation
+          icon={<InfoIcon />}
+          title="バス停情報"
+          showBackButton={true}
+          onBack={onBack}
+        />
+        <div className="flex-1 flex items-center justify-center p-[var(--size-spacing-lg)]">
+          <div className="text-center">
+            <p className="text-red-600 mb-4">エラーが発生しました</p>
+            <p className="text-gray-600 text-sm">{error}</p>
+          </div>
+        </div>
+        <BottomNavigation
+          activeTab="bus-stop"
+          onTabClick={handleBottomNavClick}
+        />
+      </div>
+    );
+  }
+
+  const busStopData = data?.busStop;
+  const nextBus = data?.nextBus;
+  const routeJourney = data?.routeJourney || [];
+
   return (
     <>
       <div className="bg-white min-h-screen w-full max-w-[var(--max-w-mobile)] mx-auto flex flex-col relative pb-[calc(var(--size-container-md)+6rem)]">
@@ -125,13 +95,24 @@ export function BusStopInfoPage({
         />
 
         <div className="flex-1 flex flex-col px-[var(--size-spacing-lg)] overflow-auto">
-          <BusStopHeader
-            name={mockBusStopData.name}
-            distance={mockBusStopData.distance}
-          />
+          {/* Bus Stop Header */}
+          {busStopData ? (
+            <BusStopHeader
+              name={busStopData.name}
+              distance={busStopData.distance || ""}
+            />
+          ) : (
+            <div className="h-[60px] flex items-center">
+              <LoadingSpinner size="sm" />
+              <span className="ml-2 text-gray-600">
+                バス停情報を読み込み中...
+              </span>
+            </div>
+          )}
 
+          {/* Next Bus Info */}
           <div className="pt-[var(--size-spacing-2xl)]">
-            {isNextBusLoading ? (
+            {isLoading || !data ? (
               <div className="w-full bg-white border border-gray-200 rounded-[var(--radius-lg)] p-[var(--size-spacing-2xl)] flex items-center justify-center">
                 <div className="flex flex-col items-center gap-[var(--size-spacing-md)]">
                   <LoadingSpinner size="sm" />
@@ -140,13 +121,20 @@ export function BusStopInfoPage({
                   </span>
                 </div>
               </div>
+            ) : nextBus ? (
+              <NextBusInfo busInfo={nextBus} />
             ) : (
-              <NextBusInfo busInfo={mockBusStopData.nextBus} />
+              <div className="w-full bg-white border border-gray-200 rounded-[var(--radius-lg)] p-[var(--size-spacing-2xl)] text-center">
+                <span className="text-gray-600">
+                  現在運行中のバスがありません
+                </span>
+              </div>
             )}
           </div>
 
+          {/* Route Journey */}
           <div className="pt-[var(--size-spacing-2xl)] flex-1 min-h-0">
-            {isRouteJourneyLoading ? (
+            {isLoading || !data ? (
               <div className="h-full flex flex-col">
                 <h3 className="text-[1.125rem] mb-[var(--size-spacing-lg)]">
                   このバスの行き先
@@ -160,12 +148,50 @@ export function BusStopInfoPage({
                   </div>
                 </div>
               </div>
-            ) : (
+            ) : routeJourney.length > 0 ? (
               <JourneyTimeline
                 title="このバスの行き先"
-                stops={mockBusStopData.routeJourney}
-                variant="bus-info"
+                stops={routeJourney}
+                renderRightContent={(stop) => (
+                  <>
+                    {stop.cost !== undefined && stop.cost > 0 && (
+                      <div className="flex items-center justify-center">
+                        <span className="flex items-baseline gap-1">
+                          <span className="text-[var(--text-xl)]">
+                            {stop.cost}
+                          </span>
+                          <span className="text-sm">円</span>
+                        </span>
+                      </div>
+                    )}
+                    <div className="flex flex-col items-end gap-[var(--size-spacing-xs)] flex-0">
+                      {stop.arrivalTime && (
+                        <div className="flex flex-0 whitespace-nowrap items-end">
+                          <span className="text-[var(--text-base)] whitespace-nowrap">
+                            {stop.arrivalTime} 着
+                          </span>
+                        </div>
+                      )}
+                      {stop.departureTime && (
+                        <div className="flex flex-0 whitespace-nowrap items-end">
+                          <span className="text-[var(--text-base)] whitespace-nowrap">
+                            {stop.departureTime} 発
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
               />
+            ) : (
+              <div className="h-full flex flex-col">
+                <h3 className="text-[1.125rem] mb-[var(--size-spacing-lg)]">
+                  このバスの行き先
+                </h3>
+                <div className="flex-1 bg-white border border-gray-200 rounded-[var(--radius-lg)] p-[var(--size-spacing-2xl)] flex items-center justify-center">
+                  <span className="text-gray-600">経路情報がありません</span>
+                </div>
+              </div>
             )}
           </div>
         </div>
