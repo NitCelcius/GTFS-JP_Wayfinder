@@ -8,7 +8,7 @@ export const mockTripDetails: TripDetails = {
   routes: [
     {
       id: "route1",
-      name: "経路1",
+      name: "行き方1",
       departureTime: "12:34",
       arrivalTime: "14:30",
       duration: "1時間57分",
@@ -35,7 +35,7 @@ export const mockTripDetails: TripDetails = {
     },
     {
       id: "route2",
-      name: "経路2",
+      name: "行き方2",
       departureTime: "12:45",
       arrivalTime: "15:15",
       duration: "2時間30分",

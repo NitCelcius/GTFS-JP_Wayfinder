@@ -79,7 +79,7 @@ export function RecentBusStopSearches({
       </div>
       {recentBusStops.length === 0 ? (
         <div className="text-center py-[var(--size-spacing-2xl)] text-gray-500">
-          <p>最近検索したバス停はありません</p>
+          <p>履歴に検索したバス停はありません</p>
         </div>
       ) : (
         <div>
