@@ -165,19 +165,31 @@ export function BusStopInfoPage({
                       </div>
                     )}
                     <div className="flex flex-col items-end gap-[var(--size-spacing-xs)] flex-0">
-                      {stop.arrivalTime && (
+                      {stop.arrivalTime &&
+                      stop.departureTime &&
+                      stop.arrivalTime === stop.departureTime ? (
                         <div className="flex flex-0 whitespace-nowrap items-end">
                           <span className="text-[var(--text-base)] whitespace-nowrap">
-                            {stop.arrivalTime} 着
+                            {stop.arrivalTime}
                           </span>
                         </div>
-                      )}
-                      {stop.departureTime && (
-                        <div className="flex flex-0 whitespace-nowrap items-end">
-                          <span className="text-[var(--text-base)] whitespace-nowrap">
-                            {stop.departureTime} 発
-                          </span>
-                        </div>
+                      ) : (
+                        <>
+                          {stop.arrivalTime && (
+                            <div className="flex flex-0 whitespace-nowrap items-end">
+                              <span className="text-[var(--text-base)] whitespace-nowrap">
+                                {stop.arrivalTime} 着
+                              </span>
+                            </div>
+                          )}
+                          {stop.departureTime && (
+                            <div className="flex flex-0 whitespace-nowrap items-end">
+                              <span className="text-[var(--text-base)] whitespace-nowrap">
+                                {stop.departureTime} 発
+                              </span>
+                            </div>
+                          )}
+                        </>
                       )}
                     </div>
                   </>

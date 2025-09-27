@@ -37,9 +37,12 @@ export function useBusStopData(busStopId?: string): UseBusStopDataResult {
 
         const apiClient = ApiClient.getInstance();
 
-        // Fetch upcoming buses with trip info expanded
-        const upcomingResponse =
-          await apiClient.getBusStopInfoExpanded(busStopId);
+        // Fetch upcoming buses with trip info expanded, limit to 1 for next bus only
+        const upcomingResponse = await apiClient.getBusStopInfoExpanded(
+          busStopId,
+          undefined,
+          1
+        );
         const upcomingData = upcomingResponse.data as UpcomingBusEnrichedData;
 
         if (!upcomingData) {

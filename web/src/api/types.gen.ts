@@ -367,7 +367,7 @@ export type GetUpcomingStopsStopIdUpcomingGetData = {
          * Limit
          * クライアント側の最大件数
          */
-        limit?: number | null;
+        limit?: number;
     };
     url: '/stops/{stop_id}/upcoming';
 };

@@ -1,4 +1,5 @@
 import asyncio
+import logging
 from typing import Any, List, Optional
 
 import pandas as pd
@@ -9,6 +10,8 @@ from gtfs_jp_wayfinder.models import (
 from gtfs_jp_wayfinder.services import wayfinder as wf_service
 
 _initialized = False
+
+logger = logging.getLogger(__name__)
 
 
 async def initialize(data_dir: str):
@@ -47,13 +50,227 @@ def get_trips_from_stop(stop_id: str, service_id: Optional[str] = None):
     return wf_service.get_trips_from_stop(stop_id, service_id)
 
 
-def get_time_from_trip_and_stop(trip_id: str, stop_id: str):
-    """Return dict with trip_id, arrival_time and departure_time.
+def get_times_from_trips_and_stop_batch(
+    trip_ids: List[str],
+    stop_id: str,
+    trip_id_contains: Optional[str] = None,
+    min_arrival_time: Optional[str] = None,
+    max_items: Optional[int] = None,
+) -> dict:
+    """Batch get arrival/departure times for multiple trips at a specific stop.
 
-    Underlying implementation may return numpy.datetime64 / pandas.Timestamp
-    values; convert them to HH:MM:SS strings so Pydantic models expecting
-    strings can validate correctly.
+    Args:
+        trip_ids: List of trip IDs to query
+        stop_id: The stop ID to get times for
+        trip_id_contains: Optional string that trip_id must contain
+        min_arrival_time: Optional minimum arrival time filter in "HH:MM:SS" format
+                         (returns trips with arrival >= this time)
+        max_items: Optional maximum number of results to return. If None, uses
+                  environment variable GTFS_BATCH_MAX_ITEMS or returns all results.
+
+    Returns:
+        dict mapping trip_id -> {trip_id, arrival_time, departure_time}.
+        This is the optimized bulk version that reduces N queries to 1 query.
     """
+    if not trip_ids:
+        return {}
+
+    # Apply max_items limit, considering environment variable if not explicitly set
+    effective_max_items = _get_effective_max_items(max_items)
+    if effective_max_items is not None and effective_max_items <= 0:
+        return {}  # No items requested
+
+    try:
+        # Access underlying wayfinder for bulk DataFrame operation
+        wayfinder = getattr(wf_service, "_wf", None)  # type: ignore
+        if not wayfinder or not hasattr(wayfinder, "df_stop_times"):
+            # Fallback to individual calls if bulk approach fails
+            filtered_trip_ids = _filter_trip_ids(trip_ids, trip_id_contains)
+
+            # Apply max_items limit to initial fallback case
+            if effective_max_items is not None:
+                filtered_trip_ids = filtered_trip_ids[:effective_max_items]
+
+            return {
+                trip_id: get_time_from_trip_and_stop_single(trip_id, stop_id)
+                for trip_id in filtered_trip_ids
+            }
+
+        # Apply trip_id filtering first to reduce dataset size
+        filtered_trip_ids = _filter_trip_ids(trip_ids, trip_id_contains)
+        if not filtered_trip_ids:
+            return {}
+
+        # Single bulk DataFrame query instead of N individual queries
+        df = wayfinder.df_stop_times  # type: ignore
+        filtered = df[
+            (df["trip_id"].isin(filtered_trip_ids)) & (df["stop_id"] == stop_id)
+        ][["trip_id", "arrival_time", "departure_time"]]  # type: ignore
+
+        # Convert times and build result mapping
+        result = {}
+        conv = getattr(wf_service, "format_np_datetime", None)
+
+        # Parse min_arrival_time for comparison if provided
+        min_arrival_seconds = None
+        if min_arrival_time:
+            try:
+                min_arrival_seconds = _time_string_to_seconds(min_arrival_time)
+            except Exception:
+                raise
+
+        for _, row in filtered.iterrows():  # type: ignore
+            trip_id = row["trip_id"]  # type: ignore
+            arrival_time = row["arrival_time"]  # type: ignore
+            departure_time = row["departure_time"]  # type: ignore
+
+            # Apply min_arrival_time filter before processing
+            if min_arrival_seconds is not None and arrival_time is not None:
+                try:
+                    # Convert arrival_time to string first, then to seconds for comparison
+                    if conv is not None:
+                        arrival_str = conv(arrival_time)
+                    else:
+                        arrival_str = pd.Timestamp(arrival_time).strftime("%H:%M:%S")
+
+                    arrival_seconds = _time_string_to_seconds(arrival_str)
+
+                    if arrival_seconds < min_arrival_seconds:
+                        continue  # Skip this trip as it's too early
+                except Exception:
+                    # If parsing fails, include the trip (don't filter out due to parsing errors)
+                    logger.warning(
+                        f"Warning: Could not parse arrival time for trip {trip_id}. Given value: {arrival_time}"
+                    )
+                    pass
+
+            # Convert times using the same logic as the original function
+            converted_arrival = None
+            converted_departure = None
+
+            if arrival_time is not None:
+                try:
+                    if conv is not None:
+                        converted_arrival = conv(arrival_time)
+                    else:
+                        converted_arrival = pd.Timestamp(arrival_time).strftime(
+                            "%H:%M:%S"
+                        )
+                except Exception:
+                    try:
+                        converted_arrival = str(arrival_time)
+                    except Exception:
+                        converted_arrival = None
+
+            if departure_time is not None:
+                try:
+                    if conv is not None:
+                        converted_departure = conv(departure_time)
+                    else:
+                        converted_departure = pd.Timestamp(departure_time).strftime(
+                            "%H:%M:%S"
+                        )
+                except Exception:
+                    try:
+                        converted_departure = str(departure_time)
+                    except Exception:
+                        converted_departure = None
+
+            result[trip_id] = {
+                "trip_id": trip_id,
+                "arrival_time": converted_arrival,
+                "departure_time": converted_departure,
+            }
+
+            # Apply max_items limit during processing for efficiency
+            if effective_max_items is not None and len(result) >= effective_max_items:
+                break
+
+        return result
+
+    except Exception:
+        # Fallback to individual calls if any error occurs
+        filtered_trip_ids = _filter_trip_ids(trip_ids, trip_id_contains)
+
+        # Apply max_items limit to fallback case as well
+        if effective_max_items is not None:
+            filtered_trip_ids = filtered_trip_ids[:effective_max_items]
+
+        return {
+            trip_id: get_time_from_trip_and_stop_single(trip_id, stop_id)
+            for trip_id in filtered_trip_ids
+        }
+
+
+def _get_effective_max_items(max_items: Optional[int]) -> Optional[int]:
+    """Get the effective max items limit, considering environment variable."""
+    import os
+
+    if max_items is not None:
+        return max_items
+
+    # Check environment variable
+    env_max = os.environ.get("GTFS_BATCH_MAX_ITEMS")
+    if env_max:
+        try:
+            return int(env_max)
+        except ValueError:
+            logger.warning(
+                f"Warning: Invalid GTFS_BATCH_MAX_ITEMS env value: {env_max}"
+            )
+
+    return None  # No limit
+
+
+def _filter_trip_ids(
+    trip_ids: List[str], contains_filter: Optional[str] = None
+) -> List[str]:
+    """Helper function to filter trip IDs by substring."""
+    if not contains_filter:
+        return trip_ids
+
+    return [trip_id for trip_id in trip_ids if contains_filter in trip_id]
+
+
+def _time_string_to_seconds(time_str: str) -> int:
+    """Convert time string (HH:MM:SS or HH:MM) to seconds since midnight.
+
+    Handles GTFS extended time format where hours can exceed 24 (e.g., 25:30:00 for 1:30 AM next day).
+
+    Args:
+        time_str: Time string in HH:MM:SS or HH:MM format
+
+    Returns:
+        Total seconds since midnight (can exceed 86400 for next-day times)
+
+    Raises:
+        ValueError: If time string format is invalid
+    """
+    if not time_str:
+        raise ValueError("Empty time string")
+
+    parts = time_str.split(":")
+    if len(parts) < 2 or len(parts) > 3:
+        raise ValueError(f"Invalid time format: {time_str}")
+
+    try:
+        hours = int(parts[0])
+        minutes = int(parts[1])
+        seconds = int(parts[2]) if len(parts) == 3 else 0
+
+        if minutes < 0 or minutes >= 60:
+            raise ValueError(f"Invalid minutes: {minutes}")
+        if seconds < 0 or seconds >= 60:
+            raise ValueError(f"Invalid seconds: {seconds}")
+
+        return hours * 3600 + minutes * 60 + seconds
+
+    except (ValueError, IndexError) as e:
+        raise ValueError(f"Could not parse time '{time_str}': {e}")
+
+
+def get_time_from_trip_and_stop_single(trip_id: str, stop_id: str):
+    """Original single-trip implementation, used internally and as fallback."""
     res = wf_service.get_time_from_trip_and_stop(trip_id, stop_id)
     # use public formatter when available
     conv = getattr(wf_service, "format_np_datetime", None)
@@ -74,6 +291,45 @@ def get_time_from_trip_and_stop(trip_id: str, stop_id: str):
             except Exception:
                 res[k] = None
     return res
+
+
+def get_time_from_trip_and_stop(trip_id: str, stop_id: str):
+    """Return dict with trip_id, arrival_time and departure_time.
+
+    Compatibility wrapper that uses the batch function internally for consistency.
+    For better performance when dealing with multiple trips, use get_times_from_trips_and_stop_batch directly.
+    """
+    batch_result = get_times_from_trips_and_stop_batch([trip_id], stop_id)
+    return batch_result.get(
+        trip_id, {"trip_id": trip_id, "arrival_time": None, "departure_time": None}
+    )
+
+
+def get_filtered_times_from_trips_and_stop(
+    trip_ids: List[str],
+    stop_id: str,
+    trip_id_contains: Optional[str] = None,
+    min_arrival_time: Optional[str] = None,
+    max_items: Optional[int] = None,
+) -> dict:
+    """Get times for trips with filtering options.
+
+    This is a convenience wrapper that exposes the filtering capabilities
+    of the batch function with a more descriptive name for API usage.
+
+    Args:
+        trip_ids: List of trip IDs to query
+        stop_id: The stop ID to get times for
+        trip_id_contains: Optional string that trip_id must contain
+        min_arrival_time: Optional minimum arrival time filter in "HH:MM:SS" format
+        max_items: Optional maximum number of results to return
+
+    Returns:
+        dict mapping trip_id -> {trip_id, arrival_time, departure_time}
+    """
+    return get_times_from_trips_and_stop_batch(
+        trip_ids, stop_id, trip_id_contains, min_arrival_time, max_items
+    )
 
 
 def get_route_id_from_trip(trip_id: str):
@@ -170,6 +426,44 @@ def get_stops_from_trip(trip_id: str) -> List[dict]:
                     r["stop_name"] = None
 
     return records
+
+
+async def get_stops_from_trips_parallel(trip_ids: List[str]) -> dict:  # type: ignore
+    """Fetch stops data for multiple trips in parallel.
+
+    Returns dict mapping trip_id -> stops_data.
+    Uses asyncio to fetch multiple trip stops concurrently for better performance.
+    """
+    if not trip_ids:
+        return {}
+
+    async def fetch_single_trip_stops(trip_id: str):
+        """Async wrapper for get_stops_from_trip."""
+        try:
+            # Run the synchronous function in a thread to avoid blocking
+            result = await asyncio.to_thread(get_stops_from_trip, trip_id)
+            return trip_id, result
+        except Exception:
+            # Return trip_id with None on error for graceful degradation
+            return trip_id, None
+
+    # Create tasks for parallel execution
+    tasks = [fetch_single_trip_stops(trip_id) for trip_id in trip_ids]
+
+    # Execute all tasks concurrently
+    results = await asyncio.gather(*tasks, return_exceptions=True)
+
+    # Build result dictionary, handling exceptions gracefully
+    stops_map = {}
+    for result in results:  # type: ignore
+        if isinstance(result, Exception):
+            # Log exception but don't fail the whole operation
+            continue
+        elif isinstance(result, tuple) and len(result) == 2:
+            trip_id, stops_data = result
+            stops_map[trip_id] = stops_data
+
+    return stops_map
 
 
 def get_fare_by_stops(from_id: str, to_id: str) -> int:
