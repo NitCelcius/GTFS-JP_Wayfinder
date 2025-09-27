@@ -5,7 +5,7 @@ from gtfs_jp_wayfinder.main import app
 client = TestClient(app)
 
 
-def test_upcoming_variants(monkeypatch):
+def test_upcoming_variants(monkeypatch, client):
     stop_id = "S100"
 
     monkeypatch.setattr(
@@ -28,7 +28,7 @@ def test_upcoming_variants(monkeypatch):
     # Mock the new batch function
     monkeypatch.setattr(
         "gtfs_jp_wayfinder.services.wayfinder_adapter.get_times_from_trips_and_stop_batch",
-        lambda trip_ids, stop_id: {
+        lambda trip_ids, stop_id, **kwargs: {
             trip_id: {
                 "trip_id": trip_id,
                 "arrival_time": "07:00:00",

@@ -6,7 +6,7 @@ from gtfs_jp_wayfinder.main import app
 client = TestClient(app)
 
 
-def test_trips_batch_and_get_trip(monkeypatch):
+def test_trips_batch_and_get_trip(monkeypatch, client):
     # fake batch responder that echoes back TripInfo for each id
     def fake_batch(ids):
         return models.TripInfoList(
@@ -50,7 +50,7 @@ def test_trips_batch_and_get_trip(monkeypatch):
     assert resp3.status_code == 404
 
 
-def test_path_search_and_travels(monkeypatch):
+def test_path_search_and_travels(monkeypatch, client):
     # shortest path
     monkeypatch.setattr(
         "gtfs_jp_wayfinder.services.wayfinder_adapter.get_shortest_path",
@@ -83,7 +83,7 @@ def test_path_search_and_travels(monkeypatch):
     assert body["travels"][0]["trip_id"] == "t-1"
 
 
-def test_upcoming_variants(monkeypatch):
+def test_upcoming_variants(monkeypatch, client):
     stop_id = "S100"
 
     # no trips
@@ -108,7 +108,7 @@ def test_upcoming_variants(monkeypatch):
     # Mock the new batch function
     monkeypatch.setattr(
         "gtfs_jp_wayfinder.services.wayfinder_adapter.get_times_from_trips_and_stop_batch",
-        lambda trip_ids, stop_id: {
+        lambda trip_ids, stop_id, **kwargs: {
             trip_id: {
                 "trip_id": trip_id,
                 "arrival_time": "07:00:00",

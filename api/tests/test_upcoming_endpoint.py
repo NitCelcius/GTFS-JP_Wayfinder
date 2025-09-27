@@ -8,7 +8,7 @@ from gtfs_jp_wayfinder.main import app
 client = TestClient(app)
 
 
-def test_upcoming_hardcoded(monkeypatch):
+def test_upcoming_hardcoded(monkeypatch, client):
     fixture_path = Path(__file__).parent / "fixtures" / "upcoming_1021_01.json"
     expected = json.loads(fixture_path.read_text(encoding="utf-8"))
 
@@ -37,7 +37,7 @@ def test_upcoming_hardcoded(monkeypatch):
     # Mock the new batch function to return the batch time data
     monkeypatch.setattr(
         "gtfs_jp_wayfinder.services.wayfinder_adapter.get_times_from_trips_and_stop_batch",
-        lambda trip_ids, stop_id: {
+        lambda trip_ids, stop_id, **kwargs: {
             trip_id: time_map[trip_id] for trip_id in trip_ids if trip_id in time_map
         },
     )

@@ -5,7 +5,7 @@ from gtfs_jp_wayfinder.main import app
 client = TestClient(app)
 
 
-def test_get_stop_names_monkeypatch(monkeypatch):
+def test_get_stop_names_monkeypatch(monkeypatch, client):
     # patch adapter get_stop_names
     def fake_get_stop_names(stop_id: str):
         return ["中央公園"]
@@ -20,7 +20,7 @@ def test_get_stop_names_monkeypatch(monkeypatch):
     assert resp.json() == {"stop_names": ["中央公園"]}
 
 
-def test_trips_batch_limit_enforced(monkeypatch):
+def test_trips_batch_limit_enforced(monkeypatch, client):
     # ensure env variable default is 10
     import os
 

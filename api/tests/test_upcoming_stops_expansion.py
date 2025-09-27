@@ -5,7 +5,7 @@ from gtfs_jp_wayfinder.main import app
 client = TestClient(app)
 
 
-def test_upcoming_stops_expansion(monkeypatch):
+def test_upcoming_stops_expansion(monkeypatch, client):
     """Test that expand=stops properly populates the stops field"""
     stop_id = "S100"
 
@@ -23,7 +23,7 @@ def test_upcoming_stops_expansion(monkeypatch):
     # Mock the new batch function
     monkeypatch.setattr(
         "gtfs_jp_wayfinder.services.wayfinder_adapter.get_times_from_trips_and_stop_batch",
-        lambda trip_ids, stop_id: {
+        lambda trip_ids, stop_id, **kwargs: {
             trip_id: {
                 "trip_id": trip_id,
                 "arrival_time": "07:00:00",
@@ -76,7 +76,7 @@ def test_upcoming_stops_expansion(monkeypatch):
     assert body2["buses"][0]["stops"][1]["stop_name"] == "Next Stop Name"
 
 
-def test_upcoming_combined_expansion(monkeypatch):
+def test_upcoming_combined_expansion(monkeypatch, client):
     """Test that expand=trip_info,stops works correctly together"""
     stop_id = "S100"
 
@@ -94,7 +94,7 @@ def test_upcoming_combined_expansion(monkeypatch):
     # Mock the new batch function
     monkeypatch.setattr(
         "gtfs_jp_wayfinder.services.wayfinder_adapter.get_times_from_trips_and_stop_batch",
-        lambda trip_ids, stop_id: {
+        lambda trip_ids, stop_id, **kwargs: {
             trip_id: {
                 "trip_id": trip_id,
                 "arrival_time": "07:00:00",
