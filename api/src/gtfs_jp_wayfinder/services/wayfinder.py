@@ -1,7 +1,8 @@
 import threading
 from typing import Dict, List, Optional, Union
-import pandas as pd
+
 import numpy as np
+import pandas as pd
 
 from gtfs_jp_wayfinder.database import AkitaBusWayFinder, NearbyStopResult
 from gtfs_jp_wayfinder.models import (
@@ -155,3 +156,10 @@ def get_nearby_stops(lat: float, lon: float, limit: int = 10) -> List[NearbyStop
     if _wf is None:
         raise RuntimeError("Wayfinder not initialized")
     return _wf.get_nearby_stops(lat, lon, limit)
+
+
+def get_default_date() -> str:
+    """Get the default date used by the wayfinder."""
+    if _wf is None:
+        raise RuntimeError("Wayfinder not initialized")
+    return _wf.default_date

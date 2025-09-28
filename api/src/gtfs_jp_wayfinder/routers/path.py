@@ -71,10 +71,7 @@ async def timed_search(
         if isinstance(begin_time, str):
             from pandas import to_datetime
 
-            # Use database default_date for consistency
-            db_default_date = (
-                adapter.db.default_date if hasattr(adapter, "db") else "2021-01-01"
-            )
+            db_default_date = adapter.get_default_date()
             begin_time = to_datetime(f"{db_default_date}T{begin_time}").to_numpy()
         travels = adapter.get_timed_travels_from_path(path, service_id, begin_time)
 
