@@ -11,10 +11,11 @@ import { getCurrentTimeString } from "@/lib/utils";
 import type { RouteSearchResult } from "@/types";
 import { convertRouteSearchToTripDetails } from "@/types";
 
-// Disable static generation for this dynamic page
+// Static generation is disabled for this page because it fetches real-time bus information and search results
+// based on user input (query parameters) at runtime. The data required to render this page cannot be determined
+// at build time, so dynamic rendering is necessary to ensure up-to-date and personalized results.
+// TODO: consider dynamic rendering needed
 export const dynamic = "force-dynamic";
-
-// No empty placeholder: if data can't be fetched we treat it as an error
 
 export default function ResultsPage() {
   const router = useRouter();

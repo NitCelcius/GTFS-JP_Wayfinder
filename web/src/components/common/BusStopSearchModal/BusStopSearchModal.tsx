@@ -194,6 +194,7 @@ export function BusStopSearchModal({
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Add keyframes for spinner animation if Tailwind doesn't work
+  // TODO: remove CSS injection when migrating to CSS modules
   useEffect(() => {
     const style = document.createElement("style");
     style.textContent = `
