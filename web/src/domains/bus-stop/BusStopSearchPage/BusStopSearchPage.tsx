@@ -3,9 +3,8 @@ import { useEffect, useState } from "react";
 import { BottomNavigation } from "@/components/common/BottomNavigation/BottomNavigation";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner/LoadingSpinner";
 import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
-import mockBusStopsList from "@/mocks/busStops";
 
-import { BusStopList } from "./internal/BusStopList";
+import { type BusStop, BusStopList } from "./internal/BusStopList";
 import { SearchInput } from "./internal/SearchInput";
 
 interface BusStopSearchPageProps {
@@ -14,9 +13,18 @@ interface BusStopSearchPageProps {
   onNavigateToBusStopInfo?: (busStopId: string) => void;
 }
 
-// Use the centralized mock bus stops for the demo page
-const mockNearestBusStop = mockBusStopsList[5]; // 東駅 as nearest
-const mockSearchResults = mockBusStopsList.slice(0, 3);
+// Simple demo data for bus stop search (inline instead of separate mock file)
+const demoBusStops: BusStop[] = [
+  { id: "chuou-koen", name: "中央公園", distance: "500m", selectUrl: "#" },
+  { id: "shiyakusho-mae", name: "市役所前", distance: "320m", selectUrl: "#" },
+  { id: "aoba-dai", name: "青葉台", distance: "750m", selectUrl: "#" },
+  { id: "sakura-dori", name: "さくら通り", distance: "430m", selectUrl: "#" },
+  { id: "midori-gaoka", name: "緑が丘", distance: "890m", selectUrl: "#" },
+  { id: "higashi-eki", name: "東駅", distance: "120m", selectUrl: "#" },
+];
+
+const demoNearestBusStop = demoBusStops[5]; // 東駅 as nearest
+const demoSearchResults = demoBusStops.slice(0, 3);
 
 export function BusStopSearchPage({
   onNavigateToRoute,
@@ -105,7 +113,7 @@ export function BusStopSearchPage({
             </div>
           ) : (
             <BusStopList
-              busStops={[mockNearestBusStop]}
+              busStops={[demoNearestBusStop]}
               showHeader={false}
               onBusStopSelect={handleBusStopSelect}
             />
@@ -115,7 +123,7 @@ export function BusStopSearchPage({
         {/* Search Results Section */}
         <div className="pt-[var(--size-spacing-2xl)] flex-1">
           <BusStopList
-            busStops={mockSearchResults}
+            busStops={demoSearchResults}
             showHeader={false}
             headerText="検索結果"
             onBusStopSelect={handleBusStopSelect}
