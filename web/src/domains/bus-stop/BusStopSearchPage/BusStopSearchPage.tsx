@@ -34,18 +34,13 @@ export function BusStopSearchPage({
     isLoading: isLoadingNearby,
     hasLocationPermission,
   } = useNearbyStops();
-  const handleBottomNavClick = (
-    tab: "bus-stop" | "route" | "recent" | "faq"
-  ) => {
+  const handleBottomNavClick = (tab: "bus-stop" | "route" | "recent") => {
     switch (tab) {
       case "route":
         onNavigateToRoute?.();
         break;
       case "recent":
         onNavigateToRecent?.();
-        break;
-      case "faq":
-        // FAQ is handled by the BottomNavigation component itself (external link)
         break;
       default:
         // Already on bus stop page

@@ -56,18 +56,13 @@ export function RouteSearchPage({
   const [originValue, setOriginValue] = useState("");
   const [destinationValue, setDestinationValue] = useState("");
 
-  const handleBottomNavClick = (
-    tab: "bus-stop" | "route" | "recent" | "faq"
-  ) => {
+  const handleBottomNavClick = (tab: "bus-stop" | "route" | "recent") => {
     switch (tab) {
       case "bus-stop":
         onNavigateToBusStop?.();
         break;
       case "recent":
         onNavigateToRecent?.();
-        break;
-      case "faq":
-        // FAQ is handled by the BottomNavigation component itself (external link)
         break;
       default:
         // Already on route page

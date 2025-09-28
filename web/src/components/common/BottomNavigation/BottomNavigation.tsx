@@ -29,7 +29,7 @@ function RecentIcon() {
 function FAQIcon() {
   return (
     <div className={styles.faqIcon} data-name="faq">
-      <HelpCircle size={26} />
+      <HelpCircle size={18} />
     </div>
   );
 }
@@ -57,8 +57,8 @@ function NavItem({ icon, label, isActive = false, onClick }: NavItemProps) {
 }
 
 interface BottomNavigationProps {
-  activeTab?: "bus-stop" | "route" | "recent" | "faq";
-  onTabClick?: (tab: "bus-stop" | "route" | "recent" | "faq") => void;
+  activeTab?: "bus-stop" | "route" | "recent";
+  onTabClick?: (tab: "bus-stop" | "route" | "recent") => void;
 }
 
 export function BottomNavigation({
@@ -72,7 +72,6 @@ export function BottomNavigation({
       "_blank",
       "noopener,noreferrer"
     );
-    onTabClick?.("faq");
   };
 
   return (
@@ -97,12 +96,14 @@ export function BottomNavigation({
             isActive={activeTab === "recent"}
             onClick={() => onTabClick?.("recent")}
           />
-          <NavItem
-            icon={<FAQIcon />}
-            label="製作者"
-            isActive={activeTab === "faq"}
-            onClick={handleFAQClick}
-          />
+        </div>
+        {/* Small FAQ button positioned separately */}
+        <div
+          className={styles.faqButton}
+          onClick={handleFAQClick}
+          title="製作者"
+        >
+          <FAQIcon />
         </div>
       </div>
     </div>
