@@ -4,7 +4,7 @@ import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
 
 import { useNearbyStops } from "../hooks/useNearbyStops";
 import type { BusStop } from "../types";
-import { BusStopList } from "./internal/BusStopList";
+import { BusStopList, BusStopListProps } from "./internal/BusStopList";
 import { SearchInput } from "./internal/SearchInput";
 
 interface BusStopSearchPageProps {
@@ -93,7 +93,7 @@ export function BusStopSearchPage({
   );
   // TODO: remove mock from here if possible
   // Show mock search results only when location permission is not granted
-  const componentSearchResults: BusStop[] = [];
+  const componentSearchResults: BusStopListProps["busStops"] = [];
   return (
     <div className="bg-white min-h-screen w-full max-w-[var(--max-w-mobile)] mx-auto flex flex-col relative pb-[var(--size-container-md)]">
       <TopNavigation
