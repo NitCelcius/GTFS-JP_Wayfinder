@@ -75,3 +75,12 @@ export const truncateText = (text: string, maxLength: number): string => {
   if (text.length <= maxLength) return text;
   return text.substring(0, maxLength - 3) + "...";
 };
+
+/**
+ * Get the current time as a string in HH:MM:SS format
+ * @returns Current time formatted as "HH:MM:SS"
+ */
+export const getCurrentTimeString = (): string => {
+  const now = new Date();
+  return `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}:00`;
+};

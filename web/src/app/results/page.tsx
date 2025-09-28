@@ -7,6 +7,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { SearchResultPage } from "@/domains/route-search";
 import type { TripDetails } from "@/domains/route-search/SearchResultPage/types";
 import { apiClient } from "@/lib/api";
+import { getCurrentTimeString } from "@/lib/utils";
 import type { RouteSearchResult } from "@/types";
 import { convertRouteSearchToTripDetails } from "@/types";
 
@@ -24,11 +25,6 @@ export default function ResultsPage() {
 
   useEffect(() => {
     const loadData = async () => {
-      const getCurrentTimeString = (): string => {
-        const now = new Date();
-        return `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}:00`;
-      };
-
       const makeRealApiCall = async (
         fromStop: string,
         toStop: string,

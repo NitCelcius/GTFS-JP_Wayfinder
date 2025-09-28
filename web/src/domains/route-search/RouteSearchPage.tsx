@@ -4,6 +4,7 @@ import { BottomNavigation } from "@/components/common/BottomNavigation/BottomNav
 import { RouteSearchButton } from "@/components/common/RouteSearchButton/RouteSearchButton";
 import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
 import { MapSearchIcon } from "@/components/common/icons/MapSearchIcon";
+import { getCurrentTimeString } from "@/lib/utils";
 import type { BusStopSearchResult, RouteSearchState } from "@/types";
 
 import { RouteInputs } from "./internal/RouteInputs";
@@ -115,6 +116,7 @@ export function RouteSearchPage({
 
   const handleSearch = async () => {
     // Use the first candidate stop ID from each selection
+    // TODO: implement multiple candidates handling
     const originStopId = originCandidateStopIds[0];
     const destinationStopId = destinationCandidateStopIds[0];
 
@@ -128,8 +130,7 @@ export function RouteSearchPage({
     }
 
     // Use current time as the begin_time
-    const now = new Date();
-    const beginTime = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}:00`;
+    const beginTime = getCurrentTimeString();
 
     // Pass search parameters to parent (which will navigate to results page)
     const searchParams = {
