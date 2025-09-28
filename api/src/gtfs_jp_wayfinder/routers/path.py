@@ -68,7 +68,7 @@ async def timed_search(
     try:
         path = adapter.get_shortest_path(from_stop, to_stop, service_id)
         # adapter expects begin_time as numpy.datetime64 or compatible; pass through
-        if type(begin_time) is str:
+        if isinstance(begin_time, str):
             from pandas import to_datetime
 
             # Use database default_date for consistency
