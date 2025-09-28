@@ -503,4 +503,4 @@ def get_trip_journey(trip_id: str, from_stop_id: str):
 
 
 def get_default_date():
-    return wf_service._wf.get_default_date()
+    return wf_service.get_default_date()
