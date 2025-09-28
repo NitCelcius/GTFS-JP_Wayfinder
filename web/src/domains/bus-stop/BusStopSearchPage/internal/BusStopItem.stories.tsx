@@ -22,7 +22,6 @@ const sampleBusStop: BusStop = {
   id: "1",
   name: "中央公園",
   distance: "120m",
-  selectUrl: "/bus-stop/1",
 };
 
 export const Default: Story = {

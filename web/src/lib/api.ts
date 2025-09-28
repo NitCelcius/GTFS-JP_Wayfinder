@@ -5,6 +5,7 @@ import {
   getUpcomingStopsStopIdUpcomingGet,
   searchPathPathSearchGet,
   searchStopsStopsGet,
+  timedSearchPathTimedSearchGet,
 } from "@/api";
 import { client as generatedClient } from "@/api/client.gen";
 
@@ -111,6 +112,27 @@ export class ApiClient {
     } catch (error) {
       console.error("API Error:", error);
       throw new Error("Failed to fetch nearby stops");
+    }
+  }
+
+  async searchTimedRoutes(
+    fromStop: string,
+    toStop: string,
+    beginTime?: string,
+    serviceId?: string
+  ) {
+    try {
+      return await timedSearchPathTimedSearchGet({
+        query: {
+          from_stop: fromStop,
+          to_stop: toStop,
+          ...(beginTime && { begin_time: beginTime }),
+          ...(serviceId && { service_id: serviceId }),
+        },
+      });
+    } catch (error) {
+      console.error("API Error:", error);
+      throw new Error("Failed to search timed routes");
     }
   }
 }

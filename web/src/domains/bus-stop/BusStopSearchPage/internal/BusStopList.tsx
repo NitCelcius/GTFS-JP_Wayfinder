@@ -5,7 +5,6 @@ export interface BusStop {
   id: string;
   name: string;
   distance: string;
-  selectUrl: string;
 }
 
 interface BusStopListProps {

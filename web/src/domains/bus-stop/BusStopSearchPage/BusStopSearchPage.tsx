@@ -1,9 +1,6 @@
-import { useState } from "react";
-
 import { BottomNavigation } from "@/components/common/BottomNavigation/BottomNavigation";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner/LoadingSpinner";
 import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
-import mockBusStopsList from "@/mocks/busStops";
 
 import { useNearbyStops } from "../hooks/useNearbyStops";
 import type { BusStop } from "../types";
@@ -28,7 +25,6 @@ export function BusStopSearchPage({
   onNavigateToRecent,
   onNavigateToBusStopInfo,
 }: BusStopSearchPageProps) {
-  const [mockSearchResults] = useState(() => mockBusStopsList.slice(0, 3));
   const {
     nearbyStops,
     isLoading: isLoadingNearby,
@@ -97,8 +93,7 @@ export function BusStopSearchPage({
   );
   // TODO: remove mock from here if possible
   // Show mock search results only when location permission is not granted
-  const componentSearchResults = hasLocationPermission ? [] : mockSearchResults;
-
+  const componentSearchResults: BusStop[] = [];
   return (
     <div className="bg-white min-h-screen w-full max-w-[var(--max-w-mobile)] mx-auto flex flex-col relative pb-[var(--size-container-md)]">
       <TopNavigation
