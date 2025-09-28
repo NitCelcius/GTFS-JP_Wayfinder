@@ -23,13 +23,18 @@ export function BusStopInfoPage({
 }: BusStopInfoPageProps) {
   const { data, isLoading, error } = useBusStopData(busStopId);
 
-  const handleBottomNavClick = (tab: "bus-stop" | "route" | "recent") => {
+  const handleBottomNavClick = (
+    tab: "bus-stop" | "route" | "recent" | "faq"
+  ) => {
     switch (tab) {
       case "route":
         onNavigateToRoute?.();
         break;
       case "recent":
         onNavigateToRecent?.();
+        break;
+      case "faq":
+        // FAQ is handled by the BottomNavigation component itself (external link)
         break;
       default:
         // Already on bus stop related page

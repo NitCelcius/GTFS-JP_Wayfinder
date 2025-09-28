@@ -49,13 +49,18 @@ export function SearchResultPage({
     cost: station.cost,
   }));
 
-  const handleBottomNavClick = (tab: "bus-stop" | "route" | "recent") => {
+  const handleBottomNavClick = (
+    tab: "bus-stop" | "route" | "recent" | "faq"
+  ) => {
     switch (tab) {
       case "bus-stop":
         onNavigateToBusStop?.();
         break;
       case "recent":
         onNavigateToRecent?.();
+        break;
+      case "faq":
+        // FAQ is handled by the BottomNavigation component itself (external link)
         break;
       default:
         // Already on route page (results)

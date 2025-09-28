@@ -88,13 +88,18 @@ export function RecentPage({
   onNavigateToBusStopInfo,
   onNavigateToRouteSearch,
 }: RecentPageProps) {
-  const handleBottomNavClick = (tab: "bus-stop" | "route" | "recent") => {
+  const handleBottomNavClick = (
+    tab: "bus-stop" | "route" | "recent" | "faq"
+  ) => {
     switch (tab) {
       case "bus-stop":
         onNavigateToBusStop?.();
         break;
       case "route":
         onNavigateToRoute?.();
+        break;
+      case "faq":
+        // FAQ is handled by the BottomNavigation component itself (external link)
         break;
       default:
         break;

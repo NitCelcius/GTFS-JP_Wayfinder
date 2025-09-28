@@ -1,4 +1,4 @@
-import { Clock, MapPin, Route } from "lucide-react";
+import { Clock, HelpCircle, MapPin, Route } from "lucide-react";
 
 import styles from "./BottomNavigation.module.css";
 
@@ -26,6 +26,14 @@ function RecentIcon() {
   );
 }
 
+function FAQIcon() {
+  return (
+    <div className={styles.faqIcon} data-name="faq">
+      <HelpCircle size={26} />
+    </div>
+  );
+}
+
 interface NavItemProps {
   icon: React.ReactNode;
   label: string;
@@ -49,14 +57,24 @@ function NavItem({ icon, label, isActive = false, onClick }: NavItemProps) {
 }
 
 interface BottomNavigationProps {
-  activeTab?: "bus-stop" | "route" | "recent";
-  onTabClick?: (tab: "bus-stop" | "route" | "recent") => void;
+  activeTab?: "bus-stop" | "route" | "recent" | "faq";
+  onTabClick?: (tab: "bus-stop" | "route" | "recent" | "faq") => void;
 }
 
 export function BottomNavigation({
   activeTab = "route",
   onTabClick,
 }: BottomNavigationProps) {
+  const handleFAQClick = () => {
+    // Open external link for FAQ
+    window.open(
+      "https://www.nitcelcius.me/r/github",
+      "_blank",
+      "noopener,noreferrer"
+    );
+    onTabClick?.("faq");
+  };
+
   return (
     <div className={styles.bottomNav} data-name="Footer">
       <div className={styles.content}>
@@ -78,6 +96,12 @@ export function BottomNavigation({
             label="履歴"
             isActive={activeTab === "recent"}
             onClick={() => onTabClick?.("recent")}
+          />
+          <NavItem
+            icon={<FAQIcon />}
+            label="製作者"
+            isActive={activeTab === "faq"}
+            onClick={handleFAQClick}
           />
         </div>
       </div>
