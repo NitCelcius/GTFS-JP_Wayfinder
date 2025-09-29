@@ -18,20 +18,11 @@ def _np_datetime_to_time_str(np_datetime) -> str | None:
         return None
 
     try:
-        # Convert numpy datetime64 to string and extract time part
-        dt_str = str(np_datetime)
-        if "T" in dt_str:
-            time_part = dt_str.split("T")[1]
-        elif " " in dt_str:
-            time_part = dt_str.split(" ")[1]
-        else:
-            time_part = dt_str
+        # Convert to pandas datetime for better handling
+        pd_datetime = to_datetime(np_datetime)
 
-        # Remove microseconds/nanoseconds if present
-        if "." in time_part:
-            time_part = time_part.split(".")[0]
-
-        return time_part
+        # Extract time in HH:MM:SS format
+        return pd_datetime.strftime("%H:%M:%S")
     except Exception:
         return None
 
