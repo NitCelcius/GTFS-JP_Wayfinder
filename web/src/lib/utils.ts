@@ -85,57 +85,67 @@ export const getCurrentTimeString = (): string => {
   return `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}:00`;
 };
 
-// Helper function to calculate duration between two time strings, HH:MM format only
+// Helper function to calculate duration between two time strings, accepts both HH:MM and HH:MM:SS formats
 export function calculateDurationStr(
   departureTime: string,
   arrivalTime: string
 ): string {
-  // Validate input format
-  const timeFormatRegex = /^\d{1,2}:\d{2}$/;
+  // Validate input format - now accepts both HH:MM and HH:MM:SS
+  const timeFormatRegex = /^\d{1,2}:\d{2}(:\d{2})?$/;
   const MAX_HOUR = 47; // may exceed 24 for next day arrivals
 
   if (!timeFormatRegex.test(departureTime)) {
     throw new Error(
-      `Invalid departure time format. Please use HH:MM format. Input: "${departureTime}"`
+      `Invalid departure time format. Please use HH:MM or HH:MM:SS format. Input: "${departureTime}"`
     );
   }
 
   if (!timeFormatRegex.test(arrivalTime)) {
     throw new Error(
-      `Invalid arrival time format. Please use HH:MM format. Input: "${arrivalTime}"`
+      `Invalid arrival time format. Please use HH:MM or HH:MM:SS format. Input: "${arrivalTime}"`
     );
   }
 
-  const [depHour, depMin] = departureTime.split(":").map(Number);
-  const [arrHour, arrMin] = arrivalTime.split(":").map(Number);
+  // Parse time components - handle both HH:MM and HH:MM:SS formats
+  const parseTimeString = (timeStr: string) => {
+    const parts = timeStr.split(":").map(Number);
+    const hour = parts[0];
+    const minute = parts[1];
+    const second = parts[2] || 0; // Default to 0 if seconds not provided
+    return { hour, minute, second };
+  };
+
+  const depTime = parseTimeString(departureTime);
+  const arrTime = parseTimeString(arrivalTime);
 
   // Validate time ranges
-  if (depHour < 0 || depHour > MAX_HOUR || isNaN(depHour)) {
+  if (depTime.hour < 0 || depTime.hour > MAX_HOUR || isNaN(depTime.hour)) {
     throw new Error(
-      `Invalid departure hour. Must be between 0-${MAX_HOUR}. Input: "${depHour}"`
+      `Invalid departure hour. Must be between 0-${MAX_HOUR}. Input: "${depTime.hour}"`
     );
   }
 
-  if (depMin < 0 || depMin > 59 || isNaN(depMin)) {
+  if (depTime.minute < 0 || depTime.minute > 59 || isNaN(depTime.minute)) {
     throw new Error(
-      `Invalid departure minutes. Must be between 0-59. Input: "${depMin}"`
+      `Invalid departure minutes. Must be between 0-59. Input: "${depTime.minute}"`
     );
   }
 
-  if (arrHour < 0 || arrHour > MAX_HOUR || isNaN(arrHour)) {
+  if (arrTime.hour < 0 || arrTime.hour > MAX_HOUR || isNaN(arrTime.hour)) {
     throw new Error(
-      `Invalid arrival hour. Must be between 0-${MAX_HOUR}. Input: "${arrHour}"`
+      `Invalid arrival hour. Must be between 0-${MAX_HOUR}. Input: "${arrTime.hour}"`
     );
   }
 
-  if (arrMin < 0 || arrMin > 59 || isNaN(arrMin)) {
+  if (arrTime.minute < 0 || arrTime.minute > 59 || isNaN(arrTime.minute)) {
     throw new Error(
-      `Invalid arrival minutes. Must be between 0-59. Input: "${arrMin}"`
+      `Invalid arrival minutes. Must be between 0-59. Input: "${arrTime.minute}"`
     );
   }
 
-  const depTotalMin = depHour * 60 + depMin;
-  const arrTotalMin = arrHour * 60 + arrMin;
+  // Convert to total minutes (seconds are ignored for duration calculation)
+  const depTotalMin = depTime.hour * 60 + depTime.minute;
+  const arrTotalMin = arrTime.hour * 60 + arrTime.minute;
 
   let diffMin = arrTotalMin - depTotalMin;
 
