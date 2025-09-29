@@ -69,6 +69,7 @@ export function useRouteSearch(): UseRouteSearchResult {
             }
           } catch (error) {
             console.warn("バス停名の取得に失敗しました:", error);
+            setError("バス停名の取得に失敗したため、IDで表示しています。");
           }
 
           const result: RouteSearchResult = {
