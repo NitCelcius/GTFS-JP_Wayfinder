@@ -1,6 +1,7 @@
 from typing import Optional
 
 from fastapi import APIRouter, HTTPException, Query
+from pandas import to_datetime
 
 from gtfs_jp_wayfinder import models
 from gtfs_jp_wayfinder.services import wayfinder_adapter as adapter
@@ -69,8 +70,6 @@ async def timed_search(
         path = adapter.get_shortest_path(from_stop, to_stop, service_id)
         # adapter expects begin_time as numpy.datetime64 or compatible; pass through
         if isinstance(begin_time, str):
-            from pandas import to_datetime
-
             db_default_date = adapter.get_default_date()
             begin_time = to_datetime(f"{db_default_date}T{begin_time}").to_numpy()
         travels = adapter.get_timed_travels_from_path(path, service_id, begin_time)

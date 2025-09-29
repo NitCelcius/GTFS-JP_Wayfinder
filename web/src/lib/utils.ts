@@ -84,3 +84,65 @@ export const getCurrentTimeString = (): string => {
   const now = new Date();
   return `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}:00`;
 };
+
+// Helper function to calculate duration between two time strings, HH:MM format only
+export function calculateDurationStr(
+  departureTime: string,
+  arrivalTime: string
+): string {
+  // Validate input format
+  const timeFormatRegex = /^\d{1,2}:\d{2}$/;
+  const MAX_HOUR = 47; // may exceed 24 for next day arrivals
+
+  if (!timeFormatRegex.test(departureTime)) {
+    throw new Error(
+      `Invalid departure time format. Please use HH:MM format. Input: "${departureTime}"`
+    );
+  }
+
+  if (!timeFormatRegex.test(arrivalTime)) {
+    throw new Error(
+      `Invalid arrival time format. Please use HH:MM format. Input: "${arrivalTime}"`
+    );
+  }
+
+  const [depHour, depMin] = departureTime.split(":").map(Number);
+  const [arrHour, arrMin] = arrivalTime.split(":").map(Number);
+
+  // Validate time ranges
+  if (depHour < 0 || depHour > MAX_HOUR || isNaN(depHour)) {
+    throw new Error(
+      `Invalid departure hour. Must be between 0-${MAX_HOUR}. Input: "${depHour}"`
+    );
+  }
+
+  if (depMin < 0 || depMin > 59 || isNaN(depMin)) {
+    throw new Error(
+      `Invalid departure minutes. Must be between 0-59. Input: "${depMin}"`
+    );
+  }
+
+  if (arrHour < 0 || arrHour > MAX_HOUR || isNaN(arrHour)) {
+    throw new Error(
+      `Invalid arrival hour. Must be between 0-${MAX_HOUR}. Input: "${arrHour}"`
+    );
+  }
+
+  if (arrMin < 0 || arrMin > 59 || isNaN(arrMin)) {
+    throw new Error(
+      `Invalid arrival minutes. Must be between 0-59. Input: "${arrMin}"`
+    );
+  }
+
+  const depTotalMin = depHour * 60 + depMin;
+  const arrTotalMin = arrHour * 60 + arrMin;
+
+  let diffMin = arrTotalMin - depTotalMin;
+
+  // Handle next day arrival
+  if (diffMin < 0) {
+    diffMin += 24 * 60;
+  }
+
+  return `${diffMin}分`;
+}

@@ -5,17 +5,67 @@ import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { SearchResultPage } from "@/domains/route-search";
-import type { TripDetails } from "@/domains/route-search/SearchResultPage/types";
+import type {
+  RouteOption,
+  TripDetails,
+} from "@/domains/route-search/SearchResultPage/types";
 import { apiClient } from "@/lib/api";
-import { getCurrentTimeString } from "@/lib/utils";
+import { calculateDurationStr, getCurrentTimeString } from "@/lib/utils";
 import type { RouteSearchResult } from "@/types";
-import { convertRouteSearchToTripDetails } from "@/types";
 
 // Static generation is disabled for this page because it fetches real-time bus information and search results
 // based on user input (query parameters) at runtime. The data required to render this page cannot be determined
 // at build time, so dynamic rendering is necessary to ensure up-to-date and personalized results.
 // TODO: consider dynamic rendering needed
 export const dynamic = "force-dynamic";
+
+// Convert RouteSearchResult to TripDetails for the SearchResultPage
+function convertRouteSearchToTripDetails(
+  result: RouteSearchResult
+): TripDetails {
+  const routes: RouteOption[] = result.travels.map((travel, index) => ({
+    id: `route-${index + 1}`,
+    name: `経路 ${index + 1}`,
+    departureTime: travel.departure_time,
+    arrivalTime: travel.arrival_time,
+    duration: calculateDurationStr(travel.departure_time, travel.arrival_time),
+    transferCount: 0, // Direct route for now
+    fare: travel.fare,
+    totalCost: travel.fare,
+    stations: [
+      {
+        stationName: result.originStopName,
+        departureTime: travel.departure_time,
+      },
+      {
+        stationName: result.destinationStopName,
+        arrivalTime: travel.arrival_time,
+        cost: travel.fare,
+      },
+    ],
+  }));
+
+  let searchDateTime: string;
+  const today = new Date();
+  const dateStr = today.toISOString().split("T")[0];
+  if (result.searchTime) {
+    searchDateTime = `${dateStr}T${result.searchTime}`;
+  } else {
+    // Use today's date with the current time in HH:mm:ss format
+    const pad = (n: number) => n.toString().padStart(2, "0");
+    const hours = pad(today.getHours());
+    const minutes = pad(today.getMinutes());
+    searchDateTime = `${dateStr}T${hours}:${minutes}`;
+  }
+
+  return {
+    fromStation: result.originStopName,
+    toStation: result.destinationStopName,
+    searchDateTime: searchDateTime,
+    selectedRouteId: routes.length > 0 ? routes[0].id : "route-1",
+    routes,
+  };
+}
 
 export default function ResultsPage() {
   const router = useRouter();
