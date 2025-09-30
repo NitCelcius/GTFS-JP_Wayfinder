@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from typing import Any, List, Optional
+from typing import Any
 
 import pandas as pd
 
@@ -46,16 +46,16 @@ def get_stop_lat_lon(stop_id: str):
     return wf_service.get_stop_lat_lon(stop_id)
 
 
-def get_trips_from_stop(stop_id: str, service_id: Optional[str] = None):
+def get_trips_from_stop(stop_id: str, service_id: str | None = None):
     return wf_service.get_trips_from_stop(stop_id, service_id)
 
 
 def get_times_from_trips_and_stop_batch(
-    trip_ids: List[str],
+    trip_ids: list[str],
     stop_id: str,
-    trip_id_contains: Optional[str] = None,
-    min_arrival_time: Optional[str] = None,
-    max_items: Optional[int] = None,
+    trip_id_contains: str | None = None,
+    min_arrival_time: str | None = None,
+    max_items: int | None = None,
 ) -> dict:
     """Batch get arrival/departure times for multiple trips at a specific stop.
 
@@ -202,7 +202,7 @@ def get_times_from_trips_and_stop_batch(
         }
 
 
-def _get_effective_max_items(max_items: Optional[int]) -> Optional[int]:
+def _get_effective_max_items(max_items: int | None) -> int | None:
     """Get the effective max items limit, considering environment variable."""
     import os
 
@@ -223,8 +223,8 @@ def _get_effective_max_items(max_items: Optional[int]) -> Optional[int]:
 
 
 def _filter_trip_ids(
-    trip_ids: List[str], contains_filter: Optional[str] = None
-) -> List[str]:
+    trip_ids: list[str], contains_filter: str | None = None
+) -> list[str]:
     """Helper function to filter trip IDs by substring."""
     if not contains_filter:
         return trip_ids
@@ -266,7 +266,7 @@ def _time_string_to_seconds(time_str: str) -> int:
         return hours * 3600 + minutes * 60 + seconds
 
     except (ValueError, IndexError) as e:
-        raise ValueError(f"Could not parse time '{time_str}': {e}")
+        raise ValueError(f"Could not parse time '{time_str}': {e}") from e
 
 
 def get_time_from_trip_and_stop_single(trip_id: str, stop_id: str):
@@ -306,11 +306,11 @@ def get_time_from_trip_and_stop(trip_id: str, stop_id: str):
 
 
 def get_filtered_times_from_trips_and_stop(
-    trip_ids: List[str],
+    trip_ids: list[str],
     stop_id: str,
-    trip_id_contains: Optional[str] = None,
-    min_arrival_time: Optional[str] = None,
-    max_items: Optional[int] = None,
+    trip_id_contains: str | None = None,
+    min_arrival_time: str | None = None,
+    max_items: int | None = None,
 ) -> dict:
     """Get times for trips with filtering options.
 
@@ -348,7 +348,7 @@ def get_destination_id_from_trip(trip_id: str):
     return wf_service.get_destination_id_from_trip(trip_id)
 
 
-def get_stops_from_trip(trip_id: str) -> List[dict]:
+def get_stops_from_trip(trip_id: str) -> list[dict]:
     """Return list of dicts representing timed stops, converting numpy datetime to HH:MM:SS strings.
 
     Optimized version that reduces the number of individual DataFrame queries by batching
@@ -428,7 +428,7 @@ def get_stops_from_trip(trip_id: str) -> List[dict]:
     return records
 
 
-async def get_stops_from_trips_parallel(trip_ids: List[str]) -> dict:  # type: ignore
+async def get_stops_from_trips_parallel(trip_ids: list[str]) -> dict:  # type: ignore
     """Fetch stops data for multiple trips in parallel.
 
     Returns dict mapping trip_id -> stops_data.
@@ -470,20 +470,20 @@ def get_fare_by_stops(from_id: str, to_id: str) -> int:
     return wf_service.get_fare_by_stops(from_id, to_id)
 
 
-def get_trip_info_batch(trip_ids: List[str]) -> TripInfoList:
+def get_trip_info_batch(trip_ids: list[str]) -> TripInfoList:
     return wf_service.get_trip_info_batch(trip_ids)
 
 
-def get_shortest_path(from_id: str, to_id: str, service_id: Optional[str] = None):
+def get_shortest_path(from_id: str, to_id: str, service_id: str | None = None):
     return wf_service._wf.get_shortest_path(from_id, to_id, service_id)
 
 
-def get_travels_from_path(path: list, service_id: Optional[str] = None):
+def get_travels_from_path(path: list, service_id: str | None = None):
     return wf_service._wf.get_travels_from_path(path, service_id)
 
 
 def get_timed_travels_from_path(
-    path: list, service_id: str, begin_time: Any, change_time: Optional[Any] = None
+    path: list, service_id: str, begin_time: Any, change_time: Any | None = None
 ):
     # begin_time is expected to be numpy.datetime64 already by callers; if a string is passed, leave to underlying implementation
     if change_time is None:

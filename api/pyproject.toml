@@ -34,7 +34,13 @@ dev = [
 ]
 
 [tool.ruff.lint]
-select = ["F"] # TODO: 可能になればAllを導入する
+select = ["F"]
+extend-select = [
+    "E",  # 一般的なエラー/スタイル (E501 は既に ignore)
+    "W",  # 警告
+    "B",  # flake8-bugbear
+    "UP", # pyupgrade
+]
 
 ignore = [
     "D203",

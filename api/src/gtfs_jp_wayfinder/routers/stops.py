@@ -1,5 +1,3 @@
-from typing import List, Optional
-
 from fastapi import APIRouter, HTTPException, Query
 
 from gtfs_jp_wayfinder import models
@@ -8,7 +6,7 @@ from gtfs_jp_wayfinder.services import wayfinder_adapter as adapter
 router = APIRouter()
 
 
-def parse_expand(expand_str: Optional[str]) -> List[str]:
+def parse_expand(expand_str: str | None) -> list[str]:
     if not expand_str:
         return []
     tokens = [t.strip() for t in expand_str.split(",") if t.strip()]
@@ -49,7 +47,7 @@ def parse_expand(expand_str: Optional[str]) -> List[str]:
 async def get_nearby_stops(
     lat: float = Query(..., description="緯度 (度単位)", ge=-90, le=90),
     lon: float = Query(..., description="経度 (度単位)", ge=-180, le=180),
-    limit: Optional[int] = Query(None, description="取得する最大件数"),
+    limit: int | None = Query(None, description="取得する最大件数"),
 ):
     """Get nearby bus stops based on latitude and longitude coordinates.
 
@@ -89,7 +87,7 @@ async def get_nearby_stops(
         return models.NearbyStopsResponse(stops=stops)
 
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @router.get(
@@ -106,7 +104,7 @@ async def get_nearby_stops(
 )
 async def get_stop(
     stop_id: str,
-    fields: Optional[str] = Query(
+    fields: str | None = Query(
         None, description="追加で取得するフィールド (例: location)"
     ),
 ):
@@ -114,7 +112,7 @@ async def get_stop(
     try:
         names = adapter.get_stop_names(stop_id)
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
     if isinstance(names, list):
         return models.StopNameList(stop_names=names)
     return models.StopNameList(stop_names=[])
@@ -150,7 +148,7 @@ async def search_stops(
             raise RuntimeError("Wayfinder not initialized")
         res = _wf.get_stop_id(name, exact)
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
     if res is None:
         return models.StopIdResponse(stop_ids=[])
     return models.StopIdResponse(stop_ids=res.to_dict("records"))
@@ -183,13 +181,9 @@ async def search_stops(
 )
 async def get_upcoming(
     stop_id: str,
-    service_id: Optional[str] = Query(
-        None, description="サービスIDで絞り込む (例: 平日)"
-    ),
-    expand: Optional[str] = Query(
-        None, description="展開トークン (例: trip_info, stops)"
-    ),
-    limit: Optional[int] = Query(
+    service_id: str | None = Query(None, description="サービスIDで絞り込む (例: 平日)"),
+    expand: str | None = Query(None, description="展開トークン (例: trip_info, stops)"),
+    limit: int | None = Query(
         None,
         ge=1,
         description="クライアント側の最大件数",

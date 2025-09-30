@@ -1,5 +1,4 @@
 import threading
-from typing import Dict, List, Optional, Union
 
 import numpy as np
 import pandas as pd
@@ -11,7 +10,7 @@ from gtfs_jp_wayfinder.models import (
 )
 
 # Singleton instance and lock
-_wf: Optional[AkitaBusWayFinder] = None
+_wf: AkitaBusWayFinder | None = None
 _wf_lock = threading.Lock()
 
 
@@ -41,7 +40,7 @@ def get_stop_lat_lon(stop_id: str):
     return _wf.get_stop_lat_lon(stop_id)
 
 
-def get_trips_from_stop(stop_id: str, service_id: Optional[str] = None):
+def get_trips_from_stop(stop_id: str, service_id: str | None = None):
     if _wf is None:
         raise RuntimeError("Wayfinder not initialized")
     return _wf.get_trips_from_stop(stop_id, service_id)
@@ -91,11 +90,11 @@ def get_fare_by_stops(from_id: str, to_id: str):
     return fare
 
 
-def get_trip_info_batch(trip_ids: List[str]) -> TripInfoList:
+def get_trip_info_batch(trip_ids: list[str]) -> TripInfoList:
     # Batch helper: dedupe route lookups
-    trips: List[TripInfo] = []
-    route_cache: Dict[str, str] = {}
-    dest_cache: Dict[str, str] = {}
+    trips: list[TripInfo] = []
+    route_cache: dict[str, str] = {}
+    dest_cache: dict[str, str] = {}
     for tid in trip_ids:
         route_name = None
         dest_name = None
@@ -140,7 +139,7 @@ def get_trip_info_batch(trip_ids: List[str]) -> TripInfoList:
     return TripInfoList(trips=trips)
 
 
-def format_np_datetime(value: Union[pd.Timestamp, np.datetime64, str]) -> str:
+def format_np_datetime(value: pd.Timestamp | np.datetime64 | str) -> str:
     """Utility to format numpy.datetime64 or pandas.Timestamp to HH:MM:S.
 
     This helper is exposed so adapters can convert underlying numpy/pandas
@@ -151,7 +150,7 @@ def format_np_datetime(value: Union[pd.Timestamp, np.datetime64, str]) -> str:
     return timestamp.strftime("%H:%M:%S")
 
 
-def get_nearby_stops(lat: float, lon: float, limit: int = 10) -> List[NearbyStopResult]:
+def get_nearby_stops(lat: float, lon: float, limit: int = 10) -> list[NearbyStopResult]:
     """Get nearby bus stops sorted by distance."""
     if _wf is None:
         raise RuntimeError("Wayfinder not initialized")

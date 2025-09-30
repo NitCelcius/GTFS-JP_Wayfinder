@@ -1,12 +1,11 @@
 import datetime
-from typing import List, Optional
 
 from pydantic import BaseModel
 
 
 # Request models
 class TripIdList(BaseModel):
-    trip_ids: List[str]
+    trip_ids: list[str]
     model_config = {
         "json_schema_extra": {
             "examples": [
@@ -40,7 +39,7 @@ class TripIdAndTime(BaseModel):
 
 class UpcomingBus(BaseModel):
     stop_id: str
-    buses: List[TripIdAndTime]
+    buses: list[TripIdAndTime]
     model_config = {
         "json_schema_extra": {
             "examples": [
@@ -133,7 +132,7 @@ class TripTimedStop(BaseModel):
     stop_id: str
     stop_sequence: int
     stop_headsign: str
-    stop_name: Optional[str] = None
+    stop_name: str | None = None
 
     model_config = {
         "json_schema_extra": {
@@ -153,7 +152,7 @@ class TripTimedStop(BaseModel):
 
 
 class TimedTravelResponse(BaseModel):
-    travels: List[TravelOnceResponse]
+    travels: list[TravelOnceResponse]
     model_config = {
         "json_schema_extra": {
             "examples": [
@@ -175,7 +174,7 @@ class TimedTravelResponse(BaseModel):
 
 
 class StopNameList(BaseModel):
-    stop_names: List[str]
+    stop_names: list[str]
     model_config = {"json_schema_extra": {"examples": [{"stop_names": ["中央公園"]}]}}
 
 
@@ -185,7 +184,7 @@ class StopIdAndName(BaseModel):
 
 
 class StopIdResponse(BaseModel):
-    stop_ids: List[StopIdAndName]
+    stop_ids: list[StopIdAndName]
     model_config = {
         "json_schema_extra": {
             "examples": [
@@ -233,7 +232,7 @@ class TripIdAndRouteName(BaseModel):
 
 
 class PathResponse(BaseModel):
-    path: List[str]
+    path: list[str]
     model_config = {
         "json_schema_extra": {"examples": [{"path": ["1021_01", "3000_01", "6037_01"]}]}
     }
@@ -242,9 +241,9 @@ class PathResponse(BaseModel):
 # Enriched/batch models
 class TripInfo(BaseModel):
     trip_id: str
-    route_name: Optional[str] = None
-    destination_display_name: Optional[str] = None
-    destination_stop_id: Optional[str] = None
+    route_name: str | None = None
+    destination_display_name: str | None = None
+    destination_stop_id: str | None = None
 
     model_config = {
         "json_schema_extra": {
@@ -261,7 +260,7 @@ class TripInfo(BaseModel):
 
 
 class TripInfoList(BaseModel):
-    trips: List[TripInfo]
+    trips: list[TripInfo]
     model_config = {
         "json_schema_extra": {
             "examples": [
@@ -284,10 +283,10 @@ class EnrichedTrip(BaseModel):
     trip_id: str
     arrival_time: str
     departure_time: str
-    route_name: Optional[str] = None
-    destination_display_name: Optional[str] = None
-    destination_stop_id: Optional[str] = None
-    stops: Optional[List[TripTimedStop]] = None
+    route_name: str | None = None
+    destination_display_name: str | None = None
+    destination_stop_id: str | None = None
+    stops: list[TripTimedStop] | None = None
     model_config = {
         "json_schema_extra": {
             "examples": [
@@ -305,7 +304,7 @@ class EnrichedTrip(BaseModel):
 
 class UpcomingBusEnriched(BaseModel):
     stop_id: str
-    buses: List[EnrichedTrip]
+    buses: list[EnrichedTrip]
     model_config = {
         "json_schema_extra": {
             "examples": [
@@ -347,7 +346,7 @@ class NearbyStop(BaseModel):
 
 
 class NearbyStopsResponse(BaseModel):
-    stops: List[NearbyStop]
+    stops: list[NearbyStop]
     model_config = {
         "json_schema_extra": {
             "examples": [
