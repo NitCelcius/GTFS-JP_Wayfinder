@@ -86,8 +86,7 @@ def get_fare_by_stops(from_id: str, to_id: str):
     if _wf is None:
         raise RuntimeError("Wayfinder not initialized")
     fare_id = _wf.get_fare_route_by_stops(from_id, to_id)["fare_id"].values[0]
-    fare = _wf.get_fare_from_id(fare_id).item()
-    return fare
+    return _wf.get_fare_from_id(fare_id).item()
 
 
 def get_trip_info_batch(trip_ids: list[str]) -> TripInfoList:

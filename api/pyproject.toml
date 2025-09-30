@@ -40,6 +40,10 @@ extend-select = [
     "W",  # 警告
     "B",  # flake8-bugbear
     "UP", # pyupgrade
+    "SIM", # flake8-simplify
+    "RET", # return statement improvements
+    "N",   # pep8-naming
+    "ARG", # unused arguments
 ]
 
 ignore = [
@@ -64,3 +68,8 @@ unfixable = [
     "F401", # unused import を消さない
     "F841"  # unused variable を消さない
 ]
+
+# Per-file (or directory) ignores
+# TODO: Clean test fixtures/mocks then remove these ignores
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["ARG001", "ARG002", "ARG005"]

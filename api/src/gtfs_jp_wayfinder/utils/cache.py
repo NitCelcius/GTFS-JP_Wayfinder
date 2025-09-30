@@ -54,10 +54,10 @@ class TTLCache:
                 self._store.pop(key, None)
             elif len(self._store) >= self.max_items:
                 # evict the least-recently-used (first) item
-                try:
+                from contextlib import suppress
+
+                with suppress(Exception):
                     self._store.popitem(last=False)
-                except Exception:
-                    pass
             self._store[key] = (time.time(), value)
 
     def get_or_set(self, key: str, factory: Callable[[], Any]) -> Any:

@@ -45,8 +45,7 @@ async def batch_trips(
         raise HTTPException(
             status_code=400, detail=f"limit too large; max is {max_batch}"
         )
-    info = adapter.get_trip_info_batch(body.trip_ids)
-    return info
+    return adapter.get_trip_info_batch(body.trip_ids)
 
 
 @router.get(

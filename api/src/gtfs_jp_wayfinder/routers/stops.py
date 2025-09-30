@@ -104,7 +104,8 @@ async def get_nearby_stops(
 )
 async def get_stop(
     stop_id: str,
-    fields: str | None = Query(
+    _fields: str
+    | None = Query(  # TODO(ARG): implement optional field expansion (e.g. location)
         None, description="追加で取得するフィールド (例: location)"
     ),
 ):

@@ -25,8 +25,7 @@ class BusStopGrabber:
 
     def fetch_busstop_raw(self, route_id: str, query_time: datetime.time):
         req = requests.get(BusStopGrabber.get_busstop_uri(route_id, query_time))
-        resp_str = req.content.decode("utf-8-sig")
-        return resp_str
+        return req.content.decode("utf-8-sig")
 
     # route_id = "01_1449_400401"
     # fetch_time = datetime.datetime.now(ZoneInfo("Asia/Tokyo")).time()
@@ -34,8 +33,7 @@ class BusStopGrabber:
         bs = BusStopGrabber.fetch_busstop_raw(route_id=route_id, query_time=fetch_time)
 
         entries = re.findall(r"T\((.*)\)", bs)  # TODO: compile させる
-
-        resList = []
+        results = []
         for entry in entries:
             split_entry = entry.split(",")
 
@@ -69,10 +67,10 @@ class BusStopGrabber:
             if stop_scheduled_time_res:
                 stop_scheduled_time = stop_scheduled_time_res.group(1)
 
-            resList.append([stop_num, stop_name, stop_scheduled_time])
+            results.append([stop_num, stop_name, stop_scheduled_time])
 
         return pd.DataFrame(
-            resList, columns=["stop_num", "stop_name", "stop_scheduled_time"]
+            results, columns=["stop_num", "stop_name", "stop_scheduled_time"]
         )
 
         # 系統番号、不要と判断

@@ -398,13 +398,13 @@ def get_stops_from_trip(trip_id: str) -> list[dict]:
     for r in records:
         # Convert datetime fields using the helper function
         if conv is not None:
+            from contextlib import suppress
+
             for time_field in ("arrival_time", "departure_time"):
                 time_value = r.get(time_field)
                 if time_value is not None:
-                    try:
+                    with suppress(Exception):
                         r[time_field] = conv(time_value)
-                    except Exception:
-                        pass
 
         # Add stop name using cache or individual lookup as fallback
         stop_id = r.get("stop_id")
@@ -457,9 +457,8 @@ async def get_stops_from_trips_parallel(trip_ids: list[str]) -> dict:  # type: i
     stops_map = {}
     for result in results:  # type: ignore
         if isinstance(result, Exception):
-            # Log exception but don't fail the whole operation
             continue
-        elif isinstance(result, tuple) and len(result) == 2:
+        if isinstance(result, tuple) and len(result) == 2:
             trip_id, stops_data = result
             stops_map[trip_id] = stops_data
 
