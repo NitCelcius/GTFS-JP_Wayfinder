@@ -38,11 +38,11 @@ async def batch_trips(
     max_batch = int(os.environ.get("API_BATCH_MAX_TRIP_IDS", "10"))
     if len(body.trip_ids) > max_batch:
         raise HTTPException(
-            status_code=400, detail=f"batch limit exceeded; max is {max_batch}"
+            status_code=400, detail=f"batch limit exceeded; max is {max_batch}",
         )
     if limit is not None and limit > max_batch:
         raise HTTPException(
-            status_code=400, detail=f"limit too large; max is {max_batch}"
+            status_code=400, detail=f"limit too large; max is {max_batch}",
         )
     return adapter.get_trip_info_batch(body.trip_ids)
 

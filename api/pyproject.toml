@@ -53,7 +53,6 @@ extend-select = [
 ignore = [
     "D203",
     "D212",
-    "COM812",
     "T201", # TODO: print によるログ出力を許可する (ruff 移行完了したら消す)
     "E501", # TODO: 行の長さは長くてもよい (ruff 移行完了したら消す)
     "D1",   # docstring をすべてに書かなくてよい

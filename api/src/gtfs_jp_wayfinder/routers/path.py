@@ -102,7 +102,7 @@ async def path_travels(
                         "departure_time": None,
                         "from_stop_id": t.from_stop_id,
                         "to_stop_id": t.to_stop_id,
-                    }
+                    },
                 )
             else:
                 records.append(t)

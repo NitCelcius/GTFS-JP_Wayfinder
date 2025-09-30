@@ -11,13 +11,13 @@ class DistanceCalculator(ABC):
 
     @abstractmethod
     def calculate_distance(
-        self, lat1: float, lon1: float, lat2: float, lon2: float
+        self, lat1: float, lon1: float, lat2: float, lon2: float,
     ) -> float:
         """Calculate distance between two points in kilometers."""
         pass
 
     def calculate_distances_batch(
-        self, user_lat: float, user_lon: float, stops_df: pd.DataFrame
+        self, user_lat: float, user_lon: float, stops_df: pd.DataFrame,
     ) -> list[float]:
         """Calculate distances to multiple stops efficiently. Override for batch optimization."""
         distances = []
@@ -33,7 +33,7 @@ class HaversineDistanceCalculator(DistanceCalculator):
     """Accurate distance calculation using Haversine formula."""
 
     def calculate_distance(
-        self, lat1: float, lon1: float, lat2: float, lon2: float
+        self, lat1: float, lon1: float, lat2: float, lon2: float,
     ) -> float:
         """
         Calculate the great circle distance in kilometers between two points
@@ -70,7 +70,7 @@ class EuclideanDistanceCalculator(DistanceCalculator):
     """Fast approximation using Euclidean distance. Less accurate for geographic coordinates."""
 
     def calculate_distance(
-        self, lat1: float, lon1: float, lat2: float, lon2: float
+        self, lat1: float, lon1: float, lat2: float, lon2: float,
     ) -> float:
         """
         Calculate approximate distance using Euclidean formula.

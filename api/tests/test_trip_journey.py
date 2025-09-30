@@ -16,13 +16,13 @@ def test_get_journey_list_and_dataframe(monkeypatch):
                 "stop_id": "S2",
                 "fare": 130,
                 "departure_time": datetime.datetime(
-                    year=1980, month=1, day=1, hour=10, minute=0, second=0
+                    year=1980, month=1, day=1, hour=10, minute=0, second=0,
                 ),
                 "arrival_time": datetime.datetime(
-                    year=1980, month=1, day=1, hour=10, minute=30, second=0
+                    year=1980, month=1, day=1, hour=10, minute=30, second=0,
                 ),
-            }
-        ]
+            },
+        ],
     )
 
     monkeypatch.setattr(

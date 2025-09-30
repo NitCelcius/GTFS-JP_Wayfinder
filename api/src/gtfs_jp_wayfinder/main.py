@@ -34,7 +34,7 @@ def get_cors_origins():
 
     logger.warning(
         f"CORS_ORIGINS not set, using defaults: {default_origins}. "
-        "Set CORS_ORIGINS environment variable for production."
+        "Set CORS_ORIGINS environment variable for production.",
     )
     return default_origins
 

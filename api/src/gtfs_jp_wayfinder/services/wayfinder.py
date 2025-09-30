@@ -132,7 +132,7 @@ def get_trip_info_batch(trip_ids: list[str]) -> TripInfoList:
                 route_name=route_name,
                 destination_display_name=dest_name,
                 destination_stop_id=dest_stop,
-            )
+            ),
         )
 
     return TripInfoList(trips=trips)

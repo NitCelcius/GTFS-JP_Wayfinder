@@ -9,9 +9,9 @@ class TripIdList(BaseModel):
     model_config = {
         "json_schema_extra": {
             "examples": [
-                {"trip_ids": ["平日_07時50分_系統34002", "平日_09時10分_系統34002"]}
-            ]
-        }
+                {"trip_ids": ["平日_07時50分_系統34002", "平日_09時10分_系統34002"]},
+            ],
+        },
     }
 
 
@@ -31,9 +31,9 @@ class TripIdAndTime(BaseModel):
                     "trip_id": "平日_07時50分_系統34002",
                     "arrival_time": "07:50:00",
                     "departure_time": "07:50:00",
-                }
-            ]
-        }
+                },
+            ],
+        },
     }
 
 
@@ -50,11 +50,11 @@ class UpcomingBus(BaseModel):
                             "trip_id": "平日_07時50分_系統34002",
                             "arrival_time": "07:50:00",
                             "departure_time": "07:50:00",
-                        }
+                        },
                     ],
-                }
-            ]
-        }
+                },
+            ],
+        },
     }
 
 
@@ -62,7 +62,7 @@ class StopLatLon(BaseModel):
     lat: float
     lon: float
     model_config = {
-        "json_schema_extra": {"examples": [{"lat": 39.71676, "lon": 140.13113}]}
+        "json_schema_extra": {"examples": [{"lat": 39.71676, "lon": 140.13113}]},
     }
 
 
@@ -70,8 +70,8 @@ class StopCoordinateResponse(BaseModel):
     location: StopLatLon
     model_config = {
         "json_schema_extra": {
-            "examples": [{"location": {"lat": 39.71676, "lon": 140.13113}}]
-        }
+            "examples": [{"location": {"lat": 39.71676, "lon": 140.13113}}],
+        },
     }
 
 
@@ -96,9 +96,9 @@ class TripRecord(BaseModel):
                     "fare": 170,
                     "departure_time": "07:50:00",
                     "arrival_time": "07:50:00",
-                }
-            ]
-        }
+                },
+            ],
+        },
     }
 
 
@@ -119,9 +119,9 @@ class TravelOnceResponse(BaseModel):
                     "from_stop_id": "1021_01",
                     "to_stop_id": "6037_01",
                     "fare": 170,
-                }
-            ]
-        }
+                },
+            ],
+        },
     }
 
 
@@ -145,9 +145,9 @@ class TripTimedStop(BaseModel):
                     "stop_sequence": 1,
                     "stop_headsign": "中央公園",
                     "stop_name": "中央公園",
-                }
-            ]
-        }
+                },
+            ],
+        },
     }
 
 
@@ -165,11 +165,11 @@ class TimedTravelResponse(BaseModel):
                             "from_stop_id": "1021_01",
                             "to_stop_id": "6037_01",
                             "fare": 170,
-                        }
-                    ]
-                }
-            ]
-        }
+                        },
+                    ],
+                },
+            ],
+        },
     }
 
 
@@ -188,9 +188,9 @@ class StopIdResponse(BaseModel):
     model_config = {
         "json_schema_extra": {
             "examples": [
-                {"stop_ids": [{"stop_id": "1021_01", "stop_name": "中央公園"}]}
-            ]
-        }
+                {"stop_ids": [{"stop_id": "1021_01", "stop_name": "中央公園"}]},
+            ],
+        },
     }
 
 
@@ -203,9 +203,9 @@ class TripAndDestDisplayName(BaseModel):
                 {
                     "trip_id": "平日_06時33分_系統30101",
                     "destination_display_name": "大学病院",
-                }
-            ]
-        }
+                },
+            ],
+        },
     }
 
 
@@ -215,9 +215,9 @@ class TripAndDestStopId(BaseModel):
     model_config = {
         "json_schema_extra": {
             "examples": [
-                {"trip_id": "平日_06時33分_系統30101", "destination_stop_id": "404"}
-            ]
-        }
+                {"trip_id": "平日_06時33分_系統30101", "destination_stop_id": "404"},
+            ],
+        },
     }
 
 
@@ -226,15 +226,15 @@ class TripIdAndRouteName(BaseModel):
     route_name: str
     model_config = {
         "json_schema_extra": {
-            "examples": [{"trip_id": "平日_06時33分_系統30101", "route_name": "太平線"}]
-        }
+            "examples": [{"trip_id": "平日_06時33分_系統30101", "route_name": "太平線"}],
+        },
     }
 
 
 class PathResponse(BaseModel):
     path: list[str]
     model_config = {
-        "json_schema_extra": {"examples": [{"path": ["1021_01", "3000_01", "6037_01"]}]}
+        "json_schema_extra": {"examples": [{"path": ["1021_01", "3000_01", "6037_01"]}]},
     }
 
 
@@ -253,9 +253,9 @@ class TripInfo(BaseModel):
                     "route_name": "太平線",
                     "destination_display_name": "大学病院",
                     "destination_stop_id": "404",
-                }
-            ]
-        }
+                },
+            ],
+        },
     }
 
 
@@ -271,11 +271,11 @@ class TripInfoList(BaseModel):
                             "route_name": "太平線",
                             "destination_display_name": "大学病院",
                             "destination_stop_id": "404",
-                        }
-                    ]
-                }
-            ]
-        }
+                        },
+                    ],
+                },
+            ],
+        },
     }
 
 
@@ -296,9 +296,9 @@ class EnrichedTrip(BaseModel):
                     "departure_time": "07:50:00",
                     "route_name": "太平線",
                     "destination_display_name": "大学病院",
-                }
-            ]
-        }
+                },
+            ],
+        },
     }
 
 
@@ -316,11 +316,11 @@ class UpcomingBusEnriched(BaseModel):
                             "arrival_time": "07:50:00",
                             "departure_time": "07:50:00",
                             "route_name": "太平線",
-                        }
+                        },
                     ],
-                }
-            ]
-        }
+                },
+            ],
+        },
     }
 
 
@@ -339,9 +339,9 @@ class NearbyStop(BaseModel):
                     "distance_km": 0.25,
                     "lat": 39.71676,
                     "lon": 140.13113,
-                }
-            ]
-        }
+                },
+            ],
+        },
     }
 
 
@@ -366,8 +366,8 @@ class NearbyStopsResponse(BaseModel):
                             "lat": 39.71876,
                             "lon": 140.13213,
                         },
-                    ]
-                }
-            ]
-        }
+                    ],
+                },
+            ],
+        },
     }

@@ -47,14 +47,14 @@ class BusStopGrabber:
                 stop_num = int(stop_num_res.group(1))
 
             stop_name_res = re.search(
-                "</FONT>(.*?)<FONT COLOR=#0000FF>", html_detail
+                "</FONT>(.*?)<FONT COLOR=#0000FF>", html_detail,
             )  # ＜＜ みたいなのが出力されない説
             if stop_name_res:
                 stop_name = str(stop_name_res.group(1)).strip()
                 # 最後の停留所は font size = 6 なのでこっちも探す
             else:
                 stop_terminal_res = re.search(
-                    "<FONT SIZE=6>(.*)<FONT COLOR=#0000FF>", html_detail
+                    "<FONT SIZE=6>(.*)<FONT COLOR=#0000FF>", html_detail,
                 )
                 if stop_terminal_res:
                     stop_name = str(stop_terminal_res.group(1)).strip()
@@ -62,7 +62,7 @@ class BusStopGrabber:
                     raise Exception("stop_name_res not found!")
 
             stop_scheduled_time_res = re.search(
-                r"<FONT COLOR=#0000FF>(\d\d:\d\d)</FONT>", html_detail
+                r"<FONT COLOR=#0000FF>(\d\d:\d\d)</FONT>", html_detail,
             )
             if stop_scheduled_time_res:
                 stop_scheduled_time = stop_scheduled_time_res.group(1)
@@ -70,7 +70,7 @@ class BusStopGrabber:
             results.append([stop_num, stop_name, stop_scheduled_time])
 
         return pd.DataFrame(
-            results, columns=["stop_num", "stop_name", "stop_scheduled_time"]
+            results, columns=["stop_num", "stop_name", "stop_scheduled_time"],
         )
 
         # 系統番号、不要と判断

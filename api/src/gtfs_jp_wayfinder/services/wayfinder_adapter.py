@@ -140,7 +140,7 @@ def get_times_from_trips_and_stop_batch(
                 except Exception:
                     # If parsing fails, include the trip (don't filter out due to parsing errors)
                     logger.warning(
-                        f"Warning: Could not parse arrival time for trip {trip_id}. Given value: {arrival_time}"
+                        f"Warning: Could not parse arrival time for trip {trip_id}. Given value: {arrival_time}",
                     )
                     pass
 
@@ -154,7 +154,7 @@ def get_times_from_trips_and_stop_batch(
                         converted_arrival = conv(arrival_time)
                     else:
                         converted_arrival = pd.Timestamp(arrival_time).strftime(
-                            "%H:%M:%S"
+                            "%H:%M:%S",
                         )
                 except Exception:
                     try:
@@ -168,7 +168,7 @@ def get_times_from_trips_and_stop_batch(
                         converted_departure = conv(departure_time)
                     else:
                         converted_departure = pd.Timestamp(departure_time).strftime(
-                            "%H:%M:%S"
+                            "%H:%M:%S",
                         )
                 except Exception:
                     try:
@@ -216,14 +216,14 @@ def _get_effective_max_items(max_items: int | None) -> int | None:
             return int(env_max)
         except ValueError:
             logger.warning(
-                f"Warning: Invalid GTFS_BATCH_MAX_ITEMS env value: {env_max}"
+                f"Warning: Invalid GTFS_BATCH_MAX_ITEMS env value: {env_max}",
             )
 
     return None  # No limit
 
 
 def _filter_trip_ids(
-    trip_ids: list[str], contains_filter: str | None = None
+    trip_ids: list[str], contains_filter: str | None = None,
 ) -> list[str]:
     """Helper function to filter trip IDs by substring."""
     if not contains_filter:
@@ -301,7 +301,7 @@ def get_time_from_trip_and_stop(trip_id: str, stop_id: str):
     """
     batch_result = get_times_from_trips_and_stop_batch([trip_id], stop_id)
     return batch_result.get(
-        trip_id, {"trip_id": trip_id, "arrival_time": None, "departure_time": None}
+        trip_id, {"trip_id": trip_id, "arrival_time": None, "departure_time": None},
     )
 
 
@@ -328,7 +328,7 @@ def get_filtered_times_from_trips_and_stop(
         dict mapping trip_id -> {trip_id, arrival_time, departure_time}
     """
     return get_times_from_trips_and_stop_batch(
-        trip_ids, stop_id, trip_id_contains, min_arrival_time, max_items
+        trip_ids, stop_id, trip_id_contains, min_arrival_time, max_items,
     )
 
 
@@ -482,13 +482,13 @@ def get_travels_from_path(path: list, service_id: str | None = None):
 
 
 def get_timed_travels_from_path(
-    path: list, service_id: str, begin_time: Any, change_time: Any | None = None
+    path: list, service_id: str, begin_time: Any, change_time: Any | None = None,
 ):
     # begin_time is expected to be numpy.datetime64 already by callers; if a string is passed, leave to underlying implementation
     if change_time is None:
         return wf_service._wf.get_timed_travels_from_path(path, service_id, begin_time)
     return wf_service._wf.get_timed_travels_from_path(
-        path, service_id, begin_time, change_time
+        path, service_id, begin_time, change_time,
     )
 
 

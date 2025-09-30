@@ -36,12 +36,12 @@ def parse_expand(expand_str: str | None) -> list[str]:
                                 "distance_km": 0.25,
                                 "lat": 39.71676,
                                 "lon": 140.13113,
-                            }
-                        ]
-                    }
-                }
+                            },
+                        ],
+                    },
+                },
             },
-        }
+        },
     },
 )
 async def get_nearby_stops(
@@ -64,7 +64,7 @@ async def get_nearby_stops(
     # Enforce maximum limit
     if limit > max_limit:
         raise HTTPException(
-            status_code=400, detail=f"limit too large; max is {max_limit}"
+            status_code=400, detail=f"limit too large; max is {max_limit}",
         )
 
     if limit <= 0:
@@ -99,14 +99,14 @@ async def get_nearby_stops(
         200: {
             "description": "成功",
             "content": {"application/json": {"example": {"stop_names": ["中央公園"]}}},
-        }
+        },
     },
 )
 async def get_stop(
     stop_id: str,
     _fields: str
     | None = Query(  # TODO(ARG): implement optional field expansion (e.g. location)
-        None, description="追加で取得するフィールド (例: location)"
+        None, description="追加で取得するフィールド (例: location)",
     ),
 ):
     # For now we return names; location can be requested via fields=location
@@ -130,11 +130,11 @@ async def get_stop(
             "content": {
                 "application/json": {
                     "example": {
-                        "stop_ids": [{"stop_id": "1021_01", "stop_name": "中央公園"}]
-                    }
-                }
+                        "stop_ids": [{"stop_id": "1021_01", "stop_name": "中央公園"}],
+                    },
+                },
             },
-        }
+        },
     },
 )
 async def search_stops(
@@ -172,12 +172,12 @@ async def search_stops(
                                 "trip_id": "平日_06時50分_系統42202",
                                 "arrival_time": "07:07:00",
                                 "departure_time": "07:07:00",
-                            }
+                            },
                         ],
-                    }
-                }
+                    },
+                },
             },
-        }
+        },
     },
 )
 async def get_upcoming(
@@ -201,7 +201,7 @@ async def get_upcoming(
         limit = max_batch
     elif limit > max_batch:
         raise HTTPException(
-            status_code=400, detail=f"limit too large; max is {max_batch}"
+            status_code=400, detail=f"limit too large; max is {max_batch}",
         )
 
     trips = adapter.get_trips_from_stop(stop_id, service_id)
@@ -216,7 +216,7 @@ async def get_upcoming(
     # OPTIMIZATION 1: Batch fetch all arrival/departure times at once instead of N individual queries
     # Use the new max_items parameter to apply limit at the batch level for better performance
     time_map = adapter.get_times_from_trips_and_stop_batch(
-        trips_list, stop_id, max_items=limit
+        trips_list, stop_id, max_items=limit,
     )
 
     # Build base buses list using batch-fetched times
@@ -231,7 +231,7 @@ async def get_upcoming(
                 trip_id=trip,
                 arrival_time=arrival,
                 departure_time=departure,
-            )
+            ),
         )
         trip_ids.append(trip)
 
@@ -273,7 +273,7 @@ async def get_upcoming(
                     else None,
                     destination_stop_id=tinfo.destination_stop_id if tinfo else None,
                     stops=stops_data,
-                )
+                ),
             )
         return models.UpcomingBusEnriched(stop_id=stop_id, buses=enriched)
 
