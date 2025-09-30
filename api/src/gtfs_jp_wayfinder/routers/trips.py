@@ -103,18 +103,16 @@ async def get_journey(
         if journey is None:
             raise HTTPException(status_code=404, detail="not found")
 
-        records = []
-        for x in journey.itertuples():
-            records.append(
-                models.TripRecord(
-                    trip_id=x.trip_id,
-                    stop_id=x.stop_id,
-                    fare=x.fare,
-                    arrival_time=np_datetime_to_datetime_time(x.arrival_time),
-                    departure_time=np_datetime_to_datetime_time(x.departure_time),
-                )
+        return [
+            models.TripRecord(
+                trip_id=x.trip_id,
+                stop_id=x.stop_id,
+                fare=x.fare,
+                arrival_time=np_datetime_to_datetime_time(x.arrival_time),
+                departure_time=np_datetime_to_datetime_time(x.departure_time),
             )
-        return records
+            for x in journey.itertuples()
+        ]
     except HTTPException:
         raise
     except Exception as e:

@@ -1,5 +1,5 @@
-import time
 import threading
+import time
 
 from gtfs_jp_wayfinder.utils.cache import TTLCache
 

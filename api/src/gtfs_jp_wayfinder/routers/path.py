@@ -64,19 +64,17 @@ async def timed_search(
         travels = adapter.get_timed_travels_from_path(path, service_id, begin_time)
 
         # Convert TravelOnce objects to TravelOnceResponse with string times
-        travel_responses = []
-        for travel in travels:
-            travel_responses.append(
-                models.TravelOnceResponse(
-                    trip_id=travel.trip_id,
-                    departure_time=_np_datetime_to_time_str(travel.departure_time)
-                    or "",
-                    arrival_time=_np_datetime_to_time_str(travel.arrival_time) or "",
-                    from_stop_id=travel.from_stop_id,
-                    to_stop_id=travel.to_stop_id,
-                    fare=travel.fare,
-                )
+        travel_responses = [
+            models.TravelOnceResponse(
+                trip_id=travel.trip_id,
+                departure_time=_np_datetime_to_time_str(travel.departure_time) or "",
+                arrival_time=_np_datetime_to_time_str(travel.arrival_time) or "",
+                from_stop_id=travel.from_stop_id,
+                to_stop_id=travel.to_stop_id,
+                fare=travel.fare,
             )
+            for travel in travels
+        ]
 
         return models.TimedTravelResponse(travels=travel_responses)
     except Exception as e:
