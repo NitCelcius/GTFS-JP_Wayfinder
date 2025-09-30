@@ -1,0 +1,1 @@
+export { convertRouteSearchToTripDetails } from "./convertRouteSearchToTripDetails";

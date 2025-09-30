@@ -78,3 +78,9 @@ app.include_router(path.router, prefix="/path", tags=["path"])
 @app.get("/")
 async def root():
     return {"message": "GTFS-JP Wayfinder API"}
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(app, host="0.0.0.0", port=8002)

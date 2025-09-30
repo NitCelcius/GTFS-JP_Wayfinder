@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
 import { BusStopItem } from "./BusStopItem";
-import { BusStop } from "./BusStopList";
+import { BusStopListProps } from "./BusStopList";
 
 const meta: Meta<typeof BusStopItem> = {
   title: "BusStop/BusStopSearchPage/Internal/BusStopItem",
@@ -18,11 +18,10 @@ const meta: Meta<typeof BusStopItem> = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const sampleBusStop: BusStop = {
+const sampleBusStop: BusStopListProps["busStops"][0] = {
   id: "1",
   name: "中央公園",
   distance: "120m",
-  selectUrl: "/bus-stop/1",
 };
 
 export const Default: Story = {

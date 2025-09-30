@@ -1,14 +1,13 @@
 import { BusStopItem } from "./BusStopItem";
 import styles from "./BusStopList.module.css";
 
-export interface BusStop {
+interface BusStop {
   id: string;
   name: string;
   distance: string;
-  selectUrl: string;
 }
 
-interface BusStopListProps {
+export interface BusStopListProps {
   busStops: BusStop[];
   showHeader?: boolean;
   headerText?: string;

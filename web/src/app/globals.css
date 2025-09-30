@@ -1,4 +1,6 @@
-@import "tailwindcss/preflight";
+/* Use the canonical Tailwind entry points so PostCSS/tailwindcss emits base, components and utilities */
+@tailwind base;
+@tailwind components;
 @tailwind utilities;
 
 @custom-variant dark (&:is(.dark *));

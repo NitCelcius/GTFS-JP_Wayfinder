@@ -2,10 +2,10 @@ import React from "react";
 
 import { BusStopCard } from "@/components/common";
 
-import { BusStop } from "./BusStopList";
+import { BusStopListProps } from "./BusStopList";
 
 interface BusStopItemProps {
-  busStop: BusStop;
+  busStop: BusStopListProps["busStops"][0];
   onSelect?: (busStopId: string) => void;
 }
 

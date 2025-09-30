@@ -1,3 +1,6 @@
+from gtfs_jp_wayfinder.database import TravelOnce
+
+
 def test_search_stops(monkeypatch, client):
     # fake _wf with get_stop_id that returns an object with to_dict
     class FakeRes:
@@ -28,14 +31,14 @@ def test_path_timed_search(monkeypatch, client):
     monkeypatch.setattr(
         "gtfs_jp_wayfinder.services.wayfinder_adapter.get_timed_travels_from_path",
         lambda path, s=None, begin_time=None: [
-            {
-                "trip_id": "t1",
-                "departure_time": "08:00:00",
-                "arrival_time": "08:30:00",
-                "from_stop_id": "S1",
-                "to_stop_id": "S2",
-                "fare": 150,
-            }
+            TravelOnce(
+                trip_id="t1",
+                departure_time="08:00:00",
+                arrival_time="08:30:00",
+                from_stop_id="S1",
+                to_stop_id="S2",
+                fare=150,
+            )
         ],
     )
 
