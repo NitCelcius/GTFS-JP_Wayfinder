@@ -44,9 +44,10 @@ extend-select = [
     "RET", # return statement improvements
     "N",   # pep8-naming
     "ARG", # unused arguments
-    "I",   # import sorting (isort compatible)
+    "I",   # import sorting
     "PERF",# performance micro-optimizations
-    "FURB",# refurb suggestions (safe modernizations; currently 0 hits)
+    "FURB",# refurb suggestions
+    "RUF", # Ruff-specific rules
 ]
 
 ignore = [

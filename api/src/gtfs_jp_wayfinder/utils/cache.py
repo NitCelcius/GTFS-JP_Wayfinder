@@ -41,7 +41,7 @@ class TTLCache:
             val = self._store.get(key)
             if val is None:
                 return None
-            ts, data = val
+            _ts, data = val  # _ts retained for potential future TTL logic (RUF059)
             # move to end to mark as recently used
             self._store.move_to_end(key)
             return data

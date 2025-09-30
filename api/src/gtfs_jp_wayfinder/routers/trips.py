@@ -1,6 +1,5 @@
 import datetime
 import os
-from typing import Optional  # noqa: F401 (retained if future optional params added)
 
 import numpy as np
 from fastapi import APIRouter, HTTPException, Query
