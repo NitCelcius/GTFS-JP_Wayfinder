@@ -1,6 +1,5 @@
 import datetime
 import os
-from typing import List, Optional
 
 import numpy as np
 from fastapi import APIRouter, HTTPException, Query
@@ -34,19 +33,18 @@ def np_datetime_to_datetime_time(val: np.datetime64) -> datetime.time:
 )
 async def batch_trips(
     body: models.TripIdList,
-    limit: Optional[int] = Query(None, description="返却件数上限（オプション）"),
+    limit: int | None = Query(None, description="返却件数上限（オプション）"),
 ):
     max_batch = int(os.environ.get("API_BATCH_MAX_TRIP_IDS", "10"))
     if len(body.trip_ids) > max_batch:
         raise HTTPException(
-            status_code=400, detail=f"batch limit exceeded; max is {max_batch}"
+            status_code=400, detail=f"batch limit exceeded; max is {max_batch}",
         )
     if limit is not None and limit > max_batch:
         raise HTTPException(
-            status_code=400, detail=f"limit too large; max is {max_batch}"
+            status_code=400, detail=f"limit too large; max is {max_batch}",
         )
-    info = adapter.get_trip_info_batch(body.trip_ids)
-    return info
+    return adapter.get_trip_info_batch(body.trip_ids)
 
 
 @router.get(
@@ -63,7 +61,7 @@ async def fare(
         fare_val = adapter.get_fare_by_stops(from_id, to_id)
         return models.FareResponse(fare=fare_val)
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @router.get(
@@ -75,19 +73,19 @@ async def fare(
 async def get_connections(
     from_stop: str = Query(..., description="出発停留所ID"),
     to_stop: str = Query(..., description="到着停留所ID"),
-    service_id: Optional[str] = Query(None, description="サービスIDで絞り込み"),
+    service_id: str | None = Query(None, description="サービスIDで絞り込み"),
 ):
     try:
         path = adapter.get_shortest_path(from_stop, to_stop, service_id)
         travels = adapter.get_travels_from_path(path, service_id)
         return models.TimedTravelResponse(travels=travels)
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @router.get(
     "/journey",
-    response_model=List[models.TripRecord],
+    response_model=list[models.TripRecord],
     summary="運行経路の旅程取得",
     description="指定運行IDと停留所から、その運行の以降の到着/出発/運賃情報を返します。",
 )
@@ -104,22 +102,20 @@ async def get_journey(
         if journey is None:
             raise HTTPException(status_code=404, detail="not found")
 
-        records = []
-        for x in journey.itertuples():
-            records.append(
-                models.TripRecord(
-                    trip_id=x.trip_id,
-                    stop_id=x.stop_id,
-                    fare=x.fare,
-                    arrival_time=np_datetime_to_datetime_time(x.arrival_time),
-                    departure_time=np_datetime_to_datetime_time(x.departure_time),
-                )
+        return [
+            models.TripRecord(
+                trip_id=x.trip_id,
+                stop_id=x.stop_id,
+                fare=x.fare,
+                arrival_time=np_datetime_to_datetime_time(x.arrival_time),
+                departure_time=np_datetime_to_datetime_time(x.departure_time),
             )
-        return records
+            for x in journey.itertuples()
+        ]
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @router.get(
@@ -137,7 +133,7 @@ async def get_trip(trip_id: str):
 
 @router.get(
     "/{trip_id}/stops",
-    response_model=List[models.TripTimedStop],
+    response_model=list[models.TripTimedStop],
     summary="運行の停留所一覧取得",
     description="運行に紐づく停留所と時刻の一覧を返します。",
 )
@@ -145,7 +141,7 @@ async def trip_stops(trip_id: str):
     try:
         records = adapter.get_stops_from_trip(trip_id)
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
     return records
 
 
@@ -169,4 +165,4 @@ async def trip_passing(trip_id: str, stop_id: str = Query(..., description="停�
             arrival_time=(res.get("arrival_time") if isinstance(res, dict) else None),
         )
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e

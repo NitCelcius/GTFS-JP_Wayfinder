@@ -1,5 +1,3 @@
-from typing import Optional
-
 from fastapi import APIRouter, HTTPException, Query
 from pandas import to_datetime
 
@@ -36,13 +34,13 @@ def _np_datetime_to_time_str(np_datetime) -> str | None:
 async def search_path(
     from_stop: str = Query(..., description="出発停留所ID"),
     to_stop: str = Query(..., description="到着停留所ID"),
-    service_id: Optional[str] = Query(None, description="サービスIDで絞り込み"),
+    service_id: str | None = Query(None, description="サービスIDで絞り込み"),
 ):
     try:
         path = adapter.get_shortest_path(from_stop, to_stop, service_id)
         return models.PathResponse(path=path)
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @router.get(
@@ -54,8 +52,8 @@ async def search_path(
 async def timed_search(
     from_stop: str = Query(..., description="出発停留所ID"),
     to_stop: str = Query(..., description="到着停留所ID"),
-    service_id: Optional[str] = Query(None, description="サービスID"),
-    begin_time: Optional[str] = Query(None, description="開始時刻 (HH:MM:SS)"),
+    service_id: str | None = Query(None, description="サービスID"),
+    begin_time: str | None = Query(None, description="開始時刻 (HH:MM:SS)"),
 ):
     try:
         path = adapter.get_shortest_path(from_stop, to_stop, service_id)
@@ -66,30 +64,28 @@ async def timed_search(
         travels = adapter.get_timed_travels_from_path(path, service_id, begin_time)
 
         # Convert TravelOnce objects to TravelOnceResponse with string times
-        travel_responses = []
-        for travel in travels:
-            travel_responses.append(
-                models.TravelOnceResponse(
-                    trip_id=travel.trip_id,
-                    departure_time=_np_datetime_to_time_str(travel.departure_time)
-                    or "",
-                    arrival_time=_np_datetime_to_time_str(travel.arrival_time) or "",
-                    from_stop_id=travel.from_stop_id,
-                    to_stop_id=travel.to_stop_id,
-                    fare=travel.fare,
-                )
+        travel_responses = [
+            models.TravelOnceResponse(
+                trip_id=travel.trip_id,
+                departure_time=_np_datetime_to_time_str(travel.departure_time) or "",
+                arrival_time=_np_datetime_to_time_str(travel.arrival_time) or "",
+                from_stop_id=travel.from_stop_id,
+                to_stop_id=travel.to_stop_id,
+                fare=travel.fare,
             )
+            for travel in travels
+        ]
 
         return models.TimedTravelResponse(travels=travel_responses)
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @router.get("/travels")
 async def path_travels(
     from_stop: str = Query(...),
     to_stop: str = Query(...),
-    service_id: Optional[str] = Query(None),
+    service_id: str | None = Query(None),
 ):
     try:
         path = adapter.get_shortest_path(from_stop, to_stop, service_id)
@@ -106,10 +102,10 @@ async def path_travels(
                         "departure_time": None,
                         "from_stop_id": t.from_stop_id,
                         "to_stop_id": t.to_stop_id,
-                    }
+                    },
                 )
             else:
                 records.append(t)
         return {"travels": records}
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e

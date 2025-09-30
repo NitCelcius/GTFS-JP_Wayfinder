@@ -17,7 +17,7 @@ def test_trips_batch_and_get_trip(monkeypatch):
                     destination_stop_id=f"stop-{i}",
                 )
                 for i in ids
-            ]
+            ],
         )
 
     monkeypatch.setattr(

@@ -34,13 +34,13 @@ def get_cors_origins():
 
     logger.warning(
         f"CORS_ORIGINS not set, using defaults: {default_origins}. "
-        "Set CORS_ORIGINS environment variable for production."
+        "Set CORS_ORIGINS environment variable for production.",
     )
     return default_origins
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(_app: FastAPI):  # _app retained for FastAPI signature (ARG001)
     """Async lifespan for FastAPI so initialization runs via asyncio.to_thread.
 
     This allows the turborepo "uv run python -m ..." wrapper to start the
@@ -55,7 +55,7 @@ async def lifespan(app: FastAPI):
         logger.exception("Wayfinder initialization failed")
         raise
 
-    yield
+    yield  # TODO(ARG): use _app for shutdown hooks if needed
 
     # Optional: place for shutdown/cleanup if needed
 

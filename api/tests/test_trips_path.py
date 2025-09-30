@@ -18,7 +18,7 @@ def test_trips_batch_and_get_trip(monkeypatch, client):
                     destination_stop_id=f"stop-{i}",
                 )
                 for i in ids
-            ]
+            ],
         )
 
     monkeypatch.setattr(
@@ -68,7 +68,7 @@ def test_path_search_and_travels(monkeypatch, client):
                 "departure_time": "09:05:00",
                 "from_stop_id": "sA",
                 "to_stop_id": "sB",
-            }
+            },
         ],
     )
 
@@ -136,7 +136,7 @@ def test_upcoming_variants(monkeypatch, client):
                     destination_stop_id="s",
                 )
                 for i in ids
-            ]
+            ],
         )
 
     monkeypatch.setattr(

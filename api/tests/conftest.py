@@ -18,7 +18,7 @@ def client():
 
     if not data_dir.exists():
         pytest.skip(
-            f"GTFS data directory not found at {data_dir}. Skipping tests that require real data."
+            f"GTFS data directory not found at {data_dir}. Skipping tests that require real data.",
         )
 
     # Initialize wayfinder synchronously - the services.wayfinder module

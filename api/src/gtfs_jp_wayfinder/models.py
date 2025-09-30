@@ -1,18 +1,17 @@
 import datetime
-from typing import List, Optional
 
 from pydantic import BaseModel
 
 
 # Request models
 class TripIdList(BaseModel):
-    trip_ids: List[str]
+    trip_ids: list[str]
     model_config = {
         "json_schema_extra": {
             "examples": [
-                {"trip_ids": ["平日_07時50分_系統34002", "平日_09時10分_系統34002"]}
-            ]
-        }
+                {"trip_ids": ["平日_07時50分_系統34002", "平日_09時10分_系統34002"]},
+            ],
+        },
     }
 
 
@@ -32,15 +31,15 @@ class TripIdAndTime(BaseModel):
                     "trip_id": "平日_07時50分_系統34002",
                     "arrival_time": "07:50:00",
                     "departure_time": "07:50:00",
-                }
-            ]
-        }
+                },
+            ],
+        },
     }
 
 
 class UpcomingBus(BaseModel):
     stop_id: str
-    buses: List[TripIdAndTime]
+    buses: list[TripIdAndTime]
     model_config = {
         "json_schema_extra": {
             "examples": [
@@ -51,11 +50,11 @@ class UpcomingBus(BaseModel):
                             "trip_id": "平日_07時50分_系統34002",
                             "arrival_time": "07:50:00",
                             "departure_time": "07:50:00",
-                        }
+                        },
                     ],
-                }
-            ]
-        }
+                },
+            ],
+        },
     }
 
 
@@ -63,7 +62,7 @@ class StopLatLon(BaseModel):
     lat: float
     lon: float
     model_config = {
-        "json_schema_extra": {"examples": [{"lat": 39.71676, "lon": 140.13113}]}
+        "json_schema_extra": {"examples": [{"lat": 39.71676, "lon": 140.13113}]},
     }
 
 
@@ -71,8 +70,8 @@ class StopCoordinateResponse(BaseModel):
     location: StopLatLon
     model_config = {
         "json_schema_extra": {
-            "examples": [{"location": {"lat": 39.71676, "lon": 140.13113}}]
-        }
+            "examples": [{"location": {"lat": 39.71676, "lon": 140.13113}}],
+        },
     }
 
 
@@ -97,9 +96,9 @@ class TripRecord(BaseModel):
                     "fare": 170,
                     "departure_time": "07:50:00",
                     "arrival_time": "07:50:00",
-                }
-            ]
-        }
+                },
+            ],
+        },
     }
 
 
@@ -120,9 +119,9 @@ class TravelOnceResponse(BaseModel):
                     "from_stop_id": "1021_01",
                     "to_stop_id": "6037_01",
                     "fare": 170,
-                }
-            ]
-        }
+                },
+            ],
+        },
     }
 
 
@@ -133,7 +132,7 @@ class TripTimedStop(BaseModel):
     stop_id: str
     stop_sequence: int
     stop_headsign: str
-    stop_name: Optional[str] = None
+    stop_name: str | None = None
 
     model_config = {
         "json_schema_extra": {
@@ -146,14 +145,14 @@ class TripTimedStop(BaseModel):
                     "stop_sequence": 1,
                     "stop_headsign": "中央公園",
                     "stop_name": "中央公園",
-                }
-            ]
-        }
+                },
+            ],
+        },
     }
 
 
 class TimedTravelResponse(BaseModel):
-    travels: List[TravelOnceResponse]
+    travels: list[TravelOnceResponse]
     model_config = {
         "json_schema_extra": {
             "examples": [
@@ -166,16 +165,16 @@ class TimedTravelResponse(BaseModel):
                             "from_stop_id": "1021_01",
                             "to_stop_id": "6037_01",
                             "fare": 170,
-                        }
-                    ]
-                }
-            ]
-        }
+                        },
+                    ],
+                },
+            ],
+        },
     }
 
 
 class StopNameList(BaseModel):
-    stop_names: List[str]
+    stop_names: list[str]
     model_config = {"json_schema_extra": {"examples": [{"stop_names": ["中央公園"]}]}}
 
 
@@ -185,13 +184,13 @@ class StopIdAndName(BaseModel):
 
 
 class StopIdResponse(BaseModel):
-    stop_ids: List[StopIdAndName]
+    stop_ids: list[StopIdAndName]
     model_config = {
         "json_schema_extra": {
             "examples": [
-                {"stop_ids": [{"stop_id": "1021_01", "stop_name": "中央公園"}]}
-            ]
-        }
+                {"stop_ids": [{"stop_id": "1021_01", "stop_name": "中央公園"}]},
+            ],
+        },
     }
 
 
@@ -204,9 +203,9 @@ class TripAndDestDisplayName(BaseModel):
                 {
                     "trip_id": "平日_06時33分_系統30101",
                     "destination_display_name": "大学病院",
-                }
-            ]
-        }
+                },
+            ],
+        },
     }
 
 
@@ -216,9 +215,9 @@ class TripAndDestStopId(BaseModel):
     model_config = {
         "json_schema_extra": {
             "examples": [
-                {"trip_id": "平日_06時33分_系統30101", "destination_stop_id": "404"}
-            ]
-        }
+                {"trip_id": "平日_06時33分_系統30101", "destination_stop_id": "404"},
+            ],
+        },
     }
 
 
@@ -227,24 +226,24 @@ class TripIdAndRouteName(BaseModel):
     route_name: str
     model_config = {
         "json_schema_extra": {
-            "examples": [{"trip_id": "平日_06時33分_系統30101", "route_name": "太平線"}]
-        }
+            "examples": [{"trip_id": "平日_06時33分_系統30101", "route_name": "太平線"}],
+        },
     }
 
 
 class PathResponse(BaseModel):
-    path: List[str]
+    path: list[str]
     model_config = {
-        "json_schema_extra": {"examples": [{"path": ["1021_01", "3000_01", "6037_01"]}]}
+        "json_schema_extra": {"examples": [{"path": ["1021_01", "3000_01", "6037_01"]}]},
     }
 
 
 # Enriched/batch models
 class TripInfo(BaseModel):
     trip_id: str
-    route_name: Optional[str] = None
-    destination_display_name: Optional[str] = None
-    destination_stop_id: Optional[str] = None
+    route_name: str | None = None
+    destination_display_name: str | None = None
+    destination_stop_id: str | None = None
 
     model_config = {
         "json_schema_extra": {
@@ -254,14 +253,14 @@ class TripInfo(BaseModel):
                     "route_name": "太平線",
                     "destination_display_name": "大学病院",
                     "destination_stop_id": "404",
-                }
-            ]
-        }
+                },
+            ],
+        },
     }
 
 
 class TripInfoList(BaseModel):
-    trips: List[TripInfo]
+    trips: list[TripInfo]
     model_config = {
         "json_schema_extra": {
             "examples": [
@@ -272,11 +271,11 @@ class TripInfoList(BaseModel):
                             "route_name": "太平線",
                             "destination_display_name": "大学病院",
                             "destination_stop_id": "404",
-                        }
-                    ]
-                }
-            ]
-        }
+                        },
+                    ],
+                },
+            ],
+        },
     }
 
 
@@ -284,10 +283,10 @@ class EnrichedTrip(BaseModel):
     trip_id: str
     arrival_time: str
     departure_time: str
-    route_name: Optional[str] = None
-    destination_display_name: Optional[str] = None
-    destination_stop_id: Optional[str] = None
-    stops: Optional[List[TripTimedStop]] = None
+    route_name: str | None = None
+    destination_display_name: str | None = None
+    destination_stop_id: str | None = None
+    stops: list[TripTimedStop] | None = None
     model_config = {
         "json_schema_extra": {
             "examples": [
@@ -297,15 +296,15 @@ class EnrichedTrip(BaseModel):
                     "departure_time": "07:50:00",
                     "route_name": "太平線",
                     "destination_display_name": "大学病院",
-                }
-            ]
-        }
+                },
+            ],
+        },
     }
 
 
 class UpcomingBusEnriched(BaseModel):
     stop_id: str
-    buses: List[EnrichedTrip]
+    buses: list[EnrichedTrip]
     model_config = {
         "json_schema_extra": {
             "examples": [
@@ -317,11 +316,11 @@ class UpcomingBusEnriched(BaseModel):
                             "arrival_time": "07:50:00",
                             "departure_time": "07:50:00",
                             "route_name": "太平線",
-                        }
+                        },
                     ],
-                }
-            ]
-        }
+                },
+            ],
+        },
     }
 
 
@@ -340,14 +339,14 @@ class NearbyStop(BaseModel):
                     "distance_km": 0.25,
                     "lat": 39.71676,
                     "lon": 140.13113,
-                }
-            ]
-        }
+                },
+            ],
+        },
     }
 
 
 class NearbyStopsResponse(BaseModel):
-    stops: List[NearbyStop]
+    stops: list[NearbyStop]
     model_config = {
         "json_schema_extra": {
             "examples": [
@@ -367,8 +366,8 @@ class NearbyStopsResponse(BaseModel):
                             "lat": 39.71876,
                             "lon": 140.13213,
                         },
-                    ]
-                }
-            ]
-        }
+                    ],
+                },
+            ],
+        },
     }

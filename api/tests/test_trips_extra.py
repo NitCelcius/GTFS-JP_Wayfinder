@@ -16,7 +16,7 @@ def test_trip_stops(monkeypatch):
                 "stop_id": "S1",
                 "stop_sequence": 1,
                 "stop_headsign": "Central",
-            }
+            },
         ]
 
     monkeypatch.setattr(

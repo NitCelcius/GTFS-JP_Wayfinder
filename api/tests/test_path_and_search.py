@@ -16,7 +16,7 @@ def test_search_stops(monkeypatch, client):
     resp = client.get("/stops/?name=中央公園&exact=true")
     assert resp.status_code == 200
     assert resp.json() == {
-        "stop_ids": [{"stop_id": "1021_01", "stop_name": "中央公園"}]
+        "stop_ids": [{"stop_id": "1021_01", "stop_name": "中央公園"}],
     }
 
 
@@ -38,7 +38,7 @@ def test_path_timed_search(monkeypatch, client):
                 from_stop_id="S1",
                 to_stop_id="S2",
                 fare=150,
-            )
+            ),
         ],
     )
 

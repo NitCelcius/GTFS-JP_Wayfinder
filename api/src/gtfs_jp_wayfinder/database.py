@@ -1,17 +1,18 @@
 import logging
 import warnings
-from typing import List
+from dataclasses import dataclass
 
 import networkx as nx
 import numpy as np
 import pandas as pd
 
-from gtfs_jp_wayfinder.utils.distance import HaversineDistanceCalculator, EuclideanDistanceCalculator, DistanceCalculator
+from gtfs_jp_wayfinder.utils.distance import (
+    DistanceCalculator,
+    EuclideanDistanceCalculator,
+    HaversineDistanceCalculator,
+)
 
 logger = logging.getLogger(__name__)
-
-
-from dataclasses import dataclass
 
 
 @dataclass
@@ -27,6 +28,7 @@ class TravelOnce:
 @dataclass
 class NearbyStopResult:
     """Result for a single nearby bus stop."""
+
     stop_id: str
     stop_name: str
     distance_km: float
@@ -46,10 +48,12 @@ class AkitaBusWayFinder:
         self.graph = None
         self.graph_via_service_id = dict()
         self.default_date = "2021-01-01"
-        
+
         # Distance calculator - can be switched between Haversine and Euclidean
         self.distance_calculator: DistanceCalculator = (
-            HaversineDistanceCalculator() if use_haversine else EuclideanDistanceCalculator()
+            HaversineDistanceCalculator()
+            if use_haversine
+            else EuclideanDistanceCalculator()
         )
 
     # 文字列の時刻情報を numpy の datetime64 に変換する
@@ -121,7 +125,7 @@ class AkitaBusWayFinder:
                         (stop_ids[i], stop_ids[j])
                         for i in range(stop_ids_count)
                         for j in range(i + 1, stop_ids_count)
-                    ]
+                    ],
                 )
             return edges
 
@@ -143,7 +147,7 @@ class AkitaBusWayFinder:
             self.graph_via_service_id[service_id] = nx.DiGraph()
 
             service_trip_ids = list(
-                self.df_trips[self.df_trips["service_id"] == service_id]["trip_id"]
+                self.df_trips[self.df_trips["service_id"] == service_id]["trip_id"],
             )
             service_edges = generate_edges_from_trips(
                 service_trip_ids,
@@ -192,13 +196,15 @@ class AkitaBusWayFinder:
                             + str(service_id)
                             + "was not found in the date "
                             + str(date)
-                            + "in calendar_dates.txt! This will be ignored."
+                            + "in calendar_dates.txt! This will be ignored.",
+                            stacklevel=2,
                         )
                 else:
                     warnings.warn(
                         "While trying to override service id from calendar_dates.txt, the date "
                         + str(date)
-                        + " was not found in regular dates (calendar.txt)! Check calendar_dates.txt corresponds with calendar.txt. This will be ignored."
+                        + " was not found in regular dates (calendar.txt)! Check calendar_dates.txt corresponds with calendar.txt. This will be ignored.",
+                        stacklevel=2,
                     )
             elif exception_type == 1:  # 「追加」のクエリだと考える
                 # if date in date_to_service_id_list:
@@ -214,7 +220,8 @@ class AkitaBusWayFinder:
                     + str(date)
                     + " in calendar_dates.txt contains invalid exception_type"
                     + str(exception_type)
-                    + " ! This will be ignored."
+                    + " ! This will be ignored.",
+                    stacklevel=2,
                 )
 
         self.date_to_service_id = date_to_service_id_list
@@ -289,7 +296,7 @@ class AkitaBusWayFinder:
         ][["departure_time", "stop_sequence"]]
         if dep_time_df.shape[0] == 0:
             raise ValueError(
-                "The trip " + trip_id + " does not involve a stop: " + from_id
+                "The trip " + trip_id + " does not involve a stop: " + from_id,
             )
         dep_time = dep_time_df["departure_time"].values[0]
         dep_stop_seq = dep_time_df["stop_sequence"].values[0]
@@ -313,7 +320,7 @@ class AkitaBusWayFinder:
                 + " does not stop at "
                 + to_id
                 + " after the stop "
-                + from_id
+                + from_id,
             )
         arr_time = arr_time[0]
 
@@ -370,7 +377,7 @@ class AkitaBusWayFinder:
             path = nx.shortest_path(self.graph, source=from_id, target=to_id)
         else:
             path = nx.shortest_path(
-                self.graph_via_service_id[service_id], source=from_id, target=to_id
+                self.graph_via_service_id[service_id], source=from_id, target=to_id,
             )
 
         return path
@@ -395,7 +402,7 @@ class AkitaBusWayFinder:
                     departure_time=None,
                     from_stop_id=prev_stop,
                     to_stop_id=current_stop,
-                )
+                ),
             )
             prev_stop = current_stop
 
@@ -409,8 +416,10 @@ class AkitaBusWayFinder:
         path: list[str],
         service_id: str,
         begin_time: np.datetime64,
-        change_time: np.timedelta64 = np.timedelta64(0, "m"),
+        change_time: np.timedelta64 | None = None,
     ) -> list[TravelOnce]:
+        if change_time is None:
+            change_time = np.timedelta64(0, "m")
         cur_time = begin_time
         prev_stop = None
         travel_list = []
@@ -422,10 +431,10 @@ class AkitaBusWayFinder:
             candidate_trips = dict()
             logger.info("@ %s %s -> %s", cur_time, prev_stop, current_stop)
             for target_trip in self.get_trips_from_stops(
-                prev_stop, current_stop, service_id
+                prev_stop, current_stop, service_id,
             ):
                 dep_time, arr_time = self.get_trip_times(
-                    prev_stop, current_stop, target_trip
+                    prev_stop, current_stop, target_trip,
                 )
                 if dep_time >= cur_time + change_time:
                     candidate_trips[target_trip] = arr_time
@@ -436,14 +445,14 @@ class AkitaBusWayFinder:
                     + " at stop "
                     + prev_stop
                     + " to stop "
-                    + current_stop
+                    + current_stop,
                 )
             fastest_trip = min(candidate_trips, key=candidate_trips.get)
             dep_time, arr_time = self.get_trip_times(
-                prev_stop, current_stop, fastest_trip
+                prev_stop, current_stop, fastest_trip,
             )
             logger.info(
-                "fastest via %s dep %s arr %s", fastest_trip, dep_time, arr_time
+                "fastest via %s dep %s arr %s", fastest_trip, dep_time, arr_time,
             )
 
             travel_list.append(
@@ -454,7 +463,7 @@ class AkitaBusWayFinder:
                     fare=self.get_fare_from_stops(prev_stop, current_stop),
                     from_stop_id=prev_stop,
                     to_stop_id=current_stop,
-                )
+                ),
             )
             cur_time = arr_time
             prev_stop = current_stop
@@ -492,17 +501,17 @@ class AkitaBusWayFinder:
             if trip_res.shape[0] == 0:
                 if stop_res.shape[0] == 0:
                     raise ValueError(
-                        "No trip with given trip_id found and no stop with give stop_id found"
+                        "No trip with given trip_id found and no stop with give stop_id found",
                     )
                 raise ValueError(
-                    "A stop with given stop_id was found, but no trip with given trip_id found"
+                    "A stop with given stop_id was found, but no trip with given trip_id found",
                 )
             if stop_res.shape[0] == 0:
                 raise ValueError(
-                    "A trip with given trip_id was found, but no stop with given stop_id found"
+                    "A trip with given trip_id was found, but no stop with given stop_id found",
                 )
             raise ValueError(
-                "Given valid trip_id and stop_id, but no trip with the specified combination found"
+                "Given valid trip_id and stop_id, but no trip with the specified combination found",
             )
         return {
             "trip_id": res["trip_id"].values[0],
@@ -539,7 +548,7 @@ class AkitaBusWayFinder:
                 "arrival_time": arrival_time_list,
                 "departure_time": departure_time_list,
                 "stop_id": stops_list,
-            }
+            },
         )
 
     # trip_id から service_id を得る
@@ -604,30 +613,32 @@ class AkitaBusWayFinder:
             "route_long_name"
         ].values[0]
 
-    def get_nearby_stops(self, lat: float, lon: float, limit: int = 10) -> List[NearbyStopResult]:
-        """
-        Get nearby bus stops sorted by distance from given coordinates.
-        
+    def get_nearby_stops(
+        self, lat: float, lon: float, limit: int = 10,
+    ) -> list[NearbyStopResult]:
+        """Get nearby bus stops sorted by distance from given coordinates.
+
         Args:
             lat: Latitude in decimal degrees
-            lon: Longitude in decimal degrees  
+            lon: Longitude in decimal degrees
             limit: Maximum number of stops to return (default: 10)
-            
+
         Returns:
             List of NearbyStopResult dataclasses sorted by distance from nearest to farthest
         """
         if limit <= 0:
             raise ValueError("limit must be positive")
-            
         # Use batch calculation for better performance with large datasets
-        distances = self.distance_calculator.calculate_distances_batch(lat, lon, self.df_stops)
-        
+        distances = self.distance_calculator.calculate_distances_batch(
+            lat, lon, self.df_stops,
+        )
         # Extract data as numpy arrays for better performance than iterrows()
         stop_ids = self.df_stops["stop_id"].values
-        stop_names = self.df_stops["stop_name"].values  # stop_name is required in GTFS spec
+        stop_names = self.df_stops[
+            "stop_name"
+        ].values  # stop_name is required in GTFS spec
         stop_lats = self.df_stops["stop_lat"].values.astype(float)
         stop_lons = self.df_stops["stop_lon"].values.astype(float)
-        
         # Create result objects using array indexing
         results = [
             NearbyStopResult(
@@ -635,11 +646,10 @@ class AkitaBusWayFinder:
                 stop_name=stop_names[i],
                 distance_km=distances[i],
                 stop_lat=stop_lats[i],
-                stop_lon=stop_lons[i]
+                stop_lon=stop_lons[i],
             )
             for i in range(len(distances))
         ]
-        
         # Sort by distance and return only the requested limit
         results.sort(key=lambda x: x.distance_km)
         return results[:limit]

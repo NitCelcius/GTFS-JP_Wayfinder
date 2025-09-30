@@ -1,5 +1,3 @@
-from typing import List, Optional
-
 from fastapi import APIRouter, HTTPException, Query
 
 from gtfs_jp_wayfinder import models
@@ -8,7 +6,7 @@ from gtfs_jp_wayfinder.services import wayfinder_adapter as adapter
 router = APIRouter()
 
 
-def parse_expand(expand_str: Optional[str]) -> List[str]:
+def parse_expand(expand_str: str | None) -> list[str]:
     if not expand_str:
         return []
     tokens = [t.strip() for t in expand_str.split(",") if t.strip()]
@@ -38,18 +36,18 @@ def parse_expand(expand_str: Optional[str]) -> List[str]:
                                 "distance_km": 0.25,
                                 "lat": 39.71676,
                                 "lon": 140.13113,
-                            }
-                        ]
-                    }
-                }
+                            },
+                        ],
+                    },
+                },
             },
-        }
+        },
     },
 )
 async def get_nearby_stops(
     lat: float = Query(..., description="緯度 (度単位)", ge=-90, le=90),
     lon: float = Query(..., description="経度 (度単位)", ge=-180, le=180),
-    limit: Optional[int] = Query(None, description="取得する最大件数"),
+    limit: int | None = Query(None, description="取得する最大件数"),
 ):
     """Get nearby bus stops based on latitude and longitude coordinates.
 
@@ -66,7 +64,7 @@ async def get_nearby_stops(
     # Enforce maximum limit
     if limit > max_limit:
         raise HTTPException(
-            status_code=400, detail=f"limit too large; max is {max_limit}"
+            status_code=400, detail=f"limit too large; max is {max_limit}",
         )
 
     if limit <= 0:
@@ -89,7 +87,7 @@ async def get_nearby_stops(
         return models.NearbyStopsResponse(stops=stops)
 
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @router.get(
@@ -101,20 +99,21 @@ async def get_nearby_stops(
         200: {
             "description": "成功",
             "content": {"application/json": {"example": {"stop_names": ["中央公園"]}}},
-        }
+        },
     },
 )
 async def get_stop(
     stop_id: str,
-    fields: Optional[str] = Query(
-        None, description="追加で取得するフィールド (例: location)"
+    _fields: str
+    | None = Query(  # TODO(ARG): implement optional field expansion (e.g. location)
+        None, description="追加で取得するフィールド (例: location)",
     ),
 ):
     # For now we return names; location can be requested via fields=location
     try:
         names = adapter.get_stop_names(stop_id)
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
     if isinstance(names, list):
         return models.StopNameList(stop_names=names)
     return models.StopNameList(stop_names=[])
@@ -131,11 +130,11 @@ async def get_stop(
             "content": {
                 "application/json": {
                     "example": {
-                        "stop_ids": [{"stop_id": "1021_01", "stop_name": "中央公園"}]
-                    }
-                }
+                        "stop_ids": [{"stop_id": "1021_01", "stop_name": "中央公園"}],
+                    },
+                },
             },
-        }
+        },
     },
 )
 async def search_stops(
@@ -150,7 +149,7 @@ async def search_stops(
             raise RuntimeError("Wayfinder not initialized")
         res = _wf.get_stop_id(name, exact)
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
     if res is None:
         return models.StopIdResponse(stop_ids=[])
     return models.StopIdResponse(stop_ids=res.to_dict("records"))
@@ -173,23 +172,19 @@ async def search_stops(
                                 "trip_id": "平日_06時50分_系統42202",
                                 "arrival_time": "07:07:00",
                                 "departure_time": "07:07:00",
-                            }
+                            },
                         ],
-                    }
-                }
+                    },
+                },
             },
-        }
+        },
     },
 )
 async def get_upcoming(
     stop_id: str,
-    service_id: Optional[str] = Query(
-        None, description="サービスIDで絞り込む (例: 平日)"
-    ),
-    expand: Optional[str] = Query(
-        None, description="展開トークン (例: trip_info, stops)"
-    ),
-    limit: Optional[int] = Query(
+    service_id: str | None = Query(None, description="サービスIDで絞り込む (例: 平日)"),
+    expand: str | None = Query(None, description="展開トークン (例: trip_info, stops)"),
+    limit: int | None = Query(
         None,
         ge=1,
         description="クライアント側の最大件数",
@@ -206,7 +201,7 @@ async def get_upcoming(
         limit = max_batch
     elif limit > max_batch:
         raise HTTPException(
-            status_code=400, detail=f"limit too large; max is {max_batch}"
+            status_code=400, detail=f"limit too large; max is {max_batch}",
         )
 
     trips = adapter.get_trips_from_stop(stop_id, service_id)
@@ -221,7 +216,7 @@ async def get_upcoming(
     # OPTIMIZATION 1: Batch fetch all arrival/departure times at once instead of N individual queries
     # Use the new max_items parameter to apply limit at the batch level for better performance
     time_map = adapter.get_times_from_trips_and_stop_batch(
-        trips_list, stop_id, max_items=limit
+        trips_list, stop_id, max_items=limit,
     )
 
     # Build base buses list using batch-fetched times
@@ -236,7 +231,7 @@ async def get_upcoming(
                 trip_id=trip,
                 arrival_time=arrival,
                 departure_time=departure,
-            )
+            ),
         )
         trip_ids.append(trip)
 
@@ -278,7 +273,7 @@ async def get_upcoming(
                     else None,
                     destination_stop_id=tinfo.destination_stop_id if tinfo else None,
                     stops=stops_data,
-                )
+                ),
             )
         return models.UpcomingBusEnriched(stop_id=stop_id, buses=enriched)
 

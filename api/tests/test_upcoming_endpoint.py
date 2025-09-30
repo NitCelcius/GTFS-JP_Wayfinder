@@ -63,7 +63,7 @@ def test_upcoming_hardcoded(monkeypatch, client):
     )
 
     for i, (actual_bus, expected_bus) in enumerate(
-        zip(response_data["buses"], expected_buses)
+        zip(response_data["buses"], expected_buses, strict=True),
     ):
         assert actual_bus["trip_id"] == expected_bus["trip_id"], (
             f"Bus {i}: trip_id mismatch - got '{actual_bus['trip_id']}', expected '{expected_bus['trip_id']}'"

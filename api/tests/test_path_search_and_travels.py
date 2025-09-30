@@ -21,7 +21,7 @@ def test_path_search_and_travels(monkeypatch):
                 "departure_time": "09:05:00",
                 "from_stop_id": "sA",
                 "to_stop_id": "sB",
-            }
+            },
         ],
     )
 

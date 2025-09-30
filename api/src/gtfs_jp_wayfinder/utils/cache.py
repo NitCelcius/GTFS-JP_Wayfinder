@@ -13,7 +13,8 @@ tested library such as `cachetools.TTLCache`.
 import threading
 import time
 from collections import OrderedDict
-from typing import Any, Callable, Optional
+from collections.abc import Callable
+from typing import Any
 
 
 class TTLCache:
@@ -21,7 +22,7 @@ class TTLCache:
         self.ttl = float(ttl_seconds)
         self.max_items = int(max_items)
         # OrderedDict preserves insertion/access order; maps key -> (ts, value)
-        self._store: "OrderedDict[str, tuple[float, Any]]" = OrderedDict()
+        self._store: OrderedDict[str, tuple[float, Any]] = OrderedDict()
         self._lock = threading.RLock()
 
     def _purge_expired_nolock(self) -> None:
@@ -34,13 +35,13 @@ class TTLCache:
         for k in remove_keys:
             self._store.pop(k, None)
 
-    def get(self, key: str) -> Optional[Any]:
+    def get(self, key: str) -> Any | None:
         with self._lock:
             self._purge_expired_nolock()
             val = self._store.get(key)
             if val is None:
                 return None
-            ts, data = val
+            _ts, data = val  # _ts retained for potential future TTL logic (RUF059)
             # move to end to mark as recently used
             self._store.move_to_end(key)
             return data
@@ -53,10 +54,10 @@ class TTLCache:
                 self._store.pop(key, None)
             elif len(self._store) >= self.max_items:
                 # evict the least-recently-used (first) item
-                try:
+                from contextlib import suppress
+
+                with suppress(Exception):
                     self._store.popitem(last=False)
-                except Exception:
-                    pass
             self._store[key] = (time.time(), value)
 
     def get_or_set(self, key: str, factory: Callable[[], Any]) -> Any:

@@ -115,8 +115,8 @@ def test_upcoming_combined_expansion(monkeypatch, client):
                     route_name="Test Route",
                     destination_display_name="Test Destination",
                     destination_stop_id="S999",
-                )
-            ]
+                ),
+            ],
         )
 
     monkeypatch.setattr(
@@ -135,7 +135,7 @@ def test_upcoming_combined_expansion(monkeypatch, client):
                 "stop_id": "S100",
                 "stop_sequence": 1,
                 "stop_headsign": "Test Stop",
-            }
+            },
         ],
     )
 
