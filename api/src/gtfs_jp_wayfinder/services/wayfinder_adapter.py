@@ -4,6 +4,7 @@ from typing import Any, List, Optional
 
 import pandas as pd
 
+from gtfs_jp_wayfinder.config import get_batch_time_items_max
 from gtfs_jp_wayfinder.models import (
     TripInfoList,
 )
@@ -203,23 +204,10 @@ def get_times_from_trips_and_stop_batch(
 
 
 def _get_effective_max_items(max_items: Optional[int]) -> Optional[int]:
-    """Get the effective max items limit, considering environment variable."""
-    import os
-
+    """Determine batch size upper bound (explicit argument overrides env)."""
     if max_items is not None:
         return max_items
-
-    # Check environment variable
-    env_max = os.environ.get("GTFS_BATCH_MAX_ITEMS")
-    if env_max:
-        try:
-            return int(env_max)
-        except ValueError:
-            logger.warning(
-                f"Warning: Invalid GTFS_BATCH_MAX_ITEMS env value: {env_max}"
-            )
-
-    return None  # No limit
+    return get_batch_time_items_max()
 
 
 def _filter_trip_ids(

@@ -3,6 +3,10 @@ from typing import List, Optional
 from fastapi import APIRouter, HTTPException, Query
 
 from gtfs_jp_wayfinder import models
+from gtfs_jp_wayfinder.config import (
+    get_batch_trip_ids_max,
+    get_nearby_stops_max_limit,
+)
 from gtfs_jp_wayfinder.services import wayfinder_adapter as adapter
 
 router = APIRouter()
@@ -56,8 +60,8 @@ async def get_nearby_stops(
     Environment Variables:
         API_NEARBY_STOPS_MAX_LIMIT: Maximum allowed limit (default: 100)
     """
-    # Get max limit from environment variable, default 100
-    max_limit = int(__import__("os").environ.get("API_NEARBY_STOPS_MAX_LIMIT", "100"))
+    # Centralized config (dynamic read to allow test overrides)
+    max_limit = get_nearby_stops_max_limit()
 
     # If no limit specified, use the max limit (return as many as possible)
     if limit is None:
@@ -198,8 +202,8 @@ async def get_upcoming(
     # validate expand tokens
     tokens = parse_expand(expand)
 
-    # Get max batch limit from environment
-    max_batch = int(__import__("os").environ.get("API_BATCH_MAX_TRIP_IDS", "100"))
+    # Get max batch limit from centralized config (dynamic)
+    max_batch = get_batch_trip_ids_max()
 
     # If no limit provided, use max_batch as default; otherwise validate it
     if limit is None:

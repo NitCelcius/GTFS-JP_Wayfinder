@@ -1,11 +1,11 @@
 import datetime
-import os
 from typing import List, Optional
 
 import numpy as np
 from fastapi import APIRouter, HTTPException, Query
 
 from gtfs_jp_wayfinder import models
+from gtfs_jp_wayfinder.config import get_batch_trip_ids_max
 from gtfs_jp_wayfinder.services import wayfinder_adapter as adapter
 
 router = APIRouter()
@@ -36,7 +36,7 @@ async def batch_trips(
     body: models.TripIdList,
     limit: Optional[int] = Query(None, description="返却件数上限（オプション）"),
 ):
-    max_batch = int(os.environ.get("API_BATCH_MAX_TRIP_IDS", "10"))
+    max_batch = get_batch_trip_ids_max()
     if len(body.trip_ids) > max_batch:
         raise HTTPException(
             status_code=400, detail=f"batch limit exceeded; max is {max_batch}"
