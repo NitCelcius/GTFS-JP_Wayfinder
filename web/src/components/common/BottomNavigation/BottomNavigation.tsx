@@ -1,6 +1,7 @@
-import { Clock, HelpCircle, MapPin, Route } from "lucide-react";
+import { Clock, MapPin, Route } from "lucide-react";
 
 import styles from "./BottomNavigation.module.css";
+import { FAQButton } from "./FAQButton";
 
 function BusStopIcon() {
   return (
@@ -22,14 +23,6 @@ function RecentIcon() {
   return (
     <div className={styles.bookmarkIcon} data-name="recent">
       <Clock size={26} />
-    </div>
-  );
-}
-
-function FAQIcon() {
-  return (
-    <div className={styles.faqIcon} data-name="faq">
-      <HelpCircle size={18} />
     </div>
   );
 }
@@ -65,15 +58,6 @@ export function BottomNavigation({
   activeTab = "route",
   onTabClick,
 }: BottomNavigationProps) {
-  const handleFAQClick = () => {
-    // Open external link for FAQ
-    window.open(
-      "https://www.nitcelcius.me/r/github",
-      "_blank",
-      "noopener,noreferrer"
-    );
-  };
-
   return (
     <div className={styles.bottomNav} data-name="Footer">
       <div className={styles.content}>
@@ -98,13 +82,7 @@ export function BottomNavigation({
           />
         </div>
         {/* Small FAQ button positioned separately */}
-        <div
-          className={styles.faqButton}
-          onClick={handleFAQClick}
-          title="製作者"
-        >
-          <FAQIcon />
-        </div>
+        <FAQButton />
       </div>
     </div>
   );
