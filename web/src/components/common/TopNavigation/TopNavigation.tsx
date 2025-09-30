@@ -59,7 +59,7 @@ export function TopNavigation({
           )}
           {icon && <div className={STYLES.iconWrapper}>{icon}</div>}
           <div className={STYLES.title}>
-            <p className={STYLES.titleText}>{title}</p>
+            <h1 className={STYLES.titleText}>{title}</h1>
           </div>
         </div>
       </div>

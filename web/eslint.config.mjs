@@ -3,6 +3,10 @@ import eslint from "@eslint/js";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 
+import limitInlineStylesRule from "./eslint-rules/limit-inline-styles.js";
+import requireCssModulesRule from "./eslint-rules/require-css-modules.js";
+import unusedCssModuleClassesRule from "./eslint-rules/unused-css-module-classes.js";
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -35,6 +39,56 @@ const eslintConfig = [
     files: ["src/**/*.{js,ts,jsx,tsx}", "app/**/*.{js,ts,jsx,tsx}"],
     rules: {
       "no-console": "off",
+    },
+  },
+  {
+    // Enforce CSS Modules across the web/ codebase except for allowed globals
+    files: ["src/**/*.{js,ts,jsx,tsx}", "app/**/*.{js,ts,jsx,tsx}"],
+    plugins: {
+      local: {
+        rules: {
+          "require-css-modules": requireCssModulesRule,
+          "limit-inline-styles": limitInlineStylesRule,
+          "unused-css-module-classes": unusedCssModuleClassesRule,
+        },
+      },
+    },
+    rules: {
+      "local/require-css-modules": [
+        "error",
+        {
+          allow: ["globals.css", "./globals.css"],
+        },
+      ],
+      "local/limit-inline-styles": [
+        "warn",
+        {
+          maxUtilityClasses: 4,
+          allowPatterns: [
+            "^w-\\d+", // width utilities like w-6
+            "^h-\\d+", // height utilities like h-6
+            "^flex$",
+            "^items-center$",
+            "^justify-center$",
+            "^text-[^\n]+$", // arbitrary text sizes
+            "^rounded[^s]*$", // pattern for rounded / rounded-lg etc.
+          ],
+          allowHexInFiles: [
+            "globals.css", // we already import tokens there; guard mainly JSX
+          ],
+        },
+      ],
+      "local/unused-css-module-classes": [
+        "warn",
+        {
+          // Optionally ignore classes like container, root which are ubiquitous
+          ignore: ["root", "container"],
+          ignoreUnusedPatterns: ["^_"], // allow prefix underscore private classes without usage
+          reportUnused: true,
+          alwaysReportUnused: false,
+          maxSilentUnused: 50, // do not spam if a huge shared module is imported but unused
+        },
+      ],
     },
   },
 ];

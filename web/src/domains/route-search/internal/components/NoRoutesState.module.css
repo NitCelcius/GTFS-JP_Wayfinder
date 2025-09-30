@@ -1,0 +1,55 @@
+.noRoutesAlert {
+  background: var(--color-status-error-bg);
+  border-left: 4px solid var(--color-status-error-border);
+  padding: 1rem;
+  font-size: 0.875rem;
+  color: var(--color-status-error-accent);
+  margin-bottom: var(--size-spacing-lg);
+}
+.noRoutesTitle {
+  font-weight: 600;
+  margin-bottom: var(--size-spacing-sm);
+}
+.bulletList {
+  list-style: disc;
+  padding-left: 1.25rem;
+  margin-top: 0.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.searchPanel {
+  text-align: center;
+  padding: 2rem;
+}
+.searchIcon {
+  font-size: 3.75rem;
+  margin-bottom: var(--size-spacing-lg);
+}
+.searchTitle {
+  font-size: var(--text-xl);
+  font-weight: 600;
+  margin-bottom: var(--size-spacing-sm);
+}
+.searchDesc {
+  color: var(--gray-600);
+  margin-bottom: var(--size-spacing-lg);
+}
+.searchStartBtn {
+  background: var(--color-action-primary);
+  color: #fff;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-lg);
+  transition: background-color 0.15s;
+  display: inline-block;
+}
+.searchStartBtn:hover {
+  background: var(--color-action-primary-hover);
+}
+
+.halfScreenCenter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+}

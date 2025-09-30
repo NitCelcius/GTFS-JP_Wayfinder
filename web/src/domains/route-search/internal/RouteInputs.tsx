@@ -35,26 +35,12 @@ const INPUT_BACKGROUNDS = {
 function LocationIcon() {
   return (
     <div className={STYLES.icon}>
-      <svg
-        className={STYLES.iconSvg}
-        fill="none"
-        preserveAspectRatio="none"
-        viewBox="0 0 44 44"
-      >
-        <mask
-          id="mask_loc"
-          maskUnits="userSpaceOnUse"
-          style={{ maskType: "alpha" }}
-          x="0"
-          y="0"
-          width="44"
-          height="44"
-        >
-          <rect fill="#D9D9D9" width="44" height="44" />
-        </mask>
-        <g mask="url(#mask_loc)">
-          <path d={svgPaths.pb48f200} fill="#1C1B1F" />
-        </g>
+      <svg className={STYLES.iconSvg} viewBox="0 0 44 44" aria-hidden="true">
+        <path
+          d={svgPaths.pb48f200}
+          fill="var(--color-foreground)"
+          shapeRendering="geometricPrecision"
+        />
       </svg>
     </div>
   );
@@ -63,26 +49,12 @@ function LocationIcon() {
 function FlagIcon() {
   return (
     <div className={STYLES.icon}>
-      <svg
-        className={STYLES.iconSvg}
-        fill="none"
-        preserveAspectRatio="none"
-        viewBox="0 0 44 44"
-      >
-        <mask
-          id="mask_flag"
-          maskUnits="userSpaceOnUse"
-          style={{ maskType: "alpha" }}
-          x="0"
-          y="0"
-          width="44"
-          height="44"
-        >
-          <rect fill="#D9D9D9" width="44" height="44" />
-        </mask>
-        <g mask="url(#mask_flag)">
-          <path d={svgPaths.p32615cf0} fill="#1C1B1F" />
-        </g>
+      <svg className={STYLES.iconSvg} viewBox="0 0 44 44" aria-hidden="true">
+        <path
+          d={svgPaths.p32615cf0}
+          fill="var(--color-foreground)"
+          shapeRendering="geometricPrecision"
+        />
       </svg>
     </div>
   );
@@ -91,26 +63,12 @@ function FlagIcon() {
 function ArrowIcon() {
   return (
     <div className={STYLES.arrowIcon}>
-      <svg
-        className={STYLES.iconSvg}
-        fill="none"
-        preserveAspectRatio="none"
-        viewBox="0 0 40 40"
-      >
-        <mask
-          id="mask_arrow"
-          maskUnits="userSpaceOnUse"
-          style={{ maskType: "alpha" }}
-          x="0"
-          y="0"
-          width="40"
-          height="40"
-        >
-          <rect fill="#D9D9D9" width="40" height="40" />
-        </mask>
-        <g mask="url(#mask_arrow)">
-          <path d={svgPaths.p3d8ec380} fill="#1C1B1F" />
-        </g>
+      <svg className={STYLES.iconSvg} viewBox="0 0 40 40" aria-hidden="true">
+        <path
+          d={svgPaths.p3d8ec380}
+          fill="var(--color-foreground)"
+          shapeRendering="geometricPrecision"
+        />
       </svg>
     </div>
   );

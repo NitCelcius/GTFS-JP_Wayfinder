@@ -12,7 +12,7 @@ interface StationStopProps {
 
 function PinIcon() {
   return (
-    <svg className={styles.iconSvg} fill="none" viewBox="0 0 20 20">
+    <svg fill="none" viewBox="0 0 20 20">
       <path
         d="M10 2C7.24 2 5 4.24 5 7c0 2.85 2.92 6.21 5 9 2.08-2.79 5-6.15 5-9 0-2.76-2.24-5-5-5zm0 7c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"
         fill="currentColor"
@@ -23,7 +23,7 @@ function PinIcon() {
 
 function LocationIcon() {
   return (
-    <svg className={styles.iconSvg} fill="none" viewBox="0 0 20 20">
+    <svg fill="none" viewBox="0 0 20 20">
       <circle cx="10" cy="10" r="4" fill="currentColor" />
     </svg>
   );
@@ -31,7 +31,7 @@ function LocationIcon() {
 
 function FlagIcon() {
   return (
-    <svg className={styles.iconSvg} fill="none" viewBox="0 0 20 20">
+    <svg fill="none" viewBox="0 0 20 20">
       <path
         d="M4 4v12M4 4l8 2-2 4 2 4-8-2V4z"
         stroke="currentColor"
@@ -44,13 +44,7 @@ function FlagIcon() {
 
 function ArrowDownIcon() {
   return (
-    <svg
-      className={styles.iconSvg}
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      strokeWidth="2"
-    >
+    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -78,45 +72,30 @@ export function StationStop({
       <div className={styles.stationRow}>
         <div className={styles.leftSection}>
           <div className={styles.stationIcon}>{getStationIcon()}</div>
-          <div className={styles.stationName}>
-            <p className={styles.stationNameText}>{station.stationName}</p>
-          </div>
+          <p className={styles.stationNameText}>{station.stationName}</p>
         </div>
 
         <div className={styles.rightSection}>
-          {/* Cost container - on the left */}
           {station.cost !== undefined && station.cost > 0 && (
-            <div className={styles.costContainer}>
-              <div className={styles.costText}>
-                <p className={styles.costTextContent}>
-                  <span className={styles.costValue}>{station.cost}</span>
-                  <span className={styles.costCurrency}>円</span>
-                </p>
-              </div>
-            </div>
+            <p className={styles.costTextContent}>
+              <span className={styles.costValue}>{station.cost}</span>
+              <span className={styles.costCurrency}>円</span>
+            </p>
           )}
-
-          {/* Times container - on the right, vertically stacked */}
-          <div className={styles.timesContainer}>
+          <div>
             {station.arrivalTime && (
-              <div className={styles.timeText}>
-                <p className={styles.timeTextContent}>
-                  <span className={styles.timeValue}>
-                    {station.arrivalTime}
-                  </span>
-                  <span className={styles.timeStatus}> 着</span>
-                </p>
-              </div>
+              <p className={styles.timeTextContent}>
+                <span className={styles.timeValue}>{station.arrivalTime}</span>
+                <span className={styles.timeStatus}> 着</span>
+              </p>
             )}
             {station.departureTime && (
-              <div className={styles.timeText}>
-                <p className={styles.timeTextContent}>
-                  <span className={styles.timeValue}>
-                    {station.departureTime}
-                  </span>
-                  <span className={styles.timeStatus}> 発</span>
-                </p>
-              </div>
+              <p className={styles.timeTextContent}>
+                <span className={styles.timeValue}>
+                  {station.departureTime}
+                </span>
+                <span className={styles.timeStatus}> 発</span>
+              </p>
             )}
           </div>
         </div>
@@ -124,9 +103,7 @@ export function StationStop({
 
       {showTransferArrow && (
         <div className={styles.transferArrow}>
-          <div className={styles.arrowIcon}>
-            <ArrowDownIcon />
-          </div>
+          <ArrowDownIcon />
         </div>
       )}
     </div>

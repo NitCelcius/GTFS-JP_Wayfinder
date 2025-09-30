@@ -1,0 +1,69 @@
+.page {
+  background: #fff;
+  min-height: 100vh;
+  width: 100%;
+  max-width: var(--max-w-mobile);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding-bottom: var(--size-container-md);
+}
+.scrollArea {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.loadingOuter {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-block: var(--size-spacing-4xl);
+}
+.loadingInner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--size-spacing-lg);
+}
+.timelineWrapper {
+  flex: 1;
+  padding: var(--size-spacing-md) var(--size-spacing-lg);
+  min-height: 0;
+  overflow: auto;
+}
+.costWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.costInline {
+  display: flex;
+  align-items: baseline;
+  gap: 0.25rem;
+}
+.costValue {
+  font-size: var(--text-xl);
+}
+.yen {
+  font-size: 0.875rem;
+}
+.timeCol {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--size-spacing-xs);
+  flex: 0 0 auto;
+}
+.timeLine {
+  display: flex;
+  flex: 0 0 auto;
+  white-space: nowrap;
+  align-items: flex-end;
+}
+.timeText {
+  white-space: nowrap;
+  font-size: var(--text-base);
+}

@@ -5,7 +5,7 @@ import styles from "./BottomNavigation.module.css";
 function BusStopIcon() {
   return (
     <div className={styles.locationIcon} data-name="bus_stop">
-      <MapPin size={26} />
+      <MapPin size={32} />
     </div>
   );
 }
@@ -13,7 +13,7 @@ function BusStopIcon() {
 function RouteIcon() {
   return (
     <div className={styles.mapSearchIcon} data-name="route">
-      <Route size={26} />
+      <Route size={32} />
     </div>
   );
 }
@@ -21,7 +21,7 @@ function RouteIcon() {
 function RecentIcon() {
   return (
     <div className={styles.bookmarkIcon} data-name="recent">
-      <Clock size={26} />
+      <Clock size={32} />
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import React from "react";
 
 import { Card } from "../Card";
+import styles from "./BusStopCard.module.css";
 
 interface BusStopCardProps {
   title: string;
@@ -28,33 +29,22 @@ export function BusStopCard({
 
   return (
     <Card onClick={onClick}>
-      <div className="flex items-center justify-between w-full">
-        <div className="flex items-center gap-[var(--size-spacing-md)] flex-1">
-          {icon && (
-            <div className="w-[1.5rem] h-[1.5rem] flex items-center justify-center text-gray-600">
-              {icon}
-            </div>
-          )}
-          <div className="flex flex-col flex-1">
-            <span className="text-[1.125rem] mb-[var(--size-spacing-xs)]">
-              {title}
-            </span>
-            <div className="flex items-center gap-[var(--size-spacing-md)]">
-              <span className="text-[1rem] text-gray-600">{subtitle}</span>
+      <div className={styles.root}>
+        <div className={styles.left}>
+          {icon && <div className={styles.icon}>{icon}</div>}
+          <div className={styles.textGroup}>
+            <span className={styles.title}>{title}</span>
+            <div className={styles.subtitleRow}>
+              <span className={styles.subtitle}>{subtitle}</span>
               {secondaryInfo && (
-                <span className="text-[0.875rem] text-gray-500">
-                  ・{secondaryInfo}
-                </span>
+                <span className={styles.secondary}>・{secondaryInfo}</span>
               )}
             </div>
           </div>
         </div>
-        <div className="flex items-center justify-center">
-          <button
-            className="bg-[var(--color-route-primary)] text-white px-[var(--size-spacing-lg)] py-[var(--size-spacing-sm)] rounded-[var(--radius-md)] hover:bg-[var(--color-route-primary-dark)] transition-colors duration-200 min-w-[4rem] text-center"
-            onClick={handleActionClick}
-          >
-            <span className="text-[0.875rem]">{actionLabel}</span>
+        <div className={styles.actionWrap}>
+          <button className={styles.actionBtn} onClick={handleActionClick}>
+            <span className={styles.actionLabel}>{actionLabel}</span>
           </button>
         </div>
       </div>

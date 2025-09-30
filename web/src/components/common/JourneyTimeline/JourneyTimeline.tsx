@@ -1,5 +1,7 @@
 import React from "react";
 
+import styles from "./JourneyTimeline.module.css";
+
 interface JourneyStop {
   id?: string;
   name: string;
@@ -18,33 +20,11 @@ interface JourneyTimelineProps {
   renderRightContent?: (stop: JourneyStop) => React.ReactNode; // Optional custom render function for right section
 }
 
-const STYLES = {
-  container: "w-full h-full flex flex-col bg-white p-[var(--size-spacing-lg)]",
-  title: "text-[0.875rem] mb-[var(--size-spacing-sm)]",
-  scrollContainer: "flex-1 overflow-y-auto",
-  journey: "flex flex-col relative items-center",
-  stopContainer:
-    "flex relative py-[var(--size-spacing-lg)] w-full items-center",
-  leftSection: "flex items-center gap-[var(--size-spacing-md)] flex-1",
-  icon: "w-[1.5rem] h-[1.5rem] flex items-center justify-center relative z-20 bg-white rounded-full border border-gray-300 shadow-sm",
-  stopInfo: "flex flex-col",
-  stopName: "text-[1.25rem]",
-  stopLabel: "text-[0.875rem] text-gray-600",
-  rightSection:
-    "flex flex-row items-end gap-[var(--size-spacing-sm)] self-center flex-1 flex-wrap justify-end",
-  fullConnector:
-    "absolute left-[0.75rem] top-0 bottom-0 w-[2px] bg-gray-300 z-10",
-} as const;
+// Styles migrated to JourneyTimeline.module.css
 
 function LocationIcon() {
   return (
-    <svg
-      className="block size-full"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      strokeWidth="2"
-    >
+    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -61,13 +41,7 @@ function LocationIcon() {
 
 function FlagIcon() {
   return (
-    <svg
-      className="block size-full"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      strokeWidth="2"
-    >
+    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -78,7 +52,7 @@ function FlagIcon() {
 }
 
 function CircleIcon() {
-  return <div className="w-3 h-3 rounded-full bg-gray-400"></div>;
+  return <div className={styles.circleIcon}></div>;
 }
 
 export function JourneyTimeline({
@@ -97,27 +71,23 @@ export function JourneyTimeline({
   };
 
   return (
-    <div className={STYLES.container}>
-      {title && <h3 className={STYLES.title}>{title}</h3>}
-
-      <div className={STYLES.scrollContainer}>
-        <div className={STYLES.journey}>
-          {/* Continuous connector line spanning from first to last stop */}
-          {stops.length > 1 && <div className={STYLES.fullConnector}></div>}
-
+    <div className={styles.container}>
+      {title && <h3 className={styles.title}>{title}</h3>}
+      <div className={styles.scrollContainer}>
+        <div className={styles.journey}>
+          {stops.length > 1 && <div className={styles.fullConnector}></div>}
           {stops.map((stop, index) => (
-            <div key={stop.id || index} className={STYLES.stopContainer}>
-              <div className={STYLES.leftSection}>
-                <div className={STYLES.icon}>{getStopIcon(stop)}</div>
-                <div className={STYLES.stopInfo}>
-                  <span className={STYLES.stopName}>{stop.name}</span>
+            <div key={stop.id || index} className={styles.stopContainer}>
+              <div className={styles.leftSection}>
+                <div className={styles.icon}>{getStopIcon(stop)}</div>
+                <div className={styles.stopInfo}>
+                  <span className={styles.stopName}>{stop.name}</span>
                   {stop.label && (
-                    <span className={STYLES.stopLabel}>{stop.label}</span>
+                    <span className={styles.stopLabel}>{stop.label}</span>
                   )}
                 </div>
               </div>
-
-              <div className={STYLES.rightSection}>
+              <div className={styles.rightSection}>
                 {renderRightContent && renderRightContent(stop)}
               </div>
             </div>
