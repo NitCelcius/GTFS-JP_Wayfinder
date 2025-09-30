@@ -3,6 +3,7 @@ import React from "react";
 import { BusStopCard } from "@/components/common";
 
 import { RecentBusStopSearch } from "../types";
+import viewMoreStyles from "./ViewMoreButton.module.css";
 
 interface RecentBusStopSearchesProps {
   recentBusStops: RecentBusStopSearch[];
@@ -70,7 +71,7 @@ export function RecentBusStopSearches({
         <h2 className="text-[1.25rem]">バス停</h2>
         {recentBusStops.length > 0 && (
           <button
-            className="text-[var(--color-route-primary)] hover:text-[var(--color-route-primary-dark)] text-[0.875rem] transition-colors"
+            className={viewMoreStyles.viewMoreButton}
             onClick={onViewMore}
           >
             もっと見る

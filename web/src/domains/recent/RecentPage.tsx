@@ -1,6 +1,7 @@
 import { BottomNavigation } from "@/components/common/BottomNavigation/BottomNavigation";
 import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
 
+import styles from "./RecentPage.module.css";
 import { RecentBusStopSearches } from "./internal/RecentBusStopSearches";
 import { RecentRouteSearches } from "./internal/RecentRouteSearches";
 import { RecentBusStopSearch, RecentRouteSearch } from "./types";
@@ -115,11 +116,11 @@ export function RecentPage({
     console.log("Navigate to more route search history");
 
   return (
-    <div className="w-full max-w-[var(--max-w-mobile)] flex flex-col relative min-h-screen  pb-[var(--size-container-md)]">
+    <div className={styles.page}>
       <TopNavigation icon={<ClockIcon />} title="履歴" />
 
-      <div className="flex-1 px-[var(--size-spacing-lg)] py-[var(--size-spacing-md)] overflow-y-auto">
-        <div className="flex flex-col gap-[var(--size-spacing-2xl)]">
+      <div className={styles.content}>
+        <div className={styles.stack}>
           <RecentBusStopSearches
             recentBusStops={mockRecentBusStops}
             onBusStopSelect={handleBusStopSelect}

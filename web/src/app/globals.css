@@ -71,6 +71,20 @@
   --route-card-shadow:
     0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
 
+  /* Action / Primary interactive blues */
+  --color-action-primary: #3b82f6;
+  --color-action-primary-hover: #2563eb;
+
+  /* Neutral / structural additions (base tokens) */
+  --stroke-muted: #8a8a8f; /* placeholder / subtle icon strokes */
+  --icon-surface: #d9d9d9; /* neutral icon background blocks */
+
+  /* Status / Feedback */
+  --color-status-error: #ef4444;
+  --color-status-error-bg: #fef2f2;
+  --color-status-error-accent: #b91c1c;
+  --color-status-error-border: #f87171;
+
   /* Accessibility-focused sizing (rem-based) */
   --spacing-xs: 0.25rem; /* 4px at 16px base */
   --spacing-sm: 0.5rem; /* 8px */
@@ -210,6 +224,17 @@
   --color-route-card-bg: var(--route-card-bg);
   --color-route-card-border: var(--route-card-border);
 
+  /* Action / Status passthrough */
+  --color-action-primary: var(--color-action-primary);
+  --color-action-primary-hover: var(--color-action-primary-hover);
+  --color-status-error: var(--color-status-error);
+  --color-status-error-bg: var(--color-status-error-bg);
+  --color-status-error-accent: var(--color-status-error-accent);
+  --color-status-error-border: var(--color-status-error-border);
+  /* Neutral / structural mapped tokens */
+  --color-stroke-muted: var(--stroke-muted);
+  --color-icon-surface: var(--icon-surface);
+
   /* Accessibility-focused sizing */
   --size-spacing-xs: var(--spacing-xs);
   --size-spacing-sm: var(--spacing-sm);
@@ -239,6 +264,19 @@
   * {
     border-color: var(--border);
     outline-color: var(--ring);
+    box-sizing: border-box;
+  }
+
+  /* Remove default vertical margins from headings to avoid unexpected spacing
+     (component/layout code should opt-in to spacing explicitly). */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin-top: 0;
+    margin-bottom: 0;
   }
 
   body {
@@ -247,6 +285,7 @@
     /* Allow overscroll on mobile and desktop for natural scroll behavior */
     overscroll-behavior: auto;
     -webkit-overflow-scrolling: touch;
+    overflow-x: hidden;
   }
 }
 

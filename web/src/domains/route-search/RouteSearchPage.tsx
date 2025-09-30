@@ -7,6 +7,7 @@ import { MapSearchIcon } from "@/components/common/icons/MapSearchIcon";
 import { getCurrentTimeString } from "@/lib/utils";
 import type { BusStopSearchResult, RouteSearchState } from "@/types";
 
+import styles from "./RouteSearchPage.module.css";
 import { RouteInputs } from "./internal/RouteInputs";
 import { SearchConditions } from "./internal/SearchConditions";
 
@@ -35,7 +36,7 @@ function MainContent({
     originValue.trim() && destinationValue.trim() && !isLoading;
 
   return (
-    <div className="basis-0 box-border content-stretch flex flex-col gap-[var(--size-spacing-xl)] grow items-center justify-center min-h-px min-w-px px-[var(--size-spacing-lg)] py-[var(--size-spacing-sm)] relative shrink-0 w-full">
+    <div className={styles.mainContent}>
       <RouteInputs
         originValue={originValue}
         destinationValue={destinationValue}
@@ -146,9 +147,9 @@ export function RouteSearchPage({
   };
 
   return (
-    <div className="w-full max-w-[var(--max-w-mobile)] flex flex-col relative min-h-screen pb-[var(--size-container-md)] mx-auto">
+    <div className={styles.page}>
       <TopNavigation icon={<MapSearchIcon />} title="経路探索" />
-      <div className="flex-1 flex flex-col">
+      <div className={styles.main}>
         <MainContent
           onSearch={handleSearch}
           originValue={originValue}

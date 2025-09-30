@@ -3,6 +3,7 @@ import { JourneyTimeline } from "@/components/common/JourneyTimeline/JourneyTime
 import { LoadingSpinner } from "@/components/common/LoadingSpinner/LoadingSpinner";
 import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
 
+import styles from "./SearchResultPage.module.css";
 import { RouteOverview } from "./internal/RouteOverview";
 import { RouteTabs } from "./internal/RouteTabs";
 import { SearchConditionsSummary } from "./internal/SearchConditionsSummary";
@@ -64,10 +65,10 @@ export function SearchResultPage({
   };
 
   return (
-    <div className="bg-white min-h-screen w-full max-w-[var(--max-w-mobile)] mx-auto flex flex-col relative pb-[var(--size-container-md)]">
+    <div className={styles.page}>
       <TopNavigation title="検索結果" showBackButton={true} onBack={onBack} />
 
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className={styles.scrollArea}>
         <RouteOverview
           fromStation={tripDetails.fromStation}
           toStation={tripDetails.toStation}
@@ -76,8 +77,8 @@ export function SearchResultPage({
         <SearchConditionsSummary departureTime={tripDetails.searchDateTime} />
 
         {isLoading ? (
-          <div className="flex-1 flex items-center justify-center py-[var(--size-spacing-4xl)]">
-            <div className="flex flex-col items-center gap-[var(--size-spacing-lg)]">
+          <div className={styles.loadingOuter}>
+            <div className={styles.loadingInner}>
               <LoadingSpinner size="lg" />
               <p className="text-[1rem] text-gray-600">経路を検索中...</p>
             </div>
@@ -92,33 +93,31 @@ export function SearchResultPage({
 
             <TripSummary route={selectedRoute} />
 
-            <div className="flex-1 px-[var(--size-spacing-lg)] py-[var(--size-spacing-md)] min-h-0 overflow-auto">
+            <div className={styles.timelineWrapper}>
               <JourneyTimeline
                 title="経路詳細"
                 stops={journeyStops}
                 renderRightContent={(stop) => (
                   <>
                     {showCosts && stop.cost !== undefined && stop.cost > 0 && (
-                      <div className="flex items-center justify-center">
-                        <span className="flex items-baseline gap-1">
-                          <span className="text-[var(--text-xl)]">
-                            {stop.cost}
-                          </span>
-                          <span className="text-sm">円</span>
+                      <div className={styles.costWrapper}>
+                        <span className={styles.costInline}>
+                          <span className={styles.costValue}>{stop.cost}</span>
+                          <span className={styles.yen}>円</span>
                         </span>
                       </div>
                     )}
-                    <div className="flex flex-col items-end gap-[var(--size-spacing-xs)] flex-0">
+                    <div className={styles.timeCol}>
                       {stop.arrivalTime && (
-                        <div className="flex flex-0 whitespace-nowrap items-end">
-                          <span className="text-[var(--text-base)] whitespace-nowrap">
+                        <div className={styles.timeLine}>
+                          <span className={styles.timeText}>
                             {stop.arrivalTime} 着
                           </span>
                         </div>
                       )}
                       {stop.departureTime && (
-                        <div className="flex flex-0 whitespace-nowrap items-end">
-                          <span className="text-[var(--text-base)] whitespace-nowrap">
+                        <div className={styles.timeLine}>
+                          <span className={styles.timeText}>
                             {stop.departureTime} 発
                           </span>
                         </div>

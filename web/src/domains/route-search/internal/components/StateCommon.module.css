@@ -1,0 +1,50 @@
+/* Shared layout helpers actually used by current state components */
+.fullScreenCenter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+.center {
+  text-align: center;
+}
+.message {
+  margin-bottom: var(--size-spacing-lg);
+}
+.error {
+  color: var(--color-status-error);
+  margin-bottom: var(--size-spacing-lg);
+}
+.button {
+  background: var(--color-action-primary);
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-md);
+  transition: background-color 0.15s;
+}
+.button:hover {
+  background: var(--color-action-primary-hover);
+}
+.spinner {
+  animation: spin 1s linear infinite;
+  border-bottom: 2px solid var(--color-action-primary);
+  border-radius: 9999px;
+  height: 3rem;
+  width: 3rem;
+  margin: 0 auto var(--size-spacing-lg);
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.searchDesc {
+  color: var(--gray-600);
+  margin-bottom: var(--size-spacing-lg);
+}
+.halfScreenCenter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+}

@@ -1,0 +1,62 @@
+.root {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+.left {
+  display: flex;
+  align-items: center;
+  gap: var(--size-spacing-md);
+  flex: 1;
+}
+.icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gray-600);
+}
+.textGroup {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.title {
+  font-size: 1.125rem;
+  margin-bottom: var(--size-spacing-xs);
+}
+.subtitleRow {
+  display: flex;
+  align-items: center;
+  gap: var(--size-spacing-md);
+}
+.subtitle {
+  font-size: 1rem;
+  color: var(--gray-600);
+}
+.secondary {
+  font-size: 0.875rem;
+  color: var(--gray-500);
+}
+.actionWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.actionBtn {
+  background: var(--color-route-primary);
+  color: #fff;
+  padding: var(--size-spacing-sm) var(--size-spacing-lg);
+  border-radius: var(--radius-md);
+  min-width: 4rem;
+  text-align: center;
+  transition: background-color 0.2s;
+}
+.actionBtn:hover {
+  background: var(--color-route-primary-dark);
+}
+.actionLabel {
+  font-size: 0.875rem;
+}

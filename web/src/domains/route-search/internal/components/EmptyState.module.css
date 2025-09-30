@@ -1,0 +1,22 @@
+.fullScreenCenter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+.center {
+  text-align: center;
+}
+.message {
+  margin-bottom: var(--size-spacing-lg);
+}
+.button {
+  background: var(--color-action-primary);
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-md);
+  transition: background-color 0.15s;
+}
+.button:hover {
+  background: var(--color-action-primary-hover);
+}

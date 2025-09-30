@@ -1,3 +1,5 @@
+import styles from "./ErrorState.module.css";
+
 interface ErrorStateProps {
   error: string;
   onBack: () => void;
@@ -5,13 +7,10 @@ interface ErrorStateProps {
 
 export function ErrorState({ error, onBack }: ErrorStateProps) {
   return (
-    <div className="flex items-center justify-center min-h-screen">
-      <div className="text-center">
-        <div className="text-red-500 mb-4">エラー: {error}</div>
-        <button
-          onClick={onBack}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-        >
+    <div className={styles.fullScreenCenter}>
+      <div className={styles.center}>
+        <div className={styles.error}>エラー: {error}</div>
+        <button onClick={onBack} className={styles.button}>
           検索に戻る
         </button>
       </div>

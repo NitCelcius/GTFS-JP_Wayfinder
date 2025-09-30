@@ -1,4 +1,6 @@
 import { RecentRouteSearch } from "../types";
+import styles from "./RecentRouteSearches.module.css";
+import viewMoreStyles from "./ViewMoreButton.module.css";
 
 interface RecentRouteSearchesProps {
   recentRoutes: RecentRouteSearch[];
@@ -35,19 +37,16 @@ function RecentRouteItem({
   const handleClick = () => onSelect?.(route.fromStation, route.toStation);
 
   return (
-    <div
-      onClick={handleClick}
-      className="w-full bg-white border border-gray-200 rounded-[var(--radius-lg)] p-[var(--size-spacing-lg)] mb-[var(--size-spacing-md)] cursor-pointer hover:shadow-md hover:border-gray-300 transition-all duration-200 active:scale-[0.98]"
-    >
-      <div className="flex items-center gap-[var(--size-spacing-md)]">
-        <div className="w-[1.5rem] h-[1.5rem] flex items-center justify-center text-gray-600">
+    <div onClick={handleClick} className={styles.listItem}>
+      <div className={styles.itemRow}>
+        <div className={styles.iconWrap}>
           <RouteIcon />
         </div>
-        <div className="flex flex-col">
-          <span className="text-[1.125rem]">{`${route.fromStation} → ${route.toStation}`}</span>
-          <div className="text-[0.875rem] text-gray-600">
-            {route.searchedAt}
-          </div>
+        <div>
+          <span
+            className={styles.routeText}
+          >{`${route.fromStation} → ${route.toStation}`}</span>
+          <div className={styles.timestamp}>{route.searchedAt}</div>
         </div>
       </div>
     </div>
@@ -61,11 +60,11 @@ export function RecentRouteSearches({
 }: RecentRouteSearchesProps) {
   return (
     <div>
-      <div className="flex items-center justify-between mb-[var(--size-spacing-lg)]">
-        <h2 className="text-[1.25rem]">行き方</h2>
+      <div className={styles.sectionHeader}>
+        <h2 className={styles.heading}>行き方</h2>
         {recentRoutes.length > 0 && (
           <button
-            className="text-[var(--color-route-primary)] hover:text-[var(--color-route-primary-dark)] text-[0.875rem] transition-colors"
+            className={viewMoreStyles.viewMoreButton}
             onClick={onViewMore}
           >
             もっと見る
@@ -73,7 +72,7 @@ export function RecentRouteSearches({
         )}
       </div>
       {recentRoutes.length === 0 ? (
-        <div className="text-center py-[var(--size-spacing-2xl)] text-gray-500">
+        <div className={styles.emptyWrapper}>
           <p>履歴に検索した行き方はありません</p>
         </div>
       ) : (

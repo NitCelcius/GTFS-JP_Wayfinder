@@ -2,7 +2,8 @@
 
 .bottomNav {
   background-color: white;
-  height: var(--size-container-md);
+  /* Slightly taller for improved ergonomics */
+  height: calc(var(--size-container-md) + var(--size-spacing-sm));
   position: fixed;
   bottom: 0;
   left: 0;
@@ -30,36 +31,31 @@
 
 .inner {
   box-sizing: border-box;
-  content: stretch;
   display: flex;
   gap: var(--size-spacing-lg);
-  height: var(--size-container-md);
+  height: 100%;
   align-items: center;
   justify-content: center;
-  padding-left: var(--size-spacing-md);
-  padding-right: var(--size-spacing-md);
-  padding-top: 0;
-  padding-bottom: 0;
+  padding: 0 var(--size-spacing-lg);
   position: relative;
   width: 100%;
 }
 
 .navItem {
   box-sizing: border-box;
-  content: stretch;
   display: flex;
   flex-direction: column;
   gap: var(--size-spacing-xs);
   height: 100%;
   align-items: center;
-  padding-left: var(--size-spacing-xl);
-  padding-right: var(--size-spacing-xl);
-  padding-top: var(--size-spacing-xs);
-  padding-bottom: var(--size-spacing-xs);
+  justify-content: center;
+  padding: var(--size-spacing-xs) var(--size-spacing-md)
+    calc(var(--size-spacing-xs) - 1px);
   position: relative;
   border-radius: var(--radius-md);
   flex-shrink: 0;
-  min-width: 5.625rem;
+  /* Keep the compressed width from previous iteration */
+  min-width: 4.75rem;
   flex: 1;
   cursor: pointer;
   transition: opacity 0.2s ease;
@@ -95,15 +91,18 @@
 .locationIcon,
 .mapSearchIcon,
 .bookmarkIcon {
-  width: 2.25rem; /* slightly smaller to prevent vertical clipping */
-  height: 2.25rem;
+  /* Larger square icon container */
+  width: 3rem;
+  height: 3rem;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  margin-bottom: 0.125rem;
+  margin: 0;
 }
 
 .navItemLabel {
-  font-size: 0.75rem; /* ensure it fits consistently */
+  font-size: 0.75rem;
+  line-height: 1.05;
+  margin-top: 0;
 }

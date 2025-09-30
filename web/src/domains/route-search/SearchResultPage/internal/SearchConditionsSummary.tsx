@@ -41,7 +41,7 @@ export function SearchConditionsSummary({
               viewBox="0 0 346 1"
             >
               <line
-                stroke="var(--stroke-0, #8A8A8F)"
+                stroke="var(--color-stroke-muted)"
                 strokeWidth="0.5"
                 x1="0.00048828"
                 x2="346"

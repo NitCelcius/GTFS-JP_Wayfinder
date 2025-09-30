@@ -1,0 +1,97 @@
+/* JourneyTimeline module */
+
+.container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  padding: var(--size-spacing-lg);
+}
+
+.title {
+  font-size: 0.875rem;
+  margin-bottom: var(--size-spacing-sm);
+  font-weight: 500;
+  color: var(--gray-600, #4b5563);
+}
+
+.scrollContainer {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.journey {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  align-items: center;
+}
+
+.stopContainer {
+  display: flex;
+  position: relative;
+  padding: var(--size-spacing-lg) 0;
+  width: 100%;
+  align-items: center;
+}
+
+.leftSection {
+  display: flex;
+  align-items: center;
+  gap: var(--size-spacing-md);
+  flex: 1;
+}
+
+.icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 20;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 9999px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.stopInfo {
+  display: flex;
+  flex-direction: column;
+}
+.stopName {
+  font-size: 1.25rem;
+}
+.stopLabel {
+  font-size: 0.875rem;
+  color: #4b5563;
+}
+
+.rightSection {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: var(--size-spacing-sm);
+  flex: 1;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.fullConnector {
+  position: absolute;
+  left: 0.75rem;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #d1d5db;
+  z-index: 10;
+}
+
+.circleIcon {
+  width: 0.75rem; /* 12px */
+  height: 0.75rem;
+  background: #9ca3af;
+  border-radius: 9999px;
+}
