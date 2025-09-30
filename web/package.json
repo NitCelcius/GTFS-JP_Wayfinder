@@ -49,6 +49,7 @@
     "eslint-config-next": "15.5.3",
     "eslint-plugin-react-hooks": "^5.2.0",
     "msw": "^2.11.3",
+    "postcss-selector-parser": "^6.1.2",
     "prettier": "^3.6.2",
     "storybook": "8.6.14",
     "typescript": "^5.9.2",

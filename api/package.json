@@ -10,7 +10,7 @@
     "lint": "uv run ruff check",
     "lint:fix": "uv run ruff --fix",
     "test": "uv run pytest",
-    "dev": "uv run python -m uvicorn src.gtfs_jp_wayfinder.main:app --host 0.0.0.0 --port ${PORT:-8002} --reload"
+    "dev": "uv run python -m uvicorn src.gtfs_jp_wayfinder.main:app --host 0.0.0.0 --port 8002 --reload"
   },
   "keywords": [],
   "author": "",

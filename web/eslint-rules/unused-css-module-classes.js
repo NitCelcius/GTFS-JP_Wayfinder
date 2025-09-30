@@ -15,8 +15,43 @@
 // - Parsing: simple regex for class selectors: .className { OR .className, .-prefixed; ignores @keyframes, :root, :global.
 import fs from "fs";
 import path from "path";
+import postcss from "postcss";
+import selectorParser from "postcss-selector-parser";
 
-const CLASS_REGEX = /\.([a-zA-Z0-9_-]+)\s*[{,]/g; // naive but effective for typical CSS Modules
+// Extract class names from a CSS Module file using PostCSS + selector parser
+function extractClassNames(content) {
+  const defined = new Set();
+  let root;
+  try {
+    root = postcss.parse(content);
+  } catch {
+    // Fallback: simple best-effort regex if parse fails
+    const fallback = content.match(/\.([a-zA-Z0-9_-]+)/g) || [];
+    for (const m of fallback) {
+      const name = m.slice(1);
+      if (name) defined.add(name);
+    }
+    return defined;
+  }
+
+  root.walkRules((rule) => {
+    if (!rule.selector) return;
+    try {
+      selectorParser((selectors) => {
+        selectors.walkClasses((cls) => {
+          const name = cls.value;
+          if (!name) return;
+          // Ignore patterns that look intentionally global or utility placeholders
+          if (name.startsWith("global")) return;
+          defined.add(name);
+        });
+      }).processSync(rule.selector);
+    } catch {
+      // Ignore selector parse errors for this rule only
+    }
+  });
+  return defined;
+}
 
 const rule = {
   meta: {
@@ -93,14 +128,7 @@ const rule = {
       } catch {
         return;
       }
-      const defined = new Set();
-      let match;
-      while ((match = CLASS_REGEX.exec(content)) !== null) {
-        const name = match[1];
-        if (name && !name.startsWith("global")) {
-          defined.add(name);
-        }
-      }
+      const defined = extractClassNames(content);
       imports.set(varName, {
         filePath: resolved,
         defined,
