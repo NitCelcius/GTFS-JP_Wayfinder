@@ -175,9 +175,14 @@ async def get_trip(trip_id: str):
     if not info:
         raise HTTPException(status_code=404, detail="trip not found")
     # Check if the trip actually exists by verifying if we got valid data
-    # If route_name is None, it means the trip_id doesn't exist in the database
+    # If all fields are None, it means the trip_id doesn't exist in the database
+    # (get_route_id_from_trip would have failed, leaving all route-related fields as None)
     trip_info = info[0]
-    if trip_info.route_name is None and trip_info.destination_display_name is None and trip_info.destination_stop_id is None:
+    if (
+        trip_info.route_name is None
+        and trip_info.destination_display_name is None
+        and trip_info.destination_stop_id is None
+    ):
         raise HTTPException(status_code=404, detail="trip not found")
     return trip_info
 
