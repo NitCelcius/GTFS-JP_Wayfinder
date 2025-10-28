@@ -1,5 +1,3 @@
-import datetime
-
 from fastapi import APIRouter, HTTPException, Query
 from pandas import to_datetime
 
@@ -70,11 +68,10 @@ async def timed_search(
 
         # Determine reference_date and begin_time_str from begin_time parameter
         reference_date = datetime.date.today().isoformat()
-        begin_time_str = begin_time
 
         if "T" in begin_time:
             try:
-                reference_date, begin_time_str = (
+                reference_date, _begin_time_str = (
                     adapter.extract_date_and_time_from_iso_datetime(begin_time)
                 )
             except ValueError as e:
@@ -86,13 +83,6 @@ async def timed_search(
 
         # Get timed travels (returns empty list if no buses available)
         path = adapter.get_shortest_path(from_stop, to_stop, service_id)
-
-        # Parse begin_time to get reference date and time string
-        reference_date, time_string = adapter.parse_begin_time(begin_time)
-
-        # Convert time string to numpy datetime64 for adapter
-        db_default_date = adapter.get_default_date()
-        begin_time_np = to_datetime(f"{db_default_date}T{time_string}").to_numpy()
 
         travels = adapter.get_timed_travels_from_path(path, service_id, begin_time_np)
 
@@ -128,7 +118,7 @@ async def timed_search(
             )
 
         return models.TimedTravelResponse(
-            reference_date=reference_date.isoformat(),
+            reference_date=reference_date,
             travels=travel_responses,
         )
     except HTTPException:

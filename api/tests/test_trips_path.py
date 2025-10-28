@@ -126,7 +126,10 @@ def test_upcoming_variants(monkeypatch, client):
     )
     resp = client.get(f"/stops/{stop_id}/upcoming")
     assert resp.status_code == 200
-    assert resp.json() == {"stop_id": stop_id, "buses": []}
+    response_json = resp.json()
+    assert response_json["stop_id"] == stop_id
+    assert response_json["buses"] == []
+    assert "reference_date" in response_json
 
     # with trips and times
     monkeypatch.setattr(
