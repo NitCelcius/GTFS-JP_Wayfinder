@@ -1,3 +1,5 @@
+import React from "react";
+
 import styles from "./SimpleRecentPage.module.css";
 
 interface RecentBusStop {

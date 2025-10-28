@@ -1,7 +1,4 @@
-import { useState } from "react";
-
-import { BusStopSearchModal } from "@/components/common/BusStopSearchModal/BusStopSearchModal";
-import type { BusStopSearchResult } from "@/types";
+import React, { useState } from "react";
 
 import styles from "./SimpleRouteSearchPage.module.css";
 
@@ -20,37 +17,16 @@ export function SimpleRouteSearchPage({
 }: SimpleRouteSearchPageProps) {
   const [originValue, setOriginValue] = useState("");
   const [destinationValue, setDestinationValue] = useState("");
-  const [originCandidateStopIds, setOriginCandidateStopIds] = useState<
-    string[]
-  >([]);
-  const [destinationCandidateStopIds, setDestinationCandidateStopIds] =
-    useState<string[]>([]);
-  const [activeModal, setActiveModal] = useState<
-    "origin" | "destination" | null
-  >(null);
-
-  const handleOriginStopSelect = (result: BusStopSearchResult) => {
-    setOriginValue(result.stop_name);
-    setOriginCandidateStopIds(result.candidate_stop_id_list);
-    setActiveModal(null);
-  };
-
-  const handleDestinationStopSelect = (result: BusStopSearchResult) => {
-    setDestinationValue(result.stop_name);
-    setDestinationCandidateStopIds(result.candidate_stop_id_list);
-    setActiveModal(null);
-  };
 
   const handleSearch = () => {
-    const originStopId = originCandidateStopIds[0];
-    const destinationStopId = destinationCandidateStopIds[0];
-
-    if (!originStopId || !destinationStopId) {
-      return;
-    }
+    // For demo purposes, use placeholder IDs
+    const originStopId = "origin-1";
+    const destinationStopId = "dest-1";
 
     const now = new Date();
-    const beginTime = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+    const beginTime = `${String(now.getHours()).padStart(2, "0")}:${String(
+      now.getMinutes()
+    ).padStart(2, "0")}`;
 
     onSearch?.({
       originStopId,
@@ -77,12 +53,13 @@ export function SimpleRouteSearchPage({
               <span className={styles.labelIcon}>🚏</span>
               <span>乗車するバス停</span>
             </label>
-            <button
+            <input
+              type="text"
               className={styles.inputButton}
-              onClick={() => setActiveModal("origin")}
-            >
-              {originValue || "バス停を選択してください"}
-            </button>
+              placeholder="バス停名を入力してください"
+              value={originValue}
+              onChange={(e) => setOriginValue(e.target.value)}
+            />
           </div>
 
           <div className={styles.arrow}>↓</div>
@@ -92,12 +69,13 @@ export function SimpleRouteSearchPage({
               <span className={styles.labelIcon}>🎯</span>
               <span>降車するバス停</span>
             </label>
-            <button
+            <input
+              type="text"
               className={styles.inputButton}
-              onClick={() => setActiveModal("destination")}
-            >
-              {destinationValue || "バス停を選択してください"}
-            </button>
+              placeholder="バス停名を入力してください"
+              value={destinationValue}
+              onChange={(e) => setDestinationValue(e.target.value)}
+            />
           </div>
         </div>
 
@@ -106,7 +84,7 @@ export function SimpleRouteSearchPage({
           onClick={handleSearch}
           disabled={!isSearchEnabled}
         >
-          {isSearchEnabled ? "経路を検索" : "バス停を選択してください"}
+          {isSearchEnabled ? "経路を検索" : "バス停を入力してください"}
         </button>
 
         {originValue && destinationValue && (
@@ -118,22 +96,6 @@ export function SimpleRouteSearchPage({
           </div>
         )}
       </div>
-
-      {activeModal === "origin" && (
-        <BusStopSearchModal
-          onClose={() => setActiveModal(null)}
-          onStopSelect={handleOriginStopSelect}
-          title="乗車バス停を選択"
-        />
-      )}
-
-      {activeModal === "destination" && (
-        <BusStopSearchModal
-          onClose={() => setActiveModal(null)}
-          onStopSelect={handleDestinationStopSelect}
-          title="降車バス停を選択"
-        />
-      )}
     </div>
   );
 }
