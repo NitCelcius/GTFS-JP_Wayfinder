@@ -28,7 +28,7 @@ def np_datetime_to_datetime_time(val: np.datetime64) -> datetime.time:
     "/batch",
     response_model=models.TripInfoList,
     summary="運行情報のバッチ取得",
-    description="複数の運行IDを一括で渡して TripInfo を取得します。バッチサイズは環境変数で制御されます。",
+    description="複数の運行IDを一括で渡して TripInfo を取得します。バッチサイズは環境変数 API_BATCH_MAX_TRIP_IDS で制御されます（デフォルト: 10）。",
     responses={
         200: {"description": "成功"},
         400: {
@@ -38,11 +38,13 @@ def np_datetime_to_datetime_time(val: np.datetime64) -> datetime.time:
                     "examples": {
                         "batch_limit_exceeded": {
                             "summary": "バッチ制限を超過",
-                            "value": {"detail": "batch limit exceeded; max is {max}"},
+                            "value": {
+                                "detail": "batch limit exceeded; max is 10"
+                            },
                         },
                         "limit_too_large": {
                             "summary": "limitが最大値を超過",
-                            "value": {"detail": "limit too large; max is {max}"},
+                            "value": {"detail": "limit too large; max is 10"},
                         },
                     },
                 },
