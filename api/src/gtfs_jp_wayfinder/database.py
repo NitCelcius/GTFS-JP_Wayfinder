@@ -420,6 +420,11 @@ class AkitaBusWayFinder:
     ) -> list[TravelOnce]:
         if change_time is None:
             change_time = np.timedelta64(0, "m")
+
+        # Validate that begin_time is not None
+        if begin_time is None:
+            raise ValueError("begin_time cannot be None")
+
         cur_time = begin_time
         prev_stop = None
         travel_list = []
@@ -430,6 +435,15 @@ class AkitaBusWayFinder:
                 continue
             candidate_trips = dict()
             logger.info("@ %s %s -> %s", cur_time, prev_stop, current_stop)
+
+            # Validate that cur_time is not None before using it
+            if cur_time is None:
+                logger.warning(
+                    "Current time is None at stop %s, cannot continue route search",
+                    prev_stop,
+                )
+                return []
+
             for target_trip in self.get_trips_from_stops(
                 prev_stop, current_stop, service_id,
             ):
@@ -439,14 +453,14 @@ class AkitaBusWayFinder:
                 if dep_time >= cur_time + change_time:
                     candidate_trips[target_trip] = arr_time
             if len(candidate_trips.keys()) == 0:
-                raise ValueError(
-                    "No trip found with departure time after the current time "
-                    + str(cur_time)
-                    + " at stop "
-                    + prev_stop
-                    + " to stop "
-                    + current_stop,
+                # Return empty list instead of raising error when no trips are available
+                logger.info(
+                    "No trip found with departure time after %s at stop %s to stop %s",
+                    cur_time,
+                    prev_stop,
+                    current_stop,
                 )
+                return []
             fastest_trip = min(candidate_trips, key=candidate_trips.get)
             dep_time, arr_time = self.get_trip_times(
                 prev_stop, current_stop, fastest_trip,

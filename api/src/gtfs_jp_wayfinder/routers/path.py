@@ -61,11 +61,18 @@ async def timed_search(
     ),
 ):
     try:
+        # Validate begin_time parameter early
+        if begin_time is None:
+            raise HTTPException(
+                status_code=400,
+                detail="begin_time parameter is required for timed search",
+            )
+
         # Determine reference_date and begin_time_str from begin_time parameter
         reference_date = datetime.date.today().isoformat()
         begin_time_str = begin_time
 
-        if begin_time and "T" in begin_time:
+        if "T" in begin_time:
             try:
                 reference_date, begin_time_str = (
                     adapter.extract_date_and_time_from_iso_datetime(begin_time)
@@ -73,15 +80,12 @@ async def timed_search(
             except ValueError as e:
                 raise HTTPException(status_code=400, detail=str(e)) from e
 
+        # Convert begin_time string to numpy datetime64
+        db_default_date = adapter.get_default_date()
+        begin_time_np = to_datetime(f"{db_default_date}T{begin_time_str}").to_numpy()
+
+        # Get timed travels (returns empty list if no buses available)
         path = adapter.get_shortest_path(from_stop, to_stop, service_id)
-        # adapter expects begin_time as numpy.datetime64 or compatible; pass through
-        if isinstance(begin_time_str, str):
-            db_default_date = adapter.get_default_date()
-            begin_time_np = to_datetime(
-                f"{db_default_date}T{begin_time_str}"
-            ).to_numpy()
-        else:
-            begin_time_np = begin_time_str
         travels = adapter.get_timed_travels_from_path(path, service_id, begin_time_np)
 
         # Convert TravelOnce objects to TravelOnceResponse with string times
@@ -119,6 +123,7 @@ async def timed_search(
     except HTTPException:
         raise
     except Exception as e:
+        # Convert other exceptions to 400 Bad Request
         raise HTTPException(status_code=400, detail=str(e)) from e
 
 
