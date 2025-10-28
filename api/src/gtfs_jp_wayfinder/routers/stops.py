@@ -229,16 +229,11 @@ async def get_upcoming(
             detail=f"limit too large; max is {max_batch}",
         )
 
-    # Get reference date (today's date for upcoming trips)
-    import datetime
-
-    reference_date = datetime.date.today()
-
     trips = adapter.get_trips_from_stop(stop_id, service_id)
     if trips is None:
         return models.UpcomingBusEnriched(
             stop_id=stop_id,
-            reference_date=reference_date.isoformat(),
+            reference_date=reference_date,
             buses=[],
         )
 
@@ -335,13 +330,13 @@ async def get_upcoming(
             )
         return models.UpcomingBusEnriched(
             stop_id=stop_id,
-            reference_date=reference_date.isoformat(),
+            reference_date=reference_date,
             buses=enriched,
         )
 
     # default
     return models.UpcomingBusEnriched(
         stop_id=stop_id,
-        reference_date=reference_date.isoformat(),
+        reference_date=reference_date,
         buses=buses,
     )
