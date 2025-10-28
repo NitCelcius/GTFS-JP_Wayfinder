@@ -371,3 +371,53 @@ class NearbyStopsResponse(BaseModel):
             ],
         },
     }
+
+
+class TravelRecord(BaseModel):
+    """Represents a travel segment without specific departure/arrival times."""
+
+    trip_id: str
+    fare: int
+    arrival_time: str | None = None
+    departure_time: str | None = None
+    from_stop_id: str
+    to_stop_id: str
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "trip_id": "平日_07時50分_系統34002",
+                    "fare": 170,
+                    "arrival_time": None,
+                    "departure_time": None,
+                    "from_stop_id": "1021_01",
+                    "to_stop_id": "6037_01",
+                },
+            ],
+        },
+    }
+
+
+class TravelsResponse(BaseModel):
+    """Response model for untimed travels."""
+
+    travels: list[TravelRecord]
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "travels": [
+                        {
+                            "trip_id": "平日_07時50分_系統34002",
+                            "fare": 170,
+                            "arrival_time": None,
+                            "departure_time": None,
+                            "from_stop_id": "1021_01",
+                            "to_stop_id": "6037_01",
+                        },
+                    ],
+                },
+            ],
+        },
+    }
+

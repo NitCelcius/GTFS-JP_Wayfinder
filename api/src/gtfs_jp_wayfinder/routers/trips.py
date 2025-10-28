@@ -38,11 +38,11 @@ def np_datetime_to_datetime_time(val: np.datetime64) -> datetime.time:
                     "examples": {
                         "batch_limit_exceeded": {
                             "summary": "バッチ制限を超過",
-                            "value": {"detail": "batch limit exceeded; max is 10"},
+                            "value": {"detail": "batch limit exceeded; max is {max}"},
                         },
                         "limit_too_large": {
                             "summary": "limitが最大値を超過",
-                            "value": {"detail": "limit too large; max is 10"},
+                            "value": {"detail": "limit too large; max is {max}"},
                         },
                     },
                 },

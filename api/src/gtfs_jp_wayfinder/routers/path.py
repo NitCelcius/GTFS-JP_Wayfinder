@@ -103,7 +103,7 @@ async def timed_search(
 
 @router.get(
     "/travels",
-    response_model=dict,
+    response_model=models.TravelsResponse,
     summary="経路の便取得",
     description="出発停留所から到着停留所への最短経路に沿った便（travels）を返します。",
     responses={
@@ -130,17 +130,17 @@ async def path_travels(
         for t in travels:
             if hasattr(t, "trip_id"):
                 records.append(
-                    {
-                        "trip_id": t.trip_id,
-                        "fare": t.fare,
-                        "arrival_time": None,
-                        "departure_time": None,
-                        "from_stop_id": t.from_stop_id,
-                        "to_stop_id": t.to_stop_id,
-                    },
+                    models.TravelRecord(
+                        trip_id=t.trip_id,
+                        fare=t.fare,
+                        arrival_time=None,
+                        departure_time=None,
+                        from_stop_id=t.from_stop_id,
+                        to_stop_id=t.to_stop_id,
+                    ),
                 )
             else:
                 records.append(t)
-        return {"travels": records}
+        return models.TravelsResponse(travels=records)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e)) from e
