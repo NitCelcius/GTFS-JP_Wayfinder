@@ -229,9 +229,18 @@ async def get_upcoming(
             detail=f"limit too large; max is {max_batch}",
         )
 
+    # Get reference date (today's date for upcoming trips)
+    import datetime
+
+    reference_date = datetime.date.today()
+
     trips = adapter.get_trips_from_stop(stop_id, service_id)
     if trips is None:
-        return models.UpcomingBusEnriched(stop_id=stop_id, buses=[])
+        return models.UpcomingBusEnriched(
+            stop_id=stop_id,
+            reference_date=reference_date.isoformat(),
+            buses=[],
+        )
 
     # Apply client limit if provided
     trips_list = list(trips)
@@ -324,7 +333,15 @@ async def get_upcoming(
                     stops=stops_data,
                 ),
             )
-        return models.UpcomingBusEnriched(stop_id=stop_id, buses=enriched)
+        return models.UpcomingBusEnriched(
+            stop_id=stop_id,
+            reference_date=reference_date.isoformat(),
+            buses=enriched,
+        )
 
     # default
-    return models.UpcomingBusEnriched(stop_id=stop_id, buses=buses)
+    return models.UpcomingBusEnriched(
+        stop_id=stop_id,
+        reference_date=reference_date.isoformat(),
+        buses=buses,
+    )
