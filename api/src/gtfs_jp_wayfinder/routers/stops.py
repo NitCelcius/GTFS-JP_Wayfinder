@@ -42,6 +42,27 @@ def parse_expand(expand_str: str | None) -> list[str]:
                 },
             },
         },
+        400: {
+            "description": "バリデーションエラー",
+            "content": {
+                "application/json": {
+                    "examples": {
+                        "limit_too_large": {
+                            "summary": "limitが最大値を超過",
+                            "value": {"detail": "limit too large; max is 100"},
+                        },
+                        "limit_not_positive": {
+                            "summary": "limitが正の値でない",
+                            "value": {"detail": "limit must be positive"},
+                        },
+                        "general_error": {
+                            "summary": "一般的なエラー",
+                            "value": {"detail": "エラーメッセージ"},
+                        },
+                    },
+                },
+            },
+        },
     },
 )
 async def get_nearby_stops(
@@ -100,6 +121,14 @@ async def get_nearby_stops(
             "description": "成功",
             "content": {"application/json": {"example": {"stop_names": ["中央公園"]}}},
         },
+        400: {
+            "description": "エラー",
+            "content": {
+                "application/json": {
+                    "example": {"detail": "エラーメッセージ"},
+                },
+            },
+        },
     },
 )
 async def get_stop(
@@ -132,6 +161,14 @@ async def get_stop(
                     "example": {
                         "stop_ids": [{"stop_id": "1021_01", "stop_name": "中央公園"}],
                     },
+                },
+            },
+        },
+        400: {
+            "description": "エラー",
+            "content": {
+                "application/json": {
+                    "example": {"detail": "エラーメッセージ"},
                 },
             },
         },
@@ -174,6 +211,23 @@ async def search_stops(
                                 "departure_time": "07:07:00",
                             },
                         ],
+                    },
+                },
+            },
+        },
+        400: {
+            "description": "バリデーションエラー",
+            "content": {
+                "application/json": {
+                    "examples": {
+                        "invalid_expand": {
+                            "summary": "無効な展開トークン",
+                            "value": {"detail": "Invalid expand token: invalid_token"},
+                        },
+                        "limit_too_large": {
+                            "summary": "limitが最大値を超過",
+                            "value": {"detail": "limit too large; max is 100"},
+                        },
                     },
                 },
             },
