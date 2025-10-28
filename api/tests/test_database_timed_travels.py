@@ -79,13 +79,13 @@ def test_get_timed_travels_from_path_none_cur_time(monkeypatch):
     monkeypatch.setattr(wf, "get_trip_times", mock_get_trip_times)
     monkeypatch.setattr(wf, "get_fare_from_stops", lambda from_id, to_id: 200)
 
-    # Path with 3 stops (2 segments)
-    path = ["stop1", "stop2", "stop3"]
+    # Path with 2 stops (1 segment) - arr_time will be None
+    path = ["stop1", "stop2"]
     begin_time = np.datetime64("2021-01-01T08:00:00")
-    result = wf.get_timed_travels_from_path(path, "service1", begin_time)
-
-    # Should return empty list when cur_time becomes None
-    assert result == []
+    
+    # Should raise ValueError when arr_time is None (data integrity issue)
+    with pytest.raises(ValueError, match="Arrival time is None"):
+        wf.get_timed_travels_from_path(path, "service1", begin_time)
 
 
 def test_get_timed_travels_from_path_successful(monkeypatch):
