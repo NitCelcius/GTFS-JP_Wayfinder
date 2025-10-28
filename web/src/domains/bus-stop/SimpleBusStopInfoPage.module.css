@@ -1,0 +1,291 @@
+.page {
+  min-height: 100vh;
+  background: linear-gradient(to bottom, #fef3c7, #ffffff);
+  padding: var(--spacing-2xl);
+}
+
+.container {
+  width: 100%;
+  max-width: 42rem;
+  margin: 0 auto;
+}
+
+.header {
+  margin-bottom: var(--spacing-3xl);
+}
+
+.backButton {
+  font-size: 1.25rem;
+  color: #3b82f6;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  transition: all 0.2s;
+}
+
+.backButton:hover {
+  color: #2563eb;
+  transform: translateX(-4px);
+}
+
+.busStopInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2xl);
+  background: white;
+  padding: var(--spacing-3xl);
+  border-radius: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.icon {
+  font-size: 4rem;
+}
+
+.busStopName {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+}
+
+.distance {
+  font-size: 1.25rem;
+  color: #6b7280;
+  margin: var(--spacing-sm) 0 0 0;
+}
+
+.nextBusCard {
+  background: linear-gradient(135deg, #dbeafe, #e0f2fe);
+  border: 3px solid #3b82f6;
+  border-radius: 1.5rem;
+  padding: var(--spacing-3xl);
+  margin-bottom: var(--spacing-3xl);
+}
+
+.noBusCard {
+  background: #f3f4f6;
+  border: 3px dashed #9ca3af;
+  border-radius: 1.5rem;
+  padding: var(--spacing-4xl);
+  margin-bottom: var(--spacing-3xl);
+  text-align: center;
+}
+
+.noBusText {
+  font-size: 1.375rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.sectionTitle {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 var(--spacing-2xl) 0;
+}
+
+.nextBusContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+}
+
+.busLine,
+.destination,
+.arrivalTime {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.lineLabel,
+.destinationLabel,
+.timeLabel {
+  font-size: 1.125rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.lineValue {
+  font-size: 1.625rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.destinationValue {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.timeValue {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1e40af;
+}
+
+.countdown {
+  background: #fef3c7;
+  border: 2px solid #fbbf24;
+  border-radius: 1rem;
+  padding: var(--spacing-xl);
+  text-align: center;
+  margin-top: var(--spacing-lg);
+}
+
+.countdownValue {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #92400e;
+}
+
+.upcomingSection,
+.routeSection {
+  background: white;
+  border-radius: 1.5rem;
+  padding: var(--spacing-3xl);
+  margin-bottom: var(--spacing-3xl);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.upcomingList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.upcomingItem {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2xl);
+  padding: var(--spacing-xl);
+  background: #f9fafb;
+  border-radius: 1rem;
+  border: 2px solid #e5e7eb;
+}
+
+.upcomingTime {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  min-width: 6rem;
+}
+
+.upcomingDetails {
+  flex: 1;
+}
+
+.upcomingLine {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.upcomingDestination {
+  font-size: 1rem;
+  color: #6b7280;
+  margin-top: var(--spacing-xs);
+}
+
+.routeList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.routeStop {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-xl);
+  padding: var(--spacing-lg);
+  border-radius: 0.75rem;
+  transition: all 0.2s;
+}
+
+.routeStop.currentStop {
+  background: #dbeafe;
+  border: 2px solid #3b82f6;
+}
+
+.routeDot {
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 3px solid #9ca3af;
+  border-radius: 50%;
+  margin-top: var(--spacing-sm);
+  position: relative;
+  flex-shrink: 0;
+  background: white;
+}
+
+.currentStop .routeDot {
+  border-color: #3b82f6;
+  background: #3b82f6;
+}
+
+.currentDot {
+  width: 0.75rem;
+  height: 0.75rem;
+  background: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.stopDetails {
+  flex: 1;
+}
+
+.stopName {
+  font-size: 1.375rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.currentLabel {
+  font-size: 1.125rem;
+  color: #3b82f6;
+  font-weight: 700;
+}
+
+.stopTime {
+  font-size: 1.125rem;
+  color: #6b7280;
+  margin-top: var(--spacing-xs);
+}
+
+@media (max-width: 768px) {
+  .busStopName {
+    font-size: 1.75rem;
+  }
+
+  .distance {
+    font-size: 1.125rem;
+  }
+
+  .sectionTitle {
+    font-size: 1.5rem;
+  }
+
+  .timeValue {
+    font-size: 1.75rem;
+  }
+
+  .countdownValue {
+    font-size: 1.5rem;
+  }
+
+  .upcomingTime {
+    font-size: 1.25rem;
+    min-width: 5rem;
+  }
+
+  .stopName {
+    font-size: 1.25rem;
+  }
+}

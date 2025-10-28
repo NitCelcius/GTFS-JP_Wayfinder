@@ -1,0 +1,251 @@
+.page {
+  min-height: 100vh;
+  background: linear-gradient(to bottom, #f0fdf4, #ffffff);
+  padding: var(--spacing-2xl);
+}
+
+.container {
+  width: 100%;
+  max-width: 42rem;
+  margin: 0 auto;
+}
+
+.header {
+  margin-bottom: var(--spacing-4xl);
+}
+
+.backButton {
+  font-size: 1.25rem;
+  color: #3b82f6;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  transition: all 0.2s;
+}
+
+.backButton:hover {
+  color: #2563eb;
+  transform: translateX(-4px);
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 var(--spacing-lg) 0;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+}
+
+.titleIcon {
+  font-size: 3rem;
+}
+
+.subtitle {
+  font-size: 1.25rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.section {
+  margin-bottom: var(--spacing-4xl);
+}
+
+.sectionTitle {
+  font-size: 1.875rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 0 0 var(--spacing-2xl) 0;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+}
+
+.sectionIcon {
+  font-size: 2rem;
+}
+
+.emptyState {
+  background: #f9fafb;
+  border: 3px dashed #d1d5db;
+  border-radius: 1.5rem;
+  padding: var(--spacing-4xl);
+  text-align: center;
+}
+
+.emptyText {
+  font-size: 1.25rem;
+  color: #9ca3af;
+  margin: 0;
+}
+
+.itemList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+}
+
+.busStopCard {
+  width: 100%;
+  background: white;
+  border: 3px solid #e5e7eb;
+  border-radius: 1.25rem;
+  padding: var(--spacing-2xl);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+}
+
+.busStopCard:hover {
+  border-color: #3b82f6;
+  background: #f0f9ff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.2);
+}
+
+.busStopCard:active {
+  transform: translateY(0);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--spacing-lg);
+}
+
+.cardTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1f2937;
+  flex: 1;
+}
+
+.cardTime {
+  font-size: 1.125rem;
+  color: #9ca3af;
+  white-space: nowrap;
+  margin-left: var(--spacing-lg);
+}
+
+.cardFooter {
+  display: flex;
+  gap: var(--spacing-lg);
+}
+
+.distanceBadge {
+  font-size: 1.125rem;
+  color: #059669;
+  background: #d1fae5;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: 0.5rem;
+  font-weight: 500;
+}
+
+.routeCard {
+  width: 100%;
+  background: white;
+  border: 3px solid #e5e7eb;
+  border-radius: 1.25rem;
+  padding: var(--spacing-2xl);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+}
+
+.routeCard:hover {
+  border-color: #8b5cf6;
+  background: #faf5ff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(139, 92, 246, 0.2);
+}
+
+.routeCard:active {
+  transform: translateY(0);
+}
+
+.routeHeader {
+  margin-bottom: var(--spacing-lg);
+}
+
+.routeStations {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xl);
+}
+
+.fromStation,
+.toStation {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.stationLabel {
+  font-size: 1rem;
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+.stationName {
+  font-size: 1.375rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.routeArrow {
+  font-size: 2rem;
+  color: #6b7280;
+  flex-shrink: 0;
+}
+
+.helpText {
+  background: #eff6ff;
+  border: 2px solid #bfdbfe;
+  border-radius: 1rem;
+  padding: var(--spacing-2xl);
+  text-align: center;
+  margin-top: var(--spacing-4xl);
+}
+
+.helpText p {
+  font-size: 1.125rem;
+  color: #1e40af;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .title {
+    font-size: 2rem;
+  }
+
+  .titleIcon {
+    font-size: 2.5rem;
+  }
+
+  .subtitle {
+    font-size: 1.125rem;
+  }
+
+  .sectionTitle {
+    font-size: 1.5rem;
+  }
+
+  .cardTitle,
+  .stationName {
+    font-size: 1.25rem;
+  }
+
+  .routeStations {
+    flex-direction: column;
+    gap: var(--spacing-lg);
+  }
+
+  .routeArrow {
+    transform: rotate(90deg);
+  }
+}
