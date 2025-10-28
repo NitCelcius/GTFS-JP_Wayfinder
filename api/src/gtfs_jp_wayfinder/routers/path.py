@@ -57,7 +57,7 @@ async def timed_search(
     service_id: str | None = Query(None, description="サービスID"),
     begin_time: str | None = Query(
         None,
-        description="開始時刻 (HH:MM:SS or ISO 8601 datetime, e.g., 2025-10-28T14:30:00)",
+        description="開始時刻 (HH:MM:SS形式またはISO 8601形式 例: 2025-10-28T14:30:00)",
     ),
 ):
     try:
@@ -86,7 +86,11 @@ async def timed_search(
 
         # Get timed travels (returns empty list if no buses available)
         path = adapter.get_shortest_path(from_stop, to_stop, service_id)
-        travels = adapter.get_timed_travels_from_path(path, service_id, begin_time_np)
+        # adapter expects begin_time as numpy.datetime64 or compatible; pass through
+        if isinstance(begin_time, str):
+            db_default_date = adapter.get_default_date()
+            begin_time = to_datetime(f"{db_default_date}T{begin_time}").to_numpy()
+        travels = adapter.get_timed_travels_from_path(path, service_id, begin_time)
 
         # Convert TravelOnce objects to TravelOnceResponse with string times
         travel_responses = []

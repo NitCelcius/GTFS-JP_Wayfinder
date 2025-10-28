@@ -15,6 +15,33 @@ _initialized = False
 logger = logging.getLogger(__name__)
 
 
+def parse_begin_time(begin_time_str: str | None) -> tuple[datetime.date, str]:
+    """Parse begin_time parameter which can be either HH:MM:SS or ISO datetime.
+
+    Args:
+        begin_time_str: Time string in HH:MM:SS format or ISO 8601 datetime
+                       (e.g., "2025-10-28T14:30:00"). If None, uses current time.
+
+    Returns:
+        (reference_date, time_string) where time_string is HH:MM:SS
+
+    Raises:
+        ValueError: If the ISO datetime format is invalid
+    """
+    if not begin_time_str:
+        now = datetime.datetime.now()
+        return now.date(), now.strftime("%H:%M:%S")
+
+    if "T" in begin_time_str:
+        try:
+            dt = datetime.datetime.fromisoformat(begin_time_str)
+            return dt.date(), dt.strftime("%H:%M:%S")
+        except ValueError as e:
+            raise ValueError(f"Invalid ISO datetime format: {begin_time_str}") from e
+
+    return datetime.date.today(), begin_time_str
+
+
 async def initialize(data_dir: str):
     """Async initialize wrapper that runs the blocking initialization in a thread."""
     global _initialized
