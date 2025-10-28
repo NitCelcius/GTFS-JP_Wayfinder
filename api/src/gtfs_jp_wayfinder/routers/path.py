@@ -86,11 +86,15 @@ async def timed_search(
 
         # Get timed travels (returns empty list if no buses available)
         path = adapter.get_shortest_path(from_stop, to_stop, service_id)
-        # adapter expects begin_time as numpy.datetime64 or compatible; pass through
-        if isinstance(begin_time, str):
-            db_default_date = adapter.get_default_date()
-            begin_time = to_datetime(f"{db_default_date}T{begin_time}").to_numpy()
-        travels = adapter.get_timed_travels_from_path(path, service_id, begin_time)
+
+        # Parse begin_time to get reference date and time string
+        reference_date, time_string = adapter.parse_begin_time(begin_time)
+
+        # Convert time string to numpy datetime64 for adapter
+        db_default_date = adapter.get_default_date()
+        begin_time_np = to_datetime(f"{db_default_date}T{time_string}").to_numpy()
+
+        travels = adapter.get_timed_travels_from_path(path, service_id, begin_time_np)
 
         # Convert TravelOnce objects to TravelOnceResponse with string times
         travel_responses = []
@@ -123,7 +127,10 @@ async def timed_search(
                 )
             )
 
-        return models.TimedTravelResponse(travels=travel_responses)
+        return models.TimedTravelResponse(
+            reference_date=reference_date.isoformat(),
+            travels=travel_responses,
+        )
     except HTTPException:
         raise
     except Exception as e:
