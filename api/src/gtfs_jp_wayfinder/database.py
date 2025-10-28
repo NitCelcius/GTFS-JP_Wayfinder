@@ -377,7 +377,9 @@ class AkitaBusWayFinder:
             path = nx.shortest_path(self.graph, source=from_id, target=to_id)
         else:
             path = nx.shortest_path(
-                self.graph_via_service_id[service_id], source=from_id, target=to_id,
+                self.graph_via_service_id[service_id],
+                source=from_id,
+                target=to_id,
             )
 
         return path
@@ -437,18 +439,27 @@ class AkitaBusWayFinder:
             logger.info("@ %s %s -> %s", cur_time, prev_stop, current_stop)
 
             # Validate that cur_time is not None before using it
+            # This should never happen as begin_time is validated and arr_time is validated
+            # but we check defensively to prevent TypeError
             if cur_time is None:
-                logger.warning(
-                    "Current time is None at stop %s, cannot continue route search",
+                logger.error(
+                    "Current time is None at stop %s - this indicates a data integrity issue",
                     prev_stop,
                 )
-                return []
+                raise ValueError(
+                    f"Unexpected None value for current time at stop {prev_stop}. "
+                    "This may indicate data corruption in the GTFS data."
+                )
 
             for target_trip in self.get_trips_from_stops(
-                prev_stop, current_stop, service_id,
+                prev_stop,
+                current_stop,
+                service_id,
             ):
                 dep_time, arr_time = self.get_trip_times(
-                    prev_stop, current_stop, target_trip,
+                    prev_stop,
+                    current_stop,
+                    target_trip,
                 )
                 if dep_time >= cur_time + change_time:
                     candidate_trips[target_trip] = arr_time
@@ -463,19 +474,28 @@ class AkitaBusWayFinder:
                 return []
             fastest_trip = min(candidate_trips, key=candidate_trips.get)
             dep_time, arr_time = self.get_trip_times(
-                prev_stop, current_stop, fastest_trip,
+                prev_stop,
+                current_stop,
+                fastest_trip,
             )
             logger.info(
-                "fastest via %s dep %s arr %s", fastest_trip, dep_time, arr_time,
+                "fastest via %s dep %s arr %s",
+                fastest_trip,
+                dep_time,
+                arr_time,
             )
 
             # Validate that arr_time is not None before using it
+            # If arr_time is None, this is a fatal data integrity error
             if arr_time is None:
-                logger.warning(
-                    "Arrival time is None for trip %s, cannot continue route search",
+                logger.error(
+                    "Arrival time is None for trip %s - this indicates invalid GTFS data",
                     fastest_trip,
                 )
-                return []
+                raise ValueError(
+                    f"Arrival time is None for trip {fastest_trip} at stop {current_stop}. "
+                    "This indicates invalid or corrupted GTFS data and the request cannot be fulfilled."
+                )
 
             travel_list.append(
                 TravelOnce(
@@ -636,7 +656,10 @@ class AkitaBusWayFinder:
         ].values[0]
 
     def get_nearby_stops(
-        self, lat: float, lon: float, limit: int = 10,
+        self,
+        lat: float,
+        lon: float,
+        limit: int = 10,
     ) -> list[NearbyStopResult]:
         """Get nearby bus stops sorted by distance from given coordinates.
 
@@ -652,7 +675,9 @@ class AkitaBusWayFinder:
             raise ValueError("limit must be positive")
         # Use batch calculation for better performance with large datasets
         distances = self.distance_calculator.calculate_distances_batch(
-            lat, lon, self.df_stops,
+            lat,
+            lon,
+            self.df_stops,
         )
         # Extract data as numpy arrays for better performance than iterrows()
         stop_ids = self.df_stops["stop_id"].values
