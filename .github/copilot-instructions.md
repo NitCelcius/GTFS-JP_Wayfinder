@@ -13,7 +13,7 @@ This project uses [mise](https://mise.jdx.dev/) to manage development tools for 
    ```bash
    # macOS: brew install mise
    # Linux/WSL: curl https://mise.run | sh
-   # Windows PowerShell: choco install mise (or download from https://mise.jdx.dev/)
+   # Windows PowerShell: winget install jdx.mise  # or: scoop install mise
    # Or: cargo install mise (any platform)
    ```
 

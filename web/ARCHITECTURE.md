@@ -34,7 +34,7 @@ This document explains the structure, conventions, and common developer workflow
 
 Example `.env.local`:
 
-```powershell
+```bash
 NEXT_PUBLIC_API_BASE_URL=http://localhost:8002
 ```
 
