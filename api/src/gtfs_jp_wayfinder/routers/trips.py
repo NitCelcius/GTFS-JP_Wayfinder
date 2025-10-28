@@ -164,13 +164,22 @@ async def get_journey(
     "/{trip_id}",
     response_model=models.TripInfo,
     summary="運行情報の取得",
-    description="単一の運行IDから TripInfo を取得します。",
+    description="単一の運行IDから TripInfo を取得します。指定された trip_id が存在しない場合は 404 を返します。",
+    responses={
+        200: {"description": "成功"},
+        404: {"description": "指定された trip_id が見つかりません"},
+    },
 )
 async def get_trip(trip_id: str):
     info = adapter.get_trip_info_batch([trip_id]).trips
     if not info:
         raise HTTPException(status_code=404, detail="trip not found")
-    return info[0]
+    # Check if the trip actually exists by verifying if we got valid data
+    # If route_name is None, it means the trip_id doesn't exist in the database
+    trip_info = info[0]
+    if trip_info.route_name is None and trip_info.destination_display_name is None and trip_info.destination_stop_id is None:
+        raise HTTPException(status_code=404, detail="trip not found")
+    return trip_info
 
 
 @router.get(
