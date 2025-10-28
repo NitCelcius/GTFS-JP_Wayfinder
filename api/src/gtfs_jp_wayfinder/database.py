@@ -469,6 +469,14 @@ class AkitaBusWayFinder:
                 "fastest via %s dep %s arr %s", fastest_trip, dep_time, arr_time,
             )
 
+            # Validate that arr_time is not None before using it
+            if arr_time is None:
+                logger.warning(
+                    "Arrival time is None for trip %s, cannot continue route search",
+                    fastest_trip,
+                )
+                return []
+
             travel_list.append(
                 TravelOnce(
                     trip_id=fastest_trip,
