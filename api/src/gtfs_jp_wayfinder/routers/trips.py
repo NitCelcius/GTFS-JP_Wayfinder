@@ -176,7 +176,7 @@ async def get_trip(trip_id: str):
     # This will raise ValueError if the trip doesn't exist
     try:
         wf_service.get_route_id_from_trip(trip_id)
-    except (ValueError, Exception):
+    except ValueError:
         raise HTTPException(status_code=404, detail="trip not found") from None
     
     # Trip exists, fetch the full info
