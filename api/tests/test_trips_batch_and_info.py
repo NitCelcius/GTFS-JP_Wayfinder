@@ -20,9 +20,17 @@ def test_trips_batch_and_get_trip(monkeypatch):
             ],
         )
 
+    def fake_get_route_id(trip_id):
+        # Return a fake route_id to indicate trip exists
+        return f"route-for-{trip_id}"
+
     monkeypatch.setattr(
         "gtfs_jp_wayfinder.services.wayfinder_adapter.get_trip_info_batch",
         fake_batch,
+    )
+    monkeypatch.setattr(
+        "gtfs_jp_wayfinder.services.wayfinder.get_route_id_from_trip",
+        fake_get_route_id,
     )
 
     resp = client.post("/trips/batch", json={"trip_ids": ["t1", "t2"]})
@@ -38,23 +46,13 @@ def test_trips_batch_and_get_trip(monkeypatch):
 
 def test_get_trip_not_found(monkeypatch):
     """Test that /trips/{trip_id} returns 404 when trip doesn't exist."""
-    def fake_batch_nonexistent(ids):
-        # Simulate the real behavior: return TripInfo with all fields None except trip_id
-        return models.TripInfoList(
-            trips=[
-                models.TripInfo(
-                    trip_id=i,
-                    route_name=None,
-                    destination_display_name=None,
-                    destination_stop_id=None,
-                )
-                for i in ids
-            ],
-        )
+    def fake_route_id_raises(trip_id):
+        # Simulate the real behavior: raise ValueError when trip doesn't exist
+        raise ValueError("No trip with given trip_id found")
 
     monkeypatch.setattr(
-        "gtfs_jp_wayfinder.services.wayfinder_adapter.get_trip_info_batch",
-        fake_batch_nonexistent,
+        "gtfs_jp_wayfinder.services.wayfinder.get_route_id_from_trip",
+        fake_route_id_raises,
     )
 
     resp = client.get("/trips/nonexistent_trip_id")

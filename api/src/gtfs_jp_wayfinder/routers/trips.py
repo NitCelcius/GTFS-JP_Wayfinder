@@ -6,6 +6,7 @@ from fastapi import APIRouter, HTTPException, Query
 
 from gtfs_jp_wayfinder import models
 from gtfs_jp_wayfinder.services import wayfinder_adapter as adapter
+from gtfs_jp_wayfinder.services import wayfinder as wf_service
 
 router = APIRouter()
 
@@ -129,20 +130,19 @@ async def get_journey(
     },
 )
 async def get_trip(trip_id: str):
+    # First, check if the trip exists by attempting to get its route_id
+    # This will raise ValueError if the trip doesn't exist
+    try:
+        wf_service.get_route_id_from_trip(trip_id)
+    except (ValueError, Exception):
+        raise HTTPException(status_code=404, detail="trip not found") from None
+    
+    # Trip exists, fetch the full info
     info = adapter.get_trip_info_batch([trip_id]).trips
     if not info:
+        # Shouldn't happen if trip exists, but handle defensively
         raise HTTPException(status_code=404, detail="trip not found")
-    # Check if the trip actually exists by verifying if we got valid data
-    # If all fields are None, it means the trip_id doesn't exist in the database
-    # (get_route_id_from_trip would have failed, leaving all route-related fields as None)
-    trip_info = info[0]
-    if (
-        trip_info.route_name is None
-        and trip_info.destination_display_name is None
-        and trip_info.destination_stop_id is None
-    ):
-        raise HTTPException(status_code=404, detail="trip not found")
-    return trip_info
+    return info[0]
 
 
 @router.get(
