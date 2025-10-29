@@ -1,13 +1,7 @@
-import styles from "./NextBusInfo.module.css";
+import { useTimeDisplay } from "@/hooks";
 
-interface BusInfo {
-  line: string;
-  system: string;
-  destination: string;
-  direction: string;
-  arrivalTime: string;
-  status: string;
-}
+import type { BusInfo } from "../types";
+import styles from "./NextBusInfo.module.css";
 
 interface NextBusInfoProps {
   busInfo: BusInfo;
@@ -20,6 +14,8 @@ export function NextBusInfo({
   showPreviousIndicator = true,
   showNextIndicator = true,
 }: NextBusInfoProps) {
+  const timeDisplay = useTimeDisplay();
+
   const handlePreviousBus = () => {
     // Placeholder for previous bus functionality
     console.log("Show previous bus");
@@ -52,7 +48,11 @@ export function NextBusInfo({
         <div className={styles.mainInfo}>
           <span className={styles.mainInfoText}>{busInfo.destination}</span>{" "}
           <span className={styles.directionText}>{busInfo.direction}</span>{" "}
-          <span className={styles.mainInfoText}>{busInfo.arrivalTime}</span>{" "}
+          <span className={styles.mainInfoText}>
+            {busInfo.arrivalDatetime
+              ? timeDisplay.format(busInfo.arrivalDatetime, busInfo.arrivalTime)
+              : busInfo.arrivalTime}
+          </span>{" "}
           <span className={styles.statusText}>{busInfo.status}</span>
         </div>
 

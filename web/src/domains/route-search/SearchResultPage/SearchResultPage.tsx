@@ -2,6 +2,7 @@ import { BottomNavigation } from "@/components/common/BottomNavigation/BottomNav
 import { JourneyTimeline } from "@/components/common/JourneyTimeline/JourneyTimeline";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner/LoadingSpinner";
 import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
+import { useTimeDisplay } from "@/hooks";
 
 import styles from "./SearchResultPage.module.css";
 import { RouteOverview } from "./internal/RouteOverview";
@@ -19,6 +20,8 @@ export function SearchResultPage({
   showCosts = true,
   isLoading = false,
 }: SearchResultPageProps) {
+  const timeDisplay = useTimeDisplay();
+
   const selectedRoute =
     tripDetails.routes.find(
       (route) => route.id === tripDetails.selectedRouteId
@@ -47,6 +50,8 @@ export function SearchResultPage({
           : ("intermediate" as const),
     arrivalTime: station.arrivalTime,
     departureTime: station.departureTime,
+    arrivalDatetime: station.arrivalDatetime,
+    departureDatetime: station.departureDatetime,
     cost: station.cost,
   }));
 
@@ -111,14 +116,26 @@ export function SearchResultPage({
                       {stop.arrivalTime && (
                         <div className={styles.timeLine}>
                           <span className={styles.timeText}>
-                            {stop.arrivalTime} 着
+                            {stop.arrivalDatetime
+                              ? timeDisplay.format(
+                                  stop.arrivalDatetime,
+                                  stop.arrivalTime
+                                )
+                              : stop.arrivalTime}{" "}
+                            着
                           </span>
                         </div>
                       )}
                       {stop.departureTime && (
                         <div className={styles.timeLine}>
                           <span className={styles.timeText}>
-                            {stop.departureTime} 発
+                            {stop.departureDatetime
+                              ? timeDisplay.format(
+                                  stop.departureDatetime,
+                                  stop.departureTime
+                                )
+                              : stop.departureTime}{" "}
+                            発
                           </span>
                         </div>
                       )}

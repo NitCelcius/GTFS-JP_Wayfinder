@@ -8,6 +8,18 @@ import type {
 import type { BusInfo, BusStop, BusStopInfo, JourneyStop } from "./types";
 
 /**
+ * Convert ISO datetime string to Date object
+ * @throws Error if datetime string is invalid
+ */
+function parseDateTime(datetimeString: string): Date {
+  const date = new Date(datetimeString);
+  if (isNaN(date.getTime())) {
+    throw new Error(`Invalid datetime string: "${datetimeString}"`);
+  }
+  return date;
+}
+
+/**
  * Convert API time string (HH:MM:SS) to display format (HH:MM)
  */
 export function formatTime(timeString: string): string {
@@ -23,12 +35,22 @@ export function convertTripToBusInfo(trip: EnrichedTripData): BusInfo {
   // const systemMatch = routeName.match(/系統(\d+)/);
   // const system = systemMatch ? `系統${systemMatch[1]}` : "";
 
+  let arrivalDatetime: Date;
+  try {
+    arrivalDatetime = parseDateTime(trip.arrival_datetime);
+  } catch (error) {
+    throw new Error(
+      `Failed to parse arrival datetime in BusInfo: ${error instanceof Error ? error.message : String(error)}`
+    );
+  }
+
   return {
     line: trip.route_name || "不明",
     system: "", // TODO: APIにない
     destination: trip.destination_display_name || "不明", // TODO: nullableにすべきか
     direction: "行",
     arrivalTime: formatTime(trip.arrival_time),
+    arrivalDatetime,
     status: "当バス停着",
   };
 }
@@ -66,6 +88,23 @@ export function convertTripStopsToJourneyStops(
     // TODO: Implement proper fare calculation using fare API endpoint
     const cost = 0;
 
+    let arrivalDatetime: Date;
+    let departureDatetime: Date;
+    try {
+      arrivalDatetime = parseDateTime(stop.arrival_datetime);
+    } catch (error) {
+      throw new Error(
+        `Failed to parse arrival datetime for journey stop "${stop.stop_name}": ${error instanceof Error ? error.message : String(error)}`
+      );
+    }
+    try {
+      departureDatetime = parseDateTime(stop.departure_datetime);
+    } catch (error) {
+      throw new Error(
+        `Failed to parse departure datetime for journey stop "${stop.stop_name}": ${error instanceof Error ? error.message : String(error)}`
+      );
+    }
+
     journeyStops.push({
       id: stop.stop_id,
       name: stop.stop_name || "不明",
@@ -73,6 +112,8 @@ export function convertTripStopsToJourneyStops(
       time: formatTime(stop.arrival_time), // Backward compatibility
       arrivalTime: formatTime(stop.arrival_time),
       departureTime: formatTime(stop.departure_time),
+      arrivalDatetime,
+      departureDatetime,
       cost: cost && cost >= 0 ? cost : undefined, // TODO: currently zero due to API being WIP
       label,
     });
