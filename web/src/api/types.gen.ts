@@ -19,11 +19,11 @@ export type EnrichedTrip = {
     /**
      * Arrival Datetime
      */
-    arrival_datetime?: string | null;
+    arrival_datetime: string;
     /**
      * Departure Datetime
      */
-    departure_datetime?: string | null;
+    departure_datetime: string;
     /**
      * Route Name
      */
@@ -171,11 +171,11 @@ export type TravelOnceResponse = {
     /**
      * Departure Datetime
      */
-    departure_datetime?: string | null;
+    departure_datetime: string;
     /**
      * Arrival Datetime
      */
-    arrival_datetime?: string | null;
+    arrival_datetime: string;
     /**
      * From Stop Id
      */
@@ -259,11 +259,11 @@ export type TripRecord = {
     /**
      * Departure Datetime
      */
-    departure_datetime?: string | null;
+    departure_datetime: string;
     /**
      * Arrival Datetime
      */
-    arrival_datetime?: string | null;
+    arrival_datetime: string;
 };
 
 /**
@@ -285,11 +285,11 @@ export type TripTimedStop = {
     /**
      * Arrival Datetime
      */
-    arrival_datetime?: string | null;
+    arrival_datetime: string;
     /**
      * Departure Datetime
      */
-    departure_datetime?: string | null;
+    departure_datetime: string;
     /**
      * Stop Id
      */
@@ -479,7 +479,7 @@ export type GetUpcomingStopsStopIdUpcomingGetData = {
         limit?: number | null;
         /**
          * Begin Time
-         * 開始時刻 (HH:MM:SS or ISO 8601 datetime, e.g., 2025-10-28T14:30:00)
+         * 開始時刻 (HH:MM:SS または ISO 8601 形式 (e.g., 2025-10-28T14:30:00). HH:MM:SS形式の場合、今日の日付が基準日として使用されます。ISO 8601形式の場合、`begon_time`で指定された日付が基準日として使用されます。
          */
         begin_time?: string | null;
     };
