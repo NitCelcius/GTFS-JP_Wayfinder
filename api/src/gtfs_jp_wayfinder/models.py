@@ -1,6 +1,6 @@
 import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 # Request models
@@ -31,8 +31,8 @@ class TripIdAndTime(BaseModel):
     trip_id: str
     arrival_time: str
     departure_time: str
-    arrival_datetime: str
-    departure_datetime: str
+    arrival_datetime: str = Field(...)
+    departure_datetime: str = Field(...)
 
     model_config = {
         "json_schema_extra": {
@@ -99,8 +99,8 @@ class TripRecord(BaseModel):
     fare: int
     departure_time: datetime.time
     arrival_time: datetime.time
-    departure_datetime: str
-    arrival_datetime: str
+    departure_datetime: str = Field(...)
+    arrival_datetime: str = Field(...)
 
     model_config = {
         "json_schema_extra": {
@@ -123,8 +123,8 @@ class TravelOnceResponse(BaseModel):
     trip_id: str
     departure_time: str
     arrival_time: str
-    departure_datetime: str
-    arrival_datetime: str
+    departure_datetime: str = Field(...)
+    arrival_datetime: str = Field(...)
     from_stop_id: str
     to_stop_id: str
     fare: int
@@ -151,8 +151,8 @@ class TripTimedStop(BaseModel):
     trip_id: str
     arrival_time: str
     departure_time: str
-    arrival_datetime: str
-    departure_datetime: str
+    arrival_datetime: str = Field(...)
+    departure_datetime: str = Field(...)
     stop_id: str
     stop_sequence: int
     stop_headsign: str
@@ -313,8 +313,8 @@ class EnrichedTrip(BaseModel):
     trip_id: str
     arrival_time: str
     departure_time: str
-    arrival_datetime: str
-    departure_datetime: str
+    arrival_datetime: str = Field(...)
+    departure_datetime: str = Field(...)
     route_name: str | None = None
     destination_display_name: str | None = None
     destination_stop_id: str | None = None
