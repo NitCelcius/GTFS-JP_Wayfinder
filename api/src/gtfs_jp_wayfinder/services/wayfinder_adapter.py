@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 import logging
 from typing import Any
 
@@ -223,7 +224,8 @@ def _get_effective_max_items(max_items: int | None) -> int | None:
 
 
 def _filter_trip_ids(
-    trip_ids: list[str], contains_filter: str | None = None,
+    trip_ids: list[str],
+    contains_filter: str | None = None,
 ) -> list[str]:
     """Helper function to filter trip IDs by substring."""
     if not contains_filter:
@@ -301,7 +303,8 @@ def get_time_from_trip_and_stop(trip_id: str, stop_id: str):
     """
     batch_result = get_times_from_trips_and_stop_batch([trip_id], stop_id)
     return batch_result.get(
-        trip_id, {"trip_id": trip_id, "arrival_time": None, "departure_time": None},
+        trip_id,
+        {"trip_id": trip_id, "arrival_time": None, "departure_time": None},
     )
 
 
@@ -328,7 +331,11 @@ def get_filtered_times_from_trips_and_stop(
         dict mapping trip_id -> {trip_id, arrival_time, departure_time}
     """
     return get_times_from_trips_and_stop_batch(
-        trip_ids, stop_id, trip_id_contains, min_arrival_time, max_items,
+        trip_ids,
+        stop_id,
+        trip_id_contains,
+        min_arrival_time,
+        max_items,
     )
 
 
@@ -482,13 +489,19 @@ def get_travels_from_path(path: list, service_id: str | None = None):
 
 
 def get_timed_travels_from_path(
-    path: list, service_id: str, begin_time: Any, change_time: Any | None = None,
+    path: list,
+    service_id: str,
+    begin_time: Any,
+    change_time: Any | None = None,
 ):
     # begin_time is expected to be numpy.datetime64 already by callers; if a string is passed, leave to underlying implementation
     if change_time is None:
         return wf_service._wf.get_timed_travels_from_path(path, service_id, begin_time)
     return wf_service._wf.get_timed_travels_from_path(
-        path, service_id, begin_time, change_time,
+        path,
+        service_id,
+        begin_time,
+        change_time,
     )
 
 
@@ -503,3 +516,105 @@ def get_trip_journey(trip_id: str, from_stop_id: str):
 
 def get_default_date():
     return wf_service.get_default_date()
+
+
+def extract_reference_date_from_iso_datetime(begin_time: str) -> str:
+    """Extract reference date from ISO 8601 datetime string.
+
+    Args:
+        begin_time: ISO 8601 datetime string (e.g., "2025-10-28T14:30:00")
+
+    Returns:
+        ISO date string (e.g., "2025-10-28")
+
+    Raises:
+        ValueError: If the datetime string is not in valid ISO 8601 format
+    """
+    if not begin_time or "T" not in begin_time:
+        raise ValueError(f"Expected ISO 8601 datetime format, got: {begin_time}")
+
+    try:
+        dt_obj = datetime.datetime.fromisoformat(begin_time)
+        return dt_obj.date().isoformat()
+    except ValueError as e:
+        raise ValueError(f"Invalid ISO datetime format: {begin_time}") from e
+
+
+def extract_date_and_time_from_iso_datetime(begin_time: str) -> tuple[str, str]:
+    """Extract both reference date and time from ISO 8601 datetime string.
+
+    Args:
+        begin_time: ISO 8601 datetime string (e.g., "2025-10-28T14:30:00")
+
+    Returns:
+        Tuple of (reference_date, time_str) where:
+        - reference_date: ISO date string (e.g., "2025-10-28")
+        - time_str: Time string in HH:MM:SS format
+
+    Raises:
+        ValueError: If the datetime string is not in valid ISO 8601 format
+    """
+    if not begin_time or "T" not in begin_time:
+        raise ValueError(f"Expected ISO 8601 datetime format, got: {begin_time}")
+
+    try:
+        dt_obj = datetime.datetime.fromisoformat(begin_time)
+        reference_date = dt_obj.date().isoformat()
+        time_str = dt_obj.time().strftime("%H:%M:%S")
+        return reference_date, time_str
+    except ValueError as e:
+        raise ValueError(f"Invalid ISO datetime format: {begin_time}") from e
+
+
+def merge_date_and_time_to_iso(
+    reference_date: str,
+    time_str: str,
+) -> str:
+    """
+    Merge a reference date (ISO format: YYYY-MM-DD) and time string (HH:MM:SS or HH:MM)
+    into a full ISO 8601 datetime string.
+
+    Handles overnight trips by detecting when time is earlier than the previous time.
+
+    Args:
+        reference_date: ISO date string (e.g., "2025-10-28"). Must not be None or empty.
+        time_str: Time string in HH:MM:SS or HH:MM format (e.g., "14:30:00" or "14:30").
+                  Must not be None or empty.
+
+    Returns:
+        ISO 8601 datetime string (e.g., "2025-10-28T14:30:00")
+
+    Raises:
+        ValueError: If reference_date or time_str are None, empty strings, or in invalid format
+
+    Examples:
+        merge_date_and_time_to_iso("2025-10-28", "14:30:00") -> "2025-10-28T14:30:00"
+        merge_date_and_time_to_iso("2025-10-28", "14:30") -> "2025-10-28T14:30:00"
+    """
+    # Strict validation: reject None and empty strings
+    if not reference_date:
+        raise ValueError("reference_date cannot be None or empty string")
+    if not time_str:
+        raise ValueError("time_str cannot be None or empty string")
+
+    # Parse the time string
+    time_parts = time_str.split(":")
+    if len(time_parts) < 2 or len(time_parts) > 3:
+        raise ValueError(f"Invalid time format: {time_str}")
+
+    try:
+        hours = int(time_parts[0])
+        minutes = int(time_parts[1])
+        seconds = int(time_parts[2]) if len(time_parts) == 3 else 0
+
+        # Create datetime object
+        reference_dt = datetime.datetime.fromisoformat(reference_date)
+        result_dt = reference_dt.replace(hour=hours, minute=minutes, second=seconds)
+
+        # Return ISO format string
+        return result_dt.isoformat()
+
+    except ValueError as e:
+        raise ValueError(
+            f"Error merging date and time: date={reference_date}, time={time_str}"
+        ) from e
