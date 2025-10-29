@@ -129,17 +129,17 @@ async def get_journey(
             arrival_time_str = _np_datetime_to_time_str(x.arrival_time)
             departure_time_str = _np_datetime_to_time_str(x.departure_time)
 
-            # Calculate datetime fields only if time values are available
-            arrival_datetime = None
-            departure_datetime = None
-            if arrival_time_str:
-                arrival_datetime = adapter.merge_date_and_time_to_iso(
-                    reference_date, arrival_time_str
-                )
-            if departure_time_str:
-                departure_datetime = adapter.merge_date_and_time_to_iso(
-                    reference_date, departure_time_str
-                )
+            if not arrival_time_str or not departure_time_str:
+                # Skip this record if times are missing (required fields)
+                continue
+
+            # Calculate datetime fields
+            arrival_datetime = adapter.merge_date_and_time_to_iso(
+                reference_date, arrival_time_str
+            )
+            departure_datetime = adapter.merge_date_and_time_to_iso(
+                reference_date, departure_time_str
+            )
 
             records.append(
                 models.TripRecord(
@@ -205,17 +205,20 @@ async def trip_passing(trip_id: str, stop_id: str = Query(..., description="åœç
             res.get("departure_time") if isinstance(res, dict) else None
         )
 
-        # Calculate datetime fields only if time values are available
-        arrival_datetime = None
-        departure_datetime = None
-        if arrival_time_str:
-            arrival_datetime = adapter.merge_date_and_time_to_iso(
-                reference_date, arrival_time_str
+        # Both times must be available for non-null datetime fields
+        if not arrival_time_str or not departure_time_str:
+            raise HTTPException(
+                status_code=404,
+                detail=f"Missing arrival/departure times for trip {trip_id} at stop {stop_id}",
             )
-        if departure_time_str:
-            departure_datetime = adapter.merge_date_and_time_to_iso(
-                reference_date, departure_time_str
-            )
+
+        # Calculate datetime fields (now always non-null)
+        arrival_datetime = adapter.merge_date_and_time_to_iso(
+            reference_date, arrival_time_str
+        )
+        departure_datetime = adapter.merge_date_and_time_to_iso(
+            reference_date, departure_time_str
+        )
 
         return models.TripRecord(
             trip_id=trip_id,

@@ -90,23 +90,23 @@ async def timed_search(
             departure_time_str = _np_datetime_to_time_str(travel.departure_time)
             arrival_time_str = _np_datetime_to_time_str(travel.arrival_time)
 
-            # Calculate datetime fields only if time values are available
-            departure_datetime = None
-            arrival_datetime = None
-            if departure_time_str:
-                departure_datetime = adapter.merge_date_and_time_to_iso(
-                    reference_date, departure_time_str
-                )
-            if arrival_time_str:
-                arrival_datetime = adapter.merge_date_and_time_to_iso(
-                    reference_date, arrival_time_str
-                )
+            if not departure_time_str or not arrival_time_str:
+                # Skip this travel if times are missing (required fields)
+                continue
+
+            # Calculate datetime fields
+            departure_datetime = adapter.merge_date_and_time_to_iso(
+                reference_date, departure_time_str
+            )
+            arrival_datetime = adapter.merge_date_and_time_to_iso(
+                reference_date, arrival_time_str
+            )
 
             travel_responses.append(
                 models.TravelOnceResponse(
                     trip_id=travel.trip_id,
-                    departure_time=departure_time_str or "",
-                    arrival_time=arrival_time_str or "",
+                    departure_time=departure_time_str,
+                    arrival_time=arrival_time_str,
                     departure_datetime=departure_datetime,
                     arrival_datetime=arrival_datetime,
                     from_stop_id=travel.from_stop_id,
