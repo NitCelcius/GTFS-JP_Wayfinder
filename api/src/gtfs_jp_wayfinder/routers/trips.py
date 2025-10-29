@@ -3,6 +3,7 @@ import os
 
 import numpy as np
 from fastapi import APIRouter, HTTPException, Query
+from pandas import to_datetime
 
 from gtfs_jp_wayfinder import models
 from gtfs_jp_wayfinder.services import wayfinder_adapter as adapter
@@ -24,6 +25,22 @@ def np_datetime_to_datetime_time(val: np.datetime64) -> datetime.time:
     raise TypeError(f"Cannot convert value of type {type(val)} to datetime.time")
 
 
+def _np_datetime_to_time_str(np_datetime: np.datetime64) -> str:
+    """Convert numpy.datetime64 to HH:MM:SS string format.
+
+    Returns ValueError if conversion fails.
+    """
+
+    try:
+        # Convert to pandas datetime for better handling
+        pd_datetime = to_datetime(np_datetime)
+
+        # Extract time in HH:MM:SS format
+        return pd_datetime.strftime("%H:%M:%S")
+    except Exception as e:
+        raise ValueError("Invalid numpy.datetime64 value") from e
+
+
 @router.post(
     "/batch",
     response_model=models.TripInfoList,
@@ -38,11 +55,13 @@ async def batch_trips(
     max_batch = int(os.environ.get("API_BATCH_MAX_TRIP_IDS", "10"))
     if len(body.trip_ids) > max_batch:
         raise HTTPException(
-            status_code=400, detail=f"batch limit exceeded; max is {max_batch}",
+            status_code=400,
+            detail=f"batch limit exceeded; max is {max_batch}",
         )
     if limit is not None and limit > max_batch:
         raise HTTPException(
-            status_code=400, detail=f"limit too large; max is {max_batch}",
+            status_code=400,
+            detail=f"limit too large; max is {max_batch}",
         )
     return adapter.get_trip_info_batch(body.trip_ids)
 
@@ -102,16 +121,39 @@ async def get_journey(
         if journey is None:
             raise HTTPException(status_code=404, detail="not found")
 
-        return [
-            models.TripRecord(
-                trip_id=x.trip_id,
-                stop_id=x.stop_id,
-                fare=x.fare,
-                arrival_time=np_datetime_to_datetime_time(x.arrival_time),
-                departure_time=np_datetime_to_datetime_time(x.departure_time),
+        # Determine reference_date (use default date from adapter)
+        reference_date = adapter.get_default_date()
+
+        records = []
+        for x in journey.itertuples():
+            arrival_time_str = _np_datetime_to_time_str(x.arrival_time)
+            departure_time_str = _np_datetime_to_time_str(x.departure_time)
+
+            # Calculate datetime fields only if time values are available
+            arrival_datetime = None
+            departure_datetime = None
+            if arrival_time_str:
+                arrival_datetime = adapter.merge_date_and_time_to_iso(
+                    reference_date, arrival_time_str
+                )
+            if departure_time_str:
+                departure_datetime = adapter.merge_date_and_time_to_iso(
+                    reference_date, departure_time_str
+                )
+
+            records.append(
+                models.TripRecord(
+                    trip_id=x.trip_id,
+                    stop_id=x.stop_id,
+                    fare=x.fare,
+                    arrival_time=np_datetime_to_datetime_time(x.arrival_time),
+                    departure_time=np_datetime_to_datetime_time(x.departure_time),
+                    arrival_datetime=arrival_datetime,
+                    departure_datetime=departure_datetime,
+                )
             )
-            for x in journey.itertuples()
-        ]
+
+        return records
     except HTTPException:
         raise
     except Exception as e:
@@ -155,6 +197,26 @@ async def trip_passing(trip_id: str, stop_id: str = Query(..., description="åœç
     try:
         res = adapter.get_time_from_trip_and_stop(trip_id, stop_id)
         # res should be dict-like with arrival_time/departure_time/fare
+        # Determine reference_date (use default date from adapter)
+        reference_date = adapter.get_default_date()
+
+        arrival_time_str = res.get("arrival_time") if isinstance(res, dict) else None
+        departure_time_str = (
+            res.get("departure_time") if isinstance(res, dict) else None
+        )
+
+        # Calculate datetime fields only if time values are available
+        arrival_datetime = None
+        departure_datetime = None
+        if arrival_time_str:
+            arrival_datetime = adapter.merge_date_and_time_to_iso(
+                reference_date, arrival_time_str
+            )
+        if departure_time_str:
+            departure_datetime = adapter.merge_date_and_time_to_iso(
+                reference_date, departure_time_str
+            )
+
         return models.TripRecord(
             trip_id=trip_id,
             stop_id=stop_id,
@@ -163,6 +225,8 @@ async def trip_passing(trip_id: str, stop_id: str = Query(..., description="åœç
                 res.get("departure_time") if isinstance(res, dict) else None
             ),
             arrival_time=(res.get("arrival_time") if isinstance(res, dict) else None),
+            arrival_datetime=arrival_datetime,
+            departure_datetime=departure_datetime,
         )
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e)) from e

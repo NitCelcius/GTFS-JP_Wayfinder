@@ -1,3 +1,5 @@
+import datetime
+
 from fastapi import APIRouter, HTTPException, Query
 from pandas import to_datetime
 
@@ -53,30 +55,69 @@ async def timed_search(
     from_stop: str = Query(..., description="出発停留所ID"),
     to_stop: str = Query(..., description="到着停留所ID"),
     service_id: str | None = Query(None, description="サービスID"),
-    begin_time: str | None = Query(None, description="開始時刻 (HH:MM:SS)"),
+    begin_time: str | None = Query(
+        None,
+        description="開始時刻 (HH:MM:SS or ISO 8601 datetime, e.g., 2025-10-28T14:30:00)",
+    ),
 ):
     try:
+        # Determine reference_date and begin_time_str from begin_time parameter
+        reference_date = datetime.date.today().isoformat()
+        begin_time_str = begin_time
+
+        if begin_time and "T" in begin_time:
+            try:
+                reference_date, begin_time_str = (
+                    adapter.extract_date_and_time_from_iso_datetime(begin_time)
+                )
+            except ValueError as e:
+                raise HTTPException(status_code=500, detail=str(e)) from e
+
         path = adapter.get_shortest_path(from_stop, to_stop, service_id)
         # adapter expects begin_time as numpy.datetime64 or compatible; pass through
-        if isinstance(begin_time, str):
+        if isinstance(begin_time_str, str):
             db_default_date = adapter.get_default_date()
-            begin_time = to_datetime(f"{db_default_date}T{begin_time}").to_numpy()
-        travels = adapter.get_timed_travels_from_path(path, service_id, begin_time)
+            begin_time_np = to_datetime(
+                f"{db_default_date}T{begin_time_str}"
+            ).to_numpy()
+        else:
+            begin_time_np = begin_time_str
+        travels = adapter.get_timed_travels_from_path(path, service_id, begin_time_np)
 
         # Convert TravelOnce objects to TravelOnceResponse with string times
-        travel_responses = [
-            models.TravelOnceResponse(
-                trip_id=travel.trip_id,
-                departure_time=_np_datetime_to_time_str(travel.departure_time) or "",
-                arrival_time=_np_datetime_to_time_str(travel.arrival_time) or "",
-                from_stop_id=travel.from_stop_id,
-                to_stop_id=travel.to_stop_id,
-                fare=travel.fare,
+        travel_responses = []
+        for travel in travels:
+            departure_time_str = _np_datetime_to_time_str(travel.departure_time)
+            arrival_time_str = _np_datetime_to_time_str(travel.arrival_time)
+
+            # Calculate datetime fields only if time values are available
+            departure_datetime = None
+            arrival_datetime = None
+            if departure_time_str:
+                departure_datetime = adapter.merge_date_and_time_to_iso(
+                    reference_date, departure_time_str
+                )
+            if arrival_time_str:
+                arrival_datetime = adapter.merge_date_and_time_to_iso(
+                    reference_date, arrival_time_str
+                )
+
+            travel_responses.append(
+                models.TravelOnceResponse(
+                    trip_id=travel.trip_id,
+                    departure_time=departure_time_str or "",
+                    arrival_time=arrival_time_str or "",
+                    departure_datetime=departure_datetime,
+                    arrival_datetime=arrival_datetime,
+                    from_stop_id=travel.from_stop_id,
+                    to_stop_id=travel.to_stop_id,
+                    fare=travel.fare,
+                )
             )
-            for travel in travels
-        ]
 
         return models.TimedTravelResponse(travels=travel_responses)
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e)) from e
 
