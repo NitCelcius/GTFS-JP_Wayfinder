@@ -2,6 +2,7 @@ import { BottomNavigation } from "@/components/common/BottomNavigation/BottomNav
 import { JourneyTimeline } from "@/components/common/JourneyTimeline/JourneyTimeline";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner/LoadingSpinner";
 import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
+import { useTimeDisplay } from "@/hooks";
 
 import styles from "./BusStopInfoPage.module.css";
 import { useBusStopData } from "./hooks";
@@ -23,6 +24,7 @@ export function BusStopInfoPage({
   onNavigateToRecent,
 }: BusStopInfoPageProps) {
   const { data, isLoading, error } = useBusStopData(busStopId);
+  const timeDisplay = useTimeDisplay();
 
   const handleBottomNavClick = (tab: "bus-stop" | "route" | "recent") => {
     switch (tab) {
@@ -167,7 +169,12 @@ export function BusStopInfoPage({
                       stop.arrivalTime === stop.departureTime ? (
                         <div className={styles.timeLine}>
                           <span className={styles.timeText}>
-                            {stop.arrivalTime}
+                            {stop.arrivalDatetime
+                              ? timeDisplay.format(
+                                  stop.arrivalDatetime,
+                                  stop.arrivalTime
+                                )
+                              : stop.arrivalTime}
                           </span>
                         </div>
                       ) : (
@@ -175,14 +182,26 @@ export function BusStopInfoPage({
                           {stop.arrivalTime && (
                             <div className={styles.timeLine}>
                               <span className={styles.timeText}>
-                                {stop.arrivalTime} 着
+                                {stop.arrivalDatetime
+                                  ? timeDisplay.format(
+                                      stop.arrivalDatetime,
+                                      stop.arrivalTime
+                                    )
+                                  : stop.arrivalTime}{" "}
+                                着
                               </span>
                             </div>
                           )}
                           {stop.departureTime && (
                             <div className={styles.timeLine}>
                               <span className={styles.timeText}>
-                                {stop.departureTime} 発
+                                {stop.departureDatetime
+                                  ? timeDisplay.format(
+                                      stop.departureDatetime,
+                                      stop.departureTime
+                                    )
+                                  : stop.departureTime}{" "}
+                                発
                               </span>
                             </div>
                           )}

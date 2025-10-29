@@ -2,6 +2,8 @@ export interface Station {
   stationName: string;
   arrivalTime?: string;
   departureTime?: string;
+  arrivalDatetime?: Date;
+  departureDatetime?: Date;
   isTransfer?: boolean;
   cost?: number;
 }

@@ -12,6 +12,7 @@ export interface BusInfo {
   destination: string;
   direction: string;
   arrivalTime: string;
+  arrivalDatetime: Date;
   status: string;
 }
 
@@ -22,6 +23,8 @@ export interface JourneyStop {
   time: string; // For backward compatibility, typically arrival_time
   arrivalTime?: string;
   departureTime?: string;
+  arrivalDatetime: Date;
+  departureDatetime: Date;
   cost?: number;
   label?: string;
 }
