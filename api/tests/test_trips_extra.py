@@ -13,6 +13,8 @@ def test_trip_stops(monkeypatch):
                 "trip_id": trip_id,
                 "arrival_time": "08:00:00",
                 "departure_time": "08:00:00",
+                "arrival_datetime": "2025-10-29T08:00:00",
+                "departure_datetime": "2025-10-29T08:00:00",
                 "stop_id": "S1",
                 "stop_sequence": 1,
                 "stop_headsign": "Central",

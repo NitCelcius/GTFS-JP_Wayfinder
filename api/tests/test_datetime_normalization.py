@@ -18,16 +18,28 @@ def test_format_np_datetime_with_pandas_timestamp():
 
 def test_adapter_converts_time_fields(monkeypatch):
     # simulate underlying service returning raw numpy datetime values
-    def fake_get_time(trip_id, stop_id):
+    # The adapter's get_time_from_trip_and_stop now calls get_times_from_trips_and_stop_batch
+    def fake_get_times_batch(
+        trip_ids, stop_id, trip_id_contains=None, min_arrival_time=None, max_items=None
+    ):
+        # The real batch function converts numpy/pandas datetime to strings
+        # so our mock should do the same
         return {
-            "trip_id": trip_id,
-            "arrival_time": np.datetime64("2021-01-01T08:00:00"),
-            "departure_time": pd.Timestamp("2021-01-01T08:00:00"),
+            trip_id: {
+                "trip_id": trip_id,
+                "arrival_time": wayfinder.format_np_datetime(
+                    np.datetime64("2021-01-01T08:00:00")
+                ),
+                "departure_time": wayfinder.format_np_datetime(
+                    pd.Timestamp("2021-01-01T08:00:00")
+                ),
+            }
+            for trip_id in trip_ids
         }
 
     monkeypatch.setattr(
-        "gtfs_jp_wayfinder.services.wayfinder.get_time_from_trip_and_stop",
-        fake_get_time,
+        "gtfs_jp_wayfinder.services.wayfinder_adapter.get_times_from_trips_and_stop_batch",
+        fake_get_times_batch,
     )
 
     res = wayfinder_adapter.get_time_from_trip_and_stop("t1", "s1")

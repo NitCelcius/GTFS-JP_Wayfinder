@@ -17,6 +17,14 @@ export type EnrichedTrip = {
      */
     departure_time: string;
     /**
+     * Arrival Datetime
+     */
+    arrival_datetime: string;
+    /**
+     * Departure Datetime
+     */
+    departure_datetime: string;
+    /**
      * Route Name
      */
     route_name?: string | null;
@@ -161,6 +169,14 @@ export type TravelOnceResponse = {
      */
     arrival_time: string;
     /**
+     * Departure Datetime
+     */
+    departure_datetime: string;
+    /**
+     * Arrival Datetime
+     */
+    arrival_datetime: string;
+    /**
      * From Stop Id
      */
     from_stop_id: string;
@@ -240,6 +256,14 @@ export type TripRecord = {
      * Arrival Time
      */
     arrival_time: string;
+    /**
+     * Departure Datetime
+     */
+    departure_datetime: string;
+    /**
+     * Arrival Datetime
+     */
+    arrival_datetime: string;
 };
 
 /**
@@ -258,6 +282,14 @@ export type TripTimedStop = {
      * Departure Time
      */
     departure_time: string;
+    /**
+     * Arrival Datetime
+     */
+    arrival_datetime: string;
+    /**
+     * Departure Datetime
+     */
+    departure_datetime: string;
     /**
      * Stop Id
      */
@@ -359,10 +391,10 @@ export type GetStopStopsStopIdGetData = {
     };
     query?: {
         /**
-         * Fields
+         *  Fields
          * 追加で取得するフィールド (例: location)
          */
-        fields?: string | null;
+        _fields?: string | null;
     };
     url: '/stops/{stop_id}';
 };
@@ -444,7 +476,12 @@ export type GetUpcomingStopsStopIdUpcomingGetData = {
          * Limit
          * クライアント側の最大件数
          */
-        limit?: number;
+        limit?: number | null;
+        /**
+         * Begin Time
+         * 開始時刻 (HH:MM:SS または ISO 8601 形式 (e.g., 2025-10-28T14:30:00). HH:MM:SS形式の場合、今日の日付が基準日として使用されます。ISO 8601形式の場合、`begon_time`で指定された日付が基準日として使用されます。
+         */
+        begin_time?: string | null;
     };
     url: '/stops/{stop_id}/upcoming';
 };
@@ -771,7 +808,7 @@ export type TimedSearchPathTimedSearchGetData = {
         service_id?: string | null;
         /**
          * Begin Time
-         * 開始時刻 (HH:MM:SS)
+         * 開始時刻 (HH:MM:SS or ISO 8601 datetime, e.g., 2025-10-28T14:30:00)
          */
         begin_time?: string | null;
     };

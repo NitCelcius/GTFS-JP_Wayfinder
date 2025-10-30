@@ -1,6 +1,6 @@
 import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 # Request models
@@ -21,9 +21,19 @@ class ServiceId(BaseModel):
 
 # Response / domain models
 class TripIdAndTime(BaseModel):
+    """バス停の発着情報
+
+    arrival_datetimeとdeparture_datetimeの日付部分は、begin_timeパラメータやAPIに与えた日付から決定されます。
+    - begin_timeがISO 8601形式の場合は、指定された日付を使用します。
+    - begin_timeがHH:MM:SS形式またはNoneの場合は、今日の日付を使用します。
+    """
+
     trip_id: str
     arrival_time: str
     departure_time: str
+    arrival_datetime: str = Field(...)
+    departure_datetime: str = Field(...)
+
     model_config = {
         "json_schema_extra": {
             "examples": [
@@ -31,6 +41,8 @@ class TripIdAndTime(BaseModel):
                     "trip_id": "平日_07時50分_系統34002",
                     "arrival_time": "07:50:00",
                     "departure_time": "07:50:00",
+                    "arrival_datetime": "2025-10-28T07:50:00",
+                    "departure_datetime": "2025-10-28T07:50:00",
                 },
             ],
         },
@@ -87,6 +99,9 @@ class TripRecord(BaseModel):
     fare: int
     departure_time: datetime.time
     arrival_time: datetime.time
+    departure_datetime: str = Field(...)
+    arrival_datetime: str = Field(...)
+
     model_config = {
         "json_schema_extra": {
             "examples": [
@@ -96,6 +111,8 @@ class TripRecord(BaseModel):
                     "fare": 170,
                     "departure_time": "07:50:00",
                     "arrival_time": "07:50:00",
+                    "departure_datetime": "2025-10-28T07:50:00",
+                    "arrival_datetime": "2025-10-28T07:50:00",
                 },
             ],
         },
@@ -106,9 +123,12 @@ class TravelOnceResponse(BaseModel):
     trip_id: str
     departure_time: str
     arrival_time: str
+    departure_datetime: str = Field(...)
+    arrival_datetime: str = Field(...)
     from_stop_id: str
     to_stop_id: str
     fare: int
+
     model_config = {
         "json_schema_extra": {
             "examples": [
@@ -116,6 +136,8 @@ class TravelOnceResponse(BaseModel):
                     "trip_id": "t1",
                     "departure_time": "08:00:00",
                     "arrival_time": "08:30:00",
+                    "departure_datetime": "2025-10-28T08:00:00",
+                    "arrival_datetime": "2025-10-28T08:30:00",
                     "from_stop_id": "1021_01",
                     "to_stop_id": "6037_01",
                     "fare": 170,
@@ -129,6 +151,8 @@ class TripTimedStop(BaseModel):
     trip_id: str
     arrival_time: str
     departure_time: str
+    arrival_datetime: str = Field(...)
+    departure_datetime: str = Field(...)
     stop_id: str
     stop_sequence: int
     stop_headsign: str
@@ -141,6 +165,8 @@ class TripTimedStop(BaseModel):
                     "trip_id": "t1",
                     "arrival_time": "08:00:00",
                     "departure_time": "08:00:00",
+                    "arrival_datetime": "2025-10-28T08:00:00",
+                    "departure_datetime": "2025-10-28T08:00:00",
                     "stop_id": "1021_01",
                     "stop_sequence": 1,
                     "stop_headsign": "中央公園",
@@ -226,7 +252,9 @@ class TripIdAndRouteName(BaseModel):
     route_name: str
     model_config = {
         "json_schema_extra": {
-            "examples": [{"trip_id": "平日_06時33分_系統30101", "route_name": "太平線"}],
+            "examples": [
+                {"trip_id": "平日_06時33分_系統30101", "route_name": "太平線"}
+            ],
         },
     }
 
@@ -234,7 +262,9 @@ class TripIdAndRouteName(BaseModel):
 class PathResponse(BaseModel):
     path: list[str]
     model_config = {
-        "json_schema_extra": {"examples": [{"path": ["1021_01", "3000_01", "6037_01"]}]},
+        "json_schema_extra": {
+            "examples": [{"path": ["1021_01", "3000_01", "6037_01"]}]
+        },
     }
 
 
@@ -283,10 +313,13 @@ class EnrichedTrip(BaseModel):
     trip_id: str
     arrival_time: str
     departure_time: str
+    arrival_datetime: str = Field(...)
+    departure_datetime: str = Field(...)
     route_name: str | None = None
     destination_display_name: str | None = None
     destination_stop_id: str | None = None
     stops: list[TripTimedStop] | None = None
+
     model_config = {
         "json_schema_extra": {
             "examples": [
@@ -294,6 +327,8 @@ class EnrichedTrip(BaseModel):
                     "trip_id": "平日_07時50分_系統34002",
                     "arrival_time": "07:50:00",
                     "departure_time": "07:50:00",
+                    "arrival_datetime": "2025-10-28T07:50:00",
+                    "departure_datetime": "2025-10-28T07:50:00",
                     "route_name": "太平線",
                     "destination_display_name": "大学病院",
                 },

@@ -1,3 +1,6 @@
+import datetime
+import warnings
+
 from fastapi import APIRouter, HTTPException, Query
 
 from gtfs_jp_wayfinder import models
@@ -85,7 +88,8 @@ async def get_nearby_stops(
     # Enforce maximum limit
     if limit > max_limit:
         raise HTTPException(
-            status_code=400, detail=f"limit too large; max is {max_limit}",
+            status_code=400,
+            detail=f"limit too large; max is {max_limit}",
         )
 
     if limit <= 0:
@@ -135,7 +139,8 @@ async def get_stop(
     stop_id: str,
     _fields: str
     | None = Query(  # TODO(ARG): implement optional field expansion (e.g. location)
-        None, description="追加で取得するフィールド (例: location)",
+        None,
+        description="追加で取得するフィールド (例: location)",
     ),
 ):
     # For now we return names; location can be requested via fields=location
@@ -243,7 +248,26 @@ async def get_upcoming(
         ge=1,
         description="クライアント側の最大件数",
     ),
+    begin_time: str | None = Query(
+        None,
+        description=(
+            "開始時刻 (HH:MM:SS または ISO 8601 形式 (e.g., 2025-10-28T14:30:00). "
+            "HH:MM:SS形式の場合、今日の日付が基準日として使用されます。"
+            "ISO 8601形式の場合、`begin_time`で指定された日付が基準日として使用されます。"
+        ),
+    ),
 ):
+    # Determine reference_date from begin_time parameter
+    reference_date = datetime.date.today().isoformat()
+    if begin_time and "T" in begin_time:
+        try:
+            reference_date = adapter.extract_reference_date_from_iso_datetime(
+                begin_time
+            )
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=str(e)) from e
+    # else: if HH:MM:SS format, use today's date as reference_date
+
     # validate expand tokens
     tokens = parse_expand(expand)
 
@@ -255,7 +279,8 @@ async def get_upcoming(
         limit = max_batch
     elif limit > max_batch:
         raise HTTPException(
-            status_code=400, detail=f"limit too large; max is {max_batch}",
+            status_code=400,
+            detail=f"limit too large; max is {max_batch}",
         )
 
     trips = adapter.get_trips_from_stop(stop_id, service_id)
@@ -270,7 +295,9 @@ async def get_upcoming(
     # OPTIMIZATION 1: Batch fetch all arrival/departure times at once instead of N individual queries
     # Use the new max_items parameter to apply limit at the batch level for better performance
     time_map = adapter.get_times_from_trips_and_stop_batch(
-        trips_list, stop_id, max_items=limit,
+        trips_list,
+        stop_id,
+        max_items=limit,
     )
 
     # Build base buses list using batch-fetched times
@@ -280,11 +307,28 @@ async def get_upcoming(
         time_obj = time_map.get(trip, {})
         arrival = time_obj.get("arrival_time")
         departure = time_obj.get("departure_time")
+
+        # Enforce non-null times (required for non-null datetime fields)
+        if not arrival or not departure:
+            warnings.warn(
+                f"Skipping trip {trip} for stop {stop_id} due to missing arrival/departure times",
+                stacklevel=2,
+            )
+            continue
+
+        # Convert time fields to ISO datetime format (required fields)
+        arrival_datetime = adapter.merge_date_and_time_to_iso(reference_date, arrival)
+        departure_datetime = adapter.merge_date_and_time_to_iso(
+            reference_date, departure
+        )
+
         buses.append(
             models.EnrichedTrip(
                 trip_id=trip,
                 arrival_time=arrival,
                 departure_time=departure,
+                arrival_datetime=arrival_datetime,
+                departure_datetime=departure_datetime,
             ),
         )
         trip_ids.append(trip)
@@ -321,6 +365,8 @@ async def get_upcoming(
                     trip_id=b.trip_id,
                     arrival_time=b.arrival_time,
                     departure_time=b.departure_time,
+                    arrival_datetime=b.arrival_datetime,
+                    departure_datetime=b.departure_datetime,
                     route_name=tinfo.route_name if tinfo else None,
                     destination_display_name=tinfo.destination_display_name
                     if tinfo
