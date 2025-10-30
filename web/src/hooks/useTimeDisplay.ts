@@ -2,17 +2,24 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import { DefaultTimeFormatter, TimeFormatterBase } from "./TimeFormatterBase";
 
-// Default singleton instance
-const defaultFormatterInstance = new DefaultTimeFormatter();
+let defaultFormatterInstance: DefaultTimeFormatter | null = null;
 
-export function useTimeDisplay(
-  formatter: TimeFormatterBase = defaultFormatterInstance
-) {
+function getDefaultFormatter(): DefaultTimeFormatter {
+  if (!defaultFormatterInstance) {
+    defaultFormatterInstance = new DefaultTimeFormatter();
+  }
+  return defaultFormatterInstance;
+}
+
+export function useTimeDisplay(formatter?: TimeFormatterBase) {
   const useRelativeTime = process.env.NEXT_PUBLIC_USE_RELATIVE_TIME === "true";
   const [now, setNow] = useState<Date>(new Date());
   const trackedTimesRef = useRef<Set<number>>(new Set());
 
-  const stableFormatter = useMemo(() => formatter, [formatter]);
+  const stableFormatter = useMemo(
+    () => formatter ?? getDefaultFormatter(),
+    [formatter]
+  );
 
   useEffect(() => {
     if (!useRelativeTime) return;
