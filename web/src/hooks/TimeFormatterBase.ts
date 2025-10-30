@@ -37,8 +37,9 @@ export class DefaultTimeFormatter extends TimeFormatterBase {
 
   constructor(locale?: string) {
     super();
-    // ロケールが指定されていない場合はブラウザのロケールを使用
-    this.locale = locale ?? navigator.language;
+    // 指定されたロケールがなければブラウザのロケールを使うか、"ja" にする
+    this.locale =
+      locale ?? (typeof navigator !== "undefined" ? navigator.language : "ja");
     this.rtf = new Intl.RelativeTimeFormat(this.locale, { numeric: "always" });
   }
 
