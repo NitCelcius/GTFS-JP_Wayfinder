@@ -5,8 +5,8 @@ import numpy as np
 from fastapi import APIRouter, HTTPException, Query
 
 from gtfs_jp_wayfinder import models
-from gtfs_jp_wayfinder.services import wayfinder_adapter as adapter
 from gtfs_jp_wayfinder.services import wayfinder as wf_service
+from gtfs_jp_wayfinder.services import wayfinder_adapter as adapter
 
 router = APIRouter()
 
@@ -39,11 +39,13 @@ async def batch_trips(
     max_batch = int(os.environ.get("API_BATCH_MAX_TRIP_IDS", "10"))
     if len(body.trip_ids) > max_batch:
         raise HTTPException(
-            status_code=400, detail=f"batch limit exceeded; max is {max_batch}",
+            status_code=400,
+            detail=f"batch limit exceeded; max is {max_batch}",
         )
     if limit is not None and limit > max_batch:
         raise HTTPException(
-            status_code=400, detail=f"limit too large; max is {max_batch}",
+            status_code=400,
+            detail=f"limit too large; max is {max_batch}",
         )
     return adapter.get_trip_info_batch(body.trip_ids)
 
@@ -136,7 +138,7 @@ async def get_trip(trip_id: str):
         wf_service.get_route_id_from_trip(trip_id)
     except ValueError:
         raise HTTPException(status_code=404, detail="trip not found") from None
-    
+
     # Trip exists, fetch the full info
     info = adapter.get_trip_info_batch([trip_id]).trips
     if not info:
