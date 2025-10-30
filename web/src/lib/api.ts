@@ -77,7 +77,7 @@ export class ApiClient {
     try {
       return await getStopStopsStopIdGet({
         path: { stop_id: stopId },
-        ...(fields && { query: { fields } }),
+        ...(fields && { query: { _fields: fields } }),
       });
     } catch (error) {
       console.error("API Error:", error);
