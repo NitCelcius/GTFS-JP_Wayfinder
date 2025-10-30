@@ -6,8 +6,8 @@ from fastapi import APIRouter, HTTPException, Query
 from pandas import to_datetime
 
 from gtfs_jp_wayfinder import models
-from gtfs_jp_wayfinder.services import wayfinder_adapter as adapter
 from gtfs_jp_wayfinder.services import wayfinder as wf_service
+from gtfs_jp_wayfinder.services import wayfinder_adapter as adapter
 
 router = APIRouter()
 
@@ -178,7 +178,7 @@ async def get_trip(trip_id: str):
         wf_service.get_route_id_from_trip(trip_id)
     except ValueError:
         raise HTTPException(status_code=404, detail="trip not found") from None
-    
+
     # Trip exists, fetch the full info
     info = adapter.get_trip_info_batch([trip_id]).trips
     if not info:
