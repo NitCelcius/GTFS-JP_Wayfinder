@@ -71,7 +71,7 @@ async def timed_search(
                     adapter.extract_date_and_time_from_iso_datetime(begin_time)
                 )
             except ValueError as e:
-                raise HTTPException(status_code=500, detail=str(e)) from e
+                raise HTTPException(status_code=400, detail=str(e)) from e
 
         path = adapter.get_shortest_path(from_stop, to_stop, service_id)
         # adapter expects begin_time as numpy.datetime64 or compatible; pass through
