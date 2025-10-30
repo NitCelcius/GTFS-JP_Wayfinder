@@ -33,18 +33,51 @@ def test_trips_batch_and_get_trip(monkeypatch, client):
     assert "trips" in data and len(data["trips"]) == 2
     assert data["trips"][0]["trip_id"] == "t1"
 
-    # get single trip
+    # get single trip - monkeypatch to return single trip info
+    def fake_single_trip(ids):
+        return models.TripInfoList(
+            trips=[
+                models.TripInfo(
+                    trip_id=ids[0],
+                    route_name=f"route-{ids[0]}",
+                    destination_display_name=f"dest-{ids[0]}",
+                    destination_stop_id=f"stop-{ids[0]}",
+                )
+            ],
+        )
+
+    def fake_get_route_id(trip_id):
+        if trip_id == "t1":
+            return "route-1"
+        raise ValueError(f"Trip {trip_id} not found")
+
+    monkeypatch.setattr(
+        "gtfs_jp_wayfinder.services.wayfinder_adapter.get_trip_info_batch",
+        fake_single_trip,
+    )
+    monkeypatch.setattr(
+        "gtfs_jp_wayfinder.services.wayfinder.get_route_id_from_trip",
+        fake_get_route_id,
+    )
+
     resp2 = client.get("/trips/t1")
     assert resp2.status_code == 200
     assert resp2.json()["trip_id"] == "t1"
 
-    # missing trip should 404
+    # missing trip should return 404
     def fake_empty(ids):
         return models.TripInfoList(trips=[])
+
+    def fake_get_route_id_error(trip_id):
+        raise ValueError(f"Trip {trip_id} not found")
 
     monkeypatch.setattr(
         "gtfs_jp_wayfinder.services.wayfinder_adapter.get_trip_info_batch",
         fake_empty,
+    )
+    monkeypatch.setattr(
+        "gtfs_jp_wayfinder.services.wayfinder.get_route_id_from_trip",
+        fake_get_route_id_error,
     )
     resp3 = client.get("/trips/nope")
     assert resp3.status_code == 404
