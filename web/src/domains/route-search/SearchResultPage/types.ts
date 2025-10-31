@@ -30,6 +30,7 @@ export interface TripDetails {
 
 export interface SearchResultPageProps {
   tripDetails: TripDetails;
+  searchUrl?: string; // The full search URL for sharing
   onRouteSelect: (routeId: string) => void;
   onBack: () => void;
   onNavigateToBusStop?: () => void;

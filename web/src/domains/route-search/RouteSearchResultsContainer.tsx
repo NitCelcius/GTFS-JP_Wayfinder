@@ -27,6 +27,11 @@ export function RouteSearchResultsContainer({
   const searchParams = useSearchParams();
   const { tripDetails, isLoading, error, handleRouteSelect } = useRouteSearch();
 
+  // Construct the full search URL for sharing
+  const searchUrl = searchParams.toString()
+    ? `/results?${searchParams.toString()}`
+    : undefined;
+
   // Loading state
   if (isLoading) {
     return <LoadingState />;
@@ -59,6 +64,7 @@ export function RouteSearchResultsContainer({
     return (
       <SearchResultPage
         tripDetails={tripDetails}
+        searchUrl={searchUrl}
         onRouteSelect={handleRouteSelect}
         onBack={onBack}
         onNavigateToBusStop={onNavigateToBusStop}
