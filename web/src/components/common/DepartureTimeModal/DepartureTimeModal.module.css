@@ -178,31 +178,6 @@
   border-color: var(--gray-400, #9ca3af);
 }
 
-.selectedTimeDisplay {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 1rem;
-  background: var(--gray-50, #f9fafb);
-  border-radius: 0.75rem;
-  border: 1px solid var(--gray-200, #e5e7eb);
-}
-
-.selectedTimeLabel {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--gray-600, #4b5563);
-  font-family: "Inter", "Noto Sans JP", sans-serif;
-}
-
-.selectedTimeValue {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--color-action-primary, #3b82f6);
-  font-family: "Inter", "Noto Sans JP", sans-serif;
-}
-
 .footer {
   display: flex;
   justify-content: center;

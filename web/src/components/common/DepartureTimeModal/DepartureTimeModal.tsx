@@ -224,15 +224,6 @@ export function DepartureTimeModal({
               </select>
             </div>
           </div>
-
-          <div className={styles.selectedTimeDisplay}>
-            <div className={styles.selectedTimeLabel}>選択時刻:</div>
-            <div className={styles.selectedTimeValue}>
-              {isNow
-                ? "今すぐ"
-                : `${getDayLabel(currentDayOffset)} ${selectedDate.getHours().toString().padStart(2, "0")}:${selectedDate.getMinutes().toString().padStart(2, "0")}`}
-            </div>
-          </div>
         </div>
 
         <div className={styles.footer}>
