@@ -1,0 +1,31 @@
+.button {
+  width: 100%;
+  background: var(--color-destination-bg);
+  border-radius: var(--radius-md);
+  padding: var(--size-spacing-xl) var(--size-spacing-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--size-spacing-md);
+  cursor: pointer;
+  transition: opacity 0.15s;
+  border: none;
+  color: var(--color-text-primary);
+}
+
+.button:hover {
+  opacity: 0.8;
+}
+
+.icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.text {
+  font-size: 1rem;
+  font-weight: 500;
+}

@@ -123,6 +123,20 @@ export type StopIdAndName = {
 };
 
 /**
+ * StopLatLon
+ */
+export type StopLatLon = {
+    /**
+     * Lat
+     */
+    lat: number;
+    /**
+     * Lon
+     */
+    lon: number;
+};
+
+/**
  * StopIdResponse
  */
 export type StopIdResponse = {
@@ -140,6 +154,10 @@ export type StopNameList = {
      * Stop Names
      */
     stop_names: Array<string>;
+    /**
+     * Location
+     */
+    location?: StopLatLon | null;
 };
 
 /**

@@ -128,12 +128,16 @@ export function convertTripStopsToJourneyStops(
 export function convertUpcomingBusToBusStopInfo(
   data: UpcomingBusEnrichedData,
   stopName: string,
-  distance?: string
+  distance?: string,
+  lat?: number,
+  lon?: number
 ): BusStopInfo {
   const busStop: BusStop = {
     id: data.stop_id,
     name: stopName,
     distance,
+    lat,
+    lon,
   };
 
   // Get the next bus (first in the list)

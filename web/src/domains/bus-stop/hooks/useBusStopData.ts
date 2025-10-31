@@ -49,16 +49,22 @@ export function useBusStopData(busStopId?: string): UseBusStopDataResult {
           throw new Error("No data received from API");
         }
 
-        // Get stop name using ApiClient
+        // Get stop info (name and location) using ApiClient
         let stopName = busStopId; // fallback
+        let lat: number | undefined;
+        let lon: number | undefined;
         try {
-          const stopResponse = await apiClient.getStopNames(busStopId);
+          const stopResponse = await apiClient.getStopInfo(busStopId, true);
           const stopData = stopResponse.data as StopNameListData;
           if (stopData?.stop_names && stopData.stop_names.length > 0) {
             stopName = stopData.stop_names[0];
           }
+          if (stopData?.location) {
+            lat = stopData.location.lat;
+            lon = stopData.location.lon;
+          }
         } catch (stopError) {
-          console.warn("Failed to fetch stop name:", stopError);
+          console.warn("Failed to fetch stop info:", stopError);
           // Continue with fallback name
         }
 
@@ -69,7 +75,9 @@ export function useBusStopData(busStopId?: string): UseBusStopDataResult {
         const busStopInfo = convertUpcomingBusToBusStopInfo(
           upcomingData,
           stopName,
-          distance
+          distance,
+          lat,
+          lon
         );
 
         setData(busStopInfo);
