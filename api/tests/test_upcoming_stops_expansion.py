@@ -36,7 +36,7 @@ def test_upcoming_stops_expansion(monkeypatch, client):
     # Mock stops from trip with stop names
     monkeypatch.setattr(
         "gtfs_jp_wayfinder.services.wayfinder_adapter.get_stops_from_trip",
-        lambda trip_id, reference_date=None: [
+        lambda trip_id: [
             {
                 "trip_id": trip_id,
                 "arrival_time": "07:00:00",
@@ -131,7 +131,7 @@ def test_upcoming_combined_expansion(monkeypatch, client):
     # Mock stops from trip
     monkeypatch.setattr(
         "gtfs_jp_wayfinder.services.wayfinder_adapter.get_stops_from_trip",
-        lambda trip_id, reference_date=None: [
+        lambda trip_id: [
             {
                 "trip_id": trip_id,
                 "arrival_time": "07:00:00",
