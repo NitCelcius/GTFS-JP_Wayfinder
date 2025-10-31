@@ -53,8 +53,8 @@ describe("ShareButton", () => {
     fireEvent.click(shareButton);
 
     // Click overlay
-    const overlay = screen.getByText("バス停を共有").closest("div")?.parentElement
-      ?.parentElement;
+    const overlay = screen.getByText("バス停を共有").closest("div")
+      ?.parentElement?.parentElement;
     if (overlay) {
       fireEvent.click(overlay);
     }
@@ -158,9 +158,7 @@ describe("ShareButton", () => {
     fireEvent.click(copyButton);
 
     await waitFor(() => {
-      expect(alertMock).toHaveBeenCalledWith(
-        "リンクのコピーに失敗しました"
-      );
+      expect(alertMock).toHaveBeenCalledWith("リンクのコピーに失敗しました");
     });
 
     alertMock.mockRestore();
