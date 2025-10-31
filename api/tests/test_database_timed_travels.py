@@ -1,4 +1,5 @@
 """Tests for database.get_timed_travels_from_path edge cases."""
+
 import numpy as np
 import pytest
 
@@ -82,7 +83,7 @@ def test_get_timed_travels_from_path_none_cur_time(monkeypatch):
     # Path with 2 stops (1 segment) - arr_time will be None
     path = ["stop1", "stop2"]
     begin_time = np.datetime64("2021-01-01T08:00:00")
-    
+
     # Should raise ValueError when arr_time is None (data integrity issue)
     with pytest.raises(ValueError, match="Arrival time is None"):
         wf.get_timed_travels_from_path(path, "service1", begin_time)
