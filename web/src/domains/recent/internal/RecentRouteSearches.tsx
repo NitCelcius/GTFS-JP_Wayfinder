@@ -4,8 +4,13 @@ import viewMoreStyles from "./ViewMoreButton.module.css";
 
 interface RecentRouteSearchesProps {
   recentRoutes: RecentRouteSearch[];
-  // call with (fromStation, toStation) to match RecentPage handler
-  onRouteSelect?: (fromStation: string, toStation: string) => void;
+  // call with (fromStopId, toStopId, fromStopName, toStopName) to match RecentPage handler
+  onRouteSelect?: (
+    fromStopId: string,
+    toStopId: string,
+    fromStopName: string,
+    toStopName: string
+  ) => void;
   onViewMore?: () => void;
 }
 
@@ -32,9 +37,20 @@ function RecentRouteItem({
   onSelect,
 }: {
   route: RecentRouteSearch;
-  onSelect?: (fromStation: string, toStation: string) => void;
+  onSelect?: (
+    fromStopId: string,
+    toStopId: string,
+    fromStation: string,
+    toStation: string
+  ) => void;
 }) {
-  const handleClick = () => onSelect?.(route.fromStation, route.toStation);
+  const handleClick = () =>
+    onSelect?.(
+      route.fromStopId,
+      route.toStopId,
+      route.fromStopName,
+      route.toStopName
+    );
 
   return (
     <div onClick={handleClick} className={styles.listItem}>
@@ -45,7 +61,7 @@ function RecentRouteItem({
         <div>
           <span
             className={styles.routeText}
-          >{`${route.fromStation} → ${route.toStation}`}</span>
+          >{`${route.fromStopName} → ${route.toStopName}`}</span>
           <div className={styles.timestamp}>{route.searchedAt}</div>
         </div>
       </div>

@@ -13,7 +13,12 @@ interface RecentPageProps {
   onNavigateToRoute?: () => void;
   onNavigateToBusStop?: () => void;
   onNavigateToBusStopInfo?: (busStopId: string) => void;
-  onNavigateToRouteSearch?: (fromStation: string, toStation: string) => void;
+  onNavigateToRouteSearch?: (
+    fromStopId: string,
+    toStopId: string,
+    fromStopName: string,
+    toStopName: string
+  ) => void;
 }
 
 function ClockIcon() {
@@ -57,8 +62,13 @@ export function RecentPage({
     onNavigateToBusStopInfo?.(busStopId);
   };
 
-  const handleRouteSelect = (fromStation: string, toStation: string) => {
-    onNavigateToRouteSearch?.(fromStation, toStation);
+  const handleRouteSelect = (
+    fromStopId: string,
+    toStopId: string,
+    fromStopName: string,
+    toStopName: string
+  ) => {
+    onNavigateToRouteSearch?.(fromStopId, toStopId, fromStopName, toStopName);
   };
 
   const handleViewMoreBusStops = () =>

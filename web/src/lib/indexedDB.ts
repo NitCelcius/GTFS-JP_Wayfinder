@@ -19,8 +19,8 @@ export interface RouteSearchRecord {
   id: string;
   fromStopId: string;
   toStopId: string;
-  fromStation: string;
-  toStation: string;
+  fromStopName: string;
+  toStopName: string;
   searchedAt: number; // timestamp
 }
 
@@ -112,8 +112,8 @@ export async function addRouteSearch(
         : `${fromStopId}-${toStopId}-${Date.now()}-${Math.random()}`,
     fromStopId,
     toStopId,
-    fromStation,
-    toStation,
+    fromStopName: fromStation,
+    toStopName: toStation,
     searchedAt: Date.now(),
   };
 
