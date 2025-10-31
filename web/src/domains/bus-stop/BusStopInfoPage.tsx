@@ -70,11 +70,7 @@ export function BusStopInfoPage({
           title="バス停情報"
           showBackButton={true}
           onBack={onBack}
-          rightAction={
-            busStopId ? (
-              <ShareButton busStopId={busStopId} busStopName={undefined} />
-            ) : null
-          }
+          rightAction={busStopId ? <ShareButton busStopId={busStopId} /> : null}
         />
         <div className={styles.errorContent}>
           <div className="text-center">

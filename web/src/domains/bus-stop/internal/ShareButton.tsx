@@ -51,7 +51,8 @@ export function ShareButton({ busStopId, busStopName }: ShareButtonProps) {
   const [showModal, setShowModal] = useState(false);
 
   const baseUrl =
-    process.env.NEXT_PUBLIC_BASE_URL || window.location.origin || "";
+    process.env.NEXT_PUBLIC_BASE_URL ||
+    (typeof window !== "undefined" ? window.location.origin : "");
   const shareUrl = `${baseUrl}/bus-stop/${busStopId}`;
   const shareTitle = busStopName ? `${busStopName} - バス停情報` : "バス停情報";
 
@@ -82,10 +83,11 @@ export function ShareButton({ busStopId, busStopName }: ShareButtonProps) {
   const handleCopyLink = async () => {
     try {
       await navigator.clipboard.writeText(shareUrl);
-      // You could add a toast notification here
+      // TODO: Replace with toast notification system
       alert("リンクをコピーしました");
     } catch (error) {
       console.error("Copy failed:", error);
+      // TODO: Replace with toast notification system
       alert("リンクのコピーに失敗しました");
     }
   };
