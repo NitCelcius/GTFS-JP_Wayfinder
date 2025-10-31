@@ -355,11 +355,20 @@ def get_destination_id_from_trip(trip_id: str):
     return wf_service.get_destination_id_from_trip(trip_id)
 
 
-def get_stops_from_trip(trip_id: str) -> list[dict]:
+def get_stops_from_trip(
+    trip_id: str,
+    reference_date: str | None = None,
+) -> list[dict]:
     """Return list of dicts representing timed stops, converting numpy datetime to HH:MM:SS strings.
 
     Optimized version that reduces the number of individual DataFrame queries by batching
     stop name lookups.
+
+    Args:
+        trip_id: The trip ID to get stops for
+        reference_date: Optional ISO date string (e.g., "2025-10-28") used to generate
+                        arrival_datetime and departure_datetime fields. If None, these
+                        fields will not be included in the output.
     """
     df = wf_service.get_stops_from_trip(trip_id)
 
@@ -413,6 +422,33 @@ def get_stops_from_trip(trip_id: str) -> list[dict]:
                     with suppress(Exception):
                         r[time_field] = conv(time_value)
 
+        # Add arrival_datetime and departure_datetime if reference_date is provided
+        if reference_date is not None:
+            arrival_time = r.get("arrival_time")
+            departure_time = r.get("departure_time")
+
+            if arrival_time:
+                try:
+                    r["arrival_datetime"] = merge_date_and_time_to_iso(
+                        reference_date,
+                        arrival_time,
+                    )
+                except Exception:
+                    r["arrival_datetime"] = None
+            else:
+                r["arrival_datetime"] = None
+
+            if departure_time:
+                try:
+                    r["departure_datetime"] = merge_date_and_time_to_iso(
+                        reference_date,
+                        departure_time,
+                    )
+                except Exception:
+                    r["departure_datetime"] = None
+            else:
+                r["departure_datetime"] = None
+
         # Add stop name using cache or individual lookup as fallback
         stop_id = r.get("stop_id")
         if stop_id:
@@ -435,11 +471,19 @@ def get_stops_from_trip(trip_id: str) -> list[dict]:
     return records
 
 
-async def get_stops_from_trips_parallel(trip_ids: list[str]) -> dict:  # type: ignore
+async def get_stops_from_trips_parallel(
+    trip_ids: list[str],
+    reference_date: str | None = None,
+) -> dict:  # type: ignore
     """Fetch stops data for multiple trips in parallel.
 
     Returns dict mapping trip_id -> stops_data.
     Uses asyncio to fetch multiple trip stops concurrently for better performance.
+
+    Args:
+        trip_ids: List of trip IDs to fetch stops for
+        reference_date: Optional ISO date string (e.g., "2025-10-28") passed to get_stops_from_trip
+                        to generate arrival_datetime and departure_datetime fields
     """
     if not trip_ids:
         return {}
@@ -448,7 +492,11 @@ async def get_stops_from_trips_parallel(trip_ids: list[str]) -> dict:  # type: i
         """Async wrapper for get_stops_from_trip."""
         try:
             # Run the synchronous function in a thread to avoid blocking
-            result = await asyncio.to_thread(get_stops_from_trip, trip_id)
+            result = await asyncio.to_thread(
+                get_stops_from_trip,
+                trip_id,
+                reference_date,
+            )
             return trip_id, result
         except Exception:
             # Return trip_id with None on error for graceful degradation
