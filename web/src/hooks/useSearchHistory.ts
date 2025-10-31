@@ -107,7 +107,7 @@ function convertBusStopRecordToRecent(
   record: BusStopSearchRecord
 ): RecentBusStopSearch {
   return {
-    id: record.stopId,
+    id: record.stopId, // Use stopId as the display ID for navigation
     name: record.name,
     distance: record.distance,
     searchedAt: formatRelativeDate(record.searchedAt),

@@ -75,7 +75,10 @@ export async function addBusStopSearch(
   const store = transaction.objectStore(BUS_STOP_STORE);
 
   const record: BusStopSearchRecord = {
-    id: `${stopId}-${Date.now()}`,
+    id:
+      typeof crypto !== "undefined" && crypto.randomUUID
+        ? crypto.randomUUID()
+        : `${stopId}-${Date.now()}-${Math.random()}`,
     stopId,
     name,
     distance,
@@ -103,7 +106,10 @@ export async function addRouteSearch(
   const store = transaction.objectStore(ROUTE_STORE);
 
   const record: RouteSearchRecord = {
-    id: `${fromStopId}-${toStopId}-${Date.now()}`,
+    id:
+      typeof crypto !== "undefined" && crypto.randomUUID
+        ? crypto.randomUUID()
+        : `${fromStopId}-${toStopId}-${Date.now()}-${Math.random()}`,
     fromStopId,
     toStopId,
     fromStation,
