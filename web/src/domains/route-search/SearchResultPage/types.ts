@@ -2,8 +2,8 @@ export interface Station {
   stationName: string;
   arrivalTime?: string;
   departureTime?: string;
-  arrivalDatetime?: Date;
-  departureDatetime?: Date;
+  arrivalDatetime?: Date; // Should be present only when arrivalTime is present
+  departureDatetime?: Date; // Should be present only when departureTime is present
   isTransfer?: boolean;
   cost?: number;
 }

@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
+import { createDatetime } from "@/lib/utils";
+
 import { Station } from "../types";
 import { StationStop } from "./StationStop";
 
@@ -24,6 +26,8 @@ const sampleStation: Station = {
   stationName: "中央公園",
   arrivalTime: "08:15",
   departureTime: "08:17",
+  arrivalDatetime: createDatetime("08:15"),
+  departureDatetime: createDatetime("08:17"),
   cost: 180,
 };
 
@@ -32,6 +36,7 @@ export const FirstStation: Story = {
     station: {
       stationName: "東駅",
       departureTime: "08:00",
+      departureDatetime: createDatetime("08:00"),
       cost: 0,
     },
     isFirst: true,
@@ -54,6 +59,7 @@ export const LastStation: Story = {
     station: {
       stationName: "市役所前",
       arrivalTime: "08:25",
+      arrivalDatetime: createDatetime("08:25"),
       cost: 180,
     },
     isFirst: false,

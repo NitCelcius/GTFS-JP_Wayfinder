@@ -7,6 +7,8 @@ import type { RouteSearchResult } from "@/types";
 
 /**
  * Convert RouteSearchResult to TripDetails for the SearchResultPage
+ *
+ * NOTE: stations の最初の要素・最後の要素 (始点・終点)は arrivalDateTime / arrivalDateTime 共に同じ時間になる
  */
 export function convertRouteSearchToTripDetails(
   result: RouteSearchResult
@@ -24,10 +26,14 @@ export function convertRouteSearchToTripDetails(
       {
         stationName: result.originStopName,
         departureTime: travel.departure_time,
+        // Origin station only has departure datetime, not arrival
+        departureDatetime: new Date(travel.departure_datetime),
       },
       {
         stationName: result.destinationStopName,
         arrivalTime: travel.arrival_time,
+        // Destination station only has arrival datetime, not departure
+        arrivalDatetime: new Date(travel.arrival_datetime),
         cost: travel.fare,
       },
     ],

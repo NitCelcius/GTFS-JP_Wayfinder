@@ -156,3 +156,14 @@ export function calculateDurationStr(
 
   return `${diffMin}分`;
 }
+
+/**
+ * Create a Date object from a time string (HH:MM or HH:MM:SS)
+ * Uses 2021-01-01 as the base date for consistency with API datetime format
+ */
+export function createDatetime(timeStr: string): Date {
+  const [hours, minutes] = timeStr.split(":");
+  const date = new Date("2021-01-01");
+  date.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0, 0);
+  return date;
+}

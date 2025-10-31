@@ -1,4 +1,5 @@
 import type { TripDetails } from "@/domains/route-search/SearchResultPage/types";
+import { createDatetime } from "@/lib/utils";
 
 export const mockTripDetails: TripDetails = {
   fromStation: "hoge駅",
@@ -18,17 +19,21 @@ export const mockTripDetails: TripDetails = {
         {
           stationName: "hoge駅",
           departureTime: "12:34",
+          departureDatetime: createDatetime("12:34"),
           cost: 0,
         },
         {
           stationName: "piyo駅",
           arrivalTime: "13:30",
           departureTime: "13:40",
+          arrivalDatetime: createDatetime("13:30"),
+          departureDatetime: createDatetime("13:40"),
           cost: 120,
         },
         {
           stationName: "fuga駅",
           arrivalTime: "14:30",
+          arrivalDatetime: createDatetime("14:30"),
           cost: 330,
         },
       ],
@@ -45,23 +50,29 @@ export const mockTripDetails: TripDetails = {
         {
           stationName: "hoge駅",
           departureTime: "12:45",
+          departureDatetime: createDatetime("12:45"),
           cost: 0,
         },
         {
           stationName: "temp駅",
           arrivalTime: "13:15",
           departureTime: "13:25",
+          arrivalDatetime: createDatetime("13:15"),
+          departureDatetime: createDatetime("13:25"),
           cost: 150,
         },
         {
           stationName: "middle駅",
           arrivalTime: "14:30",
           departureTime: "14:40",
+          arrivalDatetime: createDatetime("14:30"),
+          departureDatetime: createDatetime("14:40"),
           cost: 200,
         },
         {
           stationName: "fuga駅",
           arrivalTime: "15:15",
+          arrivalDatetime: createDatetime("15:15"),
           cost: 170,
         },
       ],

@@ -1,4 +1,5 @@
 import type { TripDetails } from "@/domains/route-search/SearchResultPage/types";
+import { createDatetime } from "@/lib/utils";
 
 // Mock bus stops for the city (IDs are simple slugs)
 export const mockBusStops = [
@@ -60,20 +61,44 @@ export const mockTripDetails: TripDetails = {
       transferCount: 0,
       totalCost: 150,
       stations: [
-        { stationName: "東駅", departureTime: "08:00" },
+        {
+          stationName: "東駅",
+          departureTime: "08:00",
+          departureDatetime: createDatetime("08:00"),
+        },
         {
           stationName: "市役所前",
           arrivalTime: "08:05",
           departureTime: "08:06",
+          arrivalDatetime: createDatetime("08:05"),
+          departureDatetime: createDatetime("08:06"),
         },
         {
           stationName: "中央公園",
           arrivalTime: "08:12",
           departureTime: "08:13",
+          arrivalDatetime: createDatetime("08:12"),
+          departureDatetime: createDatetime("08:13"),
         },
-        { stationName: "西口", arrivalTime: "08:18", departureTime: "08:19" },
-        { stationName: "南町", arrivalTime: "08:25", departureTime: "08:26" },
-        { stationName: "東駅", arrivalTime: "08:35" },
+        {
+          stationName: "西口",
+          arrivalTime: "08:18",
+          departureTime: "08:19",
+          arrivalDatetime: createDatetime("08:18"),
+          departureDatetime: createDatetime("08:19"),
+        },
+        {
+          stationName: "南町",
+          arrivalTime: "08:25",
+          departureTime: "08:26",
+          arrivalDatetime: createDatetime("08:25"),
+          departureDatetime: createDatetime("08:26"),
+        },
+        {
+          stationName: "東駅",
+          arrivalTime: "08:35",
+          arrivalDatetime: createDatetime("08:35"),
+        },
       ],
     },
     {
@@ -85,14 +110,30 @@ export const mockTripDetails: TripDetails = {
       transferCount: 0,
       totalCost: 200,
       stations: [
-        { stationName: "東駅", departureTime: "08:05" },
+        {
+          stationName: "東駅",
+          departureTime: "08:05",
+          departureDatetime: createDatetime("08:05"),
+        },
         {
           stationName: "さくら通り",
           arrivalTime: "08:12",
           departureTime: "08:13",
+          arrivalDatetime: createDatetime("08:12"),
+          departureDatetime: createDatetime("08:13"),
         },
-        { stationName: "青葉台", arrivalTime: "08:20", departureTime: "08:21" },
-        { stationName: "緑が丘", arrivalTime: "08:30" },
+        {
+          stationName: "青葉台",
+          arrivalTime: "08:20",
+          departureTime: "08:21",
+          arrivalDatetime: createDatetime("08:20"),
+          departureDatetime: createDatetime("08:21"),
+        },
+        {
+          stationName: "緑が丘",
+          arrivalTime: "08:30",
+          arrivalDatetime: createDatetime("08:30"),
+        },
       ],
     },
     {
@@ -104,12 +145,27 @@ export const mockTripDetails: TripDetails = {
       transferCount: 0,
       totalCost: 180,
       stations: [
-        { stationName: "西口", departureTime: "07:55" },
-        { stationName: "北高前", arrivalTime: "08:02", departureTime: "08:03" },
-        { stationName: "大学病院", arrivalTime: "08:12" },
+        {
+          stationName: "西口",
+          departureTime: "07:55",
+          departureDatetime: createDatetime("07:55"),
+        },
+        {
+          stationName: "北高前",
+          arrivalTime: "08:02",
+          departureTime: "08:03",
+          arrivalDatetime: createDatetime("08:02"),
+          departureDatetime: createDatetime("08:03"),
+        },
+        {
+          stationName: "大学病院",
+          arrivalTime: "08:12",
+          arrivalDatetime: createDatetime("08:12"),
+        },
         {
           stationName: "あきた芸術劇場ミルハス・にぎわい交流館 AU 前",
           arrivalTime: "08:20",
+          arrivalDatetime: createDatetime("08:20"),
         },
       ],
     },
@@ -122,19 +178,37 @@ export const mockTripDetails: TripDetails = {
       transferCount: 0,
       totalCost: 220,
       stations: [
-        { stationName: "緑が丘", departureTime: "09:00" },
+        {
+          stationName: "緑が丘",
+          departureTime: "09:00",
+          departureDatetime: createDatetime("09:00"),
+        },
         {
           stationName: "中央公園",
           arrivalTime: "09:08",
           departureTime: "09:09",
+          arrivalDatetime: createDatetime("09:08"),
+          departureDatetime: createDatetime("09:09"),
         },
         {
           stationName: "さくら通り",
           arrivalTime: "09:18",
           departureTime: "09:19",
+          arrivalDatetime: createDatetime("09:18"),
+          departureDatetime: createDatetime("09:19"),
         },
-        { stationName: "北高前", arrivalTime: "09:30", departureTime: "09:31" },
-        { stationName: "大学病院", arrivalTime: "09:40" },
+        {
+          stationName: "北高前",
+          arrivalTime: "09:30",
+          departureTime: "09:31",
+          arrivalDatetime: createDatetime("09:30"),
+          departureDatetime: createDatetime("09:31"),
+        },
+        {
+          stationName: "大学病院",
+          arrivalTime: "09:40",
+          arrivalDatetime: createDatetime("09:40"),
+        },
       ],
     },
   ],
