@@ -1,3 +1,5 @@
+import datetime
+
 from fastapi import APIRouter, HTTPException, Query
 from pandas import to_datetime
 
@@ -68,10 +70,11 @@ async def timed_search(
 
         # Determine reference_date and begin_time_str from begin_time parameter
         reference_date = datetime.date.today().isoformat()
+        begin_time_str = begin_time
 
         if "T" in begin_time:
             try:
-                reference_date, _begin_time_str = (
+                reference_date, begin_time_str = (
                     adapter.extract_date_and_time_from_iso_datetime(begin_time)
                 )
             except ValueError as e:

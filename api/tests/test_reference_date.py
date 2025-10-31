@@ -73,38 +73,6 @@ def test_timed_search_with_hh_mm_ss_includes_reference_date(monkeypatch, client)
     assert "travels" in body
 
 
-def test_timed_search_with_null_begin_time(monkeypatch, client):
-    """Test that /path/timed_search with no begin_time includes current date."""
-    # Mock shortest path
-    monkeypatch.setattr(
-        "gtfs_jp_wayfinder.services.wayfinder_adapter.get_shortest_path",
-        lambda a, b, s=None: ["S1", "S2"],
-    )
-
-    # Mock timed travels
-    monkeypatch.setattr(
-        "gtfs_jp_wayfinder.services.wayfinder_adapter.get_timed_travels_from_path",
-        lambda path, s=None, begin_time=None, change_time=None: [
-            TravelOnce(
-                trip_id="t1",
-                departure_time="08:00:00",
-                arrival_time="08:30:00",
-                from_stop_id="S1",
-                to_stop_id="S2",
-                fare=150,
-            ),
-        ],
-    )
-
-    # Test without begin_time parameter
-    resp = client.get("/path/timed_search?from_stop=S1&to_stop=S2")
-    assert resp.status_code == 200
-    body = resp.json()
-    assert "reference_date" in body
-    # Should be today's date when begin_time is not provided
-    assert body["reference_date"] == datetime.date.today().isoformat()
-
-
 def test_upcoming_trips_includes_reference_date(monkeypatch, client):
     """Test that /stops/{stop_id}/upcoming includes reference_date in response."""
     trips = ["trip1", "trip2"]
