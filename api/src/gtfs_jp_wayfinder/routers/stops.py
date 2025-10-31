@@ -3,7 +3,7 @@ import warnings
 
 from fastapi import APIRouter, HTTPException, Query
 
-from gtfs_jp_wayfinder import models
+from gtfs_jp_wayfinder import models, realtime_mock
 from gtfs_jp_wayfinder.services import wayfinder_adapter as adapter
 
 router = APIRouter()
@@ -245,9 +245,6 @@ async def get_upcoming(
         stop_id,
         max_items=limit,
     )
-
-    # Import realtime mock module
-    from gtfs_jp_wayfinder import realtime_mock
 
     # Build base buses list using batch-fetched times
     buses = []

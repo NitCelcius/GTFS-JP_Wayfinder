@@ -5,7 +5,7 @@ import numpy as np
 from fastapi import APIRouter, HTTPException, Query
 from pandas import to_datetime
 
-from gtfs_jp_wayfinder import models
+from gtfs_jp_wayfinder import models, realtime_mock
 from gtfs_jp_wayfinder.services import wayfinder as wf_service
 from gtfs_jp_wayfinder.services import wayfinder_adapter as adapter
 
@@ -124,9 +124,6 @@ async def get_journey(
 
         # Determine reference_date (use default date from adapter)
         reference_date = adapter.get_default_date()
-
-        # Import realtime mock module
-        from gtfs_jp_wayfinder import realtime_mock
 
         records = []
         for x in journey.itertuples():

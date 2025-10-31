@@ -12,8 +12,8 @@ from gtfs_jp_wayfinder import models
 
 
 def generate_mock_realtime_update(
-    trip_id: str,  # noqa: ARG001
-    stop_id: str,  # noqa: ARG001
+    trip_id: str,  # noqa: ARG001 - Reserved for future GTFS-JP Real-time integration
+    stop_id: str,  # noqa: ARG001 - Reserved for future GTFS-JP Real-time integration
     scheduled_arrival_time: str,
     scheduled_departure_time: str,
     reference_date: str,
@@ -21,8 +21,8 @@ def generate_mock_realtime_update(
     """Generate mock GTFS-JP Real-time update for a trip at a stop.
 
     Args:
-        trip_id: Trip identifier (reserved for future use)
-        stop_id: Stop identifier (reserved for future use)
+        trip_id: Trip identifier (reserved for matching against GTFS-JP Real-time feed)
+        stop_id: Stop identifier (reserved for stop-specific delay calculation)
         scheduled_arrival_time: Scheduled arrival time in HH:MM:SS format
         scheduled_departure_time: Scheduled departure time in HH:MM:SS format
         reference_date: Reference date in YYYY-MM-DD format
@@ -30,6 +30,10 @@ def generate_mock_realtime_update(
     Returns:
         RealtimeUpdate object with mock delay and forecasted times, or None
         if no update is available (20% probability).
+
+    Note:
+        In future implementation, trip_id and stop_id will be used to query
+        actual GTFS-JP Real-time feed for trip-specific and stop-specific delays.
     """
     # 20% chance of no realtime update available
     if random.random() < 0.2:
@@ -100,21 +104,28 @@ def generate_mock_realtime_update(
 
 def get_trip_realtime_updates(
     trip_id: str,
-    stop_id: str | None = None,  # noqa: ARG001
+    stop_id: str | None = None,  # noqa: ARG001 - Reserved for future use
 ) -> dict[str, Any] | None:
-    """Get mock real-time updates for a trip.
+    """Get mock real-time updates for a trip (placeholder for future implementation).
 
     Args:
         trip_id: Trip identifier
-        stop_id: Optional stop identifier to get updates for specific stop (reserved for future use)
+        stop_id: Optional stop identifier to get updates for specific stop
 
     Returns:
         Dictionary containing trip update information, or None if no updates available.
 
     Note:
-        This is a mock implementation. In production, this would fetch real-time
-        data from GTFS-JP Real-time feed.
+        This function is currently not used but is reserved for future batch
+        fetching of trip updates from GTFS-JP Real-time feed. The current
+        implementation generates updates per stop-time via generate_mock_realtime_update().
+
+        Future implementation would:
+        1. Fetch GTFS-JP Real-time feed
+        2. Find TripUpdate for the given trip_id
+        3. Return structured trip update data for all stops
+        4. Cache results with appropriate TTL
     """
-    # Mock implementation - just return a flag indicating updates are available
-    # The actual update generation happens per stop-time
+    # Mock implementation - placeholder for future batch trip update fetching
+    # Current flow: updates generated per stop via generate_mock_realtime_update()
     return {"trip_id": trip_id, "has_updates": True}
