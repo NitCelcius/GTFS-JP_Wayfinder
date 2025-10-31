@@ -424,30 +424,22 @@ def get_stops_from_trip(
 
         # Add arrival_datetime and departure_datetime if reference_date is provided
         if reference_date is not None:
-            arrival_time = r.get("arrival_time")
-            departure_time = r.get("departure_time")
-
-            if arrival_time:
-                try:
-                    r["arrival_datetime"] = merge_date_and_time_to_iso(
-                        reference_date,
-                        arrival_time,
-                    )
-                except Exception:
-                    r["arrival_datetime"] = None
-            else:
-                r["arrival_datetime"] = None
-
-            if departure_time:
-                try:
-                    r["departure_datetime"] = merge_date_and_time_to_iso(
-                        reference_date,
-                        departure_time,
-                    )
-                except Exception:
-                    r["departure_datetime"] = None
-            else:
-                r["departure_datetime"] = None
+            # Convert time strings to ISO datetime format for both arrival and departure
+            for time_field, datetime_field in [
+                ("arrival_time", "arrival_datetime"),
+                ("departure_time", "departure_datetime"),
+            ]:
+                time_str = r.get(time_field)
+                if time_str:
+                    try:
+                        r[datetime_field] = merge_date_and_time_to_iso(
+                            reference_date,
+                            time_str,
+                        )
+                    except Exception:
+                        r[datetime_field] = None
+                else:
+                    r[datetime_field] = None
 
         # Add stop name using cache or individual lookup as fallback
         stop_id = r.get("stop_id")
