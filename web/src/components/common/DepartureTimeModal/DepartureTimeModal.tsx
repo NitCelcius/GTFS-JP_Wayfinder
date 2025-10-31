@@ -16,7 +16,9 @@ export function DepartureTimeModal({
   initialDateTime,
 }: DepartureTimeModalProps) {
   const [selectedDate, setSelectedDate] = useState<Date>(() => {
-    return initialDateTime || new Date();
+    const date = initialDateTime || new Date();
+    date.setMinutes(0, 0, 0);
+    return date;
   });
 
   // Track if the selected time is "now" (undefined state)
@@ -39,6 +41,7 @@ export function DepartureTimeModal({
   useEffect(() => {
     if (isOpen) {
       const newDate = initialDateTime || new Date();
+      newDate.setMinutes(0, 0, 0);
       setSelectedDate(newDate);
       setIsNow(!initialDateTime);
     }
@@ -62,7 +65,9 @@ export function DepartureTimeModal({
 
   const handleNowClick = () => {
     setIsNow(true);
-    setSelectedDate(new Date());
+    const now = new Date();
+    now.setMinutes(0, 0, 0);
+    setSelectedDate(now);
   };
 
   const handleConfirm = () => {
@@ -79,7 +84,7 @@ export function DepartureTimeModal({
     onClose();
   };
 
-  const handleDateChange = (field: "day" | "hour" | "minute", value: number) => {
+  const handleDateChange = (field: "day" | "hour", value: number) => {
     setIsNow(false);
     const newDate = new Date(selectedDate);
 
@@ -87,17 +92,14 @@ export function DepartureTimeModal({
       case "day": {
         // Adjust the day relative to today
         const today = new Date();
-        today.setHours(newDate.getHours(), newDate.getMinutes(), 0, 0);
+        today.setHours(newDate.getHours(), 0, 0, 0);
         today.setDate(today.getDate() + value);
         setSelectedDate(today);
         break;
       }
       case "hour":
         newDate.setHours(value);
-        setSelectedDate(newDate);
-        break;
-      case "minute":
-        newDate.setMinutes(value);
+        newDate.setMinutes(0);
         setSelectedDate(newDate);
         break;
     }
@@ -202,23 +204,6 @@ export function DepartureTimeModal({
                 {Array.from({ length: 24 }, (_, i) => i).map((hour) => (
                   <option key={hour} value={hour}>
                     {hour.toString().padStart(2, "0")}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className={styles.pickerColumn}>
-              <div className={styles.pickerLabel}>分</div>
-              <select
-                className={styles.pickerSelect}
-                value={selectedDate.getMinutes()}
-                onChange={(e) =>
-                  handleDateChange("minute", parseInt(e.target.value))
-                }
-              >
-                {Array.from({ length: 60 }, (_, i) => i).map((minute) => (
-                  <option key={minute} value={minute}>
-                    {minute.toString().padStart(2, "0")}
                   </option>
                 ))}
               </select>

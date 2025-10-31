@@ -110,9 +110,8 @@ function DepartureTime({
     }
 
     const hours = dateTime.getHours().toString().padStart(2, "0");
-    const minutes = dateTime.getMinutes().toString().padStart(2, "0");
 
-    return `${dayLabel} ${hours}:${minutes}`;
+    return `${dayLabel} ${hours}:00`;
   };
 
   const handleConfirm = (dateTime: Date | undefined) => {
