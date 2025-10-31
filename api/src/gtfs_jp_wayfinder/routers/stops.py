@@ -1,4 +1,3 @@
-import datetime
 import warnings
 
 from fastapi import APIRouter, HTTPException, Query
@@ -203,16 +202,13 @@ async def get_upcoming(
         ),
     ),
 ):
-    # Determine reference_date from begin_time parameter
-    reference_date = datetime.date.today().isoformat()
-    if begin_time and "T" in begin_time:
-        try:
-            reference_date = adapter.extract_reference_date_from_iso_datetime(
-                begin_time
-            )
-        except ValueError as e:
-            raise HTTPException(status_code=400, detail=str(e)) from e
-    # else: if HH:MM:SS format, use today's date as reference_date
+    # Parse begin_time parameter to determine reference_date
+    # (handles both HH:MM:SS and ISO datetime formats)
+    try:
+        reference_date_obj, _ = adapter.parse_split_date_str(begin_time)
+        reference_date = reference_date_obj.isoformat()
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
     # validate expand tokens
     tokens = parse_expand(expand)

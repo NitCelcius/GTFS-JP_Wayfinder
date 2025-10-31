@@ -15,7 +15,7 @@ _initialized = False
 logger = logging.getLogger(__name__)
 
 
-def parse_begin_time(begin_time_str: str | None) -> tuple[datetime.date, str]:
+def parse_split_date_str(begin_time_str: str | None) -> tuple[datetime.date, str]:
     """Parse begin_time parameter which can be either HH:MM:SS or ISO datetime.
 
     Args:
@@ -543,54 +543,6 @@ def get_trip_journey(trip_id: str, from_stop_id: str):
 
 def get_default_date():
     return wf_service.get_default_date()
-
-
-def extract_reference_date_from_iso_datetime(begin_time: str) -> str:
-    """Extract reference date from ISO 8601 datetime string.
-
-    Args:
-        begin_time: ISO 8601 datetime string (e.g., "2025-10-28T14:30:00")
-
-    Returns:
-        ISO date string (e.g., "2025-10-28")
-
-    Raises:
-        ValueError: If the datetime string is not in valid ISO 8601 format
-    """
-    if not begin_time or "T" not in begin_time:
-        raise ValueError(f"Expected ISO 8601 datetime format, got: {begin_time}")
-
-    try:
-        dt_obj = datetime.datetime.fromisoformat(begin_time)
-        return dt_obj.date().isoformat()
-    except ValueError as e:
-        raise ValueError(f"Invalid ISO datetime format: {begin_time}") from e
-
-
-def extract_date_and_time_from_iso_datetime(begin_time: str) -> tuple[str, str]:
-    """Extract both reference date and time from ISO 8601 datetime string.
-
-    Args:
-        begin_time: ISO 8601 datetime string (e.g., "2025-10-28T14:30:00")
-
-    Returns:
-        Tuple of (reference_date, time_str) where:
-        - reference_date: ISO date string (e.g., "2025-10-28")
-        - time_str: Time string in HH:MM:SS format
-
-    Raises:
-        ValueError: If the datetime string is not in valid ISO 8601 format
-    """
-    if not begin_time or "T" not in begin_time:
-        raise ValueError(f"Expected ISO 8601 datetime format, got: {begin_time}")
-
-    try:
-        dt_obj = datetime.datetime.fromisoformat(begin_time)
-        reference_date = dt_obj.date().isoformat()
-        time_str = dt_obj.time().strftime("%H:%M:%S")
-        return reference_date, time_str
-    except ValueError as e:
-        raise ValueError(f"Invalid ISO datetime format: {begin_time}") from e
 
 
 def merge_date_and_time_to_iso(
