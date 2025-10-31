@@ -122,8 +122,10 @@ function convertRouteRecordToRecent(
 ): RecentRouteSearch {
   return {
     id: record.id,
-    fromStation: record.fromStation,
-    toStation: record.toStation,
+    fromStopId: record.fromStopId,
+    toStopId: record.toStopId,
+    fromStopName: record.fromStopName,
+    toStopName: record.toStopName,
     searchedAt: formatRelativeDate(record.searchedAt),
   };
 }

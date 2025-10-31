@@ -7,7 +7,9 @@ export interface RecentBusStopSearch {
 
 export interface RecentRouteSearch {
   id: string;
-  fromStation: string;
-  toStation: string;
+  fromStopId: string;
+  toStopId: string;
+  fromStopName: string;
+  toStopName: string;
   searchedAt: string;
 }

@@ -87,10 +87,10 @@ describe("indexedDB", () => {
       const searches = await getRouteSearches();
 
       expect(searches).toHaveLength(2);
-      expect(searches[0].fromStation).toBe("西口");
-      expect(searches[0].toStation).toBe("大学病院");
-      expect(searches[1].fromStation).toBe("東駅");
-      expect(searches[1].toStation).toBe("中央公園");
+      expect(searches[0].fromStopName).toBe("西口");
+      expect(searches[0].toStopName).toBe("大学病院");
+      expect(searches[1].fromStopName).toBe("東駅");
+      expect(searches[1].toStopName).toBe("中央公園");
     });
 
     it("should retrieve limited number of searches", async () => {
@@ -111,8 +111,8 @@ describe("indexedDB", () => {
 
       const searches = await getRouteSearches();
 
-      expect(searches[0].fromStation).toBe("Second From");
-      expect(searches[1].fromStation).toBe("First From");
+      expect(searches[0].fromStopName).toBe("Second From");
+      expect(searches[1].fromStopName).toBe("First From");
     });
 
     it("should clear all route searches", async () => {
@@ -136,8 +136,8 @@ describe("indexedDB", () => {
       expect(search.id).toBeDefined();
       expect(search.fromStopId).toBe("stop1");
       expect(search.toStopId).toBe("stop2");
-      expect(search.fromStation).toBe("東駅");
-      expect(search.toStation).toBe("中央公園");
+      expect(search.fromStopName).toBe("東駅");
+      expect(search.toStopName).toBe("中央公園");
       expect(search.searchedAt).toBeDefined();
       expect(typeof search.searchedAt).toBe("number");
     });
