@@ -5,7 +5,7 @@ import type {
   TripTimedStopData,
   UpcomingBusEnrichedData,
 } from "./types";
-import type { BusInfo, BusStop, BusStopInfo, JourneyStop } from "./types";
+import type { BusInfo, BusStop, BusStopInfo, JourneyStopData } from "./types";
 
 /**
  * Convert ISO datetime string to Date object
@@ -56,24 +56,24 @@ export function convertTripToBusInfo(trip: EnrichedTripData): BusInfo {
 }
 
 /**
- * Convert TripTimedStop array to JourneyStop array
+ * Convert TripTimedStop array to JourneyStopData array
  * The first stop (matching current stop_id) becomes "current",
  * the last becomes "destination", others are "intermediate"
  */
 export function convertTripStopsToJourneyStops(
   stops: TripTimedStopData[],
   currentStopId: string
-): JourneyStop[] {
+): JourneyStopData[] {
   if (stops.length === 0) return [];
 
-  const journeyStops: JourneyStop[] = [];
+  const journeyStops: JourneyStopData[] = [];
   const currentStopIndex = stops.findIndex(
     (stop) => stop.stop_id === currentStopId
   );
 
   for (let i = 0; i < stops.length; i++) {
     const stop = stops[i];
-    let type: JourneyStop["type"];
+    let type: JourneyStopData["type"];
     let label: string | undefined;
 
     if (i === currentStopIndex) {
@@ -141,7 +141,7 @@ export function convertUpcomingBusToBusStopInfo(
   const nextBus = nextBusTrip ? convertTripToBusInfo(nextBusTrip) : undefined;
 
   // Convert trip stops to journey stops if available
-  const routeJourney: JourneyStop[] = nextBusTrip?.stops
+  const routeJourney: JourneyStopData[] = nextBusTrip?.stops
     ? convertTripStopsToJourneyStops(nextBusTrip.stops, data.stop_id)
     : [];
 
