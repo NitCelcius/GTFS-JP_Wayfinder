@@ -8,8 +8,8 @@ interface JourneyStop {
   time?: string;
   arrivalTime?: string;
   departureTime?: string;
-  arrivalDatetime: Date;
-  departureDatetime: Date;
+  arrivalDatetime?: Date;
+  departureDatetime?: Date;
   cost?: number;
   type?: "origin" | "intermediate" | "destination" | "current";
   label?: string;
