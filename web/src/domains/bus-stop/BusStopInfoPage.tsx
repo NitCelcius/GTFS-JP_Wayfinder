@@ -8,6 +8,7 @@ import styles from "./BusStopInfoPage.module.css";
 import { useBusStopData } from "./hooks";
 import { BusStopHeader } from "./internal/BusStopHeader";
 import { NextBusInfo } from "./internal/NextBusInfo";
+import { ShareButton } from "./internal/ShareButton";
 import { TransferButton } from "./internal/TransferButton";
 import { WalkDirectionButton } from "./internal/WalkDirectionButton";
 
@@ -69,6 +70,11 @@ export function BusStopInfoPage({
           title="バス停情報"
           showBackButton={true}
           onBack={onBack}
+          rightAction={
+            busStopId ? (
+              <ShareButton busStopId={busStopId} busStopName={undefined} />
+            ) : null
+          }
         />
         <div className={styles.errorContent}>
           <div className="text-center">
@@ -96,6 +102,14 @@ export function BusStopInfoPage({
           title="バス停情報"
           showBackButton={true}
           onBack={onBack}
+          rightAction={
+            busStopId ? (
+              <ShareButton
+                busStopId={busStopId}
+                busStopName={busStopData?.name}
+              />
+            ) : null
+          }
         />
 
         <div className={styles.content}>

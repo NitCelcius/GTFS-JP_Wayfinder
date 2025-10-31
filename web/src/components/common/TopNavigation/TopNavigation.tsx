@@ -5,6 +5,7 @@ interface TopNavigationProps {
   title?: string;
   showBackButton?: boolean;
   onBack?: () => void;
+  rightAction?: React.ReactNode;
 }
 
 const STYLES = {
@@ -47,6 +48,7 @@ export function TopNavigation({
   title = "",
   showBackButton = false,
   onBack,
+  rightAction,
 }: TopNavigationProps) {
   return (
     <div className={STYLES.container} data-name="HeaderLevel1">
@@ -61,6 +63,7 @@ export function TopNavigation({
           <div className={STYLES.title}>
             <h1 className={STYLES.titleText}>{title}</h1>
           </div>
+          {rightAction && <div className="shrink-0">{rightAction}</div>}
         </div>
       </div>
     </div>
