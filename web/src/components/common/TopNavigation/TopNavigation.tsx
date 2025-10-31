@@ -20,6 +20,8 @@ const STYLES = {
     "leading-[normal] text-[1.5rem]" /* slightly reduced for consistency */,
   iconWrapper:
     "relative shrink-0 size-[var(--size-icon-sm)] flex items-center justify-center",
+  backButton:
+    "cursor-pointer border-none bg-transparent p-0 hover:opacity-70 transition-opacity",
 } as const;
 
 function BackIcon() {
@@ -53,7 +55,7 @@ export function TopNavigation({
       <div className={STYLES.content}>
         <div className={STYLES.inner}>
           {showBackButton && (
-            <button onClick={onBack} className="cursor-pointer">
+            <button onClick={onBack} className={STYLES.backButton}>
               <BackIcon />
             </button>
           )}
