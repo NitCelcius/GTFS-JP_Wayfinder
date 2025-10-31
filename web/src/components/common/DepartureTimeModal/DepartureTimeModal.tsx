@@ -84,13 +84,14 @@ export function DepartureTimeModal({
     const newDate = new Date(selectedDate);
 
     switch (field) {
-      case "day":
+      case "day": {
         // Adjust the day relative to today
         const today = new Date();
         today.setHours(newDate.getHours(), newDate.getMinutes(), 0, 0);
         today.setDate(today.getDate() + value);
         setSelectedDate(today);
         break;
+      }
       case "hour":
         newDate.setHours(value);
         setSelectedDate(newDate);

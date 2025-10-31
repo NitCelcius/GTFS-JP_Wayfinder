@@ -59,7 +59,7 @@ function DepartureTimeModalWrapper({
         onClick={() => setIsOpen(true)}
         style={{
           padding: "1rem 2rem",
-          background: "#3b82f6",
+          background: "var(--color-action-primary)",
           color: "white",
           border: "none",
           borderRadius: "0.5rem",
