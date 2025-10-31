@@ -1,3 +1,4 @@
+import datetime
 import json
 from pathlib import Path
 
@@ -98,7 +99,6 @@ def test_upcoming_hardcoded(monkeypatch, client):
     )
 
     # Verify reference_date is a valid ISO date string
-    import datetime
 
     try:
         datetime.date.fromisoformat(response_data["reference_date"])
