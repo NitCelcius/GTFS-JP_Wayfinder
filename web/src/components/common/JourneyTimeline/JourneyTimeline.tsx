@@ -20,6 +20,7 @@ interface JourneyTimelineProps {
   stops: JourneyStop[];
   title?: string;
   renderRightContent?: (stop: JourneyStop) => React.ReactNode; // Optional custom render function for right section
+  onStopClick?: (stopName: string) => void; // Optional click handler for stop names
 }
 
 // Styles migrated to JourneyTimeline.module.css
@@ -61,6 +62,7 @@ export function JourneyTimeline({
   stops,
   title,
   renderRightContent,
+  onStopClick,
 }: JourneyTimelineProps) {
   const getStopIcon = (stop: JourneyStop) => {
     if (stop.type === "current" || stop.type === "origin") {
@@ -83,7 +85,17 @@ export function JourneyTimeline({
               <div className={styles.leftSection}>
                 <div className={styles.icon}>{getStopIcon(stop)}</div>
                 <div className={styles.stopInfo}>
-                  <span className={styles.stopName}>{stop.name}</span>
+                  {onStopClick ? (
+                    <button
+                      className={styles.stopNameButton}
+                      onClick={() => onStopClick(stop.name)}
+                      type="button"
+                    >
+                      {stop.name}
+                    </button>
+                  ) : (
+                    <span className={styles.stopName}>{stop.name}</span>
+                  )}
                   {stop.label && (
                     <span className={styles.stopLabel}>{stop.label}</span>
                   )}

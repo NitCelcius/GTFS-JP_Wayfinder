@@ -8,6 +8,7 @@ interface StationStopProps {
   isFirst: boolean;
   isLast: boolean;
   showTransferArrow: boolean;
+  onStationClick?: (stationName: string) => void;
 }
 
 function PinIcon() {
@@ -59,6 +60,7 @@ export function StationStop({
   isFirst,
   isLast,
   showTransferArrow,
+  onStationClick,
 }: StationStopProps) {
   // Determine which icon to show based on position
   const getStationIcon = () => {
@@ -72,7 +74,17 @@ export function StationStop({
       <div className={styles.stationRow}>
         <div className={styles.leftSection}>
           <div className={styles.stationIcon}>{getStationIcon()}</div>
-          <p className={styles.stationNameText}>{station.stationName}</p>
+          {onStationClick ? (
+            <button
+              className={styles.stationNameButton}
+              onClick={() => onStationClick(station.stationName)}
+              type="button"
+            >
+              {station.stationName}
+            </button>
+          ) : (
+            <p className={styles.stationNameText}>{station.stationName}</p>
+          )}
         </div>
 
         <div className={styles.rightSection}>
