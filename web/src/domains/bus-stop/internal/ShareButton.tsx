@@ -74,8 +74,14 @@ export function ShareButton({ busStopId, busStopName }: ShareButtonProps) {
         });
         setShowModal(false);
       } catch (error) {
-        // User cancelled the share or share failed
-        console.error("Share failed:", error);
+        // Check if user cancelled the share
+        if (error instanceof Error && error.name === "AbortError") {
+          console.info("Share cancelled by user");
+        } else {
+          // Other errors should be thrown
+          console.error("Share failed:", error);
+          throw error;
+        }
       }
     }
   };
@@ -94,15 +100,18 @@ export function ShareButton({ busStopId, busStopName }: ShareButtonProps) {
 
   return (
     <>
-      <button
-        className={styles.shareButton}
-        onClick={handleShareClick}
-        aria-label="共有"
-      >
-        <div className={styles.icon}>
-          <ShareIcon />
-        </div>
-      </button>
+      <div className={styles.shareButtonContainer}>
+        <button
+          className={styles.shareButton}
+          onClick={handleShareClick}
+          aria-label="共有"
+        >
+          <div className={styles.icon}>
+            <ShareIcon />
+          </div>
+        </button>
+        <span className={styles.shareLabel}>共有</span>
+      </div>
 
       {showModal && (
         <div className={styles.modalOverlay} onClick={handleCloseModal}>
@@ -125,7 +134,7 @@ export function ShareButton({ busStopId, busStopName }: ShareButtonProps) {
               <div className={styles.qrCodeContainer}>
                 <QRCodeSVG
                   value={shareUrl}
-                  size={200}
+                  size={400}
                   level="M"
                   includeMargin={true}
                 />

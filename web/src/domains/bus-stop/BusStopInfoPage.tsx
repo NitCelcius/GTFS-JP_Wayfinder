@@ -70,7 +70,6 @@ export function BusStopInfoPage({
           title="バス停情報"
           showBackButton={true}
           onBack={onBack}
-          rightAction={busStopId ? <ShareButton busStopId={busStopId} /> : null}
         />
         <div className={styles.errorContent}>
           <div className="text-center">
@@ -98,23 +97,23 @@ export function BusStopInfoPage({
           title="バス停情報"
           showBackButton={true}
           onBack={onBack}
-          rightAction={
-            busStopId ? (
-              <ShareButton
-                busStopId={busStopId}
-                busStopName={busStopData?.name}
-              />
-            ) : null
-          }
         />
 
         <div className={styles.content}>
           {/* Bus Stop Header */}
           {busStopData ? (
-            <BusStopHeader
-              name={busStopData.name}
-              distance={busStopData.distance || ""}
-            />
+            <>
+              <BusStopHeader
+                name={busStopData.name}
+                distance={busStopData.distance || ""}
+              />
+              {busStopId && (
+                <ShareButton
+                  busStopId={busStopId}
+                  busStopName={busStopData.name}
+                />
+              )}
+            </>
           ) : (
             <div className={styles.loadingHeader}>
               <LoadingSpinner size="sm" />
