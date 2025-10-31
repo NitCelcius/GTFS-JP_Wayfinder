@@ -98,19 +98,16 @@ See `CONTRIBUTING.md` for detailed setup instructions.
 ### Detailed Command Guidance
 
 - Root (recommended workspace orchestration): Root scripts (uses turbo):
-
   - `mise exec pnpm dev` -> runs turbo run dev (starts both workspaces if configured)
   - `mise exec pnpm build`
   - `mise exec pnpm test`
 
 - API service (local development):
-
   - From workspace root: `mise exec pnpm --filter api dev` (pnpm workspace filter) or `cd api && mise exec pnpm dev`
   - The package.json in `api/` runs `uv run python -m uvicorn src.gtfs_jp_wayfinder.main:app --host 0.0.0.0 --port 8002` (uv is managed by mise).
   - Important: the API expects the GTFS CSV directory to be at `./data/gtfs-akita-chuo-kotsu/` relative to the process cwd. Starting the API from the repo root (or adjusting the path) is required.
 
 - Web frontend:
-
   - `cd web && mise exec pnpm dev` (Next.js dev server, uses turbopack flag in package.json)
 
 - Docker/composition: a root `docker-compose.yml` references `api` and `web` compose files. Use Docker Compose for containerized runs.

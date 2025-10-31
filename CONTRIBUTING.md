@@ -13,22 +13,26 @@ Follow the installation instructions on the [mise website](https://mise.jdx.dev/
 ### Setting up the development environment
 
 1. **Clone the repository:**
+
    ```bash
    git clone https://github.com/NitCelcius/GTFS-JP_Wayfinder.git
    cd GTFS-JP_Wayfinder
    ```
 
 2. **Install development tools using mise:**
+
    ```bash
    mise install
    ```
+
    This will automatically install the correct versions of pnpm (10.14.0) and uv (0.8.20) as specified in `mise.toml`.
 
 3. **Install project dependencies:**
+
    ```bash
    # Install all workspace dependencies
    mise exec pnpm install
-   
+
    # Or use mise to ensure you're using the right pnpm version
    mise exec -- pnpm install
    ```
@@ -38,6 +42,7 @@ Follow the installation instructions on the [mise website](https://mise.jdx.dev/
 All development commands should be run using mise to ensure you're using the correct tool versions:
 
 ### Root workspace commands (using turbo):
+
 ```bash
 # Start development servers for both API and web
 mise exec pnpm dev
@@ -53,6 +58,7 @@ mise exec pnpm lint
 ```
 
 ### API-specific commands:
+
 ```bash
 # From workspace root
 mise exec pnpm --filter api dev
@@ -71,6 +77,7 @@ mise exec pnpm lint
 ```
 
 ### Web-specific commands:
+
 ```bash
 # From web/ directory
 cd web
@@ -82,8 +89,8 @@ mise exec pnpm build
 ```
 
 ### Generate OpenAPI client:
+
 ```bash
 # From workspace root
 mise exec pnpm run openapi-generate
 ```
-

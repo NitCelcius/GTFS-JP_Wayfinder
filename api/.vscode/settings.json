@@ -19,10 +19,7 @@
       "source.organizeImports.ruff": "always"
     }
   },
-  "cSpell.words": [
-    "GTFS",
-    "Wayfinder"
-  ],
+  "cSpell.words": ["GTFS", "Wayfinder"],
   "python.analysis.typeCheckingMode": "off",
   "python.analysis.diagnosticSeverityOverrides": {
     "strictListInference": "none",
@@ -35,9 +32,7 @@
     "reportMissingImports": "none",
     "reportUndefinedVariable": "none"
   },
-  "python.testing.pytestArgs": [
-    "tests"
-  ],
+  "python.testing.pytestArgs": ["tests"],
   "python.testing.unittestEnabled": false,
   "python.testing.pytestEnabled": true
 }

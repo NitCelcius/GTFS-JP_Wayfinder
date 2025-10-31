@@ -27,7 +27,7 @@ CI will be skipped for:
 This repository uses [mise](https://mise.jdx.dev/) for development tool management. Tool versions are defined in `mise.toml`:
 
 - **Node.js**: v20 (for web frontend and tooling)
-- **Python**: v3.13 (for API backend) 
+- **Python**: v3.13 (for API backend)
 - **pnpm**: v10.14.0 (package manager)
 - **uv**: v0.8.20 (Python dependency manager)
 
@@ -38,7 +38,7 @@ The CI workflow automatically installs these tools via mise before running build
 The CI workflow includes several caching mechanisms for improved performance:
 
 - **mise tool installations**: Tools (Node.js, Python, pnpm, uv) are cached by mise for faster setup
-- **Turbo build cache**: Cached in `.turbo` directory for faster subsequent builds  
+- **Turbo build cache**: Cached in `.turbo` directory for faster subsequent builds
 - **Python dependencies**: uv cache with dependency glob matching
 - **pnpm dependencies**: Automatically cached by mise and pnpm
 

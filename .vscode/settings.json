@@ -19,9 +19,6 @@
       "source.organizeImports.ruff": "always"
     }
   },
-  "cSpell.words": [
-    "GTFS",
-    "Wayfinder"
-  ],
+  "cSpell.words": ["GTFS", "Wayfinder"],
   "postman.settings.dotenv-detection-notification-visibility": false
 }
