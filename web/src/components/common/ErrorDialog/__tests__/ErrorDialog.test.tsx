@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 
 import { ErrorDialog } from "../ErrorDialog";
 
@@ -71,7 +71,6 @@ describe("ErrorDialog", () => {
   it("should navigate to home when Go Home button is clicked", () => {
     // Spy on window.location.href assignment
     const originalLocation = window.location;
-    const mockAssign = jest.fn();
 
     Object.defineProperty(window, "location", {
       value: {
@@ -196,11 +195,7 @@ describe("ErrorDialog", () => {
     testError.stack = "Test stack trace";
 
     render(
-      <ErrorDialog
-        isOpen={true}
-        onClose={mockOnClose}
-        error={testError}
-      />
+      <ErrorDialog isOpen={true} onClose={mockOnClose} error={testError} />
     );
 
     expect(screen.getByText("エラーの詳細を表示")).toBeInTheDocument();
@@ -215,11 +210,7 @@ describe("ErrorDialog", () => {
     const testError = new Error("Test error message");
 
     render(
-      <ErrorDialog
-        isOpen={true}
-        onClose={mockOnClose}
-        error={testError}
-      />
+      <ErrorDialog isOpen={true} onClose={mockOnClose} error={testError} />
     );
 
     expect(screen.queryByText("エラーの詳細を表示")).not.toBeInTheDocument();
