@@ -3,3 +3,8 @@
 
 // Mock environment variables for testing
 process.env.NEXT_PUBLIC_API_BASE_URL = "http://localhost:8002";
+
+// Polyfill structuredClone for fake-indexeddb
+if (!global.structuredClone) {
+  global.structuredClone = (val) => JSON.parse(JSON.stringify(val));
+}

@@ -11,7 +11,11 @@ import { SearchInput } from "./internal/SearchInput";
 interface BusStopSearchPageProps {
   onNavigateToRoute?: () => void;
   onNavigateToRecent?: () => void;
-  onNavigateToBusStopInfo?: (busStopId: string) => void;
+  onNavigateToBusStopInfo?: (
+    busStopId: string,
+    name?: string,
+    distance?: string
+  ) => void;
 }
 
 // Fallback bus stop (秋田駅東口) when location is unavailable
@@ -71,17 +75,33 @@ export function BusStopSearchPage({
     console.log("Searching for:", query);
   };
 
+  // Store bus stop data for history tracking
+  const busStopDataMap = new Map<string, { name: string; distance: string }>();
+
   const handleBusStopSelect = (busStopId: string) => {
-    onNavigateToBusStopInfo?.(busStopId);
+    const busStopData = busStopDataMap.get(busStopId);
+    onNavigateToBusStopInfo?.(
+      busStopId,
+      busStopData?.name,
+      busStopData?.distance
+    );
   };
 
   // Convert domain BusStop to component BusStop format
-  const convertToComponentBusStop = (busStop: BusStop) => ({
-    id: busStop.id,
-    name: busStop.name,
-    distance: busStop.distance || "",
-    selectUrl: `/bus-stop/${busStop.id}`,
-  });
+  const convertToComponentBusStop = (busStop: BusStop) => {
+    // Store bus stop data for history tracking
+    busStopDataMap.set(busStop.id, {
+      name: busStop.name,
+      distance: busStop.distance || "",
+    });
+
+    return {
+      id: busStop.id,
+      name: busStop.name,
+      distance: busStop.distance || "",
+      selectUrl: `/bus-stop/${busStop.id}`,
+    };
+  };
 
   // Prepare the nearby stops to display
   const nearbyStopsToDisplay =

@@ -3,18 +3,28 @@
 import { useRouter } from "next/navigation";
 
 import { RouteSearchPage } from "@/domains/route-search";
+import { useRouteSearchHistory } from "@/hooks/useSearchHistory";
 
 export default function HomePage() {
   const router = useRouter();
+  const { addSearch } = useRouteSearchHistory();
 
-  const handleSearch = (searchParams: {
+  const handleSearch = async (searchParams: {
     originStopId: string;
     destinationStopId: string;
     originStopName: string;
     destinationStopName: string;
     beginTime: string;
   }) => {
-    console.log("� Navigating to results with search params:", searchParams);
+    console.log("🔍 Navigating to results with search params:", searchParams);
+
+    // Save to history before navigating
+    await addSearch(
+      searchParams.originStopId,
+      searchParams.destinationStopId,
+      searchParams.originStopName,
+      searchParams.destinationStopName
+    );
 
     // Navigate to results page with search parameters
     const urlParams = new URLSearchParams({
