@@ -1,7 +1,10 @@
+import { useState } from "react";
+
 import { BottomNavigation } from "@/components/common/BottomNavigation/BottomNavigation";
 import { JourneyTimeline } from "@/components/common/JourneyTimeline/JourneyTimeline";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner/LoadingSpinner";
 import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
+import { ShareModal } from "@/domains/bus-stop/internal/ShareModal";
 import { useTimeDisplay } from "@/hooks";
 
 import styles from "./SearchResultPage.module.css";
@@ -13,6 +16,7 @@ import { SearchResultPageProps } from "./types";
 
 export function SearchResultPage({
   tripDetails,
+  searchUrl,
   onRouteSelect,
   onBack,
   onNavigateToBusStop,
@@ -21,6 +25,7 @@ export function SearchResultPage({
   isLoading = false,
 }: SearchResultPageProps) {
   const timeDisplay = useTimeDisplay();
+  const [showShareModal, setShowShareModal] = useState(false);
 
   const selectedRoute =
     tripDetails.routes.find(
@@ -69,6 +74,14 @@ export function SearchResultPage({
     }
   };
 
+  const handleShareClick = () => {
+    setShowShareModal(true);
+  };
+
+  const handleCloseShareModal = () => {
+    setShowShareModal(false);
+  };
+
   return (
     <div className={styles.page}>
       <TopNavigation title="検索結果" showBackButton={true} onBack={onBack} />
@@ -77,6 +90,8 @@ export function SearchResultPage({
         <RouteOverview
           fromStation={tripDetails.fromStation}
           toStation={tripDetails.toStation}
+          searchUrl={searchUrl}
+          onShareClick={handleShareClick}
         />
 
         <SearchConditionsSummary departureTime={tripDetails.searchDateTime} />
@@ -149,6 +164,16 @@ export function SearchResultPage({
       </div>
 
       <BottomNavigation activeTab="route" onTabClick={handleBottomNavClick} />
+
+      {/* Share Modal */}
+      {searchUrl && (
+        <ShareModal
+          shareUrl={searchUrl}
+          title={`${tripDetails.fromStation} から ${tripDetails.toStation} までの検索結果`}
+          isOpen={showShareModal}
+          onClose={handleCloseShareModal}
+        />
+      )}
     </div>
   );
 }

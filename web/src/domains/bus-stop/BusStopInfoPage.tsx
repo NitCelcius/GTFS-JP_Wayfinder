@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import { BottomNavigation } from "@/components/common/BottomNavigation/BottomNavigation";
 import { JourneyTimeline } from "@/components/common/JourneyTimeline/JourneyTimeline";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner/LoadingSpinner";
@@ -8,7 +10,7 @@ import styles from "./BusStopInfoPage.module.css";
 import { useBusStopData } from "./hooks";
 import { BusStopHeader } from "./internal/BusStopHeader";
 import { NextBusInfo } from "./internal/NextBusInfo";
-import { ShareButton } from "./internal/ShareButton";
+import { ShareModal } from "./internal/ShareModal";
 import { TransferButton } from "./internal/TransferButton";
 import { WalkDirectionButton } from "./internal/WalkDirectionButton";
 
@@ -27,6 +29,7 @@ export function BusStopInfoPage({
 }: BusStopInfoPageProps) {
   const { data, isLoading, error } = useBusStopData(busStopId);
   const timeDisplay = useTimeDisplay();
+  const [showShareModal, setShowShareModal] = useState(false);
 
   const handleBottomNavClick = (tab: "bus-stop" | "route" | "recent") => {
     switch (tab) {
@@ -45,6 +48,14 @@ export function BusStopInfoPage({
   const handleTransferClick = () => {
     // TODO: Implement transfer functionality
     console.log("Navigate to transfer options");
+  };
+
+  const handleShareClick = () => {
+    setShowShareModal(true);
+  };
+
+  const handleCloseShareModal = () => {
+    setShowShareModal(false);
   };
 
   const InfoIcon = () => (
@@ -102,18 +113,12 @@ export function BusStopInfoPage({
         <div className={styles.content}>
           {/* Bus Stop Header */}
           {busStopData ? (
-            <>
-              <BusStopHeader
-                name={busStopData.name}
-                distance={busStopData.distance || ""}
-              />
-              {busStopId && (
-                <ShareButton
-                  busStopId={busStopId}
-                  busStopName={busStopData.name}
-                />
-              )}
-            </>
+            <BusStopHeader
+              name={busStopData.name}
+              distance={busStopData.distance || ""}
+              busStopId={busStopId}
+              onShareClick={handleShareClick}
+            />
           ) : (
             <div className={styles.loadingHeader}>
               <LoadingSpinner size="sm" />
@@ -250,6 +255,16 @@ export function BusStopInfoPage({
 
       {/* Floating Transfer Button */}
       <TransferButton onClick={handleTransferClick} floating={true} />
+
+      {/* Share Modal */}
+      {busStopId && busStopData && (
+        <ShareModal
+          shareUrl={`/bus-stop/${busStopId}`}
+          title={`${busStopData.name} - バス停情報`}
+          isOpen={showShareModal}
+          onClose={handleCloseShareModal}
+        />
+      )}
     </>
   );
 }
