@@ -9,15 +9,14 @@ function WalkIcon() {
   return (
     <svg
       className="block size-full"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      strokeWidth="2"
+      fill="currentColor"
+      viewBox="0 -960 960 960"
+      width="24px"
     >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
-        d="M16 8a2 2 0 11-4 0 2 2 0 014 0zM10 20l1.5-6L10 12V8l4-1 2 3h3M7 20l1-5-3-1"
+        d="m280-40 112-564-72 28v136h-80v-188l202-86q14-6 29.5-7t29.5 4q14 5 26.5 14t20.5 23l40 64q26 42 70.5 69T760-520v80q-70 0-125-29t-94-74l-25 123 84 80v300h-80v-260l-84-64-72 324h-84Zm260-700q-33 0-56.5-23.5T460-820q0-33 23.5-56.5T540-900q33 0 56.5 23.5T620-820q0 33-23.5 56.5T540-740Z"
       />
     </svg>
   );

@@ -68,7 +68,11 @@ class TestParseSplitDateStr:
         test_cases = [
             ("2025-01-01T00:00:00", datetime.date(2025, 1, 1), "00:00:00"),
             ("2025-12-31T23:59:59", datetime.date(2025, 12, 31), "23:59:59"),
-            ("2024-02-29T12:00:00", datetime.date(2024, 2, 29), "12:00:00"),  # Leap year
+            (
+                "2024-02-29T12:00:00",
+                datetime.date(2024, 2, 29),
+                "12:00:00",
+            ),  # Leap year
         ]
 
         for iso_string, expected_date, expected_time in test_cases:

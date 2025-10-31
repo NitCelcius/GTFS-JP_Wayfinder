@@ -1,6 +1,6 @@
 .button {
   width: 100%;
-  background: var(--color-destination-bg);
+  background: var(--color-route-destination-bg);
   border-radius: var(--radius-md);
   padding: var(--size-spacing-xl) var(--size-spacing-lg);
   display: flex;

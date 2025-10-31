@@ -114,16 +114,6 @@ export function BusStopInfoPage({
             </div>
           )}
 
-          {/* Walk Direction Button */}
-          {busStopData?.lat && busStopData?.lon && (
-            <div className={styles.walkButtonWrapper}>
-              <WalkDirectionButton
-                lat={busStopData.lat}
-                lon={busStopData.lon}
-              />
-            </div>
-          )}
-
           {/* Next Bus Info */}
           <div className={styles.nextBusWrapper}>
             {isLoading || !data ? (
@@ -145,6 +135,16 @@ export function BusStopInfoPage({
               </div>
             )}
           </div>
+
+          {/* Walk Direction Button */}
+          {busStopData?.lat && busStopData?.lon && (
+            <div className={styles.walkButtonWrapper}>
+              <WalkDirectionButton
+                lat={busStopData.lat}
+                lon={busStopData.lon}
+              />
+            </div>
+          )}
 
           {/* Route Journey */}
           <div className={styles.journeyWrapper}>
