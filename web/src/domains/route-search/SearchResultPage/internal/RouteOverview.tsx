@@ -31,10 +31,10 @@ const STYLES = {
   text: "flex flex-col font-['Inter',_'Noto_Sans_JP',_sans-serif] font-normal justify-center leading-[0] not-italic relative shrink-0 text-black text-nowrap flex-1 min-w-0",
   textContent: "leading-[normal] whitespace-pre",
   shareButton:
-    "flex flex-col items-center gap-1 bg-transparent border-none cursor-pointer p-1 transition-opacity duration-200 hover:opacity-70 active:opacity-50 flex-shrink-0",
+    "flex flex-col items-center gap-1 bg-transparent border-none cursor-pointer p-0 transition-opacity duration-200 hover:opacity-70 active:opacity-50 flex-shrink-0",
   shareIcon:
-    "w-6 h-6 flex items-center justify-center text-[var(--color-primary,#3b82f6)]",
-  shareLabel: "text-xs text-[var(--color-primary,#3b82f6)] whitespace-nowrap",
+    "w-[var(--size-icon-lg)] h-[var(--size-icon-lg)] flex items-center justify-center text-[var(--color-primary)]",
+  shareLabel: "text-xs text-[var(--color-primary)] whitespace-nowrap",
 } as const;
 
 export function RouteOverview({

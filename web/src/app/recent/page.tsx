@@ -16,7 +16,12 @@ export default function RecentSearchPage() {
       onNavigateToRoute={() => router.push("/")}
       onNavigateToBusStop={() => router.push("/bus-stop")}
       onNavigateToBusStopInfo={gotoBusStopInfo}
-      onNavigateToRouteSearch={(fromStopId, toStopId, fromStation, toStation) => {
+      onNavigateToRouteSearch={(
+        fromStopId,
+        toStopId,
+        fromStation,
+        toStation
+      ) => {
         // Navigate to results page with search parameters
         const urlParams = new URLSearchParams({
           search: "true",
