@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
   // Enable environment variable validation in development
   env: {
     CUSTOM_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
+    NEXT_ERROR_CONTACT_EMAIL: process.env.NEXT_ERROR_CONTACT_EMAIL,
   },
 
   // Add helpful logging for API base URL in development

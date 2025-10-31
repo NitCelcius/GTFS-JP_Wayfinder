@@ -1,4 +1,6 @@
-import styles from "./ErrorState.module.css";
+import { useState } from "react";
+
+import { ErrorDialog } from "@/components/common";
 
 interface ErrorStateProps {
   error: string;
@@ -6,14 +8,21 @@ interface ErrorStateProps {
 }
 
 export function ErrorState({ error, onBack }: ErrorStateProps) {
+  const [isOpen, setIsOpen] = useState(true);
+  const contactEmail = process.env.NEXT_ERROR_CONTACT_EMAIL;
+
+  const handleClose = () => {
+    setIsOpen(false);
+    onBack();
+  };
+
   return (
-    <div className={styles.fullScreenCenter}>
-      <div className={styles.center}>
-        <div className={styles.error}>エラー: {error}</div>
-        <button onClick={onBack} className={styles.button}>
-          検索に戻る
-        </button>
-      </div>
-    </div>
+    <ErrorDialog
+      isOpen={isOpen}
+      onClose={handleClose}
+      title="エラーが発生しました"
+      message={error}
+      contactEmail={contactEmail}
+    />
   );
 }
