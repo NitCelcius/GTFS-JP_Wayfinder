@@ -71,8 +71,8 @@ class UpcomingBus(BaseModel):
 
 
 class StopLatLon(BaseModel):
-    lat: float
-    lon: float
+    lat: float = Field(..., ge=-90, le=90, description="緯度 (度単位)")
+    lon: float = Field(..., ge=-180, le=180, description="経度 (度単位)")
     model_config = {
         "json_schema_extra": {"examples": [{"lat": 39.71676, "lon": 140.13113}]},
     }
