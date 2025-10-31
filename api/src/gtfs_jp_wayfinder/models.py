@@ -101,6 +101,10 @@ class TripRecord(BaseModel):
     arrival_time: datetime.time
     departure_datetime: str = Field(...)
     arrival_datetime: str = Field(...)
+    realtime_update: "RealtimeUpdate | None" = Field(
+        None,
+        description="GTFS-JP Real-time更新情報（遅延と予測時刻）",
+    )
 
     model_config = {
         "json_schema_extra": {
@@ -113,6 +117,13 @@ class TripRecord(BaseModel):
                     "arrival_time": "07:50:00",
                     "departure_datetime": "2025-10-28T07:50:00",
                     "arrival_datetime": "2025-10-28T07:50:00",
+                    "realtime_update": {
+                        "delay_seconds": 180,
+                        "forecasted_arrival_time": "07:53:00",
+                        "forecasted_departure_time": "07:53:00",
+                        "forecasted_arrival_datetime": "2025-10-28T07:53:00",
+                        "forecasted_departure_datetime": "2025-10-28T07:53:00",
+                    },
                 },
             ],
         },
@@ -319,6 +330,10 @@ class EnrichedTrip(BaseModel):
     destination_display_name: str | None = None
     destination_stop_id: str | None = None
     stops: list[TripTimedStop] | None = None
+    realtime_update: "RealtimeUpdate | None" = Field(
+        None,
+        description="GTFS-JP Real-time更新情報（遅延と予測時刻）",
+    )
 
     model_config = {
         "json_schema_extra": {
@@ -331,6 +346,13 @@ class EnrichedTrip(BaseModel):
                     "departure_datetime": "2025-10-28T07:50:00",
                     "route_name": "太平線",
                     "destination_display_name": "大学病院",
+                    "realtime_update": {
+                        "delay_seconds": 180,
+                        "forecasted_arrival_time": "07:53:00",
+                        "forecasted_departure_time": "07:53:00",
+                        "forecasted_arrival_datetime": "2025-10-28T07:53:00",
+                        "forecasted_departure_datetime": "2025-10-28T07:53:00",
+                    },
                 },
             ],
         },
@@ -402,6 +424,50 @@ class NearbyStopsResponse(BaseModel):
                             "lon": 140.13213,
                         },
                     ],
+                },
+            ],
+        },
+    }
+
+
+# GTFS-JP Real-time models for trip updates
+class RealtimeUpdate(BaseModel):
+    """GTFS-JP Real-time update information for a stop time.
+
+    Follows GTFS Real-time StopTimeUpdate specification.
+    Contains delay information and forecasted arrival/departure times.
+    """
+
+    delay_seconds: int | None = Field(
+        None,
+        description="遅延秒数。正の値は遅延、負の値は早着を表します。",
+    )
+    forecasted_arrival_time: str | None = Field(
+        None,
+        description="予測到着時刻 (HH:MM:SS形式)",
+    )
+    forecasted_departure_time: str | None = Field(
+        None,
+        description="予測出発時刻 (HH:MM:SS形式)",
+    )
+    forecasted_arrival_datetime: str | None = Field(
+        None,
+        description="予測到着時刻 (ISO 8601形式)",
+    )
+    forecasted_departure_datetime: str | None = Field(
+        None,
+        description="予測出発時刻 (ISO 8601形式)",
+    )
+
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "delay_seconds": 180,
+                    "forecasted_arrival_time": "07:53:00",
+                    "forecasted_departure_time": "07:53:00",
+                    "forecasted_arrival_datetime": "2025-10-28T07:53:00",
+                    "forecasted_departure_datetime": "2025-10-28T07:53:00",
                 },
             ],
         },

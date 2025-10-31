@@ -246,6 +246,9 @@ async def get_upcoming(
         max_items=limit,
     )
 
+    # Import realtime mock module
+    from gtfs_jp_wayfinder import realtime_mock
+
     # Build base buses list using batch-fetched times
     buses = []
     trip_ids = []
@@ -268,6 +271,15 @@ async def get_upcoming(
             reference_date, departure
         )
 
+        # Generate mock realtime update
+        realtime_update = realtime_mock.generate_mock_realtime_update(
+            trip_id=trip,
+            stop_id=stop_id,
+            scheduled_arrival_time=arrival,
+            scheduled_departure_time=departure,
+            reference_date=reference_date,
+        )
+
         buses.append(
             models.EnrichedTrip(
                 trip_id=trip,
@@ -275,6 +287,7 @@ async def get_upcoming(
                 departure_time=departure,
                 arrival_datetime=arrival_datetime,
                 departure_datetime=departure_datetime,
+                realtime_update=realtime_update,
             ),
         )
         trip_ids.append(trip)
@@ -319,6 +332,7 @@ async def get_upcoming(
                     else None,
                     destination_stop_id=tinfo.destination_stop_id if tinfo else None,
                     stops=stops_data,
+                    realtime_update=b.realtime_update,
                 ),
             )
         return models.UpcomingBusEnriched(stop_id=stop_id, buses=enriched)
