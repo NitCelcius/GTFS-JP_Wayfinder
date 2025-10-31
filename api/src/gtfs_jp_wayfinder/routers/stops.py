@@ -292,12 +292,15 @@ async def get_upcoming(
         if "stops" in tokens:
             try:
                 # Use parallel fetching for better performance
-                stops_map = await adapter.get_stops_from_trips_parallel(trip_ids)
+                stops_map = await adapter.get_stops_from_trips_parallel(
+                    trip_ids,
+                    reference_date,
+                )
             except Exception:
                 # Fallback to sequential if parallel approach fails
                 for trip_id in trip_ids:
                     try:
-                        stops_data = adapter.get_stops_from_trip(trip_id)
+                        stops_data = adapter.get_stops_from_trip(trip_id, reference_date)
                         stops_map[trip_id] = stops_data
                     except Exception:
                         stops_map[trip_id] = None
