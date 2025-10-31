@@ -1,5 +1,3 @@
-import datetime
-
 from fastapi import APIRouter, HTTPException, Query
 from pandas import to_datetime
 
@@ -57,7 +55,7 @@ async def timed_search(
     service_id: str | None = Query(None, description="サービスID"),
     begin_time: str | None = Query(
         None,
-        description="開始時刻 (HH:MM:SS or ISO 8601 datetime, e.g., 2025-10-28T14:30:00)",
+        description="開始時刻 (HH:MM:SS形式またはISO 8601形式 例: 2025-10-28T14:30:00)",
     ),
 ):
     try:
@@ -68,17 +66,14 @@ async def timed_search(
                 detail="begin_time parameter is required for timed search",
             )
 
-        # Determine reference_date and begin_time_str from begin_time parameter
-        reference_date = datetime.date.today().isoformat()
-        begin_time_str = begin_time
-
-        if "T" in begin_time:
-            try:
-                reference_date, begin_time_str = (
-                    adapter.extract_date_and_time_from_iso_datetime(begin_time)
-                )
-            except ValueError as e:
-                raise HTTPException(status_code=400, detail=str(e)) from e
+        # Parse begin_time parameter (handles both HH:MM:SS and ISO datetime formats)
+        try:
+            reference_date_obj, begin_time_str = adapter.parse_split_date_str(
+                begin_time
+            )
+            reference_date = reference_date_obj.isoformat()
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=str(e)) from e
 
         # Convert begin_time string to numpy datetime64
         db_default_date = adapter.get_default_date()
@@ -86,6 +81,7 @@ async def timed_search(
 
         # Get timed travels (returns empty list if no buses available)
         path = adapter.get_shortest_path(from_stop, to_stop, service_id)
+
         travels = adapter.get_timed_travels_from_path(path, service_id, begin_time_np)
 
         # Convert TravelOnce objects to TravelOnceResponse with string times
@@ -119,7 +115,10 @@ async def timed_search(
                 )
             )
 
-        return models.TimedTravelResponse(travels=travel_responses)
+        return models.TimedTravelResponse(
+            reference_date=reference_date,
+            travels=travel_responses,
+        )
     except HTTPException:
         raise
     except Exception as e:

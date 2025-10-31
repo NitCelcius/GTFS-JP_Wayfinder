@@ -178,11 +178,13 @@ class TripTimedStop(BaseModel):
 
 
 class TimedTravelResponse(BaseModel):
+    reference_date: str | None = None
     travels: list[TravelOnceResponse]
     model_config = {
         "json_schema_extra": {
             "examples": [
                 {
+                    "reference_date": "2025-10-28",
                     "travels": [
                         {
                             "trip_id": "t1",
@@ -350,12 +352,14 @@ class EnrichedTrip(BaseModel):
 
 class UpcomingBusEnriched(BaseModel):
     stop_id: str
+    reference_date: str | None = None
     buses: list[EnrichedTrip]
     model_config = {
         "json_schema_extra": {
             "examples": [
                 {
                     "stop_id": "1021_01",
+                    "reference_date": "2025-10-28",
                     "buses": [
                         {
                             "trip_id": "平日_07時50分_系統34002",

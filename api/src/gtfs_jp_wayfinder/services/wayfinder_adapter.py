@@ -15,6 +15,33 @@ _initialized = False
 logger = logging.getLogger(__name__)
 
 
+def parse_split_date_str(begin_time_str: str | None) -> tuple[datetime.date, str]:
+    """Parse begin_time parameter which can be either HH:MM:SS or ISO datetime.
+
+    Args:
+        begin_time_str: Time string in HH:MM:SS format or ISO 8601 datetime
+                       (e.g., "2025-10-28T14:30:00"). If None, uses current time.
+
+    Returns:
+        (reference_date, time_string) where time_string is HH:MM:SS
+
+    Raises:
+        ValueError: If the ISO datetime format is invalid
+    """
+    if not begin_time_str:
+        now = datetime.datetime.now()
+        return now.date(), now.strftime("%H:%M:%S")
+
+    if "T" in begin_time_str:
+        try:
+            dt = datetime.datetime.fromisoformat(begin_time_str)
+            return dt.date(), dt.strftime("%H:%M:%S")
+        except ValueError as e:
+            raise ValueError(f"Invalid ISO datetime format: {begin_time_str}") from e
+
+    return datetime.date.today(), begin_time_str
+
+
 async def initialize(data_dir: str):
     """Async initialize wrapper that runs the blocking initialization in a thread."""
     global _initialized
@@ -355,11 +382,20 @@ def get_destination_id_from_trip(trip_id: str):
     return wf_service.get_destination_id_from_trip(trip_id)
 
 
-def get_stops_from_trip(trip_id: str) -> list[dict]:
+def get_stops_from_trip(
+    trip_id: str,
+    reference_date: str | None = None,
+) -> list[dict]:
     """Return list of dicts representing timed stops, converting numpy datetime to HH:MM:SS strings.
 
     Optimized version that reduces the number of individual DataFrame queries by batching
     stop name lookups.
+
+    Args:
+        trip_id: The trip ID to get stops for
+        reference_date: Optional ISO date string (e.g., "2025-10-28") used to generate
+                        arrival_datetime and departure_datetime fields. If None, these
+                        fields will not be included in the output.
     """
     df = wf_service.get_stops_from_trip(trip_id)
 
@@ -413,6 +449,25 @@ def get_stops_from_trip(trip_id: str) -> list[dict]:
                     with suppress(Exception):
                         r[time_field] = conv(time_value)
 
+        # Add arrival_datetime and departure_datetime if reference_date is provided
+        if reference_date is not None:
+            # Convert time strings to ISO datetime format for both arrival and departure
+            for time_field, datetime_field in [
+                ("arrival_time", "arrival_datetime"),
+                ("departure_time", "departure_datetime"),
+            ]:
+                time_str = r.get(time_field)
+                if time_str:
+                    try:
+                        r[datetime_field] = merge_date_and_time_to_iso(
+                            reference_date,
+                            time_str,
+                        )
+                    except Exception:
+                        r[datetime_field] = None  # Will be skipped after this logic
+                else:
+                    r[datetime_field] = None  # Will be skipped after this logic
+
         # Add stop name using cache or individual lookup as fallback
         stop_id = r.get("stop_id")
         if stop_id:
@@ -435,11 +490,19 @@ def get_stops_from_trip(trip_id: str) -> list[dict]:
     return records
 
 
-async def get_stops_from_trips_parallel(trip_ids: list[str]) -> dict:  # type: ignore
+async def get_stops_from_trips_parallel(
+    trip_ids: list[str],
+    reference_date: str | None = None,
+) -> dict:  # type: ignore
     """Fetch stops data for multiple trips in parallel.
 
     Returns dict mapping trip_id -> stops_data.
     Uses asyncio to fetch multiple trip stops concurrently for better performance.
+
+    Args:
+        trip_ids: List of trip IDs to fetch stops for
+        reference_date: Optional ISO date string (e.g., "2025-10-28") passed to get_stops_from_trip
+                        to generate arrival_datetime and departure_datetime fields
     """
     if not trip_ids:
         return {}
@@ -448,7 +511,11 @@ async def get_stops_from_trips_parallel(trip_ids: list[str]) -> dict:  # type: i
         """Async wrapper for get_stops_from_trip."""
         try:
             # Run the synchronous function in a thread to avoid blocking
-            result = await asyncio.to_thread(get_stops_from_trip, trip_id)
+            result = await asyncio.to_thread(
+                get_stops_from_trip,
+                trip_id,
+                reference_date,
+            )
             return trip_id, result
         except Exception:
             # Return trip_id with None on error for graceful degradation
@@ -518,54 +585,6 @@ def get_default_date():
     return wf_service.get_default_date()
 
 
-def extract_reference_date_from_iso_datetime(begin_time: str) -> str:
-    """Extract reference date from ISO 8601 datetime string.
-
-    Args:
-        begin_time: ISO 8601 datetime string (e.g., "2025-10-28T14:30:00")
-
-    Returns:
-        ISO date string (e.g., "2025-10-28")
-
-    Raises:
-        ValueError: If the datetime string is not in valid ISO 8601 format
-    """
-    if not begin_time or "T" not in begin_time:
-        raise ValueError(f"Expected ISO 8601 datetime format, got: {begin_time}")
-
-    try:
-        dt_obj = datetime.datetime.fromisoformat(begin_time)
-        return dt_obj.date().isoformat()
-    except ValueError as e:
-        raise ValueError(f"Invalid ISO datetime format: {begin_time}") from e
-
-
-def extract_date_and_time_from_iso_datetime(begin_time: str) -> tuple[str, str]:
-    """Extract both reference date and time from ISO 8601 datetime string.
-
-    Args:
-        begin_time: ISO 8601 datetime string (e.g., "2025-10-28T14:30:00")
-
-    Returns:
-        Tuple of (reference_date, time_str) where:
-        - reference_date: ISO date string (e.g., "2025-10-28")
-        - time_str: Time string in HH:MM:SS format
-
-    Raises:
-        ValueError: If the datetime string is not in valid ISO 8601 format
-    """
-    if not begin_time or "T" not in begin_time:
-        raise ValueError(f"Expected ISO 8601 datetime format, got: {begin_time}")
-
-    try:
-        dt_obj = datetime.datetime.fromisoformat(begin_time)
-        reference_date = dt_obj.date().isoformat()
-        time_str = dt_obj.time().strftime("%H:%M:%S")
-        return reference_date, time_str
-    except ValueError as e:
-        raise ValueError(f"Invalid ISO datetime format: {begin_time}") from e
-
-
 def merge_date_and_time_to_iso(
     reference_date: str,
     time_str: str,
@@ -574,11 +593,13 @@ def merge_date_and_time_to_iso(
     Merge a reference date (ISO format: YYYY-MM-DD) and time string (HH:MM:SS or HH:MM)
     into a full ISO 8601 datetime string.
 
-    Handles overnight trips by detecting when time is earlier than the previous time.
+    Supports GTFS extended hours format where hours >= 24 indicate times on the next day.
+    For example, "25:30:00" means 1:30 AM on the day after reference_date.
 
     Args:
         reference_date: ISO date string (e.g., "2025-10-28"). Must not be None or empty.
         time_str: Time string in HH:MM:SS or HH:MM format (e.g., "14:30:00" or "14:30").
+                  Hours can be >= 24 for next-day times (GTFS extended hours format).
                   Must not be None or empty.
 
     Returns:
@@ -589,6 +610,7 @@ def merge_date_and_time_to_iso(
 
     Examples:
         merge_date_and_time_to_iso("2025-10-28", "14:30:00") -> "2025-10-28T14:30:00"
+        merge_date_and_time_to_iso("2025-10-28", "25:30:00") -> "2025-10-29T01:30:00"
         merge_date_and_time_to_iso("2025-10-28", "14:30") -> "2025-10-28T14:30:00"
     """
     # Strict validation: reject None and empty strings
@@ -607,9 +629,26 @@ def merge_date_and_time_to_iso(
         minutes = int(time_parts[1])
         seconds = int(time_parts[2]) if len(time_parts) == 3 else 0
 
-        # Create datetime object
+        # Validate minutes and seconds
+        if minutes < 0 or minutes >= 60:
+            raise ValueError(f"Invalid minutes: {minutes}")
+        if seconds < 0 or seconds >= 60:
+            raise ValueError(f"Invalid seconds: {seconds}")
+
+        # Handle GTFS extended hours (hours >= 24)
+        # Calculate days to add and normalize hours to 0-23 range
+        days_to_add = hours // 24
+        normalized_hours = hours % 24
+
+        # Create datetime object with normalized hours
         reference_dt = datetime.datetime.fromisoformat(reference_date)
-        result_dt = reference_dt.replace(hour=hours, minute=minutes, second=seconds)
+        result_dt = reference_dt.replace(
+            hour=normalized_hours, minute=minutes, second=seconds
+        )
+
+        # Add extra days if hours >= 24
+        if days_to_add > 0:
+            result_dt = result_dt + datetime.timedelta(days=days_to_add)
 
         # Return ISO format string
         return result_dt.isoformat()

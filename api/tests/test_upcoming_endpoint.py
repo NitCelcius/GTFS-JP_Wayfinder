@@ -1,3 +1,4 @@
+import datetime
 import json
 from pathlib import Path
 
@@ -91,8 +92,17 @@ def test_upcoming_hardcoded(monkeypatch, client):
             f"Bus {i}: field set mismatch"
         )
 
-    # Verify no extra top-level fields
-    expected_top_level = {"stop_id", "buses"}
+    # Verify top-level fields include reference_date
+    expected_top_level = {"stop_id", "buses", "reference_date"}
     assert set(response_data.keys()) == expected_top_level, (
         "Top-level field set mismatch"
     )
+
+    # Verify reference_date is a valid ISO date string
+
+    try:
+        datetime.date.fromisoformat(response_data["reference_date"])
+    except (ValueError, TypeError) as e:
+        raise AssertionError(
+            f"Invalid reference_date format: {response_data['reference_date']}",
+        ) from e

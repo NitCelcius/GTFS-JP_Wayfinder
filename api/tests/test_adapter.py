@@ -1,0 +1,77 @@
+"""Tests for wayfinder_adapter utility functions."""
+
+import datetime
+
+import pytest
+
+from gtfs_jp_wayfinder.services.wayfinder_adapter import parse_begin_time
+
+
+class TestParseBeginTime:
+    """Test cases for parse_begin_time function."""
+
+    def test_parse_begin_time_with_hh_mm_ss(self):
+        """Test parsing HH:MM:SS format."""
+        reference_date, time_string = parse_begin_time("14:30:00")
+
+        # Reference date should be today when only time is provided
+        assert reference_date == datetime.date.today()
+        assert time_string == "14:30:00"
+
+    def test_parse_begin_time_with_iso_datetime(self):
+        """Test parsing ISO 8601 datetime format."""
+        reference_date, time_string = parse_begin_time("2025-10-28T14:30:00")
+
+        assert reference_date == datetime.date(2025, 10, 28)
+        assert time_string == "14:30:00"
+
+    def test_parse_begin_time_with_iso_datetime_with_seconds(self):
+        """Test parsing ISO datetime with seconds."""
+        reference_date, time_string = parse_begin_time("2025-10-28T09:15:45")
+
+        assert reference_date == datetime.date(2025, 10, 28)
+        assert time_string == "09:15:45"
+
+    def test_parse_begin_time_none(self):
+        """Test that None returns current datetime."""
+        reference_date, time_string = parse_begin_time(None)
+
+        # Should be today's date
+        assert reference_date == datetime.date.today()
+
+        # Time string should be in HH:MM:SS format
+        time_parts = time_string.split(":")
+        assert len(time_parts) == 3
+        assert all(part.isdigit() for part in time_parts)
+        assert 0 <= int(time_parts[0]) <= 23  # hours
+        assert 0 <= int(time_parts[1]) <= 59  # minutes
+        assert 0 <= int(time_parts[2]) <= 59  # seconds
+
+    def test_parse_begin_time_invalid_iso(self):
+        """Test that invalid ISO format raises ValueError."""
+        with pytest.raises(ValueError, match="Invalid ISO datetime format"):
+            parse_begin_time("2025-10-28T25:00:00")  # Invalid hour
+
+        with pytest.raises(ValueError, match="Invalid ISO datetime format"):
+            parse_begin_time("2025-13-01T12:00:00")  # Invalid month
+
+    def test_parse_begin_time_iso_with_timezone(self):
+        """Test parsing ISO datetime with timezone info."""
+        # Python's fromisoformat supports basic timezone info
+        reference_date, time_string = parse_begin_time("2025-10-28T14:30:00+09:00")
+
+        assert reference_date == datetime.date(2025, 10, 28)
+        assert time_string == "14:30:00"
+
+    def test_parse_begin_time_iso_different_dates(self):
+        """Test ISO datetime with various dates."""
+        test_cases = [
+            ("2025-01-01T00:00:00", datetime.date(2025, 1, 1), "00:00:00"),
+            ("2025-12-31T23:59:59", datetime.date(2025, 12, 31), "23:59:59"),
+            ("2024-02-29T12:00:00", datetime.date(2024, 2, 29), "12:00:00"),  # Leap year
+        ]
+
+        for iso_string, expected_date, expected_time in test_cases:
+            reference_date, time_string = parse_begin_time(iso_string)
+            assert reference_date == expected_date
+            assert time_string == expected_time

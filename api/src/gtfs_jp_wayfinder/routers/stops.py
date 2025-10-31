@@ -1,4 +1,3 @@
-import datetime
 import warnings
 
 from fastapi import APIRouter, HTTPException, Query
@@ -232,16 +231,13 @@ async def get_upcoming(
         ),
     ),
 ):
-    # Determine reference_date from begin_time parameter
-    reference_date = datetime.date.today().isoformat()
-    if begin_time and "T" in begin_time:
-        try:
-            reference_date = adapter.extract_reference_date_from_iso_datetime(
-                begin_time
-            )
-        except ValueError as e:
-            raise HTTPException(status_code=400, detail=str(e)) from e
-    # else: if HH:MM:SS format, use today's date as reference_date
+    # Parse begin_time parameter to determine reference_date
+    # (handles both HH:MM:SS and ISO datetime formats)
+    try:
+        reference_date_obj, _ = adapter.parse_split_date_str(begin_time)
+        reference_date = reference_date_obj.isoformat()
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
     # validate expand tokens
     tokens = parse_expand(expand)
@@ -260,7 +256,11 @@ async def get_upcoming(
 
     trips = adapter.get_trips_from_stop(stop_id, service_id)
     if trips is None:
-        return models.UpcomingBusEnriched(stop_id=stop_id, buses=[])
+        return models.UpcomingBusEnriched(
+            stop_id=stop_id,
+            reference_date=reference_date,
+            buses=[],
+        )
 
     # Apply client limit if provided
     trips_list = list(trips)
@@ -321,12 +321,15 @@ async def get_upcoming(
         if "stops" in tokens:
             try:
                 # Use parallel fetching for better performance
-                stops_map = await adapter.get_stops_from_trips_parallel(trip_ids)
+                stops_map = await adapter.get_stops_from_trips_parallel(
+                    trip_ids,
+                    reference_date,
+                )
             except Exception:
                 # Fallback to sequential if parallel approach fails
                 for trip_id in trip_ids:
                     try:
-                        stops_data = adapter.get_stops_from_trip(trip_id)
+                        stops_data = adapter.get_stops_from_trip(trip_id, reference_date)
                         stops_map[trip_id] = stops_data
                     except Exception:
                         stops_map[trip_id] = None
@@ -350,7 +353,15 @@ async def get_upcoming(
                     stops=stops_data,
                 ),
             )
-        return models.UpcomingBusEnriched(stop_id=stop_id, buses=enriched)
+        return models.UpcomingBusEnriched(
+            stop_id=stop_id,
+            reference_date=reference_date,
+            buses=enriched,
+        )
 
     # default
-    return models.UpcomingBusEnriched(stop_id=stop_id, buses=buses)
+    return models.UpcomingBusEnriched(
+        stop_id=stop_id,
+        reference_date=reference_date,
+        buses=buses,
+    )
