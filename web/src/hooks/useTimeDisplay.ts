@@ -58,7 +58,8 @@ export function useTimeDisplay(formatter?: TimeFormatterBase) {
 
       // Schedule next update - this will trigger state update
       timeoutId = setTimeout(() => scheduleNextUpdate(true), minInterval);
-    }; // Start the update cycle (don't update now on initial mount)
+    };
+    // Start the update cycle (don't update now on initial mount)
     scheduleNextUpdate(false);
 
     return () => {

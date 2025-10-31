@@ -8,7 +8,7 @@ export abstract class TimeFormatterBase {
    *                             - 正の値 = 未来（300 = "5分後"）
    *                             - 負の値 = 過去（-300 = "5分前"）
    *                             - ゼロ = 現在
-   * @returns フォーマットしたの表示文字列
+   * @returns フォーマットした表示文字列
    */
   abstract format(secondsUntilTarget: number): string;
 
@@ -18,7 +18,7 @@ export abstract class TimeFormatterBase {
    * @param secondsUntilTarget - 目標時刻までの秒数（正=未来、負=過去）
    * @returns 次回更新までのミリ秒数
    */
-  getNextUpdateMs(secondsUntilTarget: number = 1000): number {
+  getNextUpdateMs(secondsUntilTarget: number): number {
     return secondsUntilTarget;
   }
 }
@@ -97,12 +97,10 @@ export class DefaultTimeFormatter extends TimeFormatterBase {
       return secondsToNextMinute * 1000;
     }
 
-    // 60分以上: 表示形式が変わる時に更新（時間→分）
-    // 3600秒以上では "N時間後" を表示
-    // 3599秒になると "59分後" に変わる
-    // したがって3600秒の閾値を超える時に更新が必要
-    const secondsOverOneHour = absDiff - 3600;
-    return secondsOverOneHour * 1000;
+    // 60分以上: 表示形式が変わる時に更新（時間→分 または 2時間→1時間など）
+    // 3600秒ごとに更新するので、このあまりぶんを間隔とする
+    const secondsToNextHour = absDiff % 3600 === 0 ? 3600 : absDiff % 3600;
+    return secondsToNextHour * 1000;
   }
 }
 
