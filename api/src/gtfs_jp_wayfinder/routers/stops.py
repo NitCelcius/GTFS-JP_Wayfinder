@@ -96,7 +96,7 @@ async def get_nearby_stops(
 @router.get(
     "/{stop_id}",
     response_model=models.StopNameList,
-    summary="停留所名の取得",
+    summary="停留所情報の取得",
     description="停留所IDから停留所名の一覧を取得します。見つからない場合は空配列を返します。`_fields=location` で位置情報を含めます。",
     responses={
         200: {
@@ -117,12 +117,12 @@ async def get_nearby_stops(
         },
     },
 )
-async def get_stop(
+async def get_bus_stop_info(
     stop_id: str,
     _fields: str
     | None = Query(
         None,
-        description="追加で取得するフィールド (例: location)",
+        description="追加で取得するフィールド (例: location)。カンマ区切りで複数指定可能。",
     ),
 ):
     # Get stop names
@@ -130,20 +130,25 @@ async def get_stop(
         names = adapter.get_stop_names(stop_id)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e)) from e
-    
+
     if not isinstance(names, list):
         names = []
-    
+
+    # Parse requested fields (comma-separated)
+    requested_fields = set()
+    if _fields:
+        requested_fields = {field.strip() for field in _fields.split(",") if field.strip()}
+
     # Check if location field is requested
     location = None
-    if _fields and "location" in _fields:
+    if "location" in requested_fields:
         try:
             lat_lon = adapter.get_stop_lat_lon(stop_id)
             location = models.StopLatLon(lat=lat_lon[0], lon=lat_lon[1])
         except Exception as e:
             # If location not found, just omit it (location remains None)
-            warnings.warn(f"Could not fetch location for stop {stop_id}: {e}")
-    
+            warnings.warn(f"Could not fetch location for stop {stop_id}: {e}", stacklevel=2)
+
     return models.StopNameList(stop_names=names, location=location)
 
 
