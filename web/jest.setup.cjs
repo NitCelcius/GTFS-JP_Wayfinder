@@ -1,5 +1,6 @@
 // Jest setup file
 // Add custom matchers or global test setup here
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 require("@testing-library/jest-dom");
 
 // Mock environment variables for testing
