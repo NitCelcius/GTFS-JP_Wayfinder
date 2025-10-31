@@ -175,8 +175,12 @@ export function formatRelativeDate(timestamp: number): string {
   const date = new Date(timestamp);
   const now = new Date();
 
+  // Set time to start of day for accurate day comparison
+  const dateDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const nowDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
   // Calculate the difference in days
-  const diffMs = now.getTime() - date.getTime();
+  const diffMs = nowDay.getTime() - dateDay.getTime();
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
   // Format time as HH:MM

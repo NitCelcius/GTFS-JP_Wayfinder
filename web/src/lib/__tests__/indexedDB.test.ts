@@ -1,14 +1,14 @@
 import "fake-indexeddb/auto";
 
 import {
+  BusStopSearchRecord,
+  RouteSearchRecord,
   addBusStopSearch,
   addRouteSearch,
-  BusStopSearchRecord,
   clearBusStopSearches,
   clearRouteSearches,
   getBusStopSearches,
   getRouteSearches,
-  RouteSearchRecord,
 } from "../indexedDB";
 
 describe("indexedDB", () => {
@@ -95,12 +95,7 @@ describe("indexedDB", () => {
 
     it("should retrieve limited number of searches", async () => {
       for (let i = 0; i < 15; i++) {
-        await addRouteSearch(
-          `from${i}`,
-          `to${i}`,
-          `From ${i}`,
-          `To ${i}`
-        );
+        await addRouteSearch(`from${i}`, `to${i}`, `From ${i}`, `To ${i}`);
       }
 
       const searches = await getRouteSearches(5);
