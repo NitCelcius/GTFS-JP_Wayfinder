@@ -12,13 +12,16 @@ RUN pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted
 WORKDIR /app
 
 COPY ./src/ src/
+COPY ./data/ data/
 COPY ./pyproject.toml .
 COPY ./uv.lock .
+COPY ./README.md .
 
 # uvを使って依存関係のインストール
 # For environments with SSL certificate issues, uncomment the next line:
 # ENV UV_VERIFY_SSL=false
-RUN uv sync --frozen
+# Use --frozen for exact reproducibility, fallback without it if lock file has issues
+RUN uv sync --frozen --no-dev || uv sync --no-dev
 
 EXPOSE 8002
 
