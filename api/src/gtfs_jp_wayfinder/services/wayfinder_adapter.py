@@ -464,9 +464,9 @@ def get_stops_from_trip(
                             time_str,
                         )
                     except Exception:
-                        r[datetime_field] = None  # Will be skipped after this logic
+                        r[datetime_field] = None
                 else:
-                    r[datetime_field] = None  # Will be skipped after this logic
+                    r[datetime_field] = None
 
         # Add stop name using cache or individual lookup as fallback
         stop_id = r.get("stop_id")
@@ -593,13 +593,11 @@ def merge_date_and_time_to_iso(
     Merge a reference date (ISO format: YYYY-MM-DD) and time string (HH:MM:SS or HH:MM)
     into a full ISO 8601 datetime string.
 
-    Supports GTFS extended hours format where hours >= 24 indicate times on the next day.
-    For example, "25:30:00" means 1:30 AM on the day after reference_date.
+    Handles overnight trips by detecting when time is earlier than the previous time.
 
     Args:
         reference_date: ISO date string (e.g., "2025-10-28"). Must not be None or empty.
         time_str: Time string in HH:MM:SS or HH:MM format (e.g., "14:30:00" or "14:30").
-                  Hours can be >= 24 for next-day times (GTFS extended hours format).
                   Must not be None or empty.
 
     Returns:
@@ -610,7 +608,6 @@ def merge_date_and_time_to_iso(
 
     Examples:
         merge_date_and_time_to_iso("2025-10-28", "14:30:00") -> "2025-10-28T14:30:00"
-        merge_date_and_time_to_iso("2025-10-28", "25:30:00") -> "2025-10-29T01:30:00"
         merge_date_and_time_to_iso("2025-10-28", "14:30") -> "2025-10-28T14:30:00"
     """
     # Strict validation: reject None and empty strings
@@ -629,26 +626,9 @@ def merge_date_and_time_to_iso(
         minutes = int(time_parts[1])
         seconds = int(time_parts[2]) if len(time_parts) == 3 else 0
 
-        # Validate minutes and seconds
-        if minutes < 0 or minutes >= 60:
-            raise ValueError(f"Invalid minutes: {minutes}")
-        if seconds < 0 or seconds >= 60:
-            raise ValueError(f"Invalid seconds: {seconds}")
-
-        # Handle GTFS extended hours (hours >= 24)
-        # Calculate days to add and normalize hours to 0-23 range
-        days_to_add = hours // 24
-        normalized_hours = hours % 24
-
-        # Create datetime object with normalized hours
+        # Create datetime object
         reference_dt = datetime.datetime.fromisoformat(reference_date)
-        result_dt = reference_dt.replace(
-            hour=normalized_hours, minute=minutes, second=seconds
-        )
-
-        # Add extra days if hours >= 24
-        if days_to_add > 0:
-            result_dt = result_dt + datetime.timedelta(days=days_to_add)
+        result_dt = reference_dt.replace(hour=hours, minute=minutes, second=seconds)
 
         # Return ISO format string
         return result_dt.isoformat()
