@@ -5,7 +5,6 @@ import datetime
 from fastapi.testclient import TestClient
 
 from gtfs_jp_wayfinder.main import app
-from gtfs_jp_wayfinder.services.wayfinder_adapter import merge_date_and_time_to_iso
 
 client = TestClient(app)
 
@@ -59,6 +58,10 @@ def test_upcoming_stops_have_datetime_fields(monkeypatch, client):
 
         # If reference_date is provided, add datetime fields (like the real implementation)
         if reference_date:
+            from gtfs_jp_wayfinder.services.wayfinder_adapter import (
+                merge_date_and_time_to_iso,
+            )
+
             for stop in stops:
                 arrival_time = stop.get("arrival_time")
                 departure_time = stop.get("departure_time")
@@ -164,6 +167,10 @@ def test_upcoming_with_begin_time_iso_format(monkeypatch, client):
         ]
 
         if reference_date:
+            from gtfs_jp_wayfinder.services.wayfinder_adapter import (
+                merge_date_and_time_to_iso,
+            )
+
             for stop in stops:
                 stop["arrival_datetime"] = merge_date_and_time_to_iso(
                     reference_date,
