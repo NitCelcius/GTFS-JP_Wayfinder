@@ -26,6 +26,12 @@ const config: StorybookConfig = {
           '@': path.resolve(__dirname, '../src'),
         },
       },
+      define: {
+        'process.env.NEXT_PUBLIC_API_BASE_URL': JSON.stringify('http://localhost:8002'),
+      },
+      esbuild: {
+        jsxInject: `import React from 'react'`,
+      },
     });
   },
 };
