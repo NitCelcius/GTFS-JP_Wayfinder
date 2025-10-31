@@ -16,7 +16,7 @@ export interface BusInfo {
   status: string;
 }
 
-export interface JourneyStop {
+export interface JourneyStopData {
   id: string;
   name: string;
   type: "current" | "intermediate" | "destination";
@@ -32,7 +32,7 @@ export interface JourneyStop {
 export interface BusStopInfo {
   busStop: BusStop;
   nextBus?: BusInfo;
-  routeJourney: JourneyStop[];
+  routeJourney: JourneyStopData[];
 }
 
 // Re-exported API types for internal use
