@@ -85,6 +85,18 @@ export class ApiClient {
     }
   }
 
+  async getStopInfo(stopId: string, includeLocation: boolean = false) {
+    try {
+      return await getStopStopsStopIdGet({
+        path: { stop_id: stopId },
+        ...(includeLocation && { query: { _fields: "location" } }),
+      });
+    } catch (error) {
+      console.error("API Error:", error);
+      throw new Error(`Failed to fetch stop info for ${stopId}`);
+    }
+  }
+
   async searchRoutes(fromStop: string, toStop: string, serviceId?: string) {
     try {
       return await searchPathPathSearchGet({

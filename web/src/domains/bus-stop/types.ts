@@ -4,6 +4,8 @@ export interface BusStop {
   id: string;
   name: string;
   distance?: string;
+  lat?: number;
+  lon?: number;
 }
 
 export interface BusInfo {

@@ -9,6 +9,7 @@ import { useBusStopData } from "./hooks";
 import { BusStopHeader } from "./internal/BusStopHeader";
 import { NextBusInfo } from "./internal/NextBusInfo";
 import { TransferButton } from "./internal/TransferButton";
+import { WalkDirectionButton } from "./internal/WalkDirectionButton";
 
 interface BusStopInfoPageProps {
   busStopId?: string;
@@ -110,6 +111,16 @@ export function BusStopInfoPage({
               <span className="ml-2 text-gray-600">
                 バス停情報を読み込み中...
               </span>
+            </div>
+          )}
+
+          {/* Walk Direction Button */}
+          {busStopData?.lat && busStopData?.lon && (
+            <div className={styles.walkButtonWrapper}>
+              <WalkDirectionButton
+                lat={busStopData.lat}
+                lon={busStopData.lon}
+              />
             </div>
           )}
 

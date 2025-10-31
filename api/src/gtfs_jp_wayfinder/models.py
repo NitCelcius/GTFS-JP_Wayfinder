@@ -201,7 +201,18 @@ class TimedTravelResponse(BaseModel):
 
 class StopNameList(BaseModel):
     stop_names: list[str]
-    model_config = {"json_schema_extra": {"examples": [{"stop_names": ["中央公園"]}]}}
+    location: StopLatLon | None = None
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {"stop_names": ["中央公園"]},
+                {
+                    "stop_names": ["中央公園"],
+                    "location": {"lat": 39.71676, "lon": 140.13113},
+                },
+            ]
+        }
+    }
 
 
 class StopIdAndName(BaseModel):

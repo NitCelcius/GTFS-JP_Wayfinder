@@ -98,30 +98,54 @@ async def get_nearby_stops(
     "/{stop_id}",
     response_model=models.StopNameList,
     summary="停留所名の取得",
-    description="停留所IDから停留所名の一覧を取得します。見つからない場合は空配列を返します。",
+    description="停留所IDから停留所名の一覧を取得します。見つからない場合は空配列を返します。`_fields=location` で位置情報を含めます。",
     responses={
         200: {
             "description": "成功",
-            "content": {"application/json": {"example": {"stop_names": ["中央公園"]}}},
+            "content": {
+                "application/json": {
+                    "examples": {
+                        "basic": {"value": {"stop_names": ["中央公園"]}},
+                        "with_location": {
+                            "value": {
+                                "stop_names": ["中央公園"],
+                                "location": {"lat": 39.71676, "lon": 140.13113},
+                            }
+                        },
+                    }
+                }
+            },
         },
     },
 )
 async def get_stop(
     stop_id: str,
     _fields: str
-    | None = Query(  # TODO(ARG): implement optional field expansion (e.g. location)
+    | None = Query(
         None,
         description="追加で取得するフィールド (例: location)",
     ),
 ):
-    # For now we return names; location can be requested via fields=location
+    # Get stop names
     try:
         names = adapter.get_stop_names(stop_id)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e)) from e
-    if isinstance(names, list):
-        return models.StopNameList(stop_names=names)
-    return models.StopNameList(stop_names=[])
+    
+    if not isinstance(names, list):
+        names = []
+    
+    # Check if location field is requested
+    location = None
+    if _fields and "location" in _fields:
+        try:
+            lat_lon = adapter.get_stop_lat_lon(stop_id)
+            location = models.StopLatLon(lat=lat_lon[0], lon=lat_lon[1])
+        except Exception as e:
+            # If location not found, just omit it (location remains None)
+            warnings.warn(f"Could not fetch location for stop {stop_id}: {e}")
+    
+    return models.StopNameList(stop_names=names, location=location)
 
 
 @router.get(
