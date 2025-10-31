@@ -195,7 +195,9 @@ async def get_trip(trip_id: str):
 )
 async def trip_stops(trip_id: str):
     try:
-        records = adapter.get_stops_from_trip(trip_id)
+        # Use default date to populate datetime fields
+        reference_date = adapter.get_default_date()
+        records = adapter.get_stops_from_trip(trip_id, reference_date)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e)) from e
     return records

@@ -7,7 +7,7 @@ client = TestClient(app)
 
 def test_trip_stops(monkeypatch):
     # adapter returns list of stop records (dicts)
-    def fake_stops(trip_id):
+    def fake_stops(trip_id, reference_date=None):
         return [
             {
                 "trip_id": trip_id,
