@@ -1,4 +1,7 @@
+import { useState } from "react";
+
 import { BottomNavigation } from "@/components/common/BottomNavigation/BottomNavigation";
+import { BusStopDetailsModal } from "@/components/common/BusStopDetailsModal/BusStopDetailsModal";
 import { JourneyTimeline } from "@/components/common/JourneyTimeline/JourneyTimeline";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner/LoadingSpinner";
 import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
@@ -21,6 +24,18 @@ export function SearchResultPage({
   isLoading = false,
 }: SearchResultPageProps) {
   const timeDisplay = useTimeDisplay();
+  const [selectedStopName, setSelectedStopName] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleStationClick = (stationName: string) => {
+    setSelectedStopName(stationName);
+    setIsModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    setSelectedStopName(null);
+  };
 
   const selectedRoute =
     tripDetails.routes.find(
@@ -102,6 +117,7 @@ export function SearchResultPage({
               <JourneyTimeline
                 title="経路詳細"
                 stops={journeyStops}
+                onStopClick={handleStationClick}
                 renderRightContent={(stop) => (
                   <>
                     {showCosts && stop.cost !== undefined && stop.cost > 0 && (
@@ -149,6 +165,14 @@ export function SearchResultPage({
       </div>
 
       <BottomNavigation activeTab="route" onTabClick={handleBottomNavClick} />
+
+      {selectedStopName && (
+        <BusStopDetailsModal
+          isOpen={isModalOpen}
+          onClose={handleModalClose}
+          stopName={selectedStopName}
+        />
+      )}
     </div>
   );
 }
