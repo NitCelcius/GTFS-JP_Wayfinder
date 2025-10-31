@@ -3,7 +3,6 @@
 import datetime
 
 import pandas as pd
-import pytest
 from fastapi.testclient import TestClient
 
 from gtfs_jp_wayfinder import realtime_mock

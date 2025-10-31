@@ -87,9 +87,9 @@ def test_upcoming_hardcoded(monkeypatch, client):
         assert actual_bus["stops"] == expected_bus["stops"], f"Bus {i}: stops mismatch"
 
         # Verify expected fields are present (allow new optional fields like realtime_update)
-        for key in expected_bus.keys():
+        for key in expected_bus:
             assert key in actual_bus, f"Bus {i}: missing expected field '{key}'"
-        
+
         # Verify realtime_update field exists and has correct structure if present
         if "realtime_update" in actual_bus:
             rt_update = actual_bus["realtime_update"]
