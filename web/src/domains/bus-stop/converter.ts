@@ -124,6 +124,7 @@ export function convertTripStopsToJourneyStops(
 
 /**
  * Convert UpcomingBusEnrichedData to BusStopInfo
+ * Filters buses to find the next one after current time, or shows the last one if none available
  */
 export function convertUpcomingBusToBusStopInfo(
   data: UpcomingBusEnrichedData,
@@ -136,8 +137,22 @@ export function convertUpcomingBusToBusStopInfo(
     distance,
   };
 
-  // Get the next bus (first in the list)
-  const nextBusTrip = data.buses[0];
+  // Find the next bus after current time
+  const now = new Date();
+  let nextBusTrip = data.buses.find((trip) => {
+    try {
+      const departureTime = parseDateTime(trip.departure_datetime);
+      return departureTime >= now;
+    } catch {
+      return false;
+    }
+  });
+
+  // If no bus is available after current time, show the last bus
+  if (!nextBusTrip && data.buses.length > 0) {
+    nextBusTrip = data.buses[data.buses.length - 1];
+  }
+
   const nextBus = nextBusTrip ? convertTripToBusInfo(nextBusTrip) : undefined;
 
   // Convert trip stops to journey stops if available

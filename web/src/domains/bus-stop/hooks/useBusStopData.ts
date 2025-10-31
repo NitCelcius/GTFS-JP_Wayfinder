@@ -37,11 +37,17 @@ export function useBusStopData(busStopId?: string): UseBusStopDataResult {
 
         const apiClient = ApiClient.getInstance();
 
-        // Fetch upcoming buses with trip info expanded, limit to 1 for next bus only
+        // Get current time for filtering
+        const now = new Date();
+        const beginTime = now.toISOString();
+
+        // Fetch upcoming buses with trip info expanded
+        // Fetch more than 1 to filter by time and find next available bus
         const upcomingResponse = await apiClient.getBusStopInfoExpanded(
           busStopId,
           undefined,
-          1
+          10, // Fetch more buses to ensure we find one after current time
+          beginTime
         );
         const upcomingData = upcomingResponse.data as UpcomingBusEnrichedData;
 
