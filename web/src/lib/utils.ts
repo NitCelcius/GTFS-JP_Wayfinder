@@ -167,3 +167,29 @@ export function createDatetime(timeStr: string): Date {
   date.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0, 0);
   return date;
 }
+
+/**
+ * Format a timestamp to a relative date string (e.g., "今日 14:30", "昨日 12:15", "2日前 10:00")
+ */
+export function formatRelativeDate(timestamp: number): string {
+  const date = new Date(timestamp);
+  const now = new Date();
+
+  // Calculate the difference in days
+  const diffMs = now.getTime() - date.getTime();
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+  // Format time as HH:MM
+  const timeStr = `${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
+
+  if (diffDays === 0) {
+    return `今日 ${timeStr}`;
+  } else if (diffDays === 1) {
+    return `昨日 ${timeStr}`;
+  } else if (diffDays < 7) {
+    return `${diffDays}日前 ${timeStr}`;
+  } else {
+    // For older dates, show the actual date
+    return `${date.getMonth() + 1}/${date.getDate()} ${timeStr}`;
+  }
+}
