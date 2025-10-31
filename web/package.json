@@ -19,6 +19,7 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
+    "@hey-api/openapi-ts": "^0.83.1",
     "@dotenvx/dotenvx": "^1.50.1",
     "@faker-js/faker": "^10.0.0",
     "@tailwindcss/postcss": "^4.1.13",
