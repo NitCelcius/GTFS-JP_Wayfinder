@@ -30,7 +30,14 @@ function WalkIcon() {
 export function WalkDirectionButton({ lat, lon }: WalkDirectionButtonProps) {
   const handleClick = () => {
     // Validate coordinates are within valid geographic ranges
-    if (!isFinite(lat) || !isFinite(lon) || lat < -90 || lat > 90 || lon < -180 || lon > 180) {
+    if (
+      !isFinite(lat) ||
+      !isFinite(lon) ||
+      lat < -90 ||
+      lat > 90 ||
+      lon < -180 ||
+      lon > 180
+    ) {
       console.error("Invalid coordinates:", { lat, lon });
       return;
     }
