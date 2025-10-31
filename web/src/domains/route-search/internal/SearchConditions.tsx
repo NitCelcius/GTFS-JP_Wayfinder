@@ -1,4 +1,7 @@
+import { useState } from "react";
+
 import { Button } from "@/components/common/Button/Button";
+import { DepartureTimeModal } from "@/components/common/DepartureTimeModal";
 
 // Design-reference style tokens (size-spacing-*, color-route-*)
 const STYLES = {
@@ -64,31 +67,113 @@ function Divider() {
   );
 }
 
-function DepartureTime() {
+interface DepartureTimeProps {
+  selectedDateTime?: Date;
+  onDateTimeChange: (dateTime: Date | undefined) => void;
+}
+
+function DepartureTime({
+  selectedDateTime,
+  onDateTimeChange,
+}: DepartureTimeProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const formatDisplayTime = (dateTime: Date | undefined) => {
+    if (!dateTime) {
+      return "今すぐ";
+    }
+
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const selectedDay = new Date(
+      dateTime.getFullYear(),
+      dateTime.getMonth(),
+      dateTime.getDate()
+    );
+    const dayDiff = Math.floor(
+      (selectedDay.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
+    );
+
+    let dayLabel = "";
+    switch (dayDiff) {
+      case 0:
+        dayLabel = "今日";
+        break;
+      case 1:
+        dayLabel = "明日";
+        break;
+      case 2:
+        dayLabel = "明後日";
+        break;
+      default:
+        dayLabel = `${dayDiff}日後`;
+    }
+
+    const hours = dateTime.getHours().toString().padStart(2, "0");
+    const minutes = dateTime.getMinutes().toString().padStart(2, "0");
+
+    return `${dayLabel} ${hours}:${minutes}`;
+  };
+
+  const handleConfirm = (dateTime: Date | undefined) => {
+    onDateTimeChange(dateTime);
+  };
+
   return (
-    <div className={STYLES.departureTime}>
-      <div className={STYLES.departureTimeContent}>
-        <div className={STYLES.departureTimeInner}>
-          <div className={STYLES.departureTimeLabel}>
-            <p className={STYLES.departureTimeText}>出発時刻</p>
-          </div>
-          <div className={STYLES.departureTimeValue}>
-            <p className={STYLES.departureTimeValueText}>今すぐ</p>
+    <>
+      <div className={STYLES.departureTime}>
+        <div className={STYLES.departureTimeContent}>
+          <div className={STYLES.departureTimeInner}>
+            <div className={STYLES.departureTimeLabel}>
+              <p className={STYLES.departureTimeText}>出発時刻</p>
+            </div>
+            <div
+              className={STYLES.departureTimeValue}
+              onClick={() => setIsModalOpen(true)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  setIsModalOpen(true);
+                }
+              }}
+            >
+              <p className={STYLES.departureTimeValueText}>
+                {formatDisplayTime(selectedDateTime)}
+              </p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+      <DepartureTimeModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={handleConfirm}
+        initialDateTime={selectedDateTime}
+      />
+    </>
   );
 }
 
-export function SearchConditions() {
+interface SearchConditionsProps {
+  selectedDateTime?: Date;
+  onDateTimeChange: (dateTime: Date | undefined) => void;
+}
+
+export function SearchConditions({
+  selectedDateTime,
+  onDateTimeChange,
+}: SearchConditionsProps) {
   return (
     <div className={STYLES.container}>
       <div className={STYLES.content}>
         <div className={STYLES.inner}>
           <SearchHeader />
           <Divider />
-          <DepartureTime />
+          <DepartureTime
+            selectedDateTime={selectedDateTime}
+            onDateTimeChange={onDateTimeChange}
+          />
         </div>
       </div>
     </div>

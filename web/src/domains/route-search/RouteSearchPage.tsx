@@ -20,6 +20,8 @@ interface MainContentProps {
   onOriginStopSelect?: (result: BusStopSearchResult) => void;
   onDestinationStopSelect?: (result: BusStopSearchResult) => void;
   isLoading?: boolean;
+  selectedDateTime?: Date;
+  onDateTimeChange: (dateTime: Date | undefined) => void;
 }
 
 function MainContent({
@@ -31,6 +33,8 @@ function MainContent({
   onOriginStopSelect,
   onDestinationStopSelect,
   isLoading = false,
+  selectedDateTime,
+  onDateTimeChange,
 }: MainContentProps) {
   const isSearchEnabled =
     originValue.trim() && destinationValue.trim() && !isLoading;
@@ -45,7 +49,10 @@ function MainContent({
         onOriginStopSelect={onOriginStopSelect}
         onDestinationStopSelect={onDestinationStopSelect}
       />
-      <SearchConditions />
+      <SearchConditions
+        selectedDateTime={selectedDateTime}
+        onDateTimeChange={onDateTimeChange}
+      />
       <RouteSearchButton
         onClick={onSearch || (() => {})}
         disabled={!isSearchEnabled}
@@ -84,6 +91,9 @@ export function RouteSearchPage({
     result: null,
     error: null,
   });
+  const [selectedDateTime, setSelectedDateTime] = useState<Date | undefined>(
+    undefined
+  );
 
   const handleOriginStopSelect = (result: BusStopSearchResult) => {
     setOriginCandidateStopIds(result.candidate_stop_id_list);
@@ -130,8 +140,15 @@ export function RouteSearchPage({
       return;
     }
 
-    // Use current time as the begin_time
-    const beginTime = getCurrentTimeString();
+    // Use selected time if available, otherwise use current time
+    let beginTime: string;
+    if (selectedDateTime) {
+      // Format selected datetime to HH:MM:SS
+      beginTime = `${selectedDateTime.getHours().toString().padStart(2, "0")}:${selectedDateTime.getMinutes().toString().padStart(2, "0")}:00`;
+    } else {
+      // Use current time
+      beginTime = getCurrentTimeString();
+    }
 
     // Pass search parameters to parent (which will navigate to results page)
     const searchParams = {
@@ -159,6 +176,8 @@ export function RouteSearchPage({
           onOriginStopSelect={handleOriginStopSelect}
           onDestinationStopSelect={handleDestinationStopSelect}
           isLoading={routeSearchState.isLoading}
+          selectedDateTime={selectedDateTime}
+          onDateTimeChange={setSelectedDateTime}
         />
       </div>
       <BottomNavigation activeTab="route" onTabClick={handleBottomNavClick} />
