@@ -17,7 +17,7 @@ export function DepartureTimeModal({
 }: DepartureTimeModalProps) {
   const [selectedDate, setSelectedDate] = useState<Date>(() => {
     const date = initialDateTime || new Date();
-    date.setMinutes(0, 0, 0);
+    date.setSeconds(0, 0);
     return date;
   });
 
@@ -41,7 +41,7 @@ export function DepartureTimeModal({
   useEffect(() => {
     if (isOpen) {
       const newDate = initialDateTime || new Date();
-      newDate.setMinutes(0, 0, 0);
+      newDate.setSeconds(0, 0);
       setSelectedDate(newDate);
       setIsNow(!initialDateTime);
     }
@@ -66,7 +66,7 @@ export function DepartureTimeModal({
   const handleNowClick = () => {
     setIsNow(true);
     const now = new Date();
-    now.setMinutes(0, 0, 0);
+    now.setSeconds(0, 0);
     setSelectedDate(now);
   };
 
@@ -84,52 +84,71 @@ export function DepartureTimeModal({
     onClose();
   };
 
-  const handleDateChange = (field: "day" | "hour", value: number) => {
+  const handleDateChange = (
+    field: "month" | "day" | "hour" | "minute",
+    value: number
+  ) => {
     setIsNow(false);
     const newDate = new Date(selectedDate);
 
     switch (field) {
-      case "day": {
-        // Adjust the day relative to today
-        const today = new Date();
-        today.setHours(newDate.getHours(), 0, 0, 0);
-        today.setDate(today.getDate() + value);
-        setSelectedDate(today);
+      case "month": {
+        // When changing month, preserve the day if valid, otherwise adjust to last day of month
+        const currentDay = newDate.getDate();
+        newDate.setMonth(value);
+        // Check if day is still valid after month change
+        const daysInNewMonth = new Date(
+          newDate.getFullYear(),
+          value + 1,
+          0
+        ).getDate();
+        if (currentDay > daysInNewMonth) {
+          newDate.setDate(daysInNewMonth);
+        }
+        setSelectedDate(newDate);
         break;
       }
+      case "day":
+        newDate.setDate(value);
+        setSelectedDate(newDate);
+        break;
       case "hour":
         newDate.setHours(value);
-        newDate.setMinutes(0);
+        setSelectedDate(newDate);
+        break;
+      case "minute":
+        newDate.setMinutes(value);
         setSelectedDate(newDate);
         break;
     }
   };
 
-  // Calculate day offset from today (0 = today, 1 = tomorrow, etc.)
-  const getDayOffset = () => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const selected = new Date(selectedDate);
-    selected.setHours(0, 0, 0, 0);
-    return Math.floor((selected.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-  };
-
-  const getDayLabel = (offset: number) => {
-    switch (offset) {
-      case 0:
-        return "今日";
-      case 1:
-        return "明日";
-      case 2:
-        return "明後日";
-      default:
-        return `${offset}日後`;
-    }
+  // Get number of days in the selected month
+  const getDaysInMonth = () => {
+    return new Date(
+      selectedDate.getFullYear(),
+      selectedDate.getMonth() + 1,
+      0
+    ).getDate();
   };
 
   if (!isOpen) return null;
 
-  const currentDayOffset = getDayOffset();
+  const daysInMonth = getDaysInMonth();
+  const monthNames = [
+    "1月",
+    "2月",
+    "3月",
+    "4月",
+    "5月",
+    "6月",
+    "7月",
+    "8月",
+    "9月",
+    "10月",
+    "11月",
+    "12月",
+  ];
 
   return (
     <div
@@ -180,17 +199,38 @@ export function DepartureTimeModal({
 
           <div className={styles.pickerContainer}>
             <div className={styles.pickerColumn}>
+              <div className={styles.pickerLabel}>月</div>
+              <select
+                className={styles.pickerSelect}
+                value={selectedDate.getMonth()}
+                onChange={(e) =>
+                  handleDateChange("month", parseInt(e.target.value))
+                }
+              >
+                {monthNames.map((name, index) => (
+                  <option key={index} value={index}>
+                    {name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className={styles.pickerColumn}>
               <div className={styles.pickerLabel}>日</div>
               <select
                 className={styles.pickerSelect}
-                value={currentDayOffset}
-                onChange={(e) => handleDateChange("day", parseInt(e.target.value))}
+                value={selectedDate.getDate()}
+                onChange={(e) =>
+                  handleDateChange("day", parseInt(e.target.value))
+                }
               >
-                {[0, 1, 2, 3, 4, 5, 6].map((offset) => (
-                  <option key={offset} value={offset}>
-                    {getDayLabel(offset)}
-                  </option>
-                ))}
+                {Array.from({ length: daysInMonth }, (_, i) => i + 1).map(
+                  (day) => (
+                    <option key={day} value={day}>
+                      {day}
+                    </option>
+                  )
+                )}
               </select>
             </div>
 
@@ -199,11 +239,30 @@ export function DepartureTimeModal({
               <select
                 className={styles.pickerSelect}
                 value={selectedDate.getHours()}
-                onChange={(e) => handleDateChange("hour", parseInt(e.target.value))}
+                onChange={(e) =>
+                  handleDateChange("hour", parseInt(e.target.value))
+                }
               >
                 {Array.from({ length: 24 }, (_, i) => i).map((hour) => (
                   <option key={hour} value={hour}>
                     {hour.toString().padStart(2, "0")}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className={styles.pickerColumn}>
+              <div className={styles.pickerLabel}>分</div>
+              <select
+                className={styles.pickerSelect}
+                value={selectedDate.getMinutes()}
+                onChange={(e) =>
+                  handleDateChange("minute", parseInt(e.target.value))
+                }
+              >
+                {Array.from({ length: 60 }, (_, i) => i).map((minute) => (
+                  <option key={minute} value={minute}>
+                    {minute.toString().padStart(2, "0")}
                   </option>
                 ))}
               </select>

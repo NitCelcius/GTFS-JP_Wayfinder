@@ -83,35 +83,12 @@ function DepartureTime({
       return "今すぐ";
     }
 
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const selectedDay = new Date(
-      dateTime.getFullYear(),
-      dateTime.getMonth(),
-      dateTime.getDate()
-    );
-    const dayDiff = Math.floor(
-      (selectedDay.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
-    );
-
-    let dayLabel = "";
-    switch (dayDiff) {
-      case 0:
-        dayLabel = "今日";
-        break;
-      case 1:
-        dayLabel = "明日";
-        break;
-      case 2:
-        dayLabel = "明後日";
-        break;
-      default:
-        dayLabel = `${dayDiff}日後`;
-    }
-
+    const month = dateTime.getMonth() + 1;
+    const day = dateTime.getDate();
     const hours = dateTime.getHours().toString().padStart(2, "0");
+    const minutes = dateTime.getMinutes().toString().padStart(2, "0");
 
-    return `${dayLabel} ${hours}:00`;
+    return `${month}月${day}日 ${hours}:${minutes}`;
   };
 
   const handleConfirm = (dateTime: Date | undefined) => {
