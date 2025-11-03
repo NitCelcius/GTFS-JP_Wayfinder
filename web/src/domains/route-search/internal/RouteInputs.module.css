@@ -48,7 +48,6 @@
   border: none;
   outline: none;
   color: var(--color-text);
-  cursor: pointer;
 }
 
 .inputField::placeholder {
