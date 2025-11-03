@@ -1,5 +1,5 @@
 .container {
-  padding: var(--size-spacing-md) var(--size-spacing-lg);
+  padding: var(--size-spacing-lg) var(--size-spacing-lg) var(--size-spacing-md);
   width: 100%;
 }
 
