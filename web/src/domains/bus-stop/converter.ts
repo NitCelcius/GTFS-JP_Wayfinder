@@ -1,11 +1,6 @@
 // Conversion logic for transforming API responses to domain types
-import type {
-  EnrichedTripData,
-  NearbyStop,
-  TripTimedStopData,
-  UpcomingBusEnrichedData,
-} from "./types";
-import type { BusInfo, BusStop, BusStopInfo, JourneyStopData } from "./types";
+import type { EnrichedTripData, NearbyStop, TripTimedStopData } from "./types";
+import type { BusInfo, BusStop, JourneyStopData } from "./types";
 
 /**
  * Convert ISO datetime string to Date object
@@ -124,17 +119,26 @@ export function convertTripStopsToJourneyStops(
 
 /**
  * Select the best bus and find its index in the buses array
- * 
+ *
  * Selection logic:
  * 1. If there are future buses (after currentTime), pick the earliest one (minimum time)
  * 2. If all buses are in the past (before currentTime), pick the latest one (maximum time)
  *    This allows users to see the bus they just missed
- * 
+ *
  * Works correctly regardless of the order buses are returned from the API.
  * Returns the index of the best bus, or -1 if no buses are available
- * 
+ *
  * @param buses - List of buses to select from
  * @param currentTime - Current time for comparison (optional). If not provided, assumes all buses are future.
+ */
+/**
+ * Select the best bus index from a list based on current time
+ * Strategy 1: If there are future buses, pick the earliest one
+ * Strategy 2: If all buses are in the past, pick the most recent one
+ *
+ * @param buses - The list of upcoming buses to select from
+ * @param currentTime - The reference time for selection (defaults to now)
+ * @returns The index of the best bus, or -1 if the list is empty
  */
 function selectBestBusIndex(
   buses: EnrichedTripData[],
@@ -205,50 +209,37 @@ function selectBestBusIndex(
 }
 
 /**
- * Convert UpcomingBusEnrichedData to BusStopInfo
- * @param currentTime - Optional current time for intelligent bus selection (if provided, can pick past buses if all have passed)
+ * Convert a list of EnrichedTripData (buses) to an array of BusInfo
  */
-export function convertUpcomingBusToBusStopInfo(
-  data: UpcomingBusEnrichedData,
-  stopName: string,
-  distance?: string,
-  lat?: number,
-  lon?: number,
-  currentTime?: Date
-): BusStopInfo {
-  const busStop: BusStop = {
-    id: data.stop_id,
-    name: stopName,
-    distance,
-    lat,
-    lon,
-  };
+export function convertBusesToBusInfoList(
+  buses: EnrichedTripData[]
+): BusInfo[] {
+  return buses.map(convertTripToBusInfo);
+}
 
-  // Convert all buses to BusInfo
-  const buses: BusInfo[] = data.buses.map(convertTripToBusInfo);
-
-  // Find the index of the best bus to display, passing current time for intelligent selection
-  const currentBusIndex = selectBestBusIndex(
-    data.buses,
-    currentTime || new Date()
-  );
-  const nextBus = currentBusIndex >= 0 ? buses[currentBusIndex] : undefined;
-
-  // Convert trip stops to journey stops if available
-  const nextBusTrip =
-    currentBusIndex >= 0 ? data.buses[currentBusIndex] : undefined;
-  const routeJourney: JourneyStopData[] = nextBusTrip?.stops
-    ? convertTripStopsToJourneyStops(nextBusTrip.stops, data.stop_id)
-    : [];
-
-  return {
-    busStop,
-    buses,
-    busTrips: data.buses,
-    currentBusIndex,
-    nextBus,
-    routeJourney,
-  };
+/**
+ * Select the best bus to display from a list based on current time
+ * Strategy 1: If there are future buses, pick the earliest one
+ * Strategy 2: If all buses are in the past, pick the most recent one
+ *
+ * @param buses - The list of upcoming buses to select from
+ * @param currentTime - The reference time for selection (defaults to now)
+ * @returns An object with the selected bus index and the bus info, or undefined if no buses available
+ */
+export function selectBestBus(
+  buses: EnrichedTripData[],
+  busInfoList: BusInfo[],
+  currentTime: Date = new Date()
+): { index: number; busInfo: BusInfo; trip: EnrichedTripData } | undefined {
+  const bestIndex = selectBestBusIndex(buses, currentTime);
+  if (bestIndex >= 0) {
+    return {
+      index: bestIndex,
+      busInfo: busInfoList[bestIndex],
+      trip: buses[bestIndex],
+    };
+  }
+  return undefined;
 }
 
 /**
