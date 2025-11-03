@@ -4,38 +4,12 @@ import svgPaths from "@/app/imports/svg-uqfc70duf5";
 import { BusStopSearchModal } from "@/components/common";
 import type { BusStopSearchResult } from "@/types";
 
-// Design-reference style constants
-const STYLES = {
-  container: "flex flex-col gap-[var(--size-spacing-sm)] w-full",
-  icon: "relative shrink-0 w-[var(--size-icon-lg)] h-[var(--size-icon-lg)]",
-  iconSvg: "block size-full",
-  arrowContainer:
-    "flex h-[var(--size-icon-md)] items-center justify-center relative shrink-0 w-[var(--size-icon-md)]",
-  arrowIcon: "relative w-[var(--size-icon-md)] h-[var(--size-icon-md)]",
-  arrowIconDown: "flex-none rotate-[90deg]",
-  routeInput:
-    "box-border content-stretch flex gap-[var(--size-spacing-sm)] h-[var(--size-container-sm)] items-center p-[var(--size-spacing-sm)] relative rounded-[var(--radius-lg)] shrink-0 w-full max-w-[var(--max-w-mobile)]",
-  inputField:
-    "flex-1 bg-transparent border-none outline-none text-black placeholder:text-[color:var(--color-route-placeholder-text)]",
-  inputFieldClickable:
-    "flex-1 bg-transparent border-none outline-none text-black placeholder:text-[color:var(--color-route-placeholder-text)] cursor-pointer",
-  swapButtonContainer:
-    "flex flex-row items-center justify-center gap-[var(--size-spacing-md)] py-[var(--size-spacing-sm)]",
-  swapButton:
-    "flex flex-col items-center justify-center gap-[var(--size-spacing-xs)] cursor-pointer hover:opacity-80 transition-opacity",
-  swapIcon: "w-[1.5rem] h-[1.5rem] flex items-center justify-center",
-  swapText: "text-[0.75rem] text-gray-600",
-} as const;
-
-const INPUT_BACKGROUNDS = {
-  origin: "bg-[color:var(--color-route-origin-bg)]",
-  destination: "bg-[color:var(--color-route-destination-bg)]",
-} as const;
+import styles from "./RouteInputs.module.css";
 
 function LocationIcon() {
   return (
-    <div className={STYLES.icon}>
-      <svg className={STYLES.iconSvg} viewBox="0 0 44 44" aria-hidden="true">
+    <div className={styles.icon}>
+      <svg className={styles.iconSvg} viewBox="0 0 44 44" aria-hidden="true">
         <path
           d={svgPaths.pb48f200}
           fill="var(--color-foreground)"
@@ -48,8 +22,8 @@ function LocationIcon() {
 
 function FlagIcon() {
   return (
-    <div className={STYLES.icon}>
-      <svg className={STYLES.iconSvg} viewBox="0 0 44 44" aria-hidden="true">
+    <div className={styles.icon}>
+      <svg className={styles.iconSvg} viewBox="0 0 44 44" aria-hidden="true">
         <path
           d={svgPaths.p32615cf0}
           fill="var(--color-foreground)"
@@ -62,8 +36,8 @@ function FlagIcon() {
 
 function ArrowIcon() {
   return (
-    <div className={STYLES.arrowIcon}>
-      <svg className={STYLES.iconSvg} viewBox="0 0 40 40" aria-hidden="true">
+    <div className={styles.arrowIcon}>
+      <svg className={styles.iconSvg} viewBox="0 0 40 40" aria-hidden="true">
         <path
           d={svgPaths.p3d8ec380}
           fill="var(--color-foreground)"
@@ -107,21 +81,15 @@ function RouteInput({
   onChange,
   onInputClick,
 }: RouteInputProps) {
-  const bgClass =
-    type === "origin"
-      ? INPUT_BACKGROUNDS.origin
-      : INPUT_BACKGROUNDS.destination;
+  const bgClass = type === "origin" ? styles.bgOrigin : styles.bgDestination;
   const Icon = type === "origin" ? LocationIcon : FlagIcon;
-  const inputClass = onInputClick
-    ? STYLES.inputFieldClickable
-    : STYLES.inputField;
 
   return (
-    <div className={`${STYLES.routeInput} ${bgClass}`}>
+    <div className={`${styles.routeInput} ${bgClass}`}>
       <Icon />
       <input
         type="text"
-        className={inputClass}
+        className={styles.inputField}
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -171,7 +139,7 @@ export function RouteInputs({
 
   return (
     <>
-      <div className={STYLES.container}>
+      <div className={styles.container}>
         <RouteInput
           type="origin"
           placeholder="出発するバス停・場所"
@@ -181,17 +149,17 @@ export function RouteInputs({
             onOriginStopSelect ? () => setIsOriginModalOpen(true) : undefined
           }
         />
-        <div className={STYLES.swapButtonContainer}>
-          <div className={STYLES.arrowContainer}>
-            <div className={STYLES.arrowIconDown}>
+        <div className={styles.swapButtonContainer}>
+          <div className={styles.arrowContainer}>
+            <div className={styles.arrowIconDown}>
               <ArrowIcon />
             </div>
           </div>
-          <button className={STYLES.swapButton} onClick={handleSwap}>
-            <div className={STYLES.swapIcon}>
+          <button className={styles.swapButton} onClick={handleSwap}>
+            <div className={styles.swapIcon}>
               <SwapIcon />
             </div>
-            <span className={STYLES.swapText}>入れ替え</span>
+            <span className={styles.swapText}>入れ替え</span>
           </button>
         </div>
         <RouteInput

@@ -1,38 +1,12 @@
 import { Button } from "@/components/common/Button/Button";
 
-// Design-reference style tokens (size-spacing-*, color-route-*)
-const STYLES = {
-  container: "relative shrink-0 w-full",
-  content: "flex flex-col justify-center overflow-clip relative size-full",
-  inner:
-    "box-border content-stretch flex flex-col gap-[var(--size-spacing-md)] items-start justify-center px-[var(--size-spacing-2xl)] py-[var(--size-spacing-2xl)] relative w-full",
-  searchHeader:
-    "content-stretch flex flex-row items-center justify-between gap-[var(--size-spacing-md)] relative shrink-0 w-full",
-  searchHeaderTitle:
-    "flex flex-col font-['Inter:Regular',_'Noto_Sans_JP:Regular',_sans-serif] font-normal justify-center leading-[0] not-italic relative shrink-0 text-black text-nowrap",
-  searchHeaderText: "leading-[normal] whitespace-pre",
-  divider: "h-0 relative shrink-0 w-full max-w-[var(--max-w-mobile)]",
-  dividerSvg: "absolute bottom-0 left-0 right-0 top-[-0.0625rem]",
-  dividerSvgElement: "block size-full",
-  departureTime: "relative shrink-0 w-full",
-  departureTimeContent:
-    "flex flex-row items-center justify-center overflow-clip relative size-full",
-  departureTimeInner:
-    "box-border content-stretch flex gap-[var(--size-spacing-md)] items-center justify-center leading-[0] not-italic p-[var(--size-spacing-md)] relative text-nowrap w-full",
-  departureTimeLabel:
-    "flex flex-col font-['Inter:Regular',_'Noto_Sans_JP:Regular',_sans-serif] font-normal justify-center relative shrink-0 text-black",
-  departureTimeValue:
-    "flex flex-col font-['Inter:Bold',_'Noto_Sans_JP:Bold',_sans-serif] font-bold justify-center relative shrink-0 text-[color:var(--color-route-accent-text)] cursor-pointer",
-  departureTimeValueText:
-    "[text-underline-position:from-font] decoration-solid leading-[normal] text-nowrap underline whitespace-pre",
-  departureTimeText: "leading-[normal] text-nowrap whitespace-pre",
-} as const;
+import styles from "./SearchConditions.module.css";
 
 function SearchHeader() {
   return (
-    <div className={STYLES.searchHeader}>
-      <div className={STYLES.searchHeaderTitle}>
-        <p className={STYLES.searchHeaderText}>検索条件</p>
+    <div className={styles.searchHeader}>
+      <div className={styles.searchHeaderTitle}>
+        <p className={styles.searchHeaderText}>検索条件</p>
       </div>
       <Button text="リセット" variant="reset" onClick={() => {}} />
     </div>
@@ -41,10 +15,10 @@ function SearchHeader() {
 
 function Divider() {
   return (
-    <div className={STYLES.divider}>
-      <div className={STYLES.dividerSvg}>
+    <div className={styles.divider}>
+      <div className={styles.dividerSvg}>
         <svg
-          className={STYLES.dividerSvgElement}
+          className={styles.dividerSvgElement}
           fill="none"
           preserveAspectRatio="none"
           viewBox="0 0 346 1"
@@ -66,14 +40,14 @@ function Divider() {
 
 function DepartureTime() {
   return (
-    <div className={STYLES.departureTime}>
-      <div className={STYLES.departureTimeContent}>
-        <div className={STYLES.departureTimeInner}>
-          <div className={STYLES.departureTimeLabel}>
-            <p className={STYLES.departureTimeText}>出発時刻</p>
+    <div className={styles.departureTime}>
+      <div className={styles.departureTimeContent}>
+        <div className={styles.departureTimeInner}>
+          <div className={styles.departureTimeLabel}>
+            <p className={styles.departureTimeText}>出発時刻</p>
           </div>
-          <div className={STYLES.departureTimeValue}>
-            <p className={STYLES.departureTimeValueText}>今すぐ</p>
+          <div className={styles.departureTimeValue}>
+            <p className={styles.departureTimeValueText}>今すぐ</p>
           </div>
         </div>
       </div>
@@ -83,9 +57,9 @@ function DepartureTime() {
 
 export function SearchConditions() {
   return (
-    <div className={STYLES.container}>
-      <div className={STYLES.content}>
-        <div className={STYLES.inner}>
+    <div className={styles.container}>
+      <div className={styles.content}>
+        <div className={styles.inner}>
           <SearchHeader />
           <Divider />
           <DepartureTime />

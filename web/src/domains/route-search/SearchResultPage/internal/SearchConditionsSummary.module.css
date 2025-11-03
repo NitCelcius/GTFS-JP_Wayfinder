@@ -1,12 +1,82 @@
 .container {
-  padding: var(--size-spacing-sm);
+  padding: var(--size-spacing-lg) var(--size-spacing-lg) var(--size-spacing-md);
+  width: 100%;
 }
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--size-spacing-md);
+  position: relative;
+  flex-shrink: 0;
+  width: 100%;
+}
+
+.title {
+  display: flex;
+  flex-direction: column;
+  font-family: Inter, "Noto Sans JP", sans-serif;
+  font-weight: 400;
+  justify-content: center;
+  line-height: 0;
+  position: relative;
+  flex-shrink: 0;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
 .titleText {
+  line-height: normal;
+  white-space: pre;
   font-size: 0.875rem;
 }
+
 .divider {
-  margin-top: var(--size-spacing-sm);
+  height: 0;
+  position: relative;
+  flex-shrink: 0;
+  width: 100%;
 }
+
+.dividerSvg {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: -0.0625rem;
+}
+
+.dividerSvgElement {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.departureTime {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  flex-shrink: 0;
+  width: 100%;
+}
+
+.departureTimeLabel {
+  display: flex;
+  flex-direction: column;
+  font-family: Inter, "Noto Sans JP", sans-serif;
+  font-weight: 400;
+  justify-content: center;
+  line-height: 0;
+  position: relative;
+  flex-shrink: 0;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
 .departureTimeText {
+  line-height: normal;
+  white-space: pre;
   font-size: 0.9rem;
 }
