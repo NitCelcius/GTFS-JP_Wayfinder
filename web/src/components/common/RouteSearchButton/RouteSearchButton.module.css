@@ -19,7 +19,7 @@
 }
 
 .buttonDisabled {
-  background: var(--color-gray-300);
+  background: var(--color-route-inactive-bg);
   cursor: not-allowed;
   opacity: 0.5;
 }

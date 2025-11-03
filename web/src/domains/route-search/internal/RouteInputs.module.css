@@ -48,11 +48,14 @@
   border: none;
   outline: none;
   color: var(--color-text);
-  cursor: pointer;
 }
 
 .inputField::placeholder {
   color: var(--color-route-placeholder-text);
+}
+
+.inputFieldClickable {
+  cursor: pointer;
 }
 .swapButtonContainer {
   display: flex;
