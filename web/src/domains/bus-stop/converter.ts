@@ -123,14 +123,98 @@ export function convertTripStopsToJourneyStops(
 }
 
 /**
+ * Select the best bus and find its index in the buses array
+ * 
+ * Selection logic:
+ * 1. If there are future buses (after currentTime), pick the earliest one (minimum time)
+ * 2. If all buses are in the past (before currentTime), pick the latest one (maximum time)
+ *    This allows users to see the bus they just missed
+ * 
+ * Works correctly regardless of the order buses are returned from the API.
+ * Returns the index of the best bus, or -1 if no buses are available
+ * 
+ * @param buses - List of buses to select from
+ * @param currentTime - Current time for comparison (optional). If not provided, assumes all buses are future.
+ */
+function selectBestBusIndex(
+  buses: EnrichedTripData[],
+  currentTime?: Date
+): number {
+  if (buses.length === 0) return -1;
+  if (buses.length === 1) return 0;
+
+  let bestIndex = 0;
+  let bestTime = parseDateTime(buses[0].arrival_datetime);
+
+  // Parse all bus times
+  const busTimes: Date[] = [];
+  for (let i = 0; i < buses.length; i++) {
+    try {
+      busTimes[i] = parseDateTime(buses[i].arrival_datetime);
+    } catch {
+      console.warn(
+        `Failed to parse bus arrival datetime: ${buses[i].arrival_datetime}`
+      );
+      busTimes[i] = new Date(0); // Use epoch as fallback (will be treated as very old)
+    }
+  }
+
+  // Check if there are any future buses
+  const hasFutureBuses =
+    currentTime && busTimes.some((time) => time > currentTime);
+
+  if (hasFutureBuses) {
+    // Strategy 1: Pick the earliest future bus (minimum time among future buses)
+    bestIndex = 0;
+    bestTime = busTimes[0];
+
+    for (let i = 1; i < busTimes.length; i++) {
+      // Find the earliest bus that is still in the future
+      if (busTimes[i] > currentTime! && busTimes[i] < bestTime) {
+        bestIndex = i;
+        bestTime = busTimes[i];
+      }
+    }
+
+    // If the best bus we found is in the past, find the earliest future bus
+    if (bestTime <= currentTime!) {
+      for (let i = 0; i < busTimes.length; i++) {
+        if (busTimes[i] > currentTime!) {
+          if (i === 0 || busTimes[i] < bestTime) {
+            bestIndex = i;
+            bestTime = busTimes[i];
+          }
+        }
+      }
+    }
+  } else {
+    // Strategy 2: All buses are in the past, pick the latest one (maximum time)
+    // This shows the user the most recent bus they could have taken
+    bestIndex = 0;
+    bestTime = busTimes[0];
+
+    for (let i = 1; i < busTimes.length; i++) {
+      if (busTimes[i] > bestTime) {
+        bestIndex = i;
+        bestTime = busTimes[i];
+      }
+    }
+  }
+
+  return bestIndex;
+}
+
+/**
  * Convert UpcomingBusEnrichedData to BusStopInfo
+ * @param currentTime - Optional current time for intelligent bus selection (if provided, can pick past buses if all have passed)
  */
 export function convertUpcomingBusToBusStopInfo(
   data: UpcomingBusEnrichedData,
   stopName: string,
   distance?: string,
   lat?: number,
-  lon?: number
+  lon?: number,
+  currentTime?: Date
 ): BusStopInfo {
   const busStop: BusStop = {
     id: data.stop_id,
@@ -140,17 +224,28 @@ export function convertUpcomingBusToBusStopInfo(
     lon,
   };
 
-  // Get the next bus (first in the list)
-  const nextBusTrip = data.buses[0];
-  const nextBus = nextBusTrip ? convertTripToBusInfo(nextBusTrip) : undefined;
+  // Convert all buses to BusInfo
+  const buses: BusInfo[] = data.buses.map(convertTripToBusInfo);
+
+  // Find the index of the best bus to display, passing current time for intelligent selection
+  const currentBusIndex = selectBestBusIndex(
+    data.buses,
+    currentTime || new Date()
+  );
+  const nextBus = currentBusIndex >= 0 ? buses[currentBusIndex] : undefined;
 
   // Convert trip stops to journey stops if available
+  const nextBusTrip =
+    currentBusIndex >= 0 ? data.buses[currentBusIndex] : undefined;
   const routeJourney: JourneyStopData[] = nextBusTrip?.stops
     ? convertTripStopsToJourneyStops(nextBusTrip.stops, data.stop_id)
     : [];
 
   return {
     busStop,
+    buses,
+    busTrips: data.buses,
+    currentBusIndex,
     nextBus,
     routeJourney,
   };

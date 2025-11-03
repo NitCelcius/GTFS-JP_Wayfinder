@@ -36,12 +36,39 @@
   align-items: center;
   justify-content: space-between;
 }
+.navButton {
+  font-size: 0.875rem;
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--size-spacing-xs);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--size-spacing-xs) var(--size-spacing-sm);
+  border-radius: var(--radius-sm);
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+.navButton:hover {
+  background-color: var(--color-primary-light);
+  color: var(--color-primary-dark);
+}
+.navButton:active {
+  transform: scale(0.98);
+}
 .navButtonDisabled {
   font-size: 0.875rem;
   color: var(--color-gray-400);
   display: flex;
   align-items: center;
   gap: var(--size-spacing-xs);
+  background: none;
+  border: none;
+  cursor: not-allowed;
+  padding: var(--size-spacing-xs) var(--size-spacing-sm);
+  border-radius: var(--radius-sm);
 }
 .indicator {
   position: absolute;

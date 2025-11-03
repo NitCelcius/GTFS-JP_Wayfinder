@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { BottomNavigation } from "@/components/common/BottomNavigation/BottomNavigation";
 import { JourneyTimeline } from "@/components/common/JourneyTimeline/JourneyTimeline";
@@ -7,6 +7,7 @@ import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
 import { useTimeDisplay } from "@/hooks";
 
 import styles from "./BusStopInfoPage.module.css";
+import { convertTripStopsToJourneyStops } from "./converter";
 import { useBusStopData } from "./hooks";
 import { BusStopHeader } from "./internal/BusStopHeader";
 import { NextBusInfo } from "./internal/NextBusInfo";
@@ -30,6 +31,14 @@ export function BusStopInfoPage({
   const { data, isLoading, error } = useBusStopData(busStopId);
   const timeDisplay = useTimeDisplay();
   const [showShareModal, setShowShareModal] = useState(false);
+  const [currentBusIndex, setCurrentBusIndex] = useState(0);
+
+  // When data loads, set the current bus index to the "best" bus
+  useEffect(() => {
+    if (data && data.currentBusIndex >= 0) {
+      setCurrentBusIndex(data.currentBusIndex);
+    }
+  }, [data]);
 
   const handleBottomNavClick = (tab: "bus-stop" | "route" | "recent") => {
     switch (tab) {
@@ -56,6 +65,18 @@ export function BusStopInfoPage({
 
   const handleCloseShareModal = () => {
     setShowShareModal(false);
+  };
+
+  const handlePreviousBus = () => {
+    if (data && currentBusIndex > 0) {
+      setCurrentBusIndex(currentBusIndex - 1);
+    }
+  };
+
+  const handleNextBus = () => {
+    if (data && currentBusIndex < data.buses.length - 1) {
+      setCurrentBusIndex(currentBusIndex + 1);
+    }
   };
 
   const InfoIcon = () => (
@@ -97,8 +118,16 @@ export function BusStopInfoPage({
   }
 
   const busStopData = data?.busStop;
-  const nextBus = data?.nextBus;
-  const routeJourney = data?.routeJourney || [];
+
+  // Compute route journey for the currently selected bus
+  const routeJourney = data
+    ? data.busTrips[currentBusIndex]?.stops
+      ? convertTripStopsToJourneyStops(
+          data.busTrips[currentBusIndex].stops,
+          data.busStop.id
+        )
+      : []
+    : [];
 
   return (
     <>
@@ -139,8 +168,14 @@ export function BusStopInfoPage({
                   </span>
                 </div>
               </div>
-            ) : nextBus ? (
-              <NextBusInfo busInfo={nextBus} />
+            ) : data.buses.length > 0 ? (
+              <NextBusInfo
+                busInfo={data.buses[currentBusIndex]}
+                canShowPrevious={currentBusIndex > 0}
+                canShowNext={currentBusIndex < data.buses.length - 1}
+                onPreviousBus={handlePreviousBus}
+                onNextBus={handleNextBus}
+              />
             ) : (
               <div className={styles.panelCentered}>
                 <span className="text-gray-600">
