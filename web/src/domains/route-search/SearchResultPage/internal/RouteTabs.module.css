@@ -17,7 +17,9 @@
   flex-shrink: 0;
   width: 8.6875rem;
   cursor: pointer;
-  transition: color 0.15s;
+  transition:
+    color 0.15s,
+    background-color 0.15s;
   display: flex;
   align-items: center;
   justify-content: center;
