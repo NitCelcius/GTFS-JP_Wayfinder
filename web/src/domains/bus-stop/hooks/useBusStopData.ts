@@ -37,11 +37,17 @@ export function useBusStopData(busStopId?: string): UseBusStopDataResult {
 
         const apiClient = ApiClient.getInstance();
 
-        // Fetch upcoming buses with trip info expanded, limit to 1 for next bus only
+        // Pass current time to API to ensure timezone-aware bus filtering
+        // Use HH:MM:SS format which the API treats as today's date in the server timezone
+        const now = new Date();
+        const beginTime = now.toTimeString().split(" ")[0]; // "HH:MM:SS"
+
+        // Fetch multiple upcoming buses with trip info expanded to allow filtering
         const upcomingResponse = await apiClient.getBusStopInfoExpanded(
           busStopId,
           undefined,
-          1
+          50,
+          beginTime
         );
         const upcomingData = upcomingResponse.data as UpcomingBusEnrichedData;
 
@@ -71,13 +77,14 @@ export function useBusStopData(busStopId?: string): UseBusStopDataResult {
         // Calculate distance using geolocation
         const distance = calculateDistance();
 
-        // Convert API data to domain format
+        // Convert API data to domain format, passing current time for intelligent bus selection
         const busStopInfo = convertUpcomingBusToBusStopInfo(
           upcomingData,
           stopName,
           distance,
           lat,
-          lon
+          lon,
+          new Date() // Pass current time so converter can pick last bus if all have passed
         );
 
         setData(busStopInfo);

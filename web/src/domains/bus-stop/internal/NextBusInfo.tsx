@@ -5,36 +5,38 @@ import styles from "./NextBusInfo.module.css";
 
 interface NextBusInfoProps {
   busInfo: BusInfo;
-  showPreviousIndicator?: boolean;
-  showNextIndicator?: boolean;
+  canShowPrevious?: boolean;
+  canShowNext?: boolean;
+  onPreviousBus?: () => void;
+  onNextBus?: () => void;
 }
 
 export function NextBusInfo({
   busInfo,
-  showPreviousIndicator = true,
-  showNextIndicator = true,
+  canShowPrevious = false,
+  canShowNext = false,
+  onPreviousBus,
+  onNextBus,
 }: NextBusInfoProps) {
   const timeDisplay = useTimeDisplay();
 
   const handlePreviousBus = () => {
-    // Placeholder for previous bus functionality
-    console.log("Show previous bus");
+    onPreviousBus?.();
   };
 
   const handleNextBus = () => {
-    // Placeholder for next bus functionality
-    console.log("Show next bus");
+    onNextBus?.();
   };
 
   return (
     <div className={styles.wrapper}>
       {/* Left indicator for previous bus */}
-      {showPreviousIndicator && (
+      {canShowPrevious && (
         <div className={`${styles.indicator} ${styles.leftIndicator}`}></div>
       )}
 
       {/* Right indicator for next bus */}
-      {showNextIndicator && (
+      {canShowNext && (
         <div className={`${styles.indicator} ${styles.rightIndicator}`}></div>
       )}
 
@@ -48,6 +50,7 @@ export function NextBusInfo({
         <div className={styles.mainInfo}>
           <span className={styles.mainInfoText}>{busInfo.destination}</span>{" "}
           <span className={styles.directionText}>{busInfo.direction}</span>{" "}
+          <br />
           <span className={styles.mainInfoText}>
             {busInfo.arrivalDatetime
               ? timeDisplay.format(busInfo.arrivalDatetime, busInfo.arrivalTime)
@@ -58,13 +61,21 @@ export function NextBusInfo({
 
         <div className={styles.navigation}>
           <button
-            className={styles.navButtonDisabled}
+            className={
+              canShowPrevious ? styles.navButton : styles.navButtonDisabled
+            }
             onClick={handlePreviousBus}
+            disabled={!canShowPrevious}
           >
             ← 前のバス
           </button>
-          {/* TODO: implement navButton feature, but now it's disabled */}
-          <button className={styles.navButtonDisabled} onClick={handleNextBus}>
+          <button
+            className={
+              canShowNext ? styles.navButton : styles.navButtonDisabled
+            }
+            onClick={handleNextBus}
+            disabled={!canShowNext}
+          >
             次のバス →
           </button>
         </div>

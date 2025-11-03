@@ -55,16 +55,17 @@ export class ApiClient {
   async getBusStopInfoExpanded(
     stopId: string,
     serviceId?: string,
-    limit?: number
+    limit?: number,
+    beginTime?: string
   ) {
     try {
       return await getUpcomingStopsStopIdUpcomingGet({
         path: { stop_id: stopId },
         query: {
           expand: "trip_info,stops",
-          limit: 1,
-          ...(serviceId && { service_id: serviceId }),
           ...(limit && { limit }),
+          ...(serviceId && { service_id: serviceId }),
+          ...(beginTime && { begin_time: beginTime }),
         },
       });
     } catch (error) {

@@ -33,7 +33,10 @@ export interface JourneyStopData {
 
 export interface BusStopInfo {
   busStop: BusStop;
-  nextBus?: BusInfo;
+  buses: BusInfo[]; // All fetched buses
+  busTrips: EnrichedTripData[]; // Raw enriched trip data for computing journeys
+  currentBusIndex: number; // Index of the currently displayed bus
+  nextBus?: BusInfo; // Convenience property for the current bus
   routeJourney: JourneyStopData[];
 }
 
