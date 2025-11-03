@@ -2,10 +2,8 @@ import { useEffect, useState } from "react";
 
 import { ApiClient } from "@/lib/api";
 
-import {
-  calculateDistance,
-  convertUpcomingBusToBusStopInfo,
-} from "../converter";
+import { composeBusStopInfoWithLatestSelection } from "../composition";
+import { calculateDistance } from "../converter";
 import type {
   BusStopInfo,
   StopNameListData,
@@ -77,14 +75,15 @@ export function useBusStopData(busStopId?: string): UseBusStopDataResult {
         // Calculate distance using geolocation
         const distance = calculateDistance();
 
-        // Convert API data to domain format, passing current time for intelligent bus selection
-        const busStopInfo = convertUpcomingBusToBusStopInfo(
+        // Convert API data to domain format with intelligent bus selection
+        const busStopInfo = composeBusStopInfoWithLatestSelection(
           upcomingData,
           stopName,
+          busStopId,
           distance,
           lat,
           lon,
-          new Date() // Pass current time so converter can pick last bus if all have passed
+          new Date() // Pass current time so logic picks best bus
         );
 
         setData(busStopInfo);
