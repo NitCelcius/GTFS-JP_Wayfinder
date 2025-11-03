@@ -1,3 +1,5 @@
+import styles from "./RouteOverview.module.css";
+
 interface RouteOverviewProps {
   fromStation: string;
   toStation: string;
@@ -23,20 +25,6 @@ function ShareIcon() {
   );
 }
 
-// Style constants for better maintainability
-const STYLES = {
-  container: "px-[var(--size-spacing-lg)] py-[var(--size-spacing-md)] w-full",
-  wrapper:
-    "flex items-center justify-between gap-[var(--size-spacing-md)] w-full",
-  text: "flex flex-col font-['Inter',_'Noto_Sans_JP',_sans-serif] font-normal justify-center leading-[0] not-italic relative shrink-0 text-black text-nowrap flex-1 min-w-0",
-  textContent: "leading-[normal] whitespace-pre",
-  shareButton:
-    "flex flex-col items-center gap-1 bg-transparent border-none cursor-pointer p-0 transition-opacity duration-200 hover:opacity-70 active:opacity-50 flex-shrink-0",
-  shareIcon:
-    "w-[var(--size-icon-lg)] h-[var(--size-icon-lg)] flex items-center justify-center text-[var(--color-primary)]",
-  shareLabel: "text-xs text-[var(--color-primary)] whitespace-nowrap",
-} as const;
-
 export function RouteOverview({
   fromStation,
   toStation,
@@ -44,23 +32,23 @@ export function RouteOverview({
   onShareClick,
 }: RouteOverviewProps) {
   return (
-    <div className={STYLES.container} data-name="RouteOverview">
-      <div className={STYLES.wrapper}>
-        <div className={STYLES.text}>
-          <p className={STYLES.textContent}>
+    <div className={styles.container} data-name="RouteOverview">
+      <div className={styles.wrapper}>
+        <div className={styles.text}>
+          <p className={styles.textContent}>
             {fromStation} から {toStation} まで
           </p>
         </div>
         {searchUrl && (
           <button
-            className={STYLES.shareButton}
+            className={styles.shareButton}
             onClick={onShareClick}
             aria-label="共有"
           >
-            <div className={STYLES.shareIcon}>
+            <div className={styles.shareIcon}>
               <ShareIcon />
             </div>
-            <span className={STYLES.shareLabel}>共有</span>
+            <span className={styles.shareLabel}>共有</span>
           </button>
         )}
       </div>

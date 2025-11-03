@@ -1,6 +1,69 @@
 .container {
-  padding: var(--size-spacing-md);
+  padding: var(--size-spacing-lg) var(--size-spacing-lg) var(--size-spacing-md);
+  width: 100%;
 }
+
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--size-spacing-md);
+  width: 100%;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  font-family: Inter, "Noto Sans JP", sans-serif;
+  font-weight: 400;
+  justify-content: center;
+  line-height: 0;
+  position: relative;
+  flex-shrink: 0;
+  color: var(--color-text);
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+}
+
 .textContent {
+  line-height: normal;
+  white-space: pre;
   font-size: 0.875rem;
+}
+
+.shareButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: opacity 0.2s;
+  flex-shrink: 0;
+}
+
+.shareButton:hover {
+  opacity: 0.7;
+}
+
+.shareButton:active {
+  opacity: 0.5;
+}
+
+.shareIcon {
+  width: var(--size-icon-lg);
+  height: var(--size-icon-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary);
+}
+
+.shareLabel {
+  font-size: 0.75rem;
+  color: var(--color-primary);
+  white-space: nowrap;
 }

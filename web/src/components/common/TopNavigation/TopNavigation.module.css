@@ -1,0 +1,75 @@
+.container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 110;
+  background-color: var(--color-background);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  max-width: var(--max-w-mobile);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.inner {
+  box-sizing: border-box;
+  display: flex;
+  gap: var(--size-spacing-sm);
+  align-items: center;
+  padding-left: var(--size-spacing-sm);
+  padding-right: var(--size-spacing-sm);
+  padding-top: 0;
+  padding-bottom: 0;
+  position: relative;
+  width: 100%;
+  min-height: 3.3125rem;
+}
+
+.title {
+  display: flex;
+  flex-direction: column;
+  font-family: Inter, "Noto Sans JP", sans-serif;
+  font-weight: 400;
+  justify-content: center;
+  line-height: 0;
+  position: relative;
+  flex: 1;
+  color: var(--color-text);
+}
+
+.titleText {
+  line-height: normal;
+  font-size: 1.5rem;
+}
+
+.iconWrapper {
+  position: relative;
+  flex-shrink: 0;
+  width: var(--size-icon-sm);
+  height: var(--size-icon-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.backButton {
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  padding: 0;
+  transition: opacity 0.15s;
+}
+
+.backButton:hover {
+  opacity: 0.7;
+}

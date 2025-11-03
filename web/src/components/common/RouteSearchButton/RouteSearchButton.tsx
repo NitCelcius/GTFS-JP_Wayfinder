@@ -1,4 +1,5 @@
 import { LoadingSpinner } from "../LoadingSpinner/LoadingSpinner";
+import styles from "./RouteSearchButton.module.css";
 
 interface RouteSearchButtonProps {
   onClick: () => void;
@@ -7,16 +8,6 @@ interface RouteSearchButtonProps {
   isLoading?: boolean;
   disabled?: boolean;
 }
-
-const STYLES = {
-  buttonBase:
-    "w-full rounded-[var(--border-radius-md)] px-[var(--spacing-lg)] py-[var(--spacing-xl)] flex items-center justify-center gap-[var(--spacing-md)] transition-opacity",
-  buttonEnabled:
-    "bg-[color:var(--route-origin-bg)] cursor-pointer hover:opacity-80",
-  buttonDisabled: "bg-gray-300 cursor-not-allowed opacity-50",
-  icon: "w-[1.5rem] h-[1.5rem] flex items-center justify-center",
-  text: "text-[1rem]",
-} as const;
 
 function SearchIcon() {
   return (
@@ -44,18 +35,18 @@ export function RouteSearchButton({
 }: RouteSearchButtonProps) {
   const isDisabled = isLoading || disabled;
   const buttonStateClass = isDisabled
-    ? STYLES.buttonDisabled
-    : STYLES.buttonEnabled;
+    ? styles.buttonDisabled
+    : styles.buttonEnabled;
   const buttonClass = className
-    ? `${STYLES.buttonBase} ${buttonStateClass} ${className}`
-    : `${STYLES.buttonBase} ${buttonStateClass}`;
+    ? `${styles.buttonBase} ${buttonStateClass} ${className}`
+    : `${styles.buttonBase} ${buttonStateClass}`;
 
   return (
     <button className={buttonClass} onClick={onClick} disabled={isDisabled}>
-      <div className={STYLES.icon}>
+      <div className={styles.icon}>
         {isLoading ? <LoadingSpinner size="sm" /> : <SearchIcon />}
       </div>
-      <span className={STYLES.text}>
+      <span className={styles.text}>
         {isLoading ? "検索中..." : "行き方を検索"}
       </span>
     </button>

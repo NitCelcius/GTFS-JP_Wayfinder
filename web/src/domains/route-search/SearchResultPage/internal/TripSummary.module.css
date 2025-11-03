@@ -1,9 +1,61 @@
 .container {
-  padding: var(--size-spacing-md);
+  padding: var(--size-spacing-lg) var(--size-spacing-lg) var(--size-spacing-md);
+  width: 100%;
 }
+
+.timeRange {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  flex-shrink: 0;
+  width: 100%;
+  margin-bottom: var(--size-spacing-sm);
+}
+
+.timeText {
+  display: flex;
+  flex-direction: column;
+  font-family: Inter, "Noto Sans JP", sans-serif;
+  font-weight: 400;
+  justify-content: center;
+  line-height: 0;
+  position: relative;
+  flex-shrink: 0;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
 .timeTextContent {
+  line-height: normal;
+  white-space: pre;
   font-size: 0.95rem;
 }
+
+.details {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  flex-shrink: 0;
+  width: 100%;
+}
+
+.detailsText {
+  display: flex;
+  flex-direction: column;
+  font-family: Inter, "Noto Sans JP", sans-serif;
+  font-weight: 400;
+  justify-content: center;
+  line-height: 0;
+  position: relative;
+  flex-shrink: 0;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
 .detailsTextContent {
+  line-height: normal;
+  white-space: pre;
   font-size: 0.875rem;
 }

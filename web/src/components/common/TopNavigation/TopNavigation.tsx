@@ -1,5 +1,7 @@
 import React from "react";
 
+import styles from "./TopNavigation.module.css";
+
 interface TopNavigationProps {
   icon?: React.ReactNode;
   title?: string;
@@ -7,23 +9,6 @@ interface TopNavigationProps {
   onBack?: () => void;
   rightAction?: React.ReactNode;
 }
-
-const STYLES = {
-  container:
-    "top-0 left-0 right-0 w-full z-[110] bg-white border-b border-[color:var(--color-border)]",
-  content:
-    "flex flex-row items-center relative size-full max-w-[var(--max-w-mobile)] mx-auto",
-  inner:
-    "box-border content-stretch flex gap-[var(--size-spacing-sm)] items-center px-[var(--size-spacing-sm)] py-0 relative w-full min-h-[3.3125rem]",
-  title:
-    "flex flex-col font-['Inter:Regular',_'Noto_Sans_JP:Regular',_sans-serif] font-normal justify-center leading-[0] not-italic relative flex-1 text-black",
-  titleText:
-    "leading-[normal] text-[1.5rem]" /* slightly reduced for consistency */,
-  iconWrapper:
-    "relative shrink-0 size-[var(--size-icon-sm)] flex items-center justify-center",
-  backButton:
-    "cursor-pointer border-none bg-transparent p-0 hover:opacity-70 transition-opacity",
-} as const;
 
 function BackIcon() {
   return (
@@ -53,17 +38,17 @@ export function TopNavigation({
   rightAction,
 }: TopNavigationProps) {
   return (
-    <div className={STYLES.container} data-name="HeaderLevel1">
-      <div className={STYLES.content}>
-        <div className={STYLES.inner}>
+    <div className={styles.container} data-name="HeaderLevel1">
+      <div className={styles.content}>
+        <div className={styles.inner}>
           {showBackButton && (
-            <button onClick={onBack} className={STYLES.backButton}>
+            <button onClick={onBack} className={styles.backButton}>
               <BackIcon />
             </button>
           )}
-          {icon && <div className={STYLES.iconWrapper}>{icon}</div>}
-          <div className={STYLES.title}>
-            <h1 className={STYLES.titleText}>{title}</h1>
+          {icon && <div className={styles.iconWrapper}>{icon}</div>}
+          <div className={styles.title}>
+            <h1 className={styles.titleText}>{title}</h1>
           </div>
           {rightAction && <div className="shrink-0">{rightAction}</div>}
         </div>

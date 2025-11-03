@@ -1,0 +1,37 @@
+.buttonBase {
+  width: 100%;
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-xl) var(--spacing-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+  transition: opacity 0.15s;
+}
+
+.buttonEnabled {
+  background: var(--color-route-origin-bg);
+  cursor: pointer;
+}
+
+.buttonEnabled:hover {
+  opacity: 0.8;
+}
+
+.buttonDisabled {
+  background: var(--color-gray-300);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.text {
+  font-size: 1rem;
+}
