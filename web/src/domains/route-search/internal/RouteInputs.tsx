@@ -83,13 +83,16 @@ function RouteInput({
 }: RouteInputProps) {
   const bgClass = type === "origin" ? styles.bgOrigin : styles.bgDestination;
   const Icon = type === "origin" ? LocationIcon : FlagIcon;
+  const inputClass = onInputClick
+    ? `${styles.inputField} ${styles.inputFieldClickable}`
+    : styles.inputField;
 
   return (
     <div className={`${styles.routeInput} ${bgClass}`}>
       <Icon />
       <input
         type="text"
-        className={styles.inputField}
+        className={inputClass}
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
