@@ -8,34 +8,7 @@ import {
   timedSearchPathTimedSearchGet,
 } from "@/api";
 import { client as generatedClient } from "@/api/client.gen";
-
-/**
- * Extends Window interface to include __ENV__ for Storybook
- */
-declare global {
-  interface Window {
-    __ENV__?: Record<string, string | undefined>;
-  }
-}
-
-/**
- * Get environment variable value with fallback (non-hook version for module-level code)
- */
-function getEnvValue(key: string, defaultValue: string): string {
-  // Check if running in browser with injected env
-  if (typeof window !== "undefined" && window.__ENV__) {
-    const value = window.__ENV__[key];
-    if (value !== undefined) return value;
-  }
-
-  // Check process.env (works in Next.js)
-  if (typeof process !== "undefined" && process.env) {
-    const value = process.env[key];
-    if (value !== undefined) return value;
-  }
-
-  return defaultValue;
-}
+import { getEnvValue } from "./envUtils";
 
 // Configure the generated client to use the correct base URL
 const baseUrl = getEnvValue("NEXT_PUBLIC_API_BASE_URL", "http://localhost:8002");
