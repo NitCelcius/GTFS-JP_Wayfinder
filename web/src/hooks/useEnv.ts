@@ -121,6 +121,7 @@ export function useEnv(): EnvConfig {
 
 /**
  * Get a specific environment variable value
+ * This is optimized to only get the requested value instead of creating the entire env object.
  *
  * @example
  * ```tsx
@@ -131,6 +132,5 @@ export function useEnv(): EnvConfig {
  * ```
  */
 export function useEnvValue(key: keyof EnvConfig): string | undefined {
-  const env = useEnv();
-  return env[key];
+  return useMemo(() => getEnvValue(key), [key]);
 }
