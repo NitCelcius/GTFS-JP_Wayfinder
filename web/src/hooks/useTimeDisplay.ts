@@ -12,7 +12,9 @@ function getDefaultFormatter(): DefaultTimeFormatter {
 }
 
 export function useTimeDisplay(formatter?: TimeFormatterBase) {
-  const useRelativeTime = process.env.NEXT_PUBLIC_USE_RELATIVE_TIME === "true";
+  const useRelativeTime =
+    typeof process !== "undefined" &&
+    process.env?.NEXT_PUBLIC_USE_RELATIVE_TIME === "true";
   const [now, setNow] = useState<Date>(new Date());
   const trackedTimesRef = useRef<Set<number>>(new Set());
 
