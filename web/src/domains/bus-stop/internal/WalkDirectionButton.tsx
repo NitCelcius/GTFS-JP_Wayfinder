@@ -11,7 +11,6 @@ function WalkIcon() {
       src="/icons/walk.svg"
       alt=""
       className="block size-full"
-      width="24px"
       aria-hidden="true"
     />
   );

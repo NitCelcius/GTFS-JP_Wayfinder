@@ -152,8 +152,6 @@ export function BusStopSearchModal({
               src="/icons/close.svg"
               alt=""
               className="w-8 h-8"
-              width={32}
-              height={32}
               aria-hidden="true"
             />
           </button>
