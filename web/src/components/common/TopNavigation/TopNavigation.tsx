@@ -13,19 +13,12 @@ interface TopNavigationProps {
 function BackIcon() {
   return (
     <div className="relative shrink-0 size-[var(--size-icon-lg)]">
-      <svg
+      <img
+        src="/icons/arrow-back.svg"
+        alt=""
         className="block size-full"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        strokeWidth="2"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M19 12H5m0 0l7 7m-7-7l7-7"
-        />
-      </svg>
+        aria-hidden="true"
+      />
     </div>
   );
 }

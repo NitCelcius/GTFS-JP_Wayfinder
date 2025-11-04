@@ -12,45 +12,41 @@ interface StationStopProps {
 
 function PinIcon() {
   return (
-    <svg fill="none" viewBox="0 0 20 20">
-      <path
-        d="M10 2C7.24 2 5 4.24 5 7c0 2.85 2.92 6.21 5 9 2.08-2.79 5-6.15 5-9 0-2.76-2.24-5-5-5zm0 7c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"
-        fill="currentColor"
-      />
-    </svg>
+    <img
+      src="/icons/location-pin-simple.svg"
+      alt=""
+      aria-hidden="true"
+    />
   );
 }
 
 function LocationIcon() {
   return (
-    <svg fill="none" viewBox="0 0 20 20">
-      <circle cx="10" cy="10" r="4" fill="currentColor" />
-    </svg>
+    <img
+      src="/icons/location-dot.svg"
+      alt=""
+      aria-hidden="true"
+    />
   );
 }
 
 function FlagIcon() {
   return (
-    <svg fill="none" viewBox="0 0 20 20">
-      <path
-        d="M4 4v12M4 4l8 2-2 4 2 4-8-2V4z"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        fill="currentColor"
-      />
-    </svg>
+    <img
+      src="/icons/flag-simple.svg"
+      alt=""
+      aria-hidden="true"
+    />
   );
 }
 
 function ArrowDownIcon() {
   return (
-    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M19 14l-7 7m0 0l-7-7m7 7V3"
-      />
-    </svg>
+    <img
+      src="/icons/arrow-down-long.svg"
+      alt=""
+      aria-hidden="true"
+    />
   );
 }
 

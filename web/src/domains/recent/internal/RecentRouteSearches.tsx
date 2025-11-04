@@ -16,19 +16,12 @@ interface RecentRouteSearchesProps {
 
 function RouteIcon() {
   return (
-    <svg
+    <img
+      src="/icons/route.svg"
+      alt=""
       className="block size-full"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      strokeWidth="2"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M3 10h4l3 8 4-16 3 8h4"
-      />
-    </svg>
+      aria-hidden="true"
+    />
   );
 }
 
