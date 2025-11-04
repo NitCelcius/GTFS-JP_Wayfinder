@@ -8,6 +8,8 @@
  */
 
 import { useMemo } from "react";
+// Import the getEnvValue function but not the global Window type to avoid conflicts
+// The Window.__ENV__ type is declared in envUtils.ts
 
 /**
  * Environment variable configuration type
@@ -42,20 +44,13 @@ const DEFAULT_ENV: EnvConfig = {
 };
 
 /**
- * Extends Window interface to include __ENV__ for Storybook
- */
-declare global {
-  interface Window {
-    __ENV__?: EnvConfig;
-  }
-}
-
-/**
  * Get environment variable value with fallback
  * This function checks multiple sources in order:
  * 1. window.__ENV__ (for Storybook or runtime injection)
  * 2. process.env (for Next.js build-time substitution)
  * 3. Default values
+ * 
+ * Note: window.__ENV__ type is declared in lib/envUtils.ts
  */
 function getEnvValue(key: keyof EnvConfig): string | undefined {
   // Check if running in browser with injected env
