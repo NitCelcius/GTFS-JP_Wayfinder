@@ -11,43 +11,19 @@ interface StationStopProps {
 }
 
 function PinIcon() {
-  return (
-    <img
-      src="/icons/location-pin-simple.svg"
-      alt=""
-      aria-hidden="true"
-    />
-  );
+  return <img src="/icons/location-pin-simple.svg" alt="" aria-hidden="true" />;
 }
 
 function LocationIcon() {
-  return (
-    <img
-      src="/icons/location-dot.svg"
-      alt=""
-      aria-hidden="true"
-    />
-  );
+  return <img src="/icons/location-dot.svg" alt="" aria-hidden="true" />;
 }
 
 function FlagIcon() {
-  return (
-    <img
-      src="/icons/flag-simple.svg"
-      alt=""
-      aria-hidden="true"
-    />
-  );
+  return <img src="/icons/flag-simple.svg" alt="" aria-hidden="true" />;
 }
 
 function ArrowDownIcon() {
-  return (
-    <img
-      src="/icons/arrow-down-long.svg"
-      alt=""
-      aria-hidden="true"
-    />
-  );
+  return <img src="/icons/arrow-down-long.svg" alt="" aria-hidden="true" />;
 }
 
 export function StationStop({

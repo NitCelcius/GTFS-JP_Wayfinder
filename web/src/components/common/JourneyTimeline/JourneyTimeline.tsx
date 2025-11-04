@@ -25,23 +25,11 @@ interface JourneyTimelineProps {
 // Styles migrated to JourneyTimeline.module.css
 
 function LocationIcon() {
-  return (
-    <img
-      src="/icons/location-pin.svg"
-      alt=""
-      aria-hidden="true"
-    />
-  );
+  return <img src="/icons/location-pin.svg" alt="" aria-hidden="true" />;
 }
 
 function FlagIcon() {
-  return (
-    <img
-      src="/icons/flag.svg"
-      alt=""
-      aria-hidden="true"
-    />
-  );
+  return <img src="/icons/flag.svg" alt="" aria-hidden="true" />;
 }
 
 function CircleIcon() {

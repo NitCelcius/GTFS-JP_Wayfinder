@@ -9,14 +9,17 @@ interface IconProps {
 
 /**
  * Icon component that loads SVG icons from /public/icons directory.
- * 
+ *
  * Usage:
  *   <Icon name="arrow-back" size={24} />
  *   <Icon name="search" className="w-6 h-6" />
  */
 export function Icon({ name, size, className = "", style }: IconProps) {
   const sizeStyle = size
-    ? { width: typeof size === "number" ? `${size}px` : size, height: typeof size === "number" ? `${size}px` : size }
+    ? {
+        width: typeof size === "number" ? `${size}px` : size,
+        height: typeof size === "number" ? `${size}px` : size,
+      }
     : {};
 
   return (
