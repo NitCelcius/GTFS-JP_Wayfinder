@@ -31,13 +31,18 @@ export interface JourneyStopData {
   label?: string;
 }
 
+export interface BusWithJourney {
+  busInfo: BusInfo;
+  routeJourney: JourneyStopData[];
+}
+
+/**
+ * View-model type for bus stop page
+ */
 export interface BusStopInfo {
   busStop: BusStop;
-  buses: BusInfo[]; // All fetched buses
-  busTrips: EnrichedTripData[]; // Raw enriched trip data for computing journeys
-  currentBusIndex: number; // Index of the currently displayed bus
-  nextBus?: BusInfo; // Convenience property for the current bus
-  routeJourney: JourneyStopData[];
+  busesWithJourneys: BusWithJourney[]; // Paired, pre-computed journeys
+  bestBusIndex: number;
 }
 
 // Re-exported API types for internal use

@@ -7,7 +7,6 @@ import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
 import { useTimeDisplay } from "@/hooks";
 
 import styles from "./BusStopInfoPage.module.css";
-import { convertTripStopsToJourneyStops } from "./converter";
 import { useBusStopData } from "./hooks";
 import { BusStopHeader } from "./internal/BusStopHeader";
 import { NextBusInfo } from "./internal/NextBusInfo";
@@ -28,17 +27,16 @@ export function BusStopInfoPage({
   onNavigateToRoute,
   onNavigateToRecent,
 }: BusStopInfoPageProps) {
-  const { data, isLoading, error } = useBusStopData(busStopId);
+  const { busStop, busesWithJourneys, bestBusIndex, isLoading, error } =
+    useBusStopData(busStopId);
   const timeDisplay = useTimeDisplay();
   const [showShareModal, setShowShareModal] = useState(false);
   const [currentBusIndex, setCurrentBusIndex] = useState(0);
 
-  // When data loads, set the current bus index to the "best" bus
+  // Sync to best bus when data loads
   useEffect(() => {
-    if (data && data.currentBusIndex >= 0) {
-      setCurrentBusIndex(data.currentBusIndex);
-    }
-  }, [data]);
+    setCurrentBusIndex(bestBusIndex);
+  }, [bestBusIndex]);
 
   const handleBottomNavClick = (tab: "bus-stop" | "route" | "recent") => {
     switch (tab) {
@@ -68,13 +66,13 @@ export function BusStopInfoPage({
   };
 
   const handlePreviousBus = () => {
-    if (data && currentBusIndex > 0) {
+    if (currentBusIndex > 0) {
       setCurrentBusIndex(currentBusIndex - 1);
     }
   };
 
   const handleNextBus = () => {
-    if (data && currentBusIndex < data.buses.length - 1) {
+    if (currentBusIndex < busesWithJourneys.length - 1) {
       setCurrentBusIndex(currentBusIndex + 1);
     }
   };
@@ -117,17 +115,8 @@ export function BusStopInfoPage({
     );
   }
 
-  const busStopData = data?.busStop;
-
-  // Compute route journey for the currently selected bus
-  const routeJourney = data
-    ? data.busTrips[currentBusIndex]?.stops
-      ? convertTripStopsToJourneyStops(
-          data.busTrips[currentBusIndex].stops,
-          data.busStop.id
-        )
-      : []
-    : [];
+  const busStopData = busStop;
+  const currentBusData = busesWithJourneys[currentBusIndex];
 
   return (
     <>
@@ -159,7 +148,7 @@ export function BusStopInfoPage({
 
           {/* Next Bus Info */}
           <div className={styles.nextBusWrapper}>
-            {isLoading || !data ? (
+            {isLoading || busesWithJourneys.length === 0 ? (
               <div className={styles.panel}>
                 <div className={styles.panelColumn}>
                   <LoadingSpinner size="sm" />
@@ -168,11 +157,11 @@ export function BusStopInfoPage({
                   </span>
                 </div>
               </div>
-            ) : data.buses.length > 0 ? (
+            ) : currentBusData ? (
               <NextBusInfo
-                busInfo={data.buses[currentBusIndex]}
+                busInfo={currentBusData.busInfo}
                 canShowPrevious={currentBusIndex > 0}
-                canShowNext={currentBusIndex < data.buses.length - 1}
+                canShowNext={currentBusIndex < busesWithJourneys.length - 1}
                 onPreviousBus={handlePreviousBus}
                 onNextBus={handleNextBus}
               />
@@ -197,7 +186,7 @@ export function BusStopInfoPage({
 
           {/* Route Journey */}
           <div className={styles.journeyWrapper}>
-            {isLoading || !data ? (
+            {isLoading || !currentBusData ? (
               <div className={styles.journeyLoading}>
                 <h3 className={styles.journeyTitle}>このバスの行き先</h3>
                 <div className={styles.journeyBody}>
@@ -209,10 +198,10 @@ export function BusStopInfoPage({
                   </div>
                 </div>
               </div>
-            ) : routeJourney.length > 0 ? (
+            ) : currentBusData.routeJourney.length > 0 ? (
               <JourneyTimeline
                 title="このバスの行き先"
-                stops={routeJourney}
+                stops={currentBusData.routeJourney}
                 renderRightContent={(stop) => (
                   <>
                     {stop.cost !== undefined && stop.cost > 0 && (

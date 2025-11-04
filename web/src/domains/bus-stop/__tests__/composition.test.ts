@@ -50,12 +50,17 @@ describe("composeBusStopInfoWithBestSelection", () => {
       referenceTime
     );
 
-    console.log("Selected bus (sorted order):", result.nextBus);
-    console.log("Current bus index:", result.currentBusIndex);
+    console.log(
+      "Selected bus (sorted order):",
+      result.busesWithJourneys[result.bestBusIndex]
+    );
+    console.log("Best bus index:", result.bestBusIndex);
 
     // The next bus should be the first one (14:00 = earliest)
-    expect(result.nextBus?.destination).toBe("Destination A");
-    expect(result.currentBusIndex).toBe(0);
+    expect(
+      result.busesWithJourneys[result.bestBusIndex]?.busInfo.destination
+    ).toBe("Destination A");
+    expect(result.bestBusIndex).toBe(0);
   });
 
   it("should select the earliest upcoming bus when buses are out of order", () => {
@@ -81,12 +86,17 @@ describe("composeBusStopInfoWithBestSelection", () => {
       referenceTime
     );
 
-    console.log("Selected bus (unsorted):", result.nextBus);
-    console.log("Current bus index:", result.currentBusIndex);
+    console.log(
+      "Selected bus (unsorted):",
+      result.busesWithJourneys[result.bestBusIndex]
+    );
+    console.log("Best bus index:", result.bestBusIndex);
 
     // Should select the earliest bus (14:00), which is at index 1
-    expect(result.nextBus?.destination).toBe("Destination A");
-    expect(result.currentBusIndex).toBe(1);
+    expect(
+      result.busesWithJourneys[result.bestBusIndex]?.busInfo.destination
+    ).toBe("Destination A");
+    expect(result.bestBusIndex).toBe(1);
   });
 
   it("should select the single bus when only one is available", () => {
@@ -108,24 +118,21 @@ describe("composeBusStopInfoWithBestSelection", () => {
       referenceTime
     );
 
-    expect(result.nextBus?.destination).toBe("Destination A");
-    expect(result.currentBusIndex).toBe(0);
+    expect(
+      result.busesWithJourneys[result.bestBusIndex]?.busInfo.destination
+    ).toBe("Destination A");
+    expect(result.bestBusIndex).toBe(0);
   });
 
-  it("should handle empty bus list gracefully", () => {
+  it("should return error for empty bus list", () => {
     const mockData: UpcomingBusEnrichedData = {
       stop_id: "1021_01",
       buses: [],
     };
 
-    const result = composeBusStopInfoWithLatestSelection(
-      mockData,
-      "Test Stop",
-      "1021_01"
-    );
-
-    expect(result.nextBus).toBeUndefined();
-    expect(result.currentBusIndex).toBe(-1);
+    expect(() =>
+      composeBusStopInfoWithLatestSelection(mockData, "Test Stop", "1021_01")
+    ).toThrow(RangeError);
   });
 
   describe("Time-sensitive scenarios (API should pre-filter via begin_time)", () => {
@@ -155,8 +162,12 @@ describe("composeBusStopInfoWithBestSelection", () => {
       );
 
       // Should pick 14:30 (earliest), NOT 23:00 (latest/last of day)
-      expect(result.nextBus?.arrivalTime).toBe("14:30");
-      expect(result.nextBus?.destination).toBe("Destination B");
+      expect(
+        result.busesWithJourneys[result.bestBusIndex]?.busInfo.arrivalTime
+      ).toBe("14:30");
+      expect(
+        result.busesWithJourneys[result.bestBusIndex]?.busInfo.destination
+      ).toBe("Destination B");
     });
 
     it("should pick the 15:00 bus when current time is 14:00 and 14:30 already passed", () => {
@@ -184,8 +195,12 @@ describe("composeBusStopInfoWithBestSelection", () => {
       );
 
       // Should pick 15:00 (earliest), NOT 23:00
-      expect(result.nextBus?.arrivalTime).toBe("15:00");
-      expect(result.nextBus?.destination).toBe("Destination C");
+      expect(
+        result.busesWithJourneys[result.bestBusIndex]?.busInfo.arrivalTime
+      ).toBe("15:00");
+      expect(
+        result.busesWithJourneys[result.bestBusIndex]?.busInfo.destination
+      ).toBe("Destination C");
     });
 
     it("should never pick the last bus (23:00) if earlier buses exist", () => {
@@ -213,9 +228,13 @@ describe("composeBusStopInfoWithBestSelection", () => {
       );
 
       // Should ALWAYS pick the earliest (14:00), never the last (23:00)
-      expect(result.nextBus?.arrivalTime).toBe("14:00");
-      expect(result.nextBus?.destination).toBe("Destination A");
-      expect(result.currentBusIndex).toBe(0);
+      expect(
+        result.busesWithJourneys[result.bestBusIndex]?.busInfo.arrivalTime
+      ).toBe("14:00");
+      expect(
+        result.busesWithJourneys[result.bestBusIndex]?.busInfo.destination
+      ).toBe("Destination A");
+      expect(result.bestBusIndex).toBe(0);
     });
 
     it("should pick the last bus (23:00) when all buses have already passed", () => {
@@ -246,9 +265,13 @@ describe("composeBusStopInfoWithBestSelection", () => {
       );
 
       // Should pick 23:00 (the last/most recent) when all buses have passed
-      expect(result.nextBus?.arrivalTime).toBe("23:00");
-      expect(result.nextBus?.destination).toBe("Destination D");
-      expect(result.currentBusIndex).toBe(3);
+      expect(
+        result.busesWithJourneys[result.bestBusIndex]?.busInfo.arrivalTime
+      ).toBe("23:00");
+      expect(
+        result.busesWithJourneys[result.bestBusIndex]?.busInfo.destination
+      ).toBe("Destination D");
+      expect(result.bestBusIndex).toBe(3);
     });
   });
 });
