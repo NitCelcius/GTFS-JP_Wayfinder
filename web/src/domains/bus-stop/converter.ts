@@ -139,7 +139,6 @@ export function convertBusesToBusInfoList(
  */
 export function computeBestBusIndex(
   buses: EnrichedTripData[],
-
   currentTime: Date = new Date(0)
 ): number {
   if (buses.length === 0)

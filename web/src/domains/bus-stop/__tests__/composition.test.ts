@@ -50,12 +50,6 @@ describe("composeBusStopInfoWithBestSelection", () => {
       referenceTime
     );
 
-    console.log(
-      "Selected bus (sorted order):",
-      result.busesWithJourneys[result.bestBusIndex]
-    );
-    console.log("Best bus index:", result.bestBusIndex);
-
     // The next bus should be the first one (14:00 = earliest)
     expect(
       result.busesWithJourneys[result.bestBusIndex]?.busInfo.destination
@@ -85,12 +79,6 @@ describe("composeBusStopInfoWithBestSelection", () => {
       undefined,
       referenceTime
     );
-
-    console.log(
-      "Selected bus (unsorted):",
-      result.busesWithJourneys[result.bestBusIndex]
-    );
-    console.log("Best bus index:", result.bestBusIndex);
 
     // Should select the earliest bus (14:00), which is at index 1
     expect(
