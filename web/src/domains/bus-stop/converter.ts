@@ -118,97 +118,6 @@ export function convertTripStopsToJourneyStops(
 }
 
 /**
- * Select the best bus and find its index in the buses array
- *
- * Selection logic:
- * 1. If there are future buses (after currentTime), pick the earliest one (minimum time)
- * 2. If all buses are in the past (before currentTime), pick the latest one (maximum time)
- *    This allows users to see the bus they just missed
- *
- * Works correctly regardless of the order buses are returned from the API.
- * Returns the index of the best bus, or -1 if no buses are available
- *
- * @param buses - List of buses to select from
- * @param currentTime - Current time for comparison (optional). If not provided, assumes all buses are future.
- */
-/**
- * Select the best bus index from a list based on current time
- * Strategy 1: If there are future buses, pick the earliest one
- * Strategy 2: If all buses are in the past, pick the most recent one
- *
- * @param buses - The list of upcoming buses to select from
- * @param currentTime - The reference time for selection (defaults to now)
- * @returns The index of the best bus, or -1 if the list is empty
- */
-function selectBestBusIndex(
-  buses: EnrichedTripData[],
-  currentTime?: Date
-): number {
-  if (buses.length === 0) return -1;
-  if (buses.length === 1) return 0;
-
-  let bestIndex = 0;
-  let bestTime = parseDateTime(buses[0].arrival_datetime);
-
-  // Parse all bus times
-  const busTimes: Date[] = [];
-  for (let i = 0; i < buses.length; i++) {
-    try {
-      busTimes[i] = parseDateTime(buses[i].arrival_datetime);
-    } catch {
-      console.warn(
-        `Failed to parse bus arrival datetime: ${buses[i].arrival_datetime}`
-      );
-      busTimes[i] = new Date(0); // Use epoch as fallback (will be treated as very old)
-    }
-  }
-
-  // Check if there are any future buses
-  const hasFutureBuses =
-    currentTime && busTimes.some((time) => time > currentTime);
-
-  if (hasFutureBuses) {
-    // Strategy 1: Pick the earliest future bus (minimum time among future buses)
-    bestIndex = 0;
-    bestTime = busTimes[0];
-
-    for (let i = 1; i < busTimes.length; i++) {
-      // Find the earliest bus that is still in the future
-      if (busTimes[i] > currentTime! && busTimes[i] < bestTime) {
-        bestIndex = i;
-        bestTime = busTimes[i];
-      }
-    }
-
-    // If the best bus we found is in the past, find the earliest future bus
-    if (bestTime <= currentTime!) {
-      for (let i = 0; i < busTimes.length; i++) {
-        if (busTimes[i] > currentTime!) {
-          if (i === 0 || busTimes[i] < bestTime) {
-            bestIndex = i;
-            bestTime = busTimes[i];
-          }
-        }
-      }
-    }
-  } else {
-    // Strategy 2: All buses are in the past, pick the latest one (maximum time)
-    // This shows the user the most recent bus they could have taken
-    bestIndex = 0;
-    bestTime = busTimes[0];
-
-    for (let i = 1; i < busTimes.length; i++) {
-      if (busTimes[i] > bestTime) {
-        bestIndex = i;
-        bestTime = busTimes[i];
-      }
-    }
-  }
-
-  return bestIndex;
-}
-
-/**
  * Convert a list of EnrichedTripData (buses) to an array of BusInfo
  */
 export function convertBusesToBusInfoList(
@@ -223,23 +132,60 @@ export function convertBusesToBusInfoList(
  * Strategy 2: If all buses are in the past, pick the most recent one
  *
  * @param buses - The list of upcoming buses to select from
- * @param currentTime - The reference time for selection (defaults to now)
- * @returns An object with the selected bus index and the bus info, or undefined if no buses available
+ * @param currentTime - The reference time for selection (if none, the first bus is chosen)
+ * @returns The index of the selected bus
+ * @throws RangeError if no buses are provided
+ * @throws Error if no parseable bus arrival times are found
  */
-export function selectBestBus(
+export function computeBestBusIndex(
   buses: EnrichedTripData[],
-  busInfoList: BusInfo[],
-  currentTime: Date = new Date()
-): { index: number; busInfo: BusInfo; trip: EnrichedTripData } | undefined {
-  const bestIndex = selectBestBusIndex(buses, currentTime);
-  if (bestIndex >= 0) {
-    return {
-      index: bestIndex,
-      busInfo: busInfoList[bestIndex],
-      trip: buses[bestIndex],
-    };
+
+  currentTime: Date = new Date(0)
+): number {
+  if (buses.length === 0)
+    throw new RangeError("No buses available to select from");
+  if (buses.length === 1) {
+    return 0;
   }
-  return undefined;
+
+  // Single-pass: track earliest future bus and most recent past bus indices
+  let earliestFutureIndex: number | null = null;
+  let earliestFutureTime: Date | null = null;
+
+  let mostRecentPastIndex: number | null = null;
+  let mostRecentPastTime: Date | null = null;
+
+  for (let i = 0; i < buses.length; i++) {
+    const b = buses[i];
+    let t: Date;
+    try {
+      t = parseDateTime(b.arrival_datetime);
+    } catch {
+      console.warn(
+        `Failed to parse bus arrival datetime: ${b.arrival_datetime}`
+      );
+      continue; // skip unparsable times
+    }
+
+    if (t > currentTime) {
+      if (earliestFutureTime === null || t < earliestFutureTime) {
+        earliestFutureTime = t;
+        earliestFutureIndex = i;
+      }
+    } else {
+      if (mostRecentPastTime === null || t > mostRecentPastTime) {
+        mostRecentPastTime = t;
+        mostRecentPastIndex = i;
+      }
+    }
+  }
+
+  // Prefer earliest future bus when available, otherwise most recent past bus.
+  if (earliestFutureIndex !== null) return earliestFutureIndex;
+  if (mostRecentPastIndex !== null) return mostRecentPastIndex;
+
+  // Fallback: no parseable times found, cannot compute
+  throw new Error("No parseable bus arrival times found");
 }
 
 /**
