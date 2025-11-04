@@ -4,8 +4,8 @@
  */
 import {
   computeBestBusIndex,
-  convertBusesToBusInfoList,
   convertTripStopsToJourneyStops,
+  convertTripToBusInfo,
 } from "./converter";
 import type { BusStopInfo, UpcomingBusEnrichedData } from "./types";
 
@@ -37,7 +37,7 @@ export function composeBusStopInfoWithLatestSelection(
 
   // Convert all buses and pre-compute their journeys
   const busesWithJourneys = enrichedData.buses.map((trip) => ({
-    busInfo: convertBusesToBusInfoList([trip])[0],
+    busInfo: convertTripToBusInfo(trip),
     routeJourney: trip.stops
       ? convertTripStopsToJourneyStops(trip.stops, stopId)
       : [],
