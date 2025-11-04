@@ -64,11 +64,16 @@ function openDB(): Promise<IDBDatabase> {
 
 /**
  * Add a bus stop search to history
+ * @param stopId - The ID of the bus stop
+ * @param name - The name of the bus stop
+ * @param distance - The distance description to the bus stop
+ * @param searchedAt - The timestamp indicating when the search was ran. If not provided, uses current time.
  */
 export async function addBusStopSearch(
   stopId: string,
   name: string,
-  distance: string
+  distance: string,
+  searchedAt?: number
 ): Promise<void> {
   const db = await openDB();
   const transaction = db.transaction([BUS_STOP_STORE], "readwrite");
@@ -82,7 +87,7 @@ export async function addBusStopSearch(
     stopId,
     name,
     distance,
-    searchedAt: Date.now(),
+    searchedAt: searchedAt ?? Date.now(),
   };
 
   return new Promise((resolve, reject) => {
@@ -94,12 +99,14 @@ export async function addBusStopSearch(
 
 /**
  * Add a route search to history
+ * @param searchedAt - Optional timestamp for testing. If not provided, uses current time.
  */
 export async function addRouteSearch(
   fromStopId: string,
   toStopId: string,
   fromStation: string,
-  toStation: string
+  toStation: string,
+  searchedAt?: number
 ): Promise<void> {
   const db = await openDB();
   const transaction = db.transaction([ROUTE_STORE], "readwrite");
@@ -114,7 +121,7 @@ export async function addRouteSearch(
     toStopId,
     fromStopName: fromStation,
     toStopName: toStation,
-    searchedAt: Date.now(),
+    searchedAt: searchedAt ?? Date.now(),
   };
 
   return new Promise((resolve, reject) => {
