@@ -4,30 +4,30 @@ This directory contains all SVG icons used throughout the application. Icons are
 
 ## Available Icons
 
-| Icon Name | Description | Usage |
-|-----------|-------------|-------|
-| `alert-triangle.svg` | Warning/error indicator | Error states in modals and alerts |
-| `arrow-back.svg` | Back navigation arrow | TopNavigation back button |
-| `arrow-down-long.svg` | Long downward arrow | Transfer arrows in route results |
-| `arrow-down.svg` | Short downward arrow | Dropdown indicators |
-| `arrow-right.svg` | Right arrow | Navigation and forward actions |
-| `clock.svg` | Clock/time icon | Recent page, time-related features |
-| `close.svg` | Close/X button | Modal close buttons |
-| `flag-filled.svg` | Filled flag icon | Destination markers (filled style) |
-| `flag-simple.svg` | Simple flag icon | Destination markers (simple style) |
-| `flag.svg` | Flag icon | Destination markers (outline style) |
-| `info.svg` | Information icon | Info pages and help sections |
-| `location-dot.svg` | Location dot | Intermediate stops in journey |
-| `location-filled.svg` | Filled location pin | Location markers (filled style) |
-| `location-pin-simple.svg` | Simple location pin | Origin markers (simple style) |
-| `location-pin.svg` | Location pin | Bus stop locations, origin markers |
-| `map-search.svg` | Map with search | Map search functionality |
-| `route.svg` | Route/activity line | Recent route searches |
-| `search.svg` | Search magnifying glass | Search inputs and buttons |
-| `share.svg` | Share icon | Share functionality |
-| `swap.svg` | Swap/exchange arrows | Origin/destination swap button |
-| `transfer.svg` | Transfer arrows | Transfer/route change buttons |
-| `walk.svg` | Walking person | Walking directions button |
+| Icon Name                 | Description             | Usage                               |
+| ------------------------- | ----------------------- | ----------------------------------- |
+| `alert-triangle.svg`      | Warning/error indicator | Error states in modals and alerts   |
+| `arrow-back.svg`          | Back navigation arrow   | TopNavigation back button           |
+| `arrow-down-long.svg`     | Long downward arrow     | Transfer arrows in route results    |
+| `arrow-down.svg`          | Short downward arrow    | Dropdown indicators                 |
+| `arrow-right.svg`         | Right arrow             | Navigation and forward actions      |
+| `clock.svg`               | Clock/time icon         | Recent page, time-related features  |
+| `close.svg`               | Close/X button          | Modal close buttons                 |
+| `flag-filled.svg`         | Filled flag icon        | Destination markers (filled style)  |
+| `flag-simple.svg`         | Simple flag icon        | Destination markers (simple style)  |
+| `flag.svg`                | Flag icon               | Destination markers (outline style) |
+| `info.svg`                | Information icon        | Info pages and help sections        |
+| `location-dot.svg`        | Location dot            | Intermediate stops in journey       |
+| `location-filled.svg`     | Filled location pin     | Location markers (filled style)     |
+| `location-pin-simple.svg` | Simple location pin     | Origin markers (simple style)       |
+| `location-pin.svg`        | Location pin            | Bus stop locations, origin markers  |
+| `map-search.svg`          | Map with search         | Map search functionality            |
+| `route.svg`               | Route/activity line     | Recent route searches               |
+| `search.svg`              | Search magnifying glass | Search inputs and buttons           |
+| `share.svg`               | Share icon              | Share functionality                 |
+| `swap.svg`                | Swap/exchange arrows    | Origin/destination swap button      |
+| `transfer.svg`            | Transfer arrows         | Transfer/route change buttons       |
+| `walk.svg`                | Walking person          | Walking directions button           |
 
 ## Usage
 
@@ -77,6 +77,7 @@ When adding new icons to this directory:
 ## Migration Notes
 
 These icons were previously defined inline within component files. They have been extracted to:
+
 - Improve code clarity
 - Enable easier icon management
 - Reduce bundle size through asset optimization

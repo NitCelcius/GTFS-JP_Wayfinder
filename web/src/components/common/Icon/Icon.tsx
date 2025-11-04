@@ -15,6 +15,12 @@ interface IconProps {
  *   <Icon name="search" className="w-6 h-6" />
  */
 export function Icon({ name, size, className = "", style }: IconProps) {
+  // Validate icon name to prevent directory traversal attacks
+  if (!/^[a-z0-9-]+$/.test(name)) {
+    console.error(`Invalid icon name: ${name}`);
+    return null;
+  }
+
   const sizeStyle = size
     ? {
         width: typeof size === "number" ? `${size}px` : size,
