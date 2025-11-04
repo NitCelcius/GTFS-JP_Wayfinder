@@ -3,63 +3,63 @@
  * This layer combines converted data with selection strategies.
  */
 import {
+  computeBestBusIndex,
   convertBusesToBusInfoList,
   convertTripStopsToJourneyStops,
-  selectBestBus,
 } from "./converter";
 import type { BusStopInfo, UpcomingBusEnrichedData } from "./types";
 
 /**
  * Compose BusStopInfo from API data with intelligent default bus selection.
- * Converts all buses and pre-selects the "best"(latest if possible, otherwise last) bus based on current time.
+ * Converts all buses and pre-selects the "best" (earliest upcoming if available, otherwise most recent past) bus based on current time.
  *
  * Use this when you want the hook/logic layer to handle bus selection.
  * The component can still override the selection by updating currentBusIndex.
  *
- * @param data - Raw API response data
+ * @param enrichedData - Raw API response data
  * @param stopName - Stop name
  * @param stopId - Stop ID
  * @param distance - Distance to stop (optional)
  * @param lat - Stop latitude (optional)
  * @param lon - Stop longitude (optional)
- * @param currentTime - Reference time for selecting the best bus (defaults to now)
+ * @param currentTime - Reference time for selecting the best bus (if undefined, let computeBestBusIndex decide)
  * @returns BusStopInfo with pre-selected currentBusIndex and nextBus
  */
 export function composeBusStopInfoWithLatestSelection(
-  data: UpcomingBusEnrichedData,
+  enrichedData: UpcomingBusEnrichedData,
   stopName: string,
   stopId: string,
   distance?: string,
   lat?: number,
   lon?: number,
-  currentTime: Date = new Date()
+  currentTime: Date | undefined = undefined
 ): BusStopInfo {
-  // Convert all buses to BusInfo
-  const buses = convertBusesToBusInfoList(data.buses);
+  // Select the best bus to display based on current time (returns index or -1)
+  const selectedBusIndex = computeBestBusIndex(enrichedData.buses, currentTime);
 
-  // Select the best bus to display based on current time
-  const selectedBus = selectBestBus(data.buses, buses, currentTime);
-
-  const nextBus = selectedBus?.busInfo;
-  const currentBusIndex = selectedBus?.index ?? -1;
+  const tripBusList = convertBusesToBusInfoList(enrichedData.buses);
+  const selectedTripBus = tripBusList[selectedBusIndex];
 
   // Convert trip stops to journey stops if available
-  const routeJourney = selectedBus?.trip?.stops
-    ? convertTripStopsToJourneyStops(selectedBus.trip.stops, stopId)
+  const routeJourney = enrichedData.buses[selectedBusIndex]?.stops
+    ? convertTripStopsToJourneyStops(
+        enrichedData.buses[selectedBusIndex].stops,
+        stopId
+      )
     : [];
 
   const result: BusStopInfo = {
     busStop: {
-      id: data.stop_id,
+      id: enrichedData.stop_id,
       name: stopName,
       distance,
       lat,
       lon,
     },
-    buses,
-    busTrips: data.buses,
-    currentBusIndex,
-    nextBus,
+    buses: tripBusList,
+    busTrips: enrichedData.buses,
+    currentBusIndex: selectedBusIndex,
+    nextBus: selectedTripBus,
     routeJourney,
   };
 
