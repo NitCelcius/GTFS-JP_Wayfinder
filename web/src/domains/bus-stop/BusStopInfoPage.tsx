@@ -78,12 +78,7 @@ export function BusStopInfoPage({
   };
 
   const InfoIcon = () => (
-    <img
-      src="/icons/info.svg"
-      alt=""
-      className="w-6 h-6"
-      aria-hidden="true"
-    />
+    <img src="/icons/info.svg" alt="" className="w-6 h-6" aria-hidden="true" />
   );
 
   // Handle error state
