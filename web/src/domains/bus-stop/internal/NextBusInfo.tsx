@@ -1,3 +1,5 @@
+import React from "react";
+
 import { useTimeDisplay } from "@/hooks";
 
 import type { BusInfo } from "../types";
@@ -48,15 +50,21 @@ export function NextBusInfo({
         </div>
 
         <div className={styles.mainInfo}>
-          <span className={styles.mainInfoText}>{busInfo.destination}</span>{" "}
-          <span className={styles.directionText}>{busInfo.direction}</span>{" "}
-          <br />
-          <span className={styles.mainInfoText}>
-            {busInfo.arrivalDatetime
-              ? timeDisplay.format(busInfo.arrivalDatetime, busInfo.arrivalTime)
-              : busInfo.arrivalTime}
-          </span>{" "}
-          <span className={styles.statusText}>{busInfo.status}</span>
+          <div>
+            <span className={styles.mainInfoText}>{busInfo.destination}</span>{" "}
+            <span className={styles.directionText}>{busInfo.direction}</span>
+          </div>
+          <div>
+            <span className={styles.mainInfoText}>
+              {busInfo.arrivalDatetime
+                ? timeDisplay.format(
+                    busInfo.arrivalDatetime,
+                    busInfo.arrivalTime
+                  )
+                : busInfo.arrivalTime}
+            </span>{" "}
+            <span className={styles.statusText}>{busInfo.status}</span>
+          </div>
         </div>
 
         <div className={styles.navigation}>
