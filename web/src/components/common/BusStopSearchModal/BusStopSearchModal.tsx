@@ -148,21 +148,14 @@ export function BusStopSearchModal({
             onClick={onClose}
             aria-label="閉じる"
           >
-            <svg
+            <img
+              src="/icons/close.svg"
+              alt=""
               className="w-8 h-8"
-              fill="none"
-              strokeWidth="2"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
               width={32}
               height={32}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
+              aria-hidden="true"
+            />
           </button>
         </div>
 
@@ -187,19 +180,12 @@ export function BusStopSearchModal({
             </div>
           ) : error ? (
             <div className={styles.emptyState}>
-              <svg
+              <img
+                src="/icons/alert-triangle.svg"
+                alt=""
                 className={styles.emptyIcon}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"
-                />
-              </svg>
+                aria-hidden="true"
+              />
               <div className={styles.emptyTitle}>エラーが発生しました</div>
               <div className={styles.emptyDescription}>{error}</div>
             </div>
@@ -207,19 +193,12 @@ export function BusStopSearchModal({
             <div className={styles.emptyState}>
               {searchQuery.trim() ? (
                 <>
-                  <svg
+                  <img
+                    src="/icons/search.svg"
+                    alt=""
                     className={styles.emptyIcon}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    />
-                  </svg>
+                    aria-hidden="true"
+                  />
                   <div className={styles.emptyTitle}>
                     該当するバス停が見つかりませんでした
                   </div>
@@ -229,25 +208,12 @@ export function BusStopSearchModal({
                 </>
               ) : (
                 <>
-                  <svg
+                  <img
+                    src="/icons/location-pin.svg"
+                    alt=""
                     className={styles.emptyIcon}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                  </svg>
+                    aria-hidden="true"
+                  />
                   <div className={styles.emptyTitle}>バス停を検索</div>
                   <div className={styles.emptyDescription}>
                     上の検索ボックスにバス停名を入力してください
