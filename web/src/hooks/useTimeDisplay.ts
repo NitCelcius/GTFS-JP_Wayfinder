@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { DefaultTimeFormatter, TimeFormatterBase } from "./TimeFormatterBase";
+import { useEnvValue } from "./useEnv";
 
 let defaultFormatterInstance: DefaultTimeFormatter | null = null;
 
@@ -13,8 +14,7 @@ function getDefaultFormatter(): DefaultTimeFormatter {
 
 export function useTimeDisplay(formatter?: TimeFormatterBase) {
   const useRelativeTime =
-    typeof process !== "undefined" &&
-    process.env?.NEXT_PUBLIC_USE_RELATIVE_TIME === "true";
+    useEnvValue("NEXT_PUBLIC_USE_RELATIVE_TIME") === "true";
   const [now, setNow] = useState<Date>(new Date());
   const trackedTimesRef = useRef<Set<number>>(new Set());
 

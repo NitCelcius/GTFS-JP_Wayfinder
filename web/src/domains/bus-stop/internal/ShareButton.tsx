@@ -4,6 +4,7 @@ import { QRCodeSVG } from "qrcode.react";
 
 import { useState } from "react";
 
+import { useEnvValue } from "@/hooks";
 import styles from "./ShareButton.module.css";
 
 interface ShareButtonProps {
@@ -49,10 +50,7 @@ function CloseIcon() {
 
 export function ShareButton({ busStopId, busStopName }: ShareButtonProps) {
   const [showModal, setShowModal] = useState(false);
-
-  const baseUrl =
-    process.env.NEXT_PUBLIC_BASE_URL ||
-    (typeof window !== "undefined" ? window.location.origin : "");
+  const baseUrl = useEnvValue("NEXT_PUBLIC_BASE_URL") || "";
   const shareUrl = `${baseUrl}/bus-stop/${busStopId}`;
   const shareTitle = busStopName ? `${busStopName} - バス停情報` : "バス停情報";
 

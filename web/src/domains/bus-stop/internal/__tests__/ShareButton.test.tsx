@@ -7,11 +7,15 @@ describe("ShareButton", () => {
   const mockBusStopName = "テストバス停";
 
   beforeEach(() => {
-    // Mock environment variable
-    process.env.NEXT_PUBLIC_BASE_URL = "http://localhost:3000";
+    // Mock environment variable via window.__ENV__ for useEnv hook
+    (window as any).__ENV__ = {
+      NEXT_PUBLIC_BASE_URL: "http://localhost:3000",
+    };
   });
 
   afterEach(() => {
+    // Clean up mock
+    delete (window as any).__ENV__;
     jest.restoreAllMocks();
   });
 

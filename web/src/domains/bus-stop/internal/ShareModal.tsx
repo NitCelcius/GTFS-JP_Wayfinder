@@ -2,6 +2,7 @@
 
 import { QRCodeSVG } from "qrcode.react";
 
+import { useEnvValue } from "@/hooks";
 import styles from "./ShareModal.module.css";
 
 interface ShareModalProps {
@@ -35,11 +36,7 @@ export function ShareModal({
   isOpen,
   onClose,
 }: ShareModalProps) {
-  if (!isOpen) return null;
-
-  const baseUrl =
-    process.env.NEXT_PUBLIC_BASE_URL ||
-    (typeof window !== "undefined" ? window.location.origin : "");
+  const baseUrl = useEnvValue("NEXT_PUBLIC_BASE_URL") || "";
 
   // If shareUrl is a relative path, prepend the base URL
   const fullShareUrl = shareUrl.startsWith("http")
@@ -47,6 +44,8 @@ export function ShareModal({
     : `${baseUrl}${shareUrl.startsWith("/") ? shareUrl : `/${shareUrl}`}`;
 
   const shareTitle = title || "バス停情報";
+
+  if (!isOpen) return null;
 
   const handleNativeShare = async () => {
     if (navigator.share) {
