@@ -6,18 +6,21 @@ import { composeBusStopInfoWithLatestSelection } from "../composition";
 import { calculateDistance } from "../converter";
 import type {
   BusStopInfo,
+  BusWithJourney,
   StopNameListData,
   UpcomingBusEnrichedData,
 } from "../types";
 
-interface UseBusStopDataResult {
-  data: BusStopInfo | null;
+interface UseBusStopDataReturn {
+  busStop: BusStopInfo["busStop"] | null;
+  busesWithJourneys: BusWithJourney[];
+  bestBusIndex: number;
   isLoading: boolean;
   error: string | null;
 }
 
-export function useBusStopData(busStopId?: string): UseBusStopDataResult {
-  const [data, setData] = useState<BusStopInfo | null>(null);
+export function useBusStopData(busStopId?: string): UseBusStopDataReturn {
+  const [composedData, setComposedData] = useState<BusStopInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -86,7 +89,7 @@ export function useBusStopData(busStopId?: string): UseBusStopDataResult {
           new Date() // Pass current time so logic picks best bus
         );
 
-        setData(busStopInfo);
+        setComposedData(busStopInfo);
       } catch (err) {
         console.error("Failed to fetch bus stop data:", err);
         setError(
@@ -100,5 +103,12 @@ export function useBusStopData(busStopId?: string): UseBusStopDataResult {
     fetchBusStopData();
   }, [busStopId]);
 
-  return { data, isLoading, error };
+  // Expose the structured data the component needs
+  return {
+    busStop: composedData?.busStop ?? null,
+    busesWithJourneys: composedData?.busesWithJourneys ?? [],
+    bestBusIndex: composedData?.bestBusIndex ?? 0,
+    isLoading,
+    error,
+  };
 }
