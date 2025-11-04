@@ -167,7 +167,7 @@ export function computeBestBusIndex(
       continue; // skip unparsable times
     }
 
-    if (t > currentTime) {
+    if (t >= currentTime) {
       if (earliestFutureTime === null || t < earliestFutureTime) {
         earliestFutureTime = t;
         earliestFutureIndex = i;
