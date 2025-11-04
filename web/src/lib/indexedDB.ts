@@ -67,7 +67,7 @@ function openDB(): Promise<IDBDatabase> {
  * @param stopId - The ID of the bus stop
  * @param name - The name of the bus stop
  * @param distance - The distance description to the bus stop
- * @param searchedAt - The timestamp indicating when the search was ran. If not provided, uses current time.
+ * @param searchedAt - The timestamp indicating when the search was run. If not provided, uses current time.
  */
 export async function addBusStopSearch(
   stopId: string,
@@ -99,7 +99,11 @@ export async function addBusStopSearch(
 
 /**
  * Add a route search to history
- * @param searchedAt - Optional timestamp for testing. If not provided, uses current time.
+ * @param fromStopId - The ID of the origin bus stop
+ * @param toStopId - The ID of the destination bus stop
+ * @param fromStation - The name of the origin bus stop
+ * @param toStation - The name of the destination bus stop
+ * @param searchedAt - The timestamp indicating when the search was ran. If not provided, uses current time.
  */
 export async function addRouteSearch(
   fromStopId: string,
