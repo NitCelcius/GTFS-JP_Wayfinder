@@ -20,8 +20,10 @@ describe("indexedDB", () => {
 
   describe("Bus Stop Searches", () => {
     it("should add and retrieve bus stop searches", async () => {
-      await addBusStopSearch("stop1", "中央公園", "徒歩2分");
-      await addBusStopSearch("stop2", "市役所前", "徒歩5分");
+      const timestamp1 = 1000;
+      const timestamp2 = 2000;
+      await addBusStopSearch("stop1", "中央公園", "徒歩2分", timestamp1);
+      await addBusStopSearch("stop2", "市役所前", "徒歩5分", timestamp2);
 
       const searches = await getBusStopSearches();
 
@@ -41,10 +43,10 @@ describe("indexedDB", () => {
     });
 
     it("should order searches by searchedAt (newest first)", async () => {
-      await addBusStopSearch("stop1", "First Stop", "徒歩1分");
-      // Add a small delay to ensure different timestamps
-      await new Promise((resolve) => setTimeout(resolve, 10));
-      await addBusStopSearch("stop2", "Second Stop", "徒歩2分");
+      const timestamp1 = 1000;
+      const timestamp2 = 2000;
+      await addBusStopSearch("stop1", "First Stop", "徒歩1分", timestamp1);
+      await addBusStopSearch("stop2", "Second Stop", "徒歩2分", timestamp2);
 
       const searches = await getBusStopSearches();
 
@@ -81,8 +83,10 @@ describe("indexedDB", () => {
 
   describe("Route Searches", () => {
     it("should add and retrieve route searches", async () => {
-      await addRouteSearch("stop1", "stop2", "東駅", "中央公園");
-      await addRouteSearch("stop3", "stop4", "西口", "大学病院");
+      const timestamp1 = 1000;
+      const timestamp2 = 2000;
+      await addRouteSearch("stop1", "stop2", "東駅", "中央公園", timestamp1);
+      await addRouteSearch("stop3", "stop4", "西口", "大学病院", timestamp2);
 
       const searches = await getRouteSearches();
 
@@ -104,10 +108,22 @@ describe("indexedDB", () => {
     });
 
     it("should order searches by searchedAt (newest first)", async () => {
-      await addRouteSearch("stop1", "stop2", "First From", "First To");
-      // Add a small delay to ensure different timestamps
-      await new Promise((resolve) => setTimeout(resolve, 10));
-      await addRouteSearch("stop3", "stop4", "Second From", "Second To");
+      const timestamp1 = 1000;
+      const timestamp2 = 2000;
+      await addRouteSearch(
+        "stop1",
+        "stop2",
+        "First From",
+        "First To",
+        timestamp1
+      );
+      await addRouteSearch(
+        "stop3",
+        "stop4",
+        "Second From",
+        "Second To",
+        timestamp2
+      );
 
       const searches = await getRouteSearches();
 
