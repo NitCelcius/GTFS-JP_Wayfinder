@@ -8,14 +8,14 @@ describe("ShareButton", () => {
 
   beforeEach(() => {
     // Mock environment variable via window.__ENV__ for useEnv hook
-    (window as any).__ENV__ = {
+    (window as Window & { __ENV__?: Record<string, string | undefined> }).__ENV__ = {
       NEXT_PUBLIC_BASE_URL: "http://localhost:3000",
     };
   });
 
   afterEach(() => {
     // Clean up mock
-    delete (window as any).__ENV__;
+    delete (window as Window & { __ENV__?: Record<string, string | undefined> }).__ENV__;
     jest.restoreAllMocks();
   });
 

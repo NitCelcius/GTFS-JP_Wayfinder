@@ -9,7 +9,7 @@ describe("useEnv", () => {
     process.env = { ...originalEnv };
     // Clean up any injected window.__ENV__
     if (typeof window !== "undefined") {
-      delete (window as any).__ENV__;
+      delete (window as Window & { __ENV__?: Record<string, string | undefined> }).__ENV__;
     }
   });
 
@@ -17,7 +17,7 @@ describe("useEnv", () => {
     process.env = originalEnv;
     // Clean up any injected window.__ENV__
     if (typeof window !== "undefined") {
-      delete (window as any).__ENV__;
+      delete (window as Window & { __ENV__?: Record<string, string | undefined> }).__ENV__;
     }
   });
 
@@ -52,7 +52,7 @@ describe("useEnv", () => {
       process.env.NEXT_PUBLIC_API_BASE_URL = "https://api.example.com";
 
       // Mock window.__ENV__
-      (window as any).__ENV__ = {
+      (window as Window & { __ENV__?: Record<string, string | undefined> }).__ENV__ = {
         NEXT_PUBLIC_API_BASE_URL: "https://storybook.example.com",
       };
 
@@ -87,7 +87,7 @@ describe("useEnv", () => {
 
     it("should use window.__ENV__ value when available", () => {
       // Mock window.__ENV__
-      (window as any).__ENV__ = {
+      (window as Window & { __ENV__?: Record<string, string | undefined> }).__ENV__ = {
         NEXT_PUBLIC_BASE_URL: "https://custom.example.com",
       };
 
@@ -113,7 +113,7 @@ describe("useEnv", () => {
       }
 
       // Second test: window.__ENV__ should override process.env
-      (window as any).__ENV__ = {
+      (window as Window & { __ENV__?: Record<string, string | undefined> }).__ENV__ = {
         NEXT_PUBLIC_USE_RELATIVE_TIME: "false",
       };
 
@@ -132,7 +132,7 @@ describe("useEnv", () => {
       delete process.env.NEXT_PUBLIC_API_BASE_URL;
       delete process.env.NEXT_PUBLIC_BASE_URL;
 
-      (window as any).__ENV__ = {
+      (window as Window & { __ENV__?: Record<string, string | undefined> }).__ENV__ = {
         NEXT_PUBLIC_API_BASE_URL: "http://localhost:8002",
         NEXT_PUBLIC_BASE_URL: "http://localhost:3000",
         NEXT_PUBLIC_USE_RELATIVE_TIME: "false",
