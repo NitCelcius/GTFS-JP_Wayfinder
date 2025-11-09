@@ -1,3 +1,5 @@
+/* eslint-disable local/no-direct-env-access */
+// Tests need direct access to process.env to verify the hook's behavior
 import { renderHook } from "@testing-library/react";
 
 import { useEnv, useEnvValue } from "../useEnv";
@@ -9,7 +11,9 @@ describe("useEnv", () => {
     process.env = { ...originalEnv };
     // Clean up any injected window.__ENV__
     if (typeof window !== "undefined") {
-      delete (window as Window & { __ENV__?: Record<string, string | undefined> }).__ENV__;
+      delete (
+        window as Window & { __ENV__?: Record<string, string | undefined> }
+      ).__ENV__;
     }
   });
 
@@ -17,7 +21,9 @@ describe("useEnv", () => {
     process.env = originalEnv;
     // Clean up any injected window.__ENV__
     if (typeof window !== "undefined") {
-      delete (window as Window & { __ENV__?: Record<string, string | undefined> }).__ENV__;
+      delete (
+        window as Window & { __ENV__?: Record<string, string | undefined> }
+      ).__ENV__;
     }
   });
 
@@ -52,7 +58,9 @@ describe("useEnv", () => {
       process.env.NEXT_PUBLIC_API_BASE_URL = "https://api.example.com";
 
       // Mock window.__ENV__
-      (window as Window & { __ENV__?: Record<string, string | undefined> }).__ENV__ = {
+      (
+        window as Window & { __ENV__?: Record<string, string | undefined> }
+      ).__ENV__ = {
         NEXT_PUBLIC_API_BASE_URL: "https://storybook.example.com",
       };
 
@@ -87,13 +95,13 @@ describe("useEnv", () => {
 
     it("should use window.__ENV__ value when available", () => {
       // Mock window.__ENV__
-      (window as Window & { __ENV__?: Record<string, string | undefined> }).__ENV__ = {
+      (
+        window as Window & { __ENV__?: Record<string, string | undefined> }
+      ).__ENV__ = {
         NEXT_PUBLIC_BASE_URL: "https://custom.example.com",
       };
 
-      const { result } = renderHook(() =>
-        useEnvValue("NEXT_PUBLIC_BASE_URL")
-      );
+      const { result } = renderHook(() => useEnvValue("NEXT_PUBLIC_BASE_URL"));
 
       expect(result.current).toBe("https://custom.example.com");
     });
@@ -113,7 +121,9 @@ describe("useEnv", () => {
       }
 
       // Second test: window.__ENV__ should override process.env
-      (window as Window & { __ENV__?: Record<string, string | undefined> }).__ENV__ = {
+      (
+        window as Window & { __ENV__?: Record<string, string | undefined> }
+      ).__ENV__ = {
         NEXT_PUBLIC_USE_RELATIVE_TIME: "false",
       };
 
@@ -132,7 +142,9 @@ describe("useEnv", () => {
       delete process.env.NEXT_PUBLIC_API_BASE_URL;
       delete process.env.NEXT_PUBLIC_BASE_URL;
 
-      (window as Window & { __ENV__?: Record<string, string | undefined> }).__ENV__ = {
+      (
+        window as Window & { __ENV__?: Record<string, string | undefined> }
+      ).__ENV__ = {
         NEXT_PUBLIC_API_BASE_URL: "http://localhost:8002",
         NEXT_PUBLIC_BASE_URL: "http://localhost:3000",
         NEXT_PUBLIC_USE_RELATIVE_TIME: "false",
@@ -147,6 +159,97 @@ describe("useEnv", () => {
       expect(result.current.NEXT_PUBLIC_BASE_URL).toBe("http://localhost:3000");
       expect(result.current.NEXT_PUBLIC_USE_RELATIVE_TIME).toBe("false");
       expect(result.current.NODE_ENV).toBe("development");
+    });
+  });
+
+  describe("Type safety", () => {
+    it("should maintain non-nullable types for required env vars", () => {
+      const { result } = renderHook(() => useEnv());
+
+      // These should never be undefined (guaranteed by defaults)
+      expect(typeof result.current.NEXT_PUBLIC_API_BASE_URL).toBe("string");
+      expect(typeof result.current.NEXT_PUBLIC_BASE_URL).toBe("string");
+      expect(typeof result.current.NEXT_PUBLIC_USE_RELATIVE_TIME).toBe(
+        "string"
+      );
+      expect(typeof result.current.NODE_ENV).toBe("string");
+      expect(typeof result.current.ENABLE_BASIC_AUTH).toBe("string");
+    });
+
+    it("should return typed values from useEnvValue with correct type inference", () => {
+      process.env.NEXT_PUBLIC_API_BASE_URL = "https://api.example.com";
+
+      const { result: urlResult } = renderHook(() =>
+        useEnvValue("NEXT_PUBLIC_API_BASE_URL")
+      );
+
+      // Type should be narrowed to string (not string | undefined)
+      expect(typeof urlResult.current).toBe("string");
+      expect(urlResult.current).toBe("https://api.example.com");
+    });
+
+    it("should handle optional env vars with correct typing", () => {
+      delete process.env.BASIC_AUTH_USERNAME;
+      delete process.env.BASIC_AUTH_PASSWORD;
+
+      const { result } = renderHook(() => useEnv());
+
+      // Optional fields may be undefined
+      expect(
+        result.current.BASIC_AUTH_USERNAME === undefined ||
+          typeof result.current.BASIC_AUTH_USERNAME === "string"
+      ).toBe(true);
+      expect(
+        result.current.BASIC_AUTH_PASSWORD === undefined ||
+          typeof result.current.BASIC_AUTH_PASSWORD === "string"
+      ).toBe(true);
+    });
+
+    it("should return undefined for optional env vars when not set", () => {
+      delete process.env.BASIC_AUTH_USERNAME;
+      delete process.env.BASIC_AUTH_PASSWORD;
+
+      const { result: usernameResult } = renderHook(() =>
+        useEnvValue("BASIC_AUTH_USERNAME")
+      );
+      const { result: passwordResult } = renderHook(() =>
+        useEnvValue("BASIC_AUTH_PASSWORD")
+      );
+
+      // Optional fields should be undefined (not empty string)
+      expect(usernameResult.current).toBeUndefined();
+      expect(passwordResult.current).toBeUndefined();
+    });
+
+    it("should return optional env var values when set", () => {
+      process.env.BASIC_AUTH_USERNAME = "admin";
+      process.env.BASIC_AUTH_PASSWORD = "secret";
+
+      const { result: usernameResult } = renderHook(() =>
+        useEnvValue("BASIC_AUTH_USERNAME")
+      );
+      const { result: passwordResult } = renderHook(() =>
+        useEnvValue("BASIC_AUTH_PASSWORD")
+      );
+
+      // Optional fields should return actual values when set
+      expect(usernameResult.current).toBe("admin");
+      expect(passwordResult.current).toBe("secret");
+    });
+
+    it("should clearly distinguish between required and optional fields", () => {
+      delete process.env.NEXT_PUBLIC_API_BASE_URL;
+      delete process.env.BASIC_AUTH_USERNAME;
+
+      const { result } = renderHook(() => useEnv());
+
+      // Required field gets default
+      expect(result.current.NEXT_PUBLIC_API_BASE_URL).toBe(
+        "http://localhost:8002"
+      );
+
+      // Optional field is undefined (not a default value)
+      expect(result.current.BASIC_AUTH_USERNAME).toBeUndefined();
     });
   });
 });
