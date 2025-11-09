@@ -95,8 +95,9 @@ See `CONTRIBUTING.md` for detailed setup instructions.
 | **Generate OpenAPI client** | `pnpm openapi-generate` (from root, runs exact same script)   |
 | **Check Python syntax**     | `uv run python -m py_compile src/...`                         |
 
- **Web frontend:**
-  - `cd web && mise exec pnpm dev` (Next.js dev server)
+**Web frontend:**
+
+- `cd web && mise exec pnpm dev` (Next.js dev server)
 - Root (recommended workspace orchestration): Root scripts (uses turbo):
   - `mise exec pnpm dev` -> runs turbo run dev (starts both workspaces if configured)
   - `mise exec pnpm build`
