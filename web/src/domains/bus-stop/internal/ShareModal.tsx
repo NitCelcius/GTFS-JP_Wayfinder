@@ -3,6 +3,7 @@
 import { QRCodeSVG } from "qrcode.react";
 
 import { useEnvValue } from "@/hooks";
+
 import styles from "./ShareModal.module.css";
 
 interface ShareModalProps {
