@@ -1,3 +1,5 @@
+/* eslint-disable local/no-direct-env-access */
+// Tests need direct access to process.env to verify the hook's behavior
 import { renderHook } from "@testing-library/react";
 
 import { DefaultTimeFormatter, TimeFormatterBase } from "../TimeFormatterBase";
