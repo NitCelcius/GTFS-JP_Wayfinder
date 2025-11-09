@@ -8,10 +8,14 @@ import {
   timedSearchPathTimedSearchGet,
 } from "@/api";
 import { client as generatedClient } from "@/api/client.gen";
+
 import { getEnvValue } from "./envUtils";
 
 // Configure the generated client to use the correct base URL
-const baseUrl = getEnvValue("NEXT_PUBLIC_API_BASE_URL", "http://localhost:8002");
+const baseUrl = getEnvValue(
+  "NEXT_PUBLIC_API_BASE_URL",
+  "http://localhost:8002"
+);
 generatedClient.setConfig({ baseUrl });
 
 export function getCurrentApiBaseUrl(): string {
