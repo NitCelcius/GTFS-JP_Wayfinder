@@ -4,6 +4,7 @@ import { dirname } from "path";
 import { fileURLToPath } from "url";
 
 import limitInlineStylesRule from "./eslint-rules/limit-inline-styles.js";
+import noDirectEnvAccessRule from "./eslint-rules/no-direct-env-access.js";
 import requireCssModulesRule from "./eslint-rules/require-css-modules.js";
 import unusedCssModuleClassesRule from "./eslint-rules/unused-css-module-classes.js";
 
@@ -50,6 +51,7 @@ const eslintConfig = [
           "require-css-modules": requireCssModulesRule,
           "limit-inline-styles": limitInlineStylesRule,
           "unused-css-module-classes": unusedCssModuleClassesRule,
+          "no-direct-env-access": noDirectEnvAccessRule,
         },
       },
     },
@@ -89,6 +91,7 @@ const eslintConfig = [
           maxSilentUnused: 50, // do not spam if a huge shared module is imported but unused
         },
       ],
+      "local/no-direct-env-access": "error",
     },
   },
 ];
