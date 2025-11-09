@@ -95,8 +95,8 @@ See `CONTRIBUTING.md` for detailed setup instructions.
 | **Generate OpenAPI client** | `pnpm openapi-generate` (from root, runs exact same script)   |
 | **Check Python syntax**     | `uv run python -m py_compile src/...`                         |
 
-### Detailed Command Guidance
-
+ **Web frontend:**
+  - `cd web && mise exec pnpm dev` (Next.js dev server)
 - Root (recommended workspace orchestration): Root scripts (uses turbo):
   - `mise exec pnpm dev` -> runs turbo run dev (starts both workspaces if configured)
   - `mise exec pnpm build`
@@ -108,7 +108,7 @@ See `CONTRIBUTING.md` for detailed setup instructions.
   - Important: the API expects the GTFS CSV directory to be at `./data/gtfs-akita-chuo-kotsu/` relative to the process cwd. Starting the API from the repo root (or adjusting the path) is required.
 
 - Web frontend:
-  - `cd web && mise exec pnpm dev` (Next.js dev server, uses turbopack flag in package.json)
+  - `cd web && mise exec pnpm dev` (Next.js dev server)
 
 - Docker/composition: a root `docker-compose.yml` references `api` and `web` compose files. Use Docker Compose for containerized runs.
 
