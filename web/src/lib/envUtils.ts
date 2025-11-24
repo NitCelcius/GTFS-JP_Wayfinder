@@ -3,6 +3,7 @@
  * This module provides non-hook functions for module-level code that can't use React hooks.
  */
 import type { ValidEnvKey } from "@/hooks/useEnv";
+import { DEFAULT_ENV_VALUES } from "./envConstants";
 
 /**
  * Extends Window interface to include __ENV__ for Storybook
@@ -12,20 +13,6 @@ declare global {
     __ENV__?: Record<string, string | undefined>;
   }
 }
-
-/**
- * Default environment values used as fallbacks
- */
-const DEFAULT_ENV_VALUES: Record<string, string> = {
-  NEXT_PUBLIC_API_BASE_URL: "http://localhost:8002",
-  NEXT_PUBLIC_BASE_URL:
-    typeof window !== "undefined"
-      ? window.location.origin
-      : "http://localhost:3000",
-  NEXT_PUBLIC_USE_RELATIVE_TIME: "false",
-  NODE_ENV: "development",
-  ENABLE_BASIC_AUTH: "false",
-};
 
 /**
  * Get environment variable value with fallback (non-hook version for module-level code)
