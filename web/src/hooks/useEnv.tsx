@@ -13,6 +13,8 @@ import React, {
   useMemo,
 } from "react";
 
+import { DEFAULT_ENV_VALUES } from "@/lib/envConstants";
+
 /**
  * Extends Window interface to include __ENV__ for Storybook
  */
@@ -76,16 +78,14 @@ export interface EnvConfig {
 
 /**
  * Default values for required environment variables only
+ * Imported from shared constants to maintain single source of truth
  */
 const DEFAULT_ENV: Record<RequiredEnvKey, string> = {
-  NEXT_PUBLIC_API_BASE_URL: "http://localhost:8002",
-  NEXT_PUBLIC_BASE_URL:
-    typeof window !== "undefined"
-      ? window.location.origin
-      : "http://localhost:3000",
-  NEXT_PUBLIC_USE_RELATIVE_TIME: "false",
-  NODE_ENV: "development",
-  ENABLE_BASIC_AUTH: "false",
+  NEXT_PUBLIC_API_BASE_URL: DEFAULT_ENV_VALUES.NEXT_PUBLIC_API_BASE_URL,
+  NEXT_PUBLIC_BASE_URL: DEFAULT_ENV_VALUES.NEXT_PUBLIC_BASE_URL,
+  NEXT_PUBLIC_USE_RELATIVE_TIME: DEFAULT_ENV_VALUES.NEXT_PUBLIC_USE_RELATIVE_TIME,
+  NODE_ENV: DEFAULT_ENV_VALUES.NODE_ENV,
+  ENABLE_BASIC_AUTH: DEFAULT_ENV_VALUES.ENABLE_BASIC_AUTH,
 };
 
 /**

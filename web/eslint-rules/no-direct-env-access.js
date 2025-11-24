@@ -99,21 +99,6 @@ const noDirectEnvAccessRule = {
           });
         }
       },
-
-      /**
-       * Detect: process.env[...] or window.__ENV__[...]
-       */
-      CallExpression(node) {
-        // Skip if this is a function call related to env access (like getEnvValue)
-        if (
-          node.callee.type === "Identifier" &&
-          (node.callee.name === "getEnvValue" ||
-            node.callee.name === "useEnv" ||
-            node.callee.name === "useEnvValue")
-        ) {
-          return;
-        }
-      },
     };
   },
 };
