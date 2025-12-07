@@ -14,6 +14,7 @@ WORKDIR /app
 COPY ./src/ src/
 COPY ./pyproject.toml .
 COPY ./uv.lock .
+COPY ./README.md .
 
 # uvを使って依存関係のインストール
 # For environments with SSL certificate issues, uncomment the next line:
