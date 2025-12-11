@@ -59,10 +59,10 @@ describe("BusStopHeader", () => {
     );
 
     expect(screen.getByText("共有")).toBeInTheDocument();
-    // Check for share icon SVG
+    // Check for share icon image
     const shareButton = screen.getByRole("button", { name: "共有" });
-    const svg = shareButton.querySelector("svg");
-    expect(svg).toBeInTheDocument();
+    const img = shareButton.querySelector("img");
+    expect(img).toBeInTheDocument();
   });
 
   it("should call onShareClick when share button is clicked", () => {
