@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
+    "dev:network": "dotenvx run -f .env.debug.network -- next dev",
     "build": "next build",
     "start": "next start",
     "test": "jest",

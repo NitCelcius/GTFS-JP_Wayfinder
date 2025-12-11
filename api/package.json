@@ -10,10 +10,14 @@
     "lint": "uv run ruff check",
     "lint:fix": "uv run ruff --fix",
     "test": "uv run python -m pytest",
-    "dev": "uv run python -m uvicorn src.gtfs_jp_wayfinder.main:app --host 0.0.0.0 --port 8002 --reload"
+    "dev": "uv run python -m uvicorn src.gtfs_jp_wayfinder.main:app --host 0.0.0.0 --port 8002 --reload",
+    "dev:network": "dotenvx run -f .env.debug.network -- uv run python -m uvicorn src.gtfs_jp_wayfinder.main:app --host ${NETWORK_HOST} --port 8002 --reload"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@10.14.0"
+  "packageManager": "pnpm@10.14.0",
+  "dependencies": {
+    "@dotenvx/dotenvx": "^1.50.1"
+  }
 }

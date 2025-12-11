@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "turbo run dev",
+    "dev:network": "turbo run dev:network",
     "start": "turbo run start",
     "build": "turbo run build",
     "test": "turbo run test",
