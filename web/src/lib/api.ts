@@ -16,6 +16,39 @@ const baseUrl = getEnvValue(
   "NEXT_PUBLIC_API_BASE_URL",
   "http://localhost:8002"
 );
+
+// Validate API base URL configuration
+if (typeof window !== "undefined") {
+  const nodeEnv = getEnvValue("NODE_ENV", "development");
+  const isProduction = nodeEnv === "production";
+  const isLocalhost =
+    baseUrl.includes("localhost") || baseUrl.includes("127.0.0.1");
+
+  // Debug logging to help diagnose configuration issues
+  console.group("🔍 API Configuration Debug");
+  console.log("Environment:", nodeEnv);
+  console.log("API Base URL:", baseUrl);
+  console.log("Is localhost?", isLocalhost);
+  console.groupEnd();
+
+  if (isProduction && isLocalhost) {
+    console.error(
+      "\n❌ CRITICAL: API is configured to use localhost in production!\n" +
+        `   Current API URL: ${baseUrl}\n` +
+        "   \n" +
+        "   DIAGNOSIS: NEXT_PUBLIC_API_BASE_URL was not set during the Vercel build.\n" +
+        "   \n" +
+        "   SOLUTION:\n" +
+        "   1. Verify env var is set in Vercel: Settings → Environment Variables\n" +
+        "   2. Make sure it's enabled for 'Production' environment\n" +
+        "   3. Redeploy from: Deployments → ... → Redeploy\n" +
+        "   4. Check build logs for '✅ API Base URL:' message\n"
+    );
+  } else if (!isProduction) {
+    console.info(`🔧 API Base URL: ${baseUrl}`);
+  }
+}
+
 generatedClient.setConfig({ baseUrl });
 
 export function getCurrentApiBaseUrl(): string {
