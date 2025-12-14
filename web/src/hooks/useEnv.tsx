@@ -13,28 +13,10 @@ import React, {
   useMemo,
 } from "react";
 
-import { DEFAULT_ENV_VALUES } from "@/lib/envConstants";
-import { type ValidEnvKey, getEnvValue } from "@/lib/envUtils";
+import { ENV_SCHEMA, type EnvConfig, type ValidEnvKey } from "@/lib/envSchema";
+import { getEnvValue } from "@/lib/envUtils";
 
-export type { ValidEnvKey };
-
-/**
- * Environment variable configuration type
- * - Required fields: guaranteed to be strings (have defaults)
- * - Optional fields: may be undefined (no fallback defaults)
- */
-export interface EnvConfig {
-  // Required environment variables (always defined)
-  NEXT_PUBLIC_API_BASE_URL: string;
-  NEXT_PUBLIC_BASE_URL: string;
-  NEXT_PUBLIC_USE_RELATIVE_TIME: string;
-  NODE_ENV: string;
-  ENABLE_BASIC_AUTH: string;
-
-  // Optional environment variables (may be undefined)
-  BASIC_AUTH_USERNAME: string | undefined;
-  BASIC_AUTH_PASSWORD: string | undefined;
-}
+export type { ValidEnvKey, EnvConfig };
 
 /**
  * Overrides for environment values, keyed by ValidEnvKey.
@@ -46,39 +28,25 @@ export type EnvOverrides = Partial<Record<ValidEnvKey, string>>;
  * Build a complete environment configuration from the available sources
  * @param overrides - Optional overrides for specific environment values
  * @returns Complete EnvConfig object with all required and optional variables
+ * @throws Error if required variables are missing
  */
 function buildEnv(overrides?: EnvOverrides): EnvConfig {
-  return {
-    NEXT_PUBLIC_API_BASE_URL:
-      overrides?.NEXT_PUBLIC_API_BASE_URL ??
-      getEnvValue("NEXT_PUBLIC_API_BASE_URL") ??
-      DEFAULT_ENV_VALUES.NEXT_PUBLIC_API_BASE_URL ??
-      "http://localhost:8002",
-    NEXT_PUBLIC_BASE_URL:
-      overrides?.NEXT_PUBLIC_BASE_URL ??
-      getEnvValue("NEXT_PUBLIC_BASE_URL") ??
-      DEFAULT_ENV_VALUES.NEXT_PUBLIC_BASE_URL ??
-      "http://localhost:3000",
-    NEXT_PUBLIC_USE_RELATIVE_TIME:
-      overrides?.NEXT_PUBLIC_USE_RELATIVE_TIME ??
-      getEnvValue("NEXT_PUBLIC_USE_RELATIVE_TIME") ??
-      DEFAULT_ENV_VALUES.NEXT_PUBLIC_USE_RELATIVE_TIME ??
-      "false",
-    NODE_ENV:
-      overrides?.NODE_ENV ??
-      getEnvValue("NODE_ENV") ??
-      DEFAULT_ENV_VALUES.NODE_ENV ??
-      "development",
-    ENABLE_BASIC_AUTH:
-      overrides?.ENABLE_BASIC_AUTH ??
-      getEnvValue("ENABLE_BASIC_AUTH") ??
-      DEFAULT_ENV_VALUES.ENABLE_BASIC_AUTH ??
-      "false",
-    BASIC_AUTH_USERNAME:
-      overrides?.BASIC_AUTH_USERNAME ?? getEnvValue("BASIC_AUTH_USERNAME"),
-    BASIC_AUTH_PASSWORD:
-      overrides?.BASIC_AUTH_PASSWORD ?? getEnvValue("BASIC_AUTH_PASSWORD"),
-  };
+  const config: Record<string, unknown> = {};
+
+  for (const key of Object.keys(ENV_SCHEMA) as ValidEnvKey[]) {
+    const overrideValue = overrides?.[key];
+    const envValue = getEnvValue(key);
+    const resolvedValue = overrideValue ?? envValue;
+
+    // Validate required variables are present
+    if (ENV_SCHEMA[key].required && !resolvedValue) {
+      throw new Error(`Missing required environment variable: ${key}`);
+    }
+
+    config[key] = resolvedValue;
+  }
+
+  return config as EnvConfig;
 }
 
 /**

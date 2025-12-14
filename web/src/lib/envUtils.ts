@@ -2,7 +2,12 @@
  * Utility functions for accessing environment variables in both Next.js and Storybook contexts
  * This module provides non-hook functions for module-level code that can't use React hooks.
  */
-import { DEFAULT_ENV_VALUES } from "./envConstants";
+import {
+  ENV_SCHEMA,
+  type ValidEnvKey,
+  getSchemaDefault,
+  isRequiredKey,
+} from "./envSchema";
 
 /**
  * Extends Window interface to include __ENV__ for Storybook
@@ -13,30 +18,50 @@ declare global {
   }
 }
 
-type RequiredEnvKey =
-  | "NEXT_PUBLIC_API_BASE_URL"
-  | "NEXT_PUBLIC_BASE_URL"
-  | "NEXT_PUBLIC_USE_RELATIVE_TIME"
-  | "NODE_ENV"
-  | "ENABLE_BASIC_AUTH";
+export type { ValidEnvKey };
 
-type OptionalEnvKey = "BASIC_AUTH_USERNAME" | "BASIC_AUTH_PASSWORD";
-
-export type ValidEnvKey = RequiredEnvKey | OptionalEnvKey;
+const getNextEnvValue = (key: ValidEnvKey): string | undefined => {
+  switch (key) {
+    case "NEXT_PUBLIC_API_BASE_URL": {
+      return process.env.NEXT_PUBLIC_API_BASE_URL;
+    }
+    case "NEXT_PUBLIC_BASE_URL": {
+      return process.env.NEXT_PUBLIC_BASE_URL;
+    }
+    case "NEXT_PUBLIC_USE_RELATIVE_TIME": {
+      return process.env.NEXT_PUBLIC_USE_RELATIVE_TIME;
+    }
+    case "NODE_ENV": {
+      return process.env.NODE_ENV;
+    }
+    case "ENABLE_BASIC_AUTH": {
+      return process.env.ENABLE_BASIC_AUTH;
+    }
+    case "BASIC_AUTH_USERNAME": {
+      return process.env.BASIC_AUTH_USERNAME;
+    }
+    case "BASIC_AUTH_PASSWORD": {
+      return process.env.BASIC_AUTH_PASSWORD;
+    }
+    default: {
+      const exhaustive: never = key;
+      return exhaustive;
+    }
+  }
+};
 
 /**
  * Get environment variable value with fallback (non-hook version for module-level code)
  * This function checks multiple sources in order:
  * 1. window.__ENV__ (for Storybook or runtime injection)
  * 2. process.env (for Next.js build-time substitution)
- * 3. Default value parameter or built-in defaults
+ * 3. Schema default value or provided default
  *
  * For type-safe access within React components, use the useEnv hook instead.
  *
  * @param key - The environment variable key
- * @param defaultValue - The default value if the environment variable is not found
- * @returns The environment variable value or the default value
- * @throws Error if variable is required but not found
+ * @param defaultValue - Optional override for the default value
+ * @returns The environment variable value, default, or undefined
  */
 export function getEnvValue(
   key: ValidEnvKey,
@@ -49,15 +74,32 @@ export function getEnvValue(
   }
 
   if (typeof process !== "undefined" && process.env) {
-    const value = process.env[key];
+    const value = getNextEnvValue(key);
     if (value !== undefined) return value;
   }
 
-  // Return provided default or built-in default
+  // Return provided override, schema default, or undefined
   if (defaultValue !== undefined) return defaultValue;
 
-  const builtInDefault = DEFAULT_ENV_VALUES[key];
-  if (builtInDefault !== undefined) return builtInDefault;
+  return getSchemaDefault(key);
+}
 
-  return undefined;
+/**
+ * Validate that all required environment variables are provided
+ * @throws Error if any required variable is missing
+ */
+export function validateRequiredEnv(): void {
+  const missing: ValidEnvKey[] = [];
+
+  for (const key of Object.keys(ENV_SCHEMA) as ValidEnvKey[]) {
+    if (isRequiredKey(key) && !getEnvValue(key)) {
+      missing.push(key);
+    }
+  }
+
+  if (missing.length > 0) {
+    throw new Error(
+      `Missing required environment variables: ${missing.join(", ")}`
+    );
+  }
 }
