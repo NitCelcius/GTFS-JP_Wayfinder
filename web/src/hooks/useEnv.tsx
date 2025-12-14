@@ -14,48 +14,9 @@ import React, {
 } from "react";
 
 import { DEFAULT_ENV_VALUES } from "@/lib/envConstants";
+import { type ValidEnvKey, getEnvValue } from "@/lib/envUtils";
 
-/**
- * Extends Window interface to include __ENV__ for Storybook
- */
-declare global {
-  interface Window {
-    __ENV__?: Record<string, string | undefined>;
-  }
-}
-
-/**
- * Required environment variables (always defined with defaults)
- * Used to derive the RequiredEnvKey type
- */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const ENV_KEYS_REQUIRED = {
-  NEXT_PUBLIC_API_BASE_URL: "NEXT_PUBLIC_API_BASE_URL",
-  NEXT_PUBLIC_BASE_URL: "NEXT_PUBLIC_BASE_URL",
-  NEXT_PUBLIC_USE_RELATIVE_TIME: "NEXT_PUBLIC_USE_RELATIVE_TIME",
-  NODE_ENV: "NODE_ENV",
-  ENABLE_BASIC_AUTH: "ENABLE_BASIC_AUTH",
-} as const;
-
-/**
- * Optional environment variables (may be undefined if not set)
- * Used to derive the OptionalEnvKey type
- */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const ENV_KEYS_OPTIONAL = {
-  BASIC_AUTH_USERNAME: "BASIC_AUTH_USERNAME",
-  BASIC_AUTH_PASSWORD: "BASIC_AUTH_PASSWORD",
-} as const;
-
-// Derive types from env key objects
-type RequiredEnvKey = keyof typeof ENV_KEYS_REQUIRED;
-type OptionalEnvKey = keyof typeof ENV_KEYS_OPTIONAL;
-
-/**
- * Type-safe environment variable key (both required and optional)
- * Use this when you need to reference valid env keys
- */
-export type ValidEnvKey = RequiredEnvKey | OptionalEnvKey;
+export type { ValidEnvKey };
 
 /**
  * Environment variable configuration type
@@ -65,7 +26,6 @@ export type ValidEnvKey = RequiredEnvKey | OptionalEnvKey;
 export interface EnvConfig {
   // Required environment variables (always defined)
   NEXT_PUBLIC_API_BASE_URL: string;
-  // TODO: This env value is mandatory for proper functioning
   NEXT_PUBLIC_BASE_URL: string;
   NEXT_PUBLIC_USE_RELATIVE_TIME: string;
   NODE_ENV: string;
@@ -77,53 +37,6 @@ export interface EnvConfig {
 }
 
 /**
- * Default values for required environment variables only
- * Imported from shared constants to maintain single source of truth
- */
-const DEFAULT_ENV: Record<RequiredEnvKey, string> = {
-  NEXT_PUBLIC_API_BASE_URL: DEFAULT_ENV_VALUES.NEXT_PUBLIC_API_BASE_URL,
-  NEXT_PUBLIC_BASE_URL: DEFAULT_ENV_VALUES.NEXT_PUBLIC_BASE_URL,
-  NEXT_PUBLIC_USE_RELATIVE_TIME:
-    DEFAULT_ENV_VALUES.NEXT_PUBLIC_USE_RELATIVE_TIME,
-  NODE_ENV: DEFAULT_ENV_VALUES.NODE_ENV,
-  ENABLE_BASIC_AUTH: DEFAULT_ENV_VALUES.ENABLE_BASIC_AUTH,
-};
-
-/**
- * Get environment variable value with fallback
- * - Required keys: return default if not found
- * - Optional keys: return undefined if not found
- */
-function getEnvValue(key: ValidEnvKey): string | undefined {
-  // Check if running in browser with injected env
-  if (typeof window !== "undefined" && window.__ENV__) {
-    const value = window.__ENV__[key];
-    if (value !== undefined) return value;
-  }
-
-  if (typeof process !== "undefined" && process.env) {
-    const value = process.env[key];
-    if (value !== undefined) return value;
-  }
-
-  // For required keys, return default; for optional, return undefined
-  if (key in DEFAULT_ENV) {
-    return DEFAULT_ENV[key as RequiredEnvKey];
-  }
-
-  return undefined;
-}
-
-function getRequiredEnv(key: RequiredEnvKey): string {
-  const value = getEnvValue(key);
-  if (value !== undefined) {
-    return value;
-  }
-
-  return DEFAULT_ENV[key];
-}
-
-/**
  * Overrides for environment values, keyed by ValidEnvKey.
  * Consumers should provide concrete string values; omit keys to fall back to defaults.
  */
@@ -131,20 +44,36 @@ export type EnvOverrides = Partial<Record<ValidEnvKey, string>>;
 
 /**
  * Build a complete environment configuration from the available sources
+ * @param overrides - Optional overrides for specific environment values
+ * @returns Complete EnvConfig object with all required and optional variables
  */
-export function buildEnv(overrides?: EnvOverrides): EnvConfig {
+function buildEnv(overrides?: EnvOverrides): EnvConfig {
   return {
     NEXT_PUBLIC_API_BASE_URL:
       overrides?.NEXT_PUBLIC_API_BASE_URL ??
-      getRequiredEnv("NEXT_PUBLIC_API_BASE_URL"),
+      getEnvValue("NEXT_PUBLIC_API_BASE_URL") ??
+      DEFAULT_ENV_VALUES.NEXT_PUBLIC_API_BASE_URL ??
+      "http://localhost:8002",
     NEXT_PUBLIC_BASE_URL:
-      overrides?.NEXT_PUBLIC_BASE_URL ?? getRequiredEnv("NEXT_PUBLIC_BASE_URL"),
+      overrides?.NEXT_PUBLIC_BASE_URL ??
+      getEnvValue("NEXT_PUBLIC_BASE_URL") ??
+      DEFAULT_ENV_VALUES.NEXT_PUBLIC_BASE_URL ??
+      "http://localhost:3000",
     NEXT_PUBLIC_USE_RELATIVE_TIME:
       overrides?.NEXT_PUBLIC_USE_RELATIVE_TIME ??
-      getRequiredEnv("NEXT_PUBLIC_USE_RELATIVE_TIME"),
-    NODE_ENV: overrides?.NODE_ENV ?? getRequiredEnv("NODE_ENV"),
+      getEnvValue("NEXT_PUBLIC_USE_RELATIVE_TIME") ??
+      DEFAULT_ENV_VALUES.NEXT_PUBLIC_USE_RELATIVE_TIME ??
+      "false",
+    NODE_ENV:
+      overrides?.NODE_ENV ??
+      getEnvValue("NODE_ENV") ??
+      DEFAULT_ENV_VALUES.NODE_ENV ??
+      "development",
     ENABLE_BASIC_AUTH:
-      overrides?.ENABLE_BASIC_AUTH ?? getRequiredEnv("ENABLE_BASIC_AUTH"),
+      overrides?.ENABLE_BASIC_AUTH ??
+      getEnvValue("ENABLE_BASIC_AUTH") ??
+      DEFAULT_ENV_VALUES.ENABLE_BASIC_AUTH ??
+      "false",
     BASIC_AUTH_USERNAME:
       overrides?.BASIC_AUTH_USERNAME ?? getEnvValue("BASIC_AUTH_USERNAME"),
     BASIC_AUTH_PASSWORD:
@@ -181,12 +110,10 @@ export const EnvProvider: React.FC<EnvProviderProps> = ({
   value,
   overrides,
 }) => {
-  const envConfig = useMemo(() => {
-    if (value) {
-      return value;
-    }
-    return buildEnv(overrides);
-  }, [value, overrides]);
+  const envConfig = useMemo(
+    () => (value ? value : buildEnv(overrides)),
+    [value, overrides]
+  );
 
   return (
     <EnvContext.Provider value={envConfig}>{children}</EnvContext.Provider>
@@ -195,6 +122,7 @@ export const EnvProvider: React.FC<EnvProviderProps> = ({
 
 /**
  * Hook to access environment variables safely in both Next.js and Storybook.
+ * Falls back to building env config if no provider is found in the component tree.
  */
 export function useEnv(): EnvConfig {
   const context = useContext(EnvContext);
