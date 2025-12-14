@@ -4,8 +4,6 @@ import React from "react";
 
 import type { Metadata } from "next";
 
-import "@/lib/initializeApiClient";
-
 import AppLayout from "./App";
 import "./globals.css";
 

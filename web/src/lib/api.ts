@@ -1,4 +1,5 @@
-// API client wrapper with error handling and request configuration
+"use client";
+
 import {
   getNearbyStopsStopsNearbyGet,
   getStopStopsStopIdGet,
@@ -7,17 +8,23 @@ import {
   searchStopsStopsGet,
   timedSearchPathTimedSearchGet,
 } from "@/api";
-import { client as generatedClient } from "@/api/client.gen";
+import { createClient } from "@/api/client";
+import type { Client } from "@/api/client";
 
 import { getEnvValue } from "./envUtils";
 
 export class ApiClient {
   private static instance: ApiClient;
+  private generatedClient: Client;
 
   private constructor() {
-    generatedClient.setConfig({
-      baseUrl: getEnvValue("NEXT_PUBLIC_API_BASE_URL"),
-    });
+    // Configure client with baseUrl from environment at runtime
+    const baseUrl = getEnvValue("NEXT_PUBLIC_API_BASE_URL");
+    if (!baseUrl) {
+      throw new Error("[ApiClient] NEXT_PUBLIC_API_BASE_URL is not configured");
+    }
+    this.generatedClient = createClient({ baseUrl });
+    console.debug("[ApiClient] initialized with baseUrl:", baseUrl);
   }
 
   static getInstance(): ApiClient {
@@ -31,6 +38,7 @@ export class ApiClient {
     try {
       return await searchStopsStopsGet({
         query: { name, exact },
+        client: this.generatedClient,
       });
     } catch (error) {
       console.error("API Error:", error);
@@ -43,6 +51,7 @@ export class ApiClient {
       return await getUpcomingStopsStopIdUpcomingGet({
         path: { stop_id: stopId },
         ...(serviceId && { query: { service_id: serviceId } }),
+        client: this.generatedClient,
       });
     } catch (error) {
       console.error("API Error:", error);
@@ -65,7 +74,7 @@ export class ApiClient {
           ...(serviceId && { service_id: serviceId }),
           ...(beginTime && { begin_time: beginTime }),
         },
-        client: generatedClient,
+        client: this.generatedClient,
       });
     } catch (error) {
       console.error("API Error:", error);
@@ -78,6 +87,7 @@ export class ApiClient {
       return await getStopStopsStopIdGet({
         path: { stop_id: stopId },
         ...(fields && { query: { _fields: fields } }),
+        client: this.generatedClient,
       });
     } catch (error) {
       console.error("API Error:", error);
@@ -98,6 +108,7 @@ export class ApiClient {
           to_stop: toStop,
           ...(serviceId && { service_id: serviceId }),
         },
+        client: this.generatedClient,
       });
     } catch (error) {
       console.error("API Error:", error);
@@ -113,6 +124,7 @@ export class ApiClient {
           lon,
           ...(limit && { limit }),
         },
+        client: this.generatedClient,
       });
     } catch (error) {
       console.error("API Error:", error);
@@ -134,6 +146,7 @@ export class ApiClient {
           ...(beginTime && { begin_time: beginTime }),
           ...(serviceId && { service_id: serviceId }),
         },
+        client: this.generatedClient,
       });
     } catch (error) {
       console.error("API Error:", error);
