@@ -22,7 +22,7 @@ export const ENV_SCHEMA = {
   NEXT_PUBLIC_USE_RELATIVE_TIME: {
     required: false,
     default: "false",
-  } as const satisfies OptionalEnvVar<"false">,
+  } as const satisfies OptionalEnvVar<"true" | "false">,
   NODE_ENV: {
     required: false,
     default: "development",
@@ -30,7 +30,7 @@ export const ENV_SCHEMA = {
   ENABLE_BASIC_AUTH: {
     required: false,
     default: "false",
-  } as const satisfies OptionalEnvVar<"false">,
+  } as const satisfies OptionalEnvVar<"true" | "false">,
 
   // Optional variables without defaults
   BASIC_AUTH_USERNAME: { required: false } as const satisfies OptionalEnvVar,
@@ -42,14 +42,14 @@ export type ValidEnvKey = keyof typeof ENV_SCHEMA;
 /**
  * Derive EnvConfig type from schema
  * - Required vars → always string
- * - Optional with default → string (the default type)
+ * - Optional with default → string
  * - Optional without default → string | undefined
  */
 export type EnvConfig = {
   [K in ValidEnvKey]: (typeof ENV_SCHEMA)[K] extends { required: true }
     ? string
-    : (typeof ENV_SCHEMA)[K] extends { default: infer D extends string }
-      ? D
+    : (typeof ENV_SCHEMA)[K] extends { default: string }
+      ? string
       : string | undefined;
 };
 
