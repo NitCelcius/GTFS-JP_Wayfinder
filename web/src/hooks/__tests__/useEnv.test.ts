@@ -9,6 +9,9 @@ describe("useEnv", () => {
 
   beforeEach(() => {
     process.env = { ...originalEnv };
+    // Set required env vars for tests
+    process.env.NEXT_PUBLIC_API_BASE_URL ??= "http://localhost:8002";
+    process.env.NEXT_PUBLIC_BASE_URL ??= "http://localhost:3000";
     // Clean up any injected window.__ENV__
     if (typeof window !== "undefined") {
       delete (
@@ -86,11 +89,9 @@ describe("useEnv", () => {
     it("should return default value when variable is not set", () => {
       delete process.env.NEXT_PUBLIC_API_BASE_URL;
 
-      const { result } = renderHook(() =>
-        useEnvValue("NEXT_PUBLIC_API_BASE_URL")
-      );
-
-      expect(result.current).toBe("http://localhost:8002");
+      expect(() => {
+        renderHook(() => useEnvValue("NEXT_PUBLIC_API_BASE_URL"));
+      }).toThrow("Missing required environment variable");
     });
 
     it("should use window.__ENV__ value when available", () => {
@@ -238,18 +239,27 @@ describe("useEnv", () => {
     });
 
     it("should clearly distinguish between required and optional fields", () => {
-      delete process.env.NEXT_PUBLIC_API_BASE_URL;
+      // Required field must be provided
+      process.env.NEXT_PUBLIC_API_BASE_URL = "http://localhost:8002";
       delete process.env.BASIC_AUTH_USERNAME;
 
       const { result } = renderHook(() => useEnv());
 
-      // Required field gets default
+      // Required field always has a value
       expect(result.current.NEXT_PUBLIC_API_BASE_URL).toBe(
         "http://localhost:8002"
       );
 
       // Optional field is undefined (not a default value)
       expect(result.current.BASIC_AUTH_USERNAME).toBeUndefined();
+    });
+
+    it("should throw error when required env var is missing", () => {
+      delete process.env.NEXT_PUBLIC_API_BASE_URL;
+
+      expect(() => {
+        renderHook(() => useEnv());
+      }).toThrow("Missing required environment variable");
     });
   });
 });
