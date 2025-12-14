@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 import type { StopIdAndName } from "@/api/types.gen";
 import { ArrowRightIcon, LocationPinIcon } from "@/components/icons";
-import { apiClient, getCurrentApiBaseUrl } from "@/lib/api";
+import { apiClient } from "@/lib/api";
 import type { BusStopSearchResult } from "@/types";
 
 import styles from "./BusStopSearchModal.module.css";
@@ -63,7 +63,6 @@ export function BusStopSearchModal({
       setError(null);
 
       try {
-        console.log("Making API request with baseUrl:", getCurrentApiBaseUrl());
         const response = await apiClient.searchBusStops(
           searchQuery.trim(),
           false

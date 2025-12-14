@@ -9,7 +9,6 @@ import {
   type EnvConfig,
   type EnvOverrides,
   EnvProvider,
-  buildEnv,
 } from "../src/hooks/useEnv";
 
 type WindowWithEnv = Window & { __ENV__?: EnvConfig };
@@ -21,7 +20,16 @@ const getWindowWithEnv = (): WindowWithEnv | undefined => {
   return window as WindowWithEnv;
 };
 
-const BASE_ENV = buildEnv();
+// Base environment for Storybook - define defaults here
+const BASE_ENV: EnvConfig = {
+  NEXT_PUBLIC_API_BASE_URL: "http://localhost:8002",
+  NEXT_PUBLIC_BASE_URL: "http://localhost:6006", // Storybook default port
+  NEXT_PUBLIC_USE_RELATIVE_TIME: "false",
+  NODE_ENV: "development",
+  ENABLE_BASIC_AUTH: "false",
+  BASIC_AUTH_USERNAME: undefined,
+  BASIC_AUTH_PASSWORD: undefined,
+};
 
 const envWindow = getWindowWithEnv();
 

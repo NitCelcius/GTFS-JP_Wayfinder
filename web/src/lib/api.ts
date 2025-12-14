@@ -11,21 +11,14 @@ import { client as generatedClient } from "@/api/client.gen";
 
 import { getEnvValue } from "./envUtils";
 
-// Configure the generated client to use the correct base URL
-const baseUrl = getEnvValue(
-  "NEXT_PUBLIC_API_BASE_URL",
-  "http://localhost:8002"
-);
-generatedClient.setConfig({ baseUrl });
-
-export function getCurrentApiBaseUrl(): string {
-  return baseUrl;
-}
-
 export class ApiClient {
   private static instance: ApiClient;
 
-  private constructor() {}
+  private constructor() {
+    generatedClient.setConfig({
+      baseUrl: getEnvValue("NEXT_PUBLIC_API_BASE_URL"),
+    });
+  }
 
   static getInstance(): ApiClient {
     if (!ApiClient.instance) {
@@ -72,6 +65,7 @@ export class ApiClient {
           ...(serviceId && { service_id: serviceId }),
           ...(beginTime && { begin_time: beginTime }),
         },
+        client: generatedClient,
       });
     } catch (error) {
       console.error("API Error:", error);
