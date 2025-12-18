@@ -52,20 +52,21 @@
   align-items: center;
   gap: var(--spacing-sm);
   font-size: var(--figma-font-subscript);
+  margin: 0;
+}
+
+.destinationLine {
+  margin: 0;
 }
 
 .routeName {
   font-weight: var(--font-weight-medium);
   color: var(--figma-foreground);
-  white-space: nowrap;
 }
 
 .destination {
   font-weight: var(--font-weight-normal);
   color: var(--figma-foreground);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .destinationLabel {
@@ -78,7 +79,8 @@
 .secondLine {
   display: flex;
   align-items: baseline;
-  gap: var(--spacing-xs);
+  gap: var(--spacing-sm);
+  margin: 0;
   font-size: var(--figma-font-subscript);
   color: var(--figma-foreground-l2);
 }
@@ -100,6 +102,6 @@
 .chevron {
   width: 24px;
   height: 24px;
-  color: var(--figma-text-placeholder);
+  color: var(--figma-foreground-l2);
   flex-shrink: 0;
 }

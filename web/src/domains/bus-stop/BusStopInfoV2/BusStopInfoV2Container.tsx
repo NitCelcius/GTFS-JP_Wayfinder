@@ -90,7 +90,8 @@ export function BusStopInfoV2Container({
         const convertedBuses: UpcomingBusInfo[] =
           busStopInfo.busesWithJourneys.map((bus) => ({
             tripId: bus.busInfo.tripId,
-            routeNumber: bus.busInfo.system || bus.busInfo.line,
+            // TODO : Use system for route number when available
+            routeNumber: "", // bus.busInfo.system || bus.busInfo.line,
             routeName: bus.busInfo.line,
             destination: bus.busInfo.destination,
             destinationLabel: bus.busInfo.direction,
@@ -125,7 +126,7 @@ export function BusStopInfoV2Container({
     <BusStopInfoV2
       busStopId={busStopId}
       busStopName={busStopName || busStopId || "バス停"}
-      distance={distance || "計算中..."}
+      distance={distance || undefined}
       pastBus={pastBus}
       upcomingBuses={upcomingBuses}
       isLoading={isLoading}
