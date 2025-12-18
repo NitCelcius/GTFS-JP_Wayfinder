@@ -123,6 +123,7 @@ export function BusStopInfoPage({
           {busStopData ? (
             <BusStopHeader
               name={busStopData.name}
+              platformCode={busStopData.platformCode}
               distance={busStopData.distance || ""}
               busStopId={busStopId}
               onShareClick={handleShareClick}

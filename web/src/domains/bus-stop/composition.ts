@@ -17,6 +17,7 @@ import type { BusStopInfo, UpcomingBusEnrichedData } from "./types";
  * @param enrichedData - Raw API response data
  * @param stopName - Stop name
  * @param stopId - Stop ID
+ * @param platformCode - Platform code (optional)
  * @param distance - Distance to stop (optional)
  * @param lat - Stop latitude (optional)
  * @param lon - Stop longitude (optional)
@@ -27,6 +28,7 @@ export function composeBusStopInfoWithLatestSelection(
   enrichedData: UpcomingBusEnrichedData,
   stopName: string,
   stopId: string,
+  platformCode?: string | null,
   distance?: string,
   lat?: number,
   lon?: number,
@@ -47,6 +49,7 @@ export function composeBusStopInfoWithLatestSelection(
     busStop: {
       id: enrichedData.stop_id,
       name: stopName,
+      platformCode,
       distance,
       lat,
       lon,
