@@ -236,6 +236,20 @@ class AkitaBusWayFinder:
             return None
         return list(ret)
 
+    # バス停idからplatform_codeを取得する
+    # 何もないときはNone、存在すればその値を返す
+    def get_platform_code(self, stop_id: str):
+        ret = self.df_stops[self.df_stops["stop_id"] == stop_id]["platform_code"].values
+        # numpy.ndarray 型
+        if ret.shape[0] == 0:
+            return None
+        # platform_code is optional in GTFS spec, might be NaN or empty string
+        platform_code = ret[0]
+        # Handle pandas NaN values and empty strings
+        if pd.isna(platform_code) or platform_code == "":
+            return None
+        return str(platform_code)
+
     # バス停の名前からidに変換する
     #   None | DataFrame[{ "stop_id": str, "stop_name": str }]
     def get_stop_id(self, stop_name, exact=False):

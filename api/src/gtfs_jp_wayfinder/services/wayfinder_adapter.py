@@ -70,6 +70,10 @@ def get_stop_names(stop_id: str):
     )
 
 
+def get_platform_code(stop_id: str):
+    return wf_service.get_platform_code(stop_id)
+
+
 def get_stop_lat_lon(stop_id: str):
     return wf_service.get_stop_lat_lon(stop_id)
 

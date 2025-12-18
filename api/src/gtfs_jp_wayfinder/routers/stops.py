@@ -97,17 +97,24 @@ async def get_nearby_stops(
     "/{stop_id}",
     response_model=models.StopNameList,
     summary="停留所情報の取得",
-    description="停留所IDから停留所名の一覧を取得します。見つからない場合は空配列を返します。`_fields=location` で位置情報を含めます。",
+    description="停留所IDから停留所名、のりば番号、位置情報を取得します。見つからない場合は空配列を返します。`_fields=location` で位置情報を含めます。",
     responses={
         200: {
             "description": "成功",
             "content": {
                 "application/json": {
                     "examples": {
-                        "basic": {"value": {"stop_names": ["中央公園"]}},
+                        "basic": {"value": {"stop_names": ["中央公園"], "platform_code": None}},
+                        "with_platform": {
+                            "value": {
+                                "stop_names": ["秋田駅西口"],
+                                "platform_code": "2",
+                            }
+                        },
                         "with_location": {
                             "value": {
                                 "stop_names": ["中央公園"],
+                                "platform_code": None,
                                 "location": {"lat": 39.71676, "lon": 140.13113},
                             }
                         },
@@ -134,6 +141,14 @@ async def get_bus_stop_info(
     if not isinstance(names, list):
         names = []
 
+    # Get platform_code
+    platform_code = None
+    try:
+        platform_code = adapter.get_platform_code(stop_id)
+    except Exception as e:
+        # If platform_code not found, just omit it (platform_code remains None)
+        warnings.warn(f"Could not fetch platform_code for stop {stop_id}: {e}", stacklevel=2)
+
     # Parse requested fields (comma-separated)
     requested_fields = set()
     if _fields:
@@ -149,7 +164,7 @@ async def get_bus_stop_info(
             # If location not found, just omit it (location remains None)
             warnings.warn(f"Could not fetch location for stop {stop_id}: {e}", stacklevel=2)
 
-    return models.StopNameList(stop_names=names, location=location)
+    return models.StopNameList(stop_names=names, platform_code=platform_code, location=location)
 
 
 @router.get(

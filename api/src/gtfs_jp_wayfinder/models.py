@@ -203,13 +203,19 @@ class TimedTravelResponse(BaseModel):
 
 class StopNameList(BaseModel):
     stop_names: list[str]
+    platform_code: str | None = Field(None, description="のりば番号 (例: \"1\", \"2\"など)")
     location: StopLatLon | None = None
     model_config = {
         "json_schema_extra": {
             "examples": [
-                {"stop_names": ["中央公園"]},
+                {"stop_names": ["中央公園"], "platform_code": None},
+                {
+                    "stop_names": ["秋田駅西口"],
+                    "platform_code": "2",
+                },
                 {
                     "stop_names": ["中央公園"],
+                    "platform_code": None,
                     "location": {"lat": 39.71676, "lon": 140.13113},
                 },
             ]
