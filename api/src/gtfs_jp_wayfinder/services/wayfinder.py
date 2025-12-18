@@ -34,6 +34,12 @@ def get_stop_names(stop_id: str):
     return _wf.get_stop_name(stop_id)
 
 
+def get_platform_code(stop_id: str):
+    if _wf is None:
+        raise RuntimeError("Wayfinder not initialized")
+    return _wf.get_platform_code(stop_id)
+
+
 def get_stop_lat_lon(stop_id: str):
     if _wf is None:
         raise RuntimeError("Wayfinder not initialized")
