@@ -1,0 +1,143 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+  margin: 0 auto;
+  background: var(--figma-background);
+  color: var(--figma-foreground);
+  padding-top: var(--spacing-lg);
+  padding-bottom: var(--spacing-4xl);
+  overflow-x: hidden;
+}
+.actionBar {
+  display: flex;
+  flex-direction: column;
+  background: var(--figma-background);
+  z-index: 10;
+  flex-shrink: 0;
+}
+.headerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--spacing-lg) var(--spacing-md);
+  gap: var(--spacing-md);
+}
+.backButton {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--figma-foreground);
+  padding: 0;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+.backButton:hover {
+  transform: scale(1.1);
+}
+.backButton:active {
+  transform: scale(0.95);
+}
+.backButton svg {
+  width: 24px;
+  height: 24px;
+}
+.busStopName {
+  font-size: var(--figma-font-header-2);
+  font-weight: var(--font-weight-medium);
+  color: var(--figma-foreground);
+  margin: 0;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.distanceLabel {
+  font-size: var(--figma-font-default);
+  color: var(--figma-foreground-l2);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.divider {
+  height: var(--figma-border-divider);
+  background: var(--figma-background-l2);
+  margin-top: var(--spacing-md);
+}
+.scrollableContent {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+.scrollableContent::-webkit-scrollbar {
+  width: 8px;
+}
+.scrollableContent::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollableContent::-webkit-scrollbar-thumb {
+  background: var(--figma-text-placeholder);
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+.scrollableContent::-webkit-scrollbar-thumb:hover {
+  background: var(--figma-foreground-l2);
+}
+.pastSection {
+  background: var(--figma-background-l2);
+  padding: var(--spacing-lg);
+  box-sizing: border-box;
+}
+.upcomingSection {
+  padding: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  box-sizing: border-box;
+}
+.sectionTitle {
+  font-size: var(--figma-font-control-label);
+  font-weight: var(--font-weight-medium);
+  color: var(--figma-foreground);
+  padding: 0 var(--spacing-sm);
+}
+.sectionDivider {
+  height: var(--figma-border-thin);
+  background: var(--figma-background-l2);
+}
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-4xl);
+  color: var(--figma-foreground-l2);
+  font-size: var(--figma-font-default);
+}
+.errorContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-4xl) var(--spacing-lg);
+  text-align: center;
+}
+.errorMessage {
+  font-size: var(--figma-font-header-2);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-status-error);
+  margin: 0;
+}
+.errorDetails {
+  font-size: var(--figma-font-default);
+  color: var(--figma-foreground-l2);
+  margin: 0;
+}

@@ -21,6 +21,11 @@ declare global {
 export type { ValidEnvKey };
 
 const getNextEnvValue = (key: ValidEnvKey): string | undefined => {
+  // Only access process if it exists (guards against Storybook SSR or browser context)
+  if (typeof process === "undefined" || !process.env) {
+    return undefined;
+  }
+
   switch (key) {
     case "NEXT_PUBLIC_API_BASE_URL": {
       return process.env.NEXT_PUBLIC_API_BASE_URL;

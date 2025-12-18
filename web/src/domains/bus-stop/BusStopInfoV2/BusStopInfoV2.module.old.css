@@ -1,0 +1,525 @@
+/* Main container */
+.page {
+  background: var(--background, #ffffff);
+  min-height: 100vh;
+  width: 100%;
+  max-width: var(--max-width-mobile);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding-top: var(--spacing-lg);
+  padding-bottom: var(--spacing-2xl);
+}
+
+/* Action bar at top */
+.actionBar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  padding-inline: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+/* Bus stop header row with name and distance */
+.headerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.backButton {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  color: var(--foreground);
+  flex-shrink: 0;
+}
+
+.backButton:active {
+  opacity: 0.7;
+}
+
+.busStopName {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--foreground);
+  flex: 1;
+  margin-left: var(--spacing-sm);
+  word-break: break-word;
+}
+
+.distanceLabel {
+  font-size: 1.125rem;
+  color: var(--foreground);
+  flex-shrink: 0;
+  text-align: right;
+  margin-left: var(--spacing-lg);
+}
+
+/* Action buttons grid */
+.actionButtons {
+  display: flex;
+  gap: var(--spacing-sm);
+  overflow-x: auto;
+  padding-bottom: var(--spacing-sm);
+  scroll-behavior: smooth;
+}
+
+/* Hide scrollbar but keep scrolling */
+.actionButtons::-webkit-scrollbar {
+  display: none;
+}
+
+.actionButtons {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.actionButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 4px var(--spacing-md);
+  height: 48px;
+  background-color: #d0e5ce;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  flex-shrink: 0;
+  min-width: 110px;
+  transition: all 0.2s ease;
+}
+
+.actionButton:active {
+  transform: scale(0.95);
+}
+
+.actionButtonIcon {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.actionButtonLabel {
+  font-size: 0.875rem;
+  color: var(--foreground);
+  text-align: center;
+  line-height: 1;
+  font-weight: 500;
+}
+
+/* Divider */
+.divider {
+  height: 1px;
+  background-color: #292929;
+  margin-top: var(--spacing-md);
+}
+
+/* Scrollable content area */
+.scrollableContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding-inline: var(--spacing-md);
+  gap: var(--spacing-sm);
+}
+
+.scrollableContent::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollableContent::-webkit-scrollbar-track {
+  background: #e2e2e2;
+  border-radius: 3px;
+}
+
+.scrollableContent::-webkit-scrollbar-thumb {
+  background: #313930;
+  border-radius: 3px;
+}
+
+/* Past buses section */
+.pastSection {
+  padding: var(--spacing-2xl) 0;
+  border-bottom: 1px solid #d2d2d2;
+}
+
+.pastBusContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+.routeNumberBadge {
+  background-color: #ccc;
+  border-radius: 9px;
+  padding: 0 var(--spacing-sm);
+  min-width: 60px;
+  height: 47px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--foreground);
+  flex-shrink: 0;
+}
+
+.tripContent {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  flex: 1;
+  min-width: 100px;
+}
+
+.tripRouteInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.tripRouteName {
+  font-size: 1rem;
+  color: #1c1b1f;
+  font-weight: 500;
+}
+
+.tripRouteDestination {
+  font-size: 1.5rem;
+  color: var(--foreground);
+  font-weight: 600;
+}
+
+.destinationLabel {
+  font-size: 0.875rem;
+  color: #1c1b1f;
+  margin-left: 4px;
+}
+
+.tripTimeInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.timeUnit {
+  font-size: 1rem;
+  color: var(--foreground);
+}
+
+.timeDisplay {
+  font-size: 1rem;
+  color: var(--foreground);
+}
+
+.pastLabel {
+  color: #1c1b1f;
+  font-size: 1rem;
+}
+
+.chevron {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--foreground);
+}
+
+/* Upcoming buses section */
+.upcomingSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.sectionTitle {
+  font-size: 1rem;
+  color: var(--foreground);
+  font-weight: 500;
+  padding-top: var(--spacing-md);
+}
+
+.sectionDivider {
+  height: 1px;
+  background-color: #292929;
+  width: 100%;
+}
+
+.tripCard {
+  display: flex;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  border: 3px solid #292929;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  align-items: flex-start;
+}
+
+.tripCard:active {
+  transform: scale(0.98);
+}
+
+.busFrontWrapper {
+  width: 40px;
+  height: auto;
+  flex-shrink: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tripCardContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  flex: 1;
+}
+
+.tripCardHead {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.routeNumberBadgePrimary {
+  background-color: #d0e5ce;
+  border-radius: 6px;
+  padding: 4px;
+  min-width: 50px;
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--foreground);
+  flex-shrink: 0;
+}
+
+.tripIndicator {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  align-items: center;
+  flex: 1;
+}
+
+.routeLabel {
+  font-size: 1rem;
+  color: #1c1b1f;
+  font-weight: 500;
+}
+
+.destinationWithLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.destination {
+  font-size: 1.5rem;
+  color: var(--foreground);
+  font-weight: 600;
+}
+
+.destinationLabelSmall {
+  font-size: 0.875rem;
+  color: #1c1b1f;
+}
+
+.tripTime {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+}
+
+.arrivalTime {
+  font-size: 1.5rem;
+  color: var(--foreground);
+}
+
+.arrivalUnit {
+  font-size: 1rem;
+  color: var(--foreground);
+}
+
+.arrivalDisplay {
+  font-size: 1rem;
+  color: var(--foreground);
+}
+
+.tripCardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.stopsUntilArrival {
+  font-size: 1rem;
+  color: var(--foreground);
+}
+
+.chevronEnd {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--foreground);
+  flex-shrink: 0;
+}
+
+/* Slim trip indicator for other upcoming buses */
+.slimTripIndicator {
+  padding: var(--spacing-2xl) 0;
+  border-bottom: 1px solid #d2d2d2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+.slimRouteNumber {
+  background-color: #d0e5ce;
+  border-radius: 9px;
+  padding: 0 var(--spacing-sm);
+  min-width: 60px;
+  height: 47px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--foreground);
+  flex-shrink: 0;
+}
+
+.slimContent {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  flex: 1;
+  min-width: 100px;
+}
+
+.slimRouteName {
+  font-size: 1rem;
+  color: #1c1b1f;
+  font-weight: 500;
+}
+
+.slimRouteDestination {
+  font-size: 1rem;
+  color: var(--foreground);
+}
+
+.slimDestinationLabel {
+  font-size: 0.875rem;
+  color: #1c1b1f;
+}
+
+.slimTimeInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.slimTimeValue {
+  font-size: 1.5rem;
+  color: var(--foreground);
+  font-weight: 600;
+}
+
+.slimTimeUnit {
+  font-size: 1rem;
+  color: var(--foreground);
+}
+
+.slimTimeDisplay {
+  font-size: 1rem;
+  color: var(--foreground);
+}
+
+.slimChevron {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--foreground);
+  flex-shrink: 0;
+}
+
+/* Loading state */
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-2xl);
+  min-height: 200px;
+}
+
+/* Error state */
+.errorContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-2xl);
+  min-height: 200px;
+}
+
+.errorMessage {
+  font-size: 1rem;
+  color: var(--color-status-error);
+  text-align: center;
+}
+
+.errorDetails {
+  font-size: 0.875rem;
+  color: #4b5563;
+  text-align: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .actionButtons {
+    gap: var(--spacing-xs);
+  }
+
+  .actionButton {
+    min-width: 100px;
+    padding: 4px 8px;
+  }
+
+  .actionButtonLabel {
+    font-size: 0.75rem;
+  }
+}

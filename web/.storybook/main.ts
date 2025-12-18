@@ -26,7 +26,6 @@ const config: StorybookConfig = {
         },
       },
       esbuild: {
-        // Ensure automatic JSX runtime is used for esbuild transformations
         jsx: "automatic",
       },
     });

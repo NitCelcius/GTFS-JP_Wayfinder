@@ -1,0 +1,146 @@
+.container {
+  display: flex;
+  align-items: stretch;
+  background: var(--figma-background);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  color: inherit;
+  gap: 0;
+  overflow: hidden;
+}
+
+.container:hover {
+  background: var(--figma-background-l2);
+}
+
+.container:active {
+  transform: scale(0.98);
+}
+
+.busIcon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  width: auto;
+  color: var(--figma-foreground);
+  padding: 0 var(--spacing-xs);
+  align-self: stretch;
+  min-width: fit-content;
+  width: calc(min(60px, 10vw)); /* force width to avoid layout shift */
+}
+
+.busIconImg {
+  height: 100%;
+  color: inherit;
+  object-fit: contain;
+  display: block;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  padding: var(--spacing-md) var(--spacing-lg);
+  gap: var(--spacing-sm);
+  flex: 1;
+  border-top: 3px solid var(--figma-foreground-disabled);
+  border-bottom: 3px solid var(--figma-foreground-disabled);
+  border-right: 3px solid var(--figma-foreground-disabled);
+  border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.routeNumberBadge {
+  min-width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--figma-primary-accent);
+  border-radius: var(--border-radius-md);
+  font-size: var(--figma-font-header-2);
+  font-weight: var(--font-weight-medium);
+  color: var(--figma-foreground);
+  flex-shrink: 0;
+}
+
+.tripInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  min-width: 0;
+}
+
+.routeLabel {
+  font-size: var(--figma-font-subscript);
+  font-weight: var(--font-weight-medium);
+  color: var(--figma-foreground-l2);
+}
+
+.destinationLine {
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacing-xs);
+}
+
+.destination {
+  font-size: var(--figma-font-control-label);
+  font-weight: var(--font-weight-medium);
+  color: var(--figma-foreground);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.destinationLabel {
+  font-size: var(--figma-font-subscript);
+  color: var(--figma-foreground-l2);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.time {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) 0;
+}
+
+.timeValue {
+  font-size: var(--figma-font-header-1);
+  font-weight: var(--font-weight-medium);
+  color: var(--figma-foreground);
+}
+
+.timeSubtext {
+  font-size: var(--figma-font-default);
+  color: var(--figma-foreground-l2);
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-top: var(--spacing-xs);
+  border-top: var(--figma-border-thin) solid var(--figma-background-l2);
+}
+
+.stopsInfo {
+  text-align: end;
+  font-size: var(--figma-font-subscript);
+  color: var(--figma-foreground-l2);
+}
+
+.chevron {
+  width: 20px;
+  height: 20px;
+  color: var(--figma-text-placeholder);
+  flex-shrink: 0;
+}
