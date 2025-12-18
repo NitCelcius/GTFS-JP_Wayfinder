@@ -1,0 +1,127 @@
+.container {
+  background: var(--background, white);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+  max-width: var(--max-w-mobile);
+  margin: 0 auto;
+}
+
+/* Top Navigation */
+.topNav {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 8px;
+  width: 100%;
+}
+
+.topNavIcon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--foreground, black);
+}
+
+.topNavTitle {
+  font-family: "Inter", "Noto Sans JP", sans-serif;
+  font-size: var(--headerlevel1fontsize, 28px);
+  font-weight: 400;
+  margin: 0;
+  color: var(--foreground, black);
+  flex: 1;
+}
+
+/* Bus Stop Header */
+.busStopHeader {
+  display: flex;
+  flex-direction: column;
+  gap: var(--halflineheight, 9px);
+  padding: 0 var(--halflineheight, 9px);
+  width: 100%;
+}
+
+.busStopHeaderContent {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.backButton {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  color: var(--foreground, black);
+}
+
+.backButton:hover {
+  opacity: 0.7;
+}
+
+.stopName {
+  font-family: "Inter", "Noto Sans JP", sans-serif;
+  font-size: var(--headerlevel1fontsize, 28px);
+  font-weight: 400;
+  margin: 0;
+  color: var(--foreground, black);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.divider {
+  height: 1px;
+  background-color: black;
+  width: 100%;
+}
+
+/* Trip Indicator */
+.tripIndicator {
+  display: flex;
+  align-items: flex-start;
+  padding: var(--halflineheight, 9px);
+  gap: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* These styles have been moved to internal/TripIndicator component */
+
+/* Stops Container */
+.stopsContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--halflineheight, 9px);
+  padding: 0 var(--halflineheight, 9px);
+  min-height: 0;
+  overflow: hidden;
+}
+
+.stopsTitle {
+  font-family: "Inter", "Noto Sans JP", sans-serif;
+  font-size: var(--subscriptlabelfontsize, 14px);
+  font-weight: 400;
+  margin: 0;
+  color: var(--foreground, black);
+  white-space: nowrap;
+}
+
+.stopsScrollArea {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* These styles have been moved to internal/StopsList and internal/StopItem components */

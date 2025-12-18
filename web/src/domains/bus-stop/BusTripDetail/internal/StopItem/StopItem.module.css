@@ -1,0 +1,93 @@
+.stopItem {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0;
+  gap: var(--halflineheight, 9px);
+  background: transparent;
+  width: 100%;
+  box-sizing: border-box;
+  flex-wrap: wrap;
+  height: fit-content;
+  padding: var(--halflineheight, 9px) 0;
+}
+
+.stopItemPassed {
+  background: var(--backgroundl2);
+}
+
+.stopItemCurrent {
+  background: var(--primaryaccent);
+}
+
+.stopLeft {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--halflineheight, 9px);
+  flex: 1;
+  min-width: 0;
+}
+
+.stopDot {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.stopName {
+  font-size: var(--headerlevel2fontsize, 24px);
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--foreground, black);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.stopRight {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 18px;
+  flex-shrink: 0;
+}
+
+.currentLabel {
+  font-size: var(--controllabelfontsize, 18px);
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--foreground, black);
+  white-space: nowrap;
+}
+
+.fareLabel {
+  font-size: var(--controllabelfontsize, 18px);
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--foreground, black);
+  white-space: nowrap;
+}
+
+.arrivalTimeContainer {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-weight: 400;
+  line-height: 1.2;
+  white-space: nowrap;
+  width: 89px;
+}
+
+.arrivalTimeValue {
+  font-size: var(--headerlevel2fontsize, 24px);
+  line-height: 1.2;
+  color: var(--foreground, black);
+  text-align: right;
+}
+
+.arrivalTimeSuffix {
+  font-size: var(--controllabelfontsize, 18px);
+  line-height: 1.2;
+  color: var(--foreground, black);
+}

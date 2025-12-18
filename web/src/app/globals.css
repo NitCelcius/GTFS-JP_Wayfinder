@@ -172,6 +172,20 @@
 
   /* Safe area */
   --figma-iphone-safe-area-top: 48px;
+
+  /* Bus Trip Detail Component Tokens (from Figma design) */
+  --primaryaccent: #d0e5ce;
+  --primaryaccentinverted: #313930;
+  --backgroundl2: #e2e2e2;
+  --foregroundl2: #1c1b1f;
+  --tabswitcherinactive: #e2e2e2;
+  --headerlevel1fontsize: 28px;
+  --headerlevel2fontsize: 24px;
+  --defaulttextfontsize: 16px;
+  --controllabelfontsize: 18px;
+  --subscriptlabelfontsize: 14px;
+  --halflineheight: 9px;
+  --4thhalflineheight: 5px;
 }
 
 .dark {
