@@ -22,6 +22,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 const defaultBusInfo: BusInfo = {
+  tripId: "trip-001",
   line: "都心循環線",
   system: "系統001",
   destination: "東駅",
@@ -32,6 +33,7 @@ const defaultBusInfo: BusInfo = {
 };
 
 const longNameBusInfo: BusInfo = {
+  tripId: "trip-002",
   line: "文教医療線",
   system: "系統003",
   destination: "あきた芸術劇場ミルハス・にぎわい交流館 AU 前",
@@ -42,6 +44,7 @@ const longNameBusInfo: BusInfo = {
 };
 
 const futureBusInfo: BusInfo = {
+  tripId: "trip-003",
   line: "青葉台線",
   system: "系統002",
   destination: "緑が丘",

@@ -9,6 +9,7 @@ export interface BusStop {
 }
 
 export interface BusInfo {
+  tripId: string;
   line: string;
   system: string;
   destination: string;

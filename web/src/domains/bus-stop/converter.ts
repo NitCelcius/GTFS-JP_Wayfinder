@@ -40,6 +40,7 @@ export function convertTripToBusInfo(trip: EnrichedTripData): BusInfo {
   }
 
   return {
+    tripId: trip.trip_id,
     line: trip.route_name || "不明",
     system: "", // TODO: APIにない
     destination: trip.destination_display_name || "不明", // TODO: nullableにすべきか
