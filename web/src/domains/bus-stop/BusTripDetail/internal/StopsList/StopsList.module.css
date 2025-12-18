@@ -1,0 +1,57 @@
+.stopsListContainer {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  max-height: calc(100vh - 300px);
+  padding-bottom: 80px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Native scrollbar styling */
+.stopsListContainer::-webkit-scrollbar {
+  width: 6px;
+}
+
+.stopsListContainer::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.stopsListContainer::-webkit-scrollbar-thumb {
+  background: var(--tabswitcherinactive);
+  border-radius: 3px;
+}
+
+.stopsListContainer::-webkit-scrollbar-thumb:hover {
+  background: var(--foregroundl2);
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 34px;
+  width: 100%;
+  background: transparent;
+}
+
+.dividerGray {
+  background: var(--backgroundl2, #e2e2e2);
+}
+
+.arrow {
+  font-size: var(--headerlevel1fontsize, 28px);
+  line-height: 1;
+  color: var(--foreground, black);
+  transform: rotate(180deg) scaleY(-1);
+}
+
+.endMessage {
+  margin: var(--halflineheight, 9px) 0 0 0;
+  padding: 0;
+  font-size: var(--defaulttextfontsize, 16px);
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--foreground, black);
+  text-align: center;
+}
