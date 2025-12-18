@@ -56,8 +56,9 @@ export function useBusStopData(busStopId?: string): UseBusStopDataReturn {
           throw new Error("No data received from API");
         }
 
-        // Get stop info (name and location) using ApiClient
+        // Get stop info (name, platform_code and location) using ApiClient
         let stopName = busStopId; // fallback
+        let platformCode: string | null = null;
         let lat: number | undefined;
         let lon: number | undefined;
         try {
@@ -65,6 +66,9 @@ export function useBusStopData(busStopId?: string): UseBusStopDataReturn {
           const stopData = stopResponse.data as StopNameListData;
           if (stopData?.stop_names && stopData.stop_names.length > 0) {
             stopName = stopData.stop_names[0];
+          }
+          if (stopData?.platform_code) {
+            platformCode = stopData.platform_code;
           }
           if (stopData?.location) {
             lat = stopData.location.lat;
@@ -83,6 +87,7 @@ export function useBusStopData(busStopId?: string): UseBusStopDataReturn {
           upcomingData,
           stopName,
           busStopId,
+          platformCode,
           distance,
           lat,
           lon,

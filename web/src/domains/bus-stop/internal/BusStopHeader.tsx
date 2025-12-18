@@ -4,6 +4,7 @@ import styles from "./BusStopHeader.module.css";
 
 interface BusStopHeaderProps {
   name: string;
+  platformCode?: string | null;
   distance: string;
   busStopId?: string;
   onShareClick?: () => void;
@@ -33,10 +34,14 @@ function ShareIcon() {
 
 export function BusStopHeader({
   name,
+  platformCode,
   distance,
   busStopId,
   onShareClick,
 }: BusStopHeaderProps) {
+  // Format the display name with platform code if available
+  const displayName = platformCode ? `${name} ${platformCode}番のりば` : name;
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -44,7 +49,7 @@ export function BusStopHeader({
           <div className={styles.icon}>
             <LocationIcon />
           </div>
-          <span className={styles.busStopName}>{name}</span>
+          <span className={styles.busStopName}>{displayName}</span>
         </div>
         <div className={styles.rightSection}>
           {busStopId && (

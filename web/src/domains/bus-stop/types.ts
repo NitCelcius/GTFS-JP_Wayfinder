@@ -3,6 +3,7 @@
 export interface BusStop {
   id: string;
   name: string;
+  platformCode?: string | null;
   distance?: string;
   lat?: number;
   lon?: number;
