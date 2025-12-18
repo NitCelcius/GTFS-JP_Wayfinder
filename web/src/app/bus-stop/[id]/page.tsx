@@ -2,7 +2,7 @@
 
 import { useParams, useRouter } from "next/navigation";
 
-import { BusStopInfoPage } from "@/domains/bus-stop";
+import { BusStopInfoV2Container } from "@/domains/bus-stop";
 
 export default function BusStopInfoPageRoute() {
   const router = useRouter();
@@ -10,11 +10,10 @@ export default function BusStopInfoPageRoute() {
   const busStopId = typeof params?.id === "string" ? params.id : undefined;
 
   return (
-    <BusStopInfoPage
+    <BusStopInfoV2Container
       busStopId={busStopId}
       onBack={() => router.push("/bus-stop")}
       onNavigateToRoute={() => router.push("/")}
-      onNavigateToRecent={() => router.push("/recent")}
     />
   );
 }

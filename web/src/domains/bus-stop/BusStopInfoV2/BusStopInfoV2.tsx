@@ -33,7 +33,7 @@ export interface UpcomingBusInfo extends BusInfo {
 interface BusStopInfoV2Props {
   busStopId?: string;
   busStopName: string;
-  distance: string;
+  distance?: string;
   pastBus?: UpcomingBusInfo | null;
   upcomingBuses: UpcomingBusInfo[];
   isLoading?: boolean;
@@ -152,7 +152,7 @@ export function BusStopInfoV2({
               </button>
               <h1 className={styles.busStopName}>{busStopName}</h1>
             </div>
-            <div className={styles.distanceLabel}>{distance}</div>
+            {distance && <div className={styles.distanceLabel}>{distance}</div>}
           </div>
         </div>
 
@@ -182,7 +182,7 @@ export function BusStopInfoV2({
             </button>
             <h1 className={styles.busStopName}>{busStopName}</h1>
           </div>
-          <div className={styles.distanceLabel}>{distance}</div>
+          {distance && <div className={styles.distanceLabel}>{distance}</div>}
         </div>
 
         {/* Action buttons - horizontal scroll */}

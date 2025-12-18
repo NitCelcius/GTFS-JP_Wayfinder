@@ -40,15 +40,17 @@ export function SlimTripIndicator({
     >
       <div className={styles.routeNumberBadge}>{routeNumber}</div>
       <div className={styles.content}>
-        <div className={styles.firstLine}>
+        <p className={styles.firstLine}>
           <span className={styles.routeName}>{routeName}</span>
+        </p>
+        <p className={styles.destinationLine}>
           <span className={styles.destination}>{destination}</span>
           <span className={styles.destinationLabel}>{destinationLabel}</span>
-        </div>
-        <div className={styles.secondLine}>
+        </p>
+        <p className={styles.secondLine}>
           <span className={styles.timeDisplay}>{timeDisplay}</span>
           <span className={styles.timeSubtext}>{timeSubtext}</span>
-        </div>
+        </p>
       </div>
       <div className={styles.chevron}>
         <ChevronRight />
