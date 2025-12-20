@@ -47,13 +47,13 @@ interface BusStopInfoV2Props {
 }
 
 interface ChevronIconProps {
-  style?: React.CSSProperties;
+  className?: string;
 }
 
-function ChevronIcon({ style }: ChevronIconProps) {
+function ChevronIcon({ className }: ChevronIconProps) {
   return (
     <svg
-      style={style}
+      className={className}
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -146,13 +146,13 @@ export function BusStopInfoV2({
       <div className={styles.page}>
         <div className={styles.actionBar}>
           <div className={styles.headerRow}>
-            <div style={{ display: "flex", alignItems: "center" }}>
+            <div className={styles.headerLeft}>
               <button
                 className={styles.backButton}
                 onClick={onBack}
                 aria-label="Go back"
               >
-                <ChevronIcon style={{ transform: "rotate(180deg)" }} />
+                <ChevronIcon className={styles.chevronRotated} />
               </button>
               <h1 className={styles.busStopName}>{busStopName}</h1>
             </div>
@@ -176,13 +176,13 @@ export function BusStopInfoV2({
       <div className={styles.actionBar}>
         {/* Header Row with back button, name, and distance */}
         <div className={styles.headerRow}>
-          <div style={{ display: "flex", alignItems: "center", flex: 1 }}>
+          <div className={styles.headerLeft}>
             <button
               className={styles.backButton}
               onClick={onBack}
               aria-label="Go back"
             >
-              <ChevronIcon style={{ transform: "rotate(180deg)" }} />
+              <ChevronIcon className={styles.chevronRotated} />
             </button>
             <h1 className={styles.busStopName}>{busStopName}</h1>
           </div>

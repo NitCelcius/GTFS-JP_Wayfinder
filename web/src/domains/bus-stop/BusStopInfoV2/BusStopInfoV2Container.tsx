@@ -32,6 +32,8 @@ export function BusStopInfoV2Container({
       return;
     }
 
+    const abortController = new AbortController();
+
     const fetchBusStopData = async () => {
       try {
         setIsLoading(true);
@@ -99,7 +101,7 @@ export function BusStopInfoV2Container({
               (bus.busInfo.arrivalDatetime.getTime() - now.getTime()) / 60000
             ),
             departureTime: bus.busInfo.arrivalTime,
-            cost: parseInt(bus.busInfo.system || "0") || undefined,
+            cost: 0, // TODO: Add fare info
             stopsUntilArrival: `${bus.routeJourney.length - 1}駅先に到着`,
           }));
 
@@ -110,6 +112,9 @@ export function BusStopInfoV2Container({
           setPastBus(null); // For now, we don't display past buses
         }
       } catch (err) {
+        if (err instanceof Error && err.name === "AbortError") {
+          return;
+        }
         console.error("Failed to fetch bus stop data:", err);
         setError(
           err instanceof Error ? err.message : "Failed to load bus stop data"
@@ -120,6 +125,10 @@ export function BusStopInfoV2Container({
     };
 
     fetchBusStopData();
+
+    return () => {
+      abortController.abort();
+    };
   }, [busStopId]);
 
   return (
@@ -133,10 +142,10 @@ export function BusStopInfoV2Container({
       error={error}
       onBack={onBack}
       onRoutineSearch={onNavigateToRoute}
-      onWalkDirections={() => console.log("Walk directions")}
-      onTransfer={() => console.log("Transfer")}
-      onRouteList={() => console.log("Route list")}
-      onBusClick={(bus) => console.log("Bus clicked:", bus)}
+      onWalkDirections={() => console.log("Walk directions")} // TODO: Implement transition to walk directions
+      onTransfer={() => console.log("Transfer")} // TODO: Implement transition to transfer search
+      onRouteList={() => console.log("Route list")} // TODO: Implement transition to route list
+      onBusClick={(bus) => console.log("Bus clicked:", bus)} // TODO: Implement transition to bus details
     />
   );
 }
