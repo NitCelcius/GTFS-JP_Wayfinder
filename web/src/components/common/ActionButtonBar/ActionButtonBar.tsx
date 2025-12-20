@@ -5,6 +5,7 @@ import styles from "./ActionButtonBar.module.css";
 interface ActionButton {
   icon: ReactNode;
   label: string;
+  id: string;
   onClick: () => void;
   ariaLabel?: string;
 }
@@ -16,9 +17,9 @@ interface ActionButtonBarProps {
 export function ActionButtonBar({ buttons }: ActionButtonBarProps) {
   return (
     <div className={styles.container}>
-      {buttons.map((button, index) => (
+      {buttons.map((button) => (
         <button
-          key={index}
+          key={button.id}
           className={styles.button}
           onClick={button.onClick}
           aria-label={button.ariaLabel || button.label}

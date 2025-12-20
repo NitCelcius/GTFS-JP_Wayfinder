@@ -114,24 +114,28 @@ export function BusStopInfoV2({
     {
       icon: <SearchIcon />,
       label: "行き先検索",
+      id: "search-destinations",
       onClick: () => onRoutineSearch?.(),
       ariaLabel: "Search destinations",
     },
     {
       icon: <WalkIcon />,
       label: "徒歩で行く",
+      id: "show-walk-directions",
       onClick: () => onWalkDirections?.(),
       ariaLabel: "Get walk directions",
     },
     {
       icon: <TransferIcon />,
       label: "のりば切替",
+      id: "change-transfer",
       onClick: () => onTransfer?.(),
       ariaLabel: "Transfer options",
     },
     {
       icon: <MapIcon />,
       label: "路線一覧",
+      id: "view-route-list",
       onClick: () => onRouteList?.(),
       ariaLabel: "View route list",
     },
