@@ -23,6 +23,12 @@
   padding: 0 var(--spacing-lg) var(--spacing-md);
   gap: var(--spacing-md);
 }
+.headerLeft {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: var(--spacing-sm);
+}
 .backButton {
   width: 32px;
   height: 32px;
@@ -46,6 +52,11 @@
 .backButton svg {
   width: 24px;
   height: 24px;
+}
+
+.chevronRotated {
+  display: inline-block;
+  transform: rotate(180deg);
 }
 .busStopName {
   font-size: var(--figma-font-header-2);

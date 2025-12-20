@@ -26,16 +26,11 @@ export function SlimTripIndicator({
   onClick,
 }: SlimTripIndicatorProps) {
   return (
-    <div
+    <a
       className={`${styles.container} ${isPast ? styles.past : ""}`}
       role="button"
       tabIndex={0}
       onClick={onClick}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          onClick?.();
-        }
-      }}
       data-trip-id={tripId}
     >
       <div className={styles.routeNumberBadge}>{routeNumber}</div>
@@ -55,6 +50,6 @@ export function SlimTripIndicator({
       <div className={styles.chevron}>
         <ChevronRight />
       </div>
-    </div>
+    </a>
   );
 }
