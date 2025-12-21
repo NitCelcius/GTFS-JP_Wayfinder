@@ -1,6 +1,7 @@
 """Tests for API responses with reference_date field."""
 
 import datetime
+from zoneinfo import ZoneInfo
 
 from gtfs_jp_wayfinder.database import TravelOnce
 
@@ -69,7 +70,10 @@ def test_timed_search_with_hh_mm_ss_includes_reference_date(monkeypatch, client)
     body = resp.json()
     assert "reference_date" in body
     # Should be today's date
-    assert body["reference_date"] == datetime.date.today().isoformat()
+    assert (
+        body["reference_date"]
+        == datetime.datetime.now(ZoneInfo("Asia/Tokyo")).date().isoformat()
+    )
     assert "travels" in body
 
 
@@ -109,7 +113,10 @@ def test_upcoming_trips_includes_reference_date(monkeypatch, client):
 
     assert "reference_date" in body
     # Should be today's date for upcoming trips
-    assert body["reference_date"] == datetime.date.today().isoformat()
+    assert (
+        body["reference_date"]
+        == datetime.datetime.now(ZoneInfo("Asia/Tokyo")).date().isoformat()
+    )
     assert "stop_id" in body
     assert "buses" in body
     assert len(body["buses"]) == 2

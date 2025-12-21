@@ -46,6 +46,7 @@ def test_trips_batch_and_get_trip(monkeypatch):
 
 def test_get_trip_not_found(monkeypatch):
     """Test that /trips/{trip_id} returns 404 when trip doesn't exist."""
+
     def fake_route_id_raises(trip_id):
         # Simulate the real behavior: raise ValueError when trip doesn't exist
         raise ValueError("No trip with given trip_id found")

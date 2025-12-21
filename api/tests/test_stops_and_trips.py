@@ -17,7 +17,11 @@ def test_get_stop_names_monkeypatch(monkeypatch, client):
 
     resp = client.get("/stops/1021_01")
     assert resp.status_code == 200
-    assert resp.json() == {"stop_names": ["中央公園"], "platform_code": None, "location": None}
+    assert resp.json() == {
+        "stop_names": ["中央公園"],
+        "platform_code": None,
+        "location": None,
+    }
 
 
 def test_get_stop_with_location_field(monkeypatch, client):
