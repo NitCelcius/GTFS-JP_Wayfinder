@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import { LoadingSpinner } from "../LoadingSpinner/LoadingSpinner";
 import styles from "./RouteSearchButton.module.css";
 
@@ -11,9 +13,12 @@ interface RouteSearchButtonProps {
 
 function SearchIcon() {
   return (
-    <img
+    <Image
       src="/icons/search.svg"
       alt=""
+      width={24}
+      height={24}
+      unoptimized
       className="block size-full"
       aria-hidden="true"
     />

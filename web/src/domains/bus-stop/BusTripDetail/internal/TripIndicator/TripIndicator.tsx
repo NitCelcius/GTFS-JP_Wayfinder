@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React from "react";
 
 import styles from "./TripIndicator.module.css";
@@ -32,9 +33,12 @@ export const TripIndicator: React.FC<TripIndicatorProps> = ({
   return (
     <div className={styles.tripIndicatorWrapper}>
       <div className={styles.busFront}>
-        <img
+        <Image
           src="/icons/bus-container-front.svg"
           alt="Bus front"
+          width={100}
+          height={100}
+          unoptimized
           className={styles.busFrontSvg}
         />
       </div>
@@ -44,11 +48,12 @@ export const TripIndicator: React.FC<TripIndicatorProps> = ({
           <div className={styles.routeDetails}>
             <p className={styles.routeName}>{routeName}</p>
             <div className={styles.destinationRow}>
-              <img
+              <Image
                 src="/icons/location-pin.svg"
                 alt="目的地"
-                width="28"
-                height="28"
+                width={28}
+                height={28}
+                unoptimized
                 className={styles.locationIcon}
               />
               <p className={styles.destinationName}>{destinationName}行</p>

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { useState } from "react";
 
 import svgPaths from "@/app/imports/svg-uqfc70duf5";
@@ -50,9 +51,12 @@ function ArrowIcon() {
 
 function SwapIcon() {
   return (
-    <img
+    <Image
       src="/icons/swap.svg"
       alt=""
+      width={24}
+      height={24}
+      unoptimized
       className="block size-full"
       aria-hidden="true"
     />

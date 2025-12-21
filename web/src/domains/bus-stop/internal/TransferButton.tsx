@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import styles from "./TransferButton.module.css";
 
 interface TransferButtonProps {
@@ -7,9 +9,12 @@ interface TransferButtonProps {
 
 function TransferIcon() {
   return (
-    <img
+    <Image
       src="/icons/transfer.svg"
       alt=""
+      width={24}
+      height={24}
+      unoptimized
       className="block size-full"
       aria-hidden="true"
     />

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React from "react";
 
 import { BusStopCard } from "@/components/common";
@@ -13,9 +14,12 @@ interface RecentBusStopSearchesProps {
 
 function LocationIcon() {
   return (
-    <img
+    <Image
       src="/icons/location-pin.svg"
       alt=""
+      width={24}
+      height={24}
+      unoptimized
       className="block size-full"
       aria-hidden="true"
     />

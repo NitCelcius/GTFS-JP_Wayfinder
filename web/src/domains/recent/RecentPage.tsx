@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import { BottomNavigation } from "@/components/common/BottomNavigation/BottomNavigation";
 import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
 import {
@@ -23,9 +25,12 @@ interface RecentPageProps {
 
 function ClockIcon() {
   return (
-    <img
+    <Image
       src="/icons/clock.svg"
       alt=""
+      width={24}
+      height={24}
+      unoptimized
       className="block size-full"
       aria-hidden="true"
     />

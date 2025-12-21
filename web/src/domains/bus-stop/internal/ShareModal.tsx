@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { QRCodeSVG } from "qrcode.react";
 
 import { useEnvValue } from "@/hooks";
@@ -15,9 +16,12 @@ interface ShareModalProps {
 
 function CloseIcon() {
   return (
-    <img
+    <Image
       src="/icons/close.svg"
       alt=""
+      width={24}
+      height={24}
+      unoptimized
       className="block size-full"
       aria-hidden="true"
     />

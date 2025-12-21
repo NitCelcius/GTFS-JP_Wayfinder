@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import styles from "./RouteOverview.module.css";
 
 interface RouteOverviewProps {
@@ -9,9 +11,12 @@ interface RouteOverviewProps {
 
 function ShareIcon() {
   return (
-    <img
+    <Image
       src="/icons/share.svg"
       alt=""
+      width={24}
+      height={24}
+      unoptimized
       className="block size-full"
       aria-hidden="true"
     />
