@@ -332,66 +332,57 @@ async def get_upcoming(
                 departure_time=departure,
                 arrival_datetime=arrival_datetime,
                 departure_datetime=departure_datetime,
+                route_name=None,
             ),
         )
         trip_ids.append(trip)
 
-    # Handle expansions: trip_info and/or stops
-    if "trip_info" in tokens or "stops" in tokens:
-        # Fetch trip info if requested (this is already batched in the original code)
-        info_map = {}
-        if "trip_info" in tokens:
-            info = adapter.get_trip_info_batch(trip_ids).trips
-            info_map = {t.trip_id: t for t in info}
+    # Always fetch trip info to populate route_name (even for default case)
+    info_map = {}
+    info = adapter.get_trip_info_batch(trip_ids).trips
+    info_map = {t.trip_id: t for t in info}
 
-        # OPTIMIZATION 2: Parallel fetch stops data instead of sequential
-        stops_map = {}
-        if "stops" in tokens:
-            try:
-                # Use parallel fetching for better performance
-                stops_map = await adapter.get_stops_from_trips_parallel(
-                    trip_ids,
-                    reference_date,
-                )
-            except Exception:
-                # Fallback to sequential if parallel approach fails
-                for trip_id in trip_ids:
-                    try:
-                        stops_data = adapter.get_stops_from_trip(
-                            trip_id, reference_date
-                        )
-                        stops_map[trip_id] = stops_data
-                    except Exception:
-                        stops_map[trip_id] = None
-
-        enriched = []
-        for b in buses:
-            tinfo = info_map.get(b.trip_id)
-            stops_data = stops_map.get(b.trip_id)
-            enriched.append(
-                models.EnrichedTrip(
-                    trip_id=b.trip_id,
-                    arrival_time=b.arrival_time,
-                    departure_time=b.departure_time,
-                    arrival_datetime=b.arrival_datetime,
-                    departure_datetime=b.departure_datetime,
-                    route_name=tinfo.route_name if tinfo else None,
-                    destination_display_name=tinfo.destination_display_name
-                    if tinfo
-                    else None,
-                    destination_stop_id=tinfo.destination_stop_id if tinfo else None,
-                    stops=stops_data,
-                ),
+    # OPTIMIZATION 2: Parallel fetch stops data only if requested
+    stops_map = {}
+    if "stops" in tokens:
+        try:
+            # Use parallel fetching for better performance
+            stops_map = await adapter.get_stops_from_trips_parallel(
+                trip_ids,
+                reference_date,
             )
-        return models.UpcomingBusEnriched(
-            stop_id=stop_id,
-            reference_date=reference_date,
-            buses=enriched,
+        except Exception:
+            # Fallback to sequential if parallel approach fails
+            for trip_id in trip_ids:
+                try:
+                    stops_data = adapter.get_stops_from_trip(trip_id, reference_date)
+                    stops_map[trip_id] = stops_data
+                except Exception:
+                    stops_map[trip_id] = None
+
+    # Enrich all buses with trip_info and optionally stops
+    enriched = []
+    for b in buses:
+        tinfo = info_map.get(b.trip_id)
+        stops_data = stops_map.get(b.trip_id) if "stops" in tokens else None
+        enriched.append(
+            models.EnrichedTrip(
+                trip_id=b.trip_id,
+                arrival_time=b.arrival_time,
+                departure_time=b.departure_time,
+                arrival_datetime=b.arrival_datetime,
+                departure_datetime=b.departure_datetime,
+                route_name=tinfo.route_name if tinfo else None,
+                destination_display_name=tinfo.destination_display_name
+                if tinfo
+                else None,
+                destination_stop_id=tinfo.destination_stop_id if tinfo else None,
+                stops=stops_data,
+            ),
         )
 
-    # default
     return models.UpcomingBusEnriched(
         stop_id=stop_id,
         reference_date=reference_date,
-        buses=buses,
+        buses=enriched,
     )

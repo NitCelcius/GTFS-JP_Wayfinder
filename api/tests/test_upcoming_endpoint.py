@@ -43,6 +43,28 @@ def test_upcoming_hardcoded(monkeypatch, client):
         },
     )
 
+    # Mock get_trip_info_batch to return trip info with route_name from the fixture
+    from gtfs_jp_wayfinder.models import TripInfo, TripInfoList
+
+    def mock_get_trip_info_batch(trip_ids):
+        return TripInfoList(
+            trips=[
+                TripInfo(
+                    trip_id=bus["trip_id"],
+                    route_name=bus.get("route_name"),
+                    destination_display_name=bus.get("destination_display_name"),
+                    destination_stop_id=bus.get("destination_stop_id"),
+                )
+                for bus in expected["buses"]
+                if bus["trip_id"] in trip_ids
+            ],
+        )
+
+    monkeypatch.setattr(
+        "gtfs_jp_wayfinder.services.wayfinder_adapter.get_trip_info_batch",
+        mock_get_trip_info_batch,
+    )
+
     resp = client.get("/stops/1021_01/upcoming")
     assert resp.status_code == 200
 
