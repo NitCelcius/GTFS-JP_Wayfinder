@@ -41,19 +41,17 @@ export const TripIndicator: React.FC<TripIndicatorProps> = ({
       <div className={styles.tripIndicatorContainer}>
         <div className={styles.topSection}>
           <div className={styles.routeNumber}>{routeNumber}</div>
-          <div className={styles.rightContainer}>
-            <div className={styles.routeDetails}>
-              <p className={styles.routeName}>{routeName}</p>
-              <div className={styles.destinationRow}>
-                <img
-                  src="/icons/location-pin.svg"
-                  alt="目的地"
-                  width="28"
-                  height="28"
-                  className={styles.locationIcon}
-                />
-                <p className={styles.destinationName}>{destinationName}行</p>
-              </div>
+          <div className={styles.routeDetails}>
+            <p className={styles.routeName}>{routeName}</p>
+            <div className={styles.destinationRow}>
+              <img
+                src="/icons/location-pin.svg"
+                alt="目的地"
+                width="28"
+                height="28"
+                className={styles.locationIcon}
+              />
+              <p className={styles.destinationName}>{destinationName}行</p>
             </div>
           </div>
         </div>
