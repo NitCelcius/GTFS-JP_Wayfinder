@@ -4,6 +4,8 @@ import pytest
 
 from gtfs_jp_wayfinder.services import wayfinder_adapter
 
+TZ_SUFFIX = "+09:00"
+
 
 class TestMergeDateAndTimeToIso:
     """Unit tests for the merge_date_and_time_to_iso utility function."""
@@ -11,22 +13,22 @@ class TestMergeDateAndTimeToIso:
     def test_basic_conversion(self):
         """Test basic conversion of date and HH:MM:SS time to ISO datetime."""
         result = wayfinder_adapter.merge_date_and_time_to_iso("2025-10-28", "14:30:00")
-        assert result == "2025-10-28T14:30:00"
+        assert result == f"2025-10-28T14:30:00{TZ_SUFFIX}"
 
     def test_hm_format_no_seconds(self):
         """Test conversion with HH:MM format (no seconds)."""
         result = wayfinder_adapter.merge_date_and_time_to_iso("2025-10-28", "14:30")
-        assert result == "2025-10-28T14:30:00"
+        assert result == f"2025-10-28T14:30:00{TZ_SUFFIX}"
 
     def test_midnight(self):
         """Test conversion at midnight."""
         result = wayfinder_adapter.merge_date_and_time_to_iso("2025-10-28", "00:00:00")
-        assert result == "2025-10-28T00:00:00"
+        assert result == f"2025-10-28T00:00:00{TZ_SUFFIX}"
 
     def test_end_of_day(self):
         """Test conversion at end of day."""
         result = wayfinder_adapter.merge_date_and_time_to_iso("2025-10-28", "23:59:59")
-        assert result == "2025-10-28T23:59:59"
+        assert result == f"2025-10-28T23:59:59{TZ_SUFFIX}"
 
     def test_none_time(self):
         """Test that None time raises ValueError."""
@@ -56,12 +58,12 @@ class TestMergeDateAndTimeToIso:
     def test_leap_year_conversion(self):
         """Test conversion on leap year date."""
         result = wayfinder_adapter.merge_date_and_time_to_iso("2024-02-29", "12:00:00")
-        assert result == "2024-02-29T12:00:00"
+        assert result == f"2024-02-29T12:00:00{TZ_SUFFIX}"
 
     def test_leading_zeros_preserved(self):
         """Test that leading zeros in time are preserved."""
         result = wayfinder_adapter.merge_date_and_time_to_iso("2025-10-28", "09:05:03")
-        assert result == "2025-10-28T09:05:03"
+        assert result == f"2025-10-28T09:05:03{TZ_SUFFIX}"
 
 
 class TestEndpointDatetimeFields:
@@ -150,7 +152,7 @@ class TestDatetimeFieldConsistency:
             bus = data["buses"][0]
             if bus.get("arrival_time") and bus.get("arrival_datetime"):
                 # Extract time portion from datetime
-                datetime_time = bus["arrival_datetime"].split("T")[1]
+                datetime_time = bus["arrival_datetime"].split("T")[1].split("+")[0]
                 # Compare hours and minutes (arrival_time may have seconds)
                 arrival_time_parts = bus["arrival_time"].split(":")
                 datetime_time_parts = datetime_time.split(":")

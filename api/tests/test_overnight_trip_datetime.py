@@ -122,46 +122,74 @@ def test_overnight_trip_stops_datetime_fields(monkeypatch, client):
     # Stop 1: Late evening (23:45) - should use test_date
     stop1 = stops[0]
     assert stop1["arrival_time"] == "23:45:00"
-    assert stop1["arrival_datetime"] == f"{test_date}T23:45:00"
-    assert stop1["departure_datetime"] == f"{test_date}T23:47:00"
+    tz_suffix = "+09:00"
+    assert stop1["arrival_datetime"] == f"{test_date}T23:45:00{tz_suffix}"
+    assert stop1["departure_datetime"] == f"{test_date}T23:47:00{tz_suffix}"
 
     # Stop 2: Almost midnight (23:58) - should use test_date
     stop2 = stops[1]
     assert stop2["arrival_time"] == "23:58:00"
-    assert stop2["arrival_datetime"] == f"{test_date}T23:58:00"
-    assert stop2["departure_datetime"] == f"{test_date}T23:59:00"
+    assert stop2["arrival_datetime"] == f"{test_date}T23:58:00{tz_suffix}"
+    assert stop2["departure_datetime"] == f"{test_date}T23:59:00{tz_suffix}"
 
     # Stop 3: After midnight (24:05 in GTFS extended hours) - Should be next day
     # GTFS extended hours (24:00+) are now properly converted to next day
     stop3 = stops[2]
     assert stop3["arrival_time"] == "24:05:00"
-    assert stop3["arrival_datetime"] == "2025-11-01T00:05:00"  # Correctly next day!
-    assert stop3["departure_datetime"] == "2025-11-01T00:06:00"
+    assert (
+        stop3["arrival_datetime"] == "2025-11-01T00:05:00+09:00"
+    )  # Correctly next day!
+    assert stop3["departure_datetime"] == "2025-11-01T00:06:00+09:00"
 
     # Stop 4: After midnight (24:15 in GTFS extended hours) - Should be next day
     stop4 = stops[3]
     assert stop4["arrival_time"] == "24:15:00"
-    assert stop4["arrival_datetime"] == "2025-11-01T00:15:00"  # Correctly next day!
-    assert stop4["departure_datetime"] == "2025-11-01T00:16:00"
+    assert (
+        stop4["arrival_datetime"] == "2025-11-01T00:15:00+09:00"
+    )  # Correctly next day!
+    assert stop4["departure_datetime"] == "2025-11-01T00:16:00+09:00"
 
 
 def test_merge_date_and_time_to_iso_basic_cases():
     """Test the merge_date_and_time_to_iso function with various inputs."""
 
     # Basic cases
-    assert merge_date_and_time_to_iso("2025-10-31", "14:30:00") == "2025-10-31T14:30:00"
-    assert merge_date_and_time_to_iso("2025-10-31", "14:30") == "2025-10-31T14:30:00"
+    assert (
+        merge_date_and_time_to_iso("2025-10-31", "14:30:00")
+        == "2025-10-31T14:30:00+09:00"
+    )
+    assert (
+        merge_date_and_time_to_iso("2025-10-31", "14:30") == "2025-10-31T14:30:00+09:00"
+    )
 
     # Midnight
-    assert merge_date_and_time_to_iso("2025-10-31", "00:00:00") == "2025-10-31T00:00:00"
+    assert (
+        merge_date_and_time_to_iso("2025-10-31", "00:00:00")
+        == "2025-10-31T00:00:00+09:00"
+    )
 
     # End of day
-    assert merge_date_and_time_to_iso("2025-10-31", "23:59:59") == "2025-10-31T23:59:59"
+    assert (
+        merge_date_and_time_to_iso("2025-10-31", "23:59:59")
+        == "2025-10-31T23:59:59+09:00"
+    )
 
     # GTFS extended hours - hours >= 24 indicate next day
-    assert merge_date_and_time_to_iso("2025-10-31", "24:00:00") == "2025-11-01T00:00:00"
-    assert merge_date_and_time_to_iso("2025-10-31", "25:30:00") == "2025-11-01T01:30:00"
-    assert merge_date_and_time_to_iso("2025-10-31", "26:45:30") == "2025-11-01T02:45:30"
+    assert (
+        merge_date_and_time_to_iso("2025-10-31", "24:00:00")
+        == "2025-11-01T00:00:00+09:00"
+    )
+    assert (
+        merge_date_and_time_to_iso("2025-10-31", "25:30:00")
+        == "2025-11-01T01:30:00+09:00"
+    )
+    assert (
+        merge_date_and_time_to_iso("2025-10-31", "26:45:30")
+        == "2025-11-01T02:45:30+09:00"
+    )
 
     # Extended hours beyond 48 (two days later)
-    assert merge_date_and_time_to_iso("2025-10-31", "48:00:00") == "2025-11-02T00:00:00"
+    assert (
+        merge_date_and_time_to_iso("2025-10-31", "48:00:00")
+        == "2025-11-02T00:00:00+09:00"
+    )

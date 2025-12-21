@@ -9,8 +9,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T07:07:00",
-      "departure_datetime": "2000-01-01T07:07:00"
+      "arrival_datetime": "2000-01-01T07:07:00+09:00",
+      "departure_datetime": "2000-01-01T07:07:00+09:00"
     },
     {
       "trip_id": "平日_07時07分_系統43002",
@@ -20,8 +20,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T07:24:00",
-      "departure_datetime": "2000-01-01T07:24:00"
+      "arrival_datetime": "2000-01-01T07:24:00+09:00",
+      "departure_datetime": "2000-01-01T07:24:00+09:00"
     },
     {
       "trip_id": "平日_07時20分_系統42202",
@@ -31,8 +31,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T07:37:00",
-      "departure_datetime": "2000-01-01T07:37:00"
+      "arrival_datetime": "2000-01-01T07:37:00+09:00",
+      "departure_datetime": "2000-01-01T07:37:00+09:00"
     },
     {
       "trip_id": "平日_07時25分_系統34402",
@@ -42,8 +42,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T07:25:00",
-      "departure_datetime": "2000-01-01T07:25:00"
+      "arrival_datetime": "2000-01-01T07:25:00+09:00",
+      "departure_datetime": "2000-01-01T07:25:00+09:00"
     },
     {
       "trip_id": "平日_07時45分_系統34401",
@@ -53,8 +53,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T08:07:00",
-      "departure_datetime": "2000-01-01T08:07:00"
+      "arrival_datetime": "2000-01-01T08:07:00+09:00",
+      "departure_datetime": "2000-01-01T08:07:00+09:00"
     },
     {
       "trip_id": "平日_07時50分_系統42202",
@@ -64,8 +64,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T08:07:00",
-      "departure_datetime": "2000-01-01T08:07:00"
+      "arrival_datetime": "2000-01-01T08:07:00+09:00",
+      "departure_datetime": "2000-01-01T08:07:00+09:00"
     },
     {
       "trip_id": "平日_07時50分_系統34402",
@@ -75,8 +75,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T07:50:00",
-      "departure_datetime": "2000-01-01T07:50:00"
+      "arrival_datetime": "2000-01-01T07:50:00+09:00",
+      "departure_datetime": "2000-01-01T07:50:00+09:00"
     },
     {
       "trip_id": "平日_07時55分_系統40301",
@@ -86,8 +86,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T07:55:00",
-      "departure_datetime": "2000-01-01T07:55:00"
+      "arrival_datetime": "2000-01-01T07:55:00+09:00",
+      "departure_datetime": "2000-01-01T07:55:00+09:00"
     },
     {
       "trip_id": "平日_08時20分_系統34401",
@@ -97,8 +97,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T08:42:00",
-      "departure_datetime": "2000-01-01T08:42:00"
+      "arrival_datetime": "2000-01-01T08:42:00+09:00",
+      "departure_datetime": "2000-01-01T08:42:00+09:00"
     },
     {
       "trip_id": "平日_08時25分_系統40302",
@@ -108,8 +108,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T08:45:00",
-      "departure_datetime": "2000-01-01T08:45:00"
+      "arrival_datetime": "2000-01-01T08:45:00+09:00",
+      "departure_datetime": "2000-01-01T08:45:00+09:00"
     },
     {
       "trip_id": "平日_09時15分_系統34402",
@@ -119,8 +119,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T09:15:00",
-      "departure_datetime": "2000-01-01T09:15:00"
+      "arrival_datetime": "2000-01-01T09:15:00+09:00",
+      "departure_datetime": "2000-01-01T09:15:00+09:00"
     },
     {
       "trip_id": "平日_09時30分_系統43001",
@@ -130,8 +130,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T09:30:00",
-      "departure_datetime": "2000-01-01T09:30:00"
+      "arrival_datetime": "2000-01-01T09:30:00+09:00",
+      "departure_datetime": "2000-01-01T09:30:00+09:00"
     },
     {
       "trip_id": "平日_09時30分_系統42202",
@@ -141,8 +141,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T09:47:00",
-      "departure_datetime": "2000-01-01T09:47:00"
+      "arrival_datetime": "2000-01-01T09:47:00+09:00",
+      "departure_datetime": "2000-01-01T09:47:00+09:00"
     },
     {
       "trip_id": "平日_09時42分_系統43002",
@@ -152,8 +152,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T09:59:00",
-      "departure_datetime": "2000-01-01T09:59:00"
+      "arrival_datetime": "2000-01-01T09:59:00+09:00",
+      "departure_datetime": "2000-01-01T09:59:00+09:00"
     },
     {
       "trip_id": "平日_10時00分_系統42201",
@@ -163,8 +163,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T10:00:00",
-      "departure_datetime": "2000-01-01T10:00:00"
+      "arrival_datetime": "2000-01-01T10:00:00+09:00",
+      "departure_datetime": "2000-01-01T10:00:00+09:00"
     },
     {
       "trip_id": "平日_10時10分_系統34401",
@@ -174,8 +174,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T10:32:00",
-      "departure_datetime": "2000-01-01T10:32:00"
+      "arrival_datetime": "2000-01-01T10:32:00+09:00",
+      "departure_datetime": "2000-01-01T10:32:00+09:00"
     },
     {
       "trip_id": "平日_10時30分_系統42202",
@@ -185,8 +185,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T10:47:00",
-      "departure_datetime": "2000-01-01T10:47:00"
+      "arrival_datetime": "2000-01-01T10:47:00+09:00",
+      "departure_datetime": "2000-01-01T10:47:00+09:00"
     },
     {
       "trip_id": "平日_11時00分_系統34402",
@@ -196,8 +196,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T11:00:00",
-      "departure_datetime": "2000-01-01T11:00:00"
+      "arrival_datetime": "2000-01-01T11:00:00+09:00",
+      "departure_datetime": "2000-01-01T11:00:00+09:00"
     },
     {
       "trip_id": "平日_11時20分_系統34401",
@@ -207,8 +207,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T11:42:00",
-      "departure_datetime": "2000-01-01T11:42:00"
+      "arrival_datetime": "2000-01-01T11:42:00+09:00",
+      "departure_datetime": "2000-01-01T11:42:00+09:00"
     },
     {
       "trip_id": "平日_11時40分_系統42201",
@@ -218,8 +218,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T11:40:00",
-      "departure_datetime": "2000-01-01T11:40:00"
+      "arrival_datetime": "2000-01-01T11:40:00+09:00",
+      "departure_datetime": "2000-01-01T11:40:00+09:00"
     },
     {
       "trip_id": "平日_12時00分_系統34402",
@@ -229,8 +229,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T12:00:00",
-      "departure_datetime": "2000-01-01T12:00:00"
+      "arrival_datetime": "2000-01-01T12:00:00+09:00",
+      "departure_datetime": "2000-01-01T12:00:00+09:00"
     },
     {
       "trip_id": "平日_12時10分_系統34401",
@@ -240,8 +240,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T12:32:00",
-      "departure_datetime": "2000-01-01T12:32:00"
+      "arrival_datetime": "2000-01-01T12:32:00+09:00",
+      "departure_datetime": "2000-01-01T12:32:00+09:00"
     },
     {
       "trip_id": "平日_12時10分_系統42202",
@@ -251,8 +251,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T12:27:00",
-      "departure_datetime": "2000-01-01T12:27:00"
+      "arrival_datetime": "2000-01-01T12:27:00+09:00",
+      "departure_datetime": "2000-01-01T12:27:00+09:00"
     },
     {
       "trip_id": "平日_12時45分_系統34402",
@@ -262,8 +262,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T12:45:00",
-      "departure_datetime": "2000-01-01T12:45:00"
+      "arrival_datetime": "2000-01-01T12:45:00+09:00",
+      "departure_datetime": "2000-01-01T12:45:00+09:00"
     },
     {
       "trip_id": "平日_13時10分_系統34401",
@@ -273,8 +273,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T13:32:00",
-      "departure_datetime": "2000-01-01T13:32:00"
+      "arrival_datetime": "2000-01-01T13:32:00+09:00",
+      "departure_datetime": "2000-01-01T13:32:00+09:00"
     },
     {
       "trip_id": "平日_13時30分_系統42201",
@@ -284,8 +284,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T13:30:00",
-      "departure_datetime": "2000-01-01T13:30:00"
+      "arrival_datetime": "2000-01-01T13:30:00+09:00",
+      "departure_datetime": "2000-01-01T13:30:00+09:00"
     },
     {
       "trip_id": "平日_13時50分_系統34402",
@@ -295,8 +295,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T13:50:00",
-      "departure_datetime": "2000-01-01T13:50:00"
+      "arrival_datetime": "2000-01-01T13:50:00+09:00",
+      "departure_datetime": "2000-01-01T13:50:00+09:00"
     },
     {
       "trip_id": "平日_14時00分_系統42202",
@@ -306,8 +306,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T14:17:00",
-      "departure_datetime": "2000-01-01T14:17:00"
+      "arrival_datetime": "2000-01-01T14:17:00+09:00",
+      "departure_datetime": "2000-01-01T14:17:00+09:00"
     },
     {
       "trip_id": "平日_14時00分_系統43001",
@@ -317,8 +317,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T14:00:00",
-      "departure_datetime": "2000-01-01T14:00:00"
+      "arrival_datetime": "2000-01-01T14:00:00+09:00",
+      "departure_datetime": "2000-01-01T14:00:00+09:00"
     },
     {
       "trip_id": "平日_14時12分_系統43002",
@@ -328,8 +328,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T14:29:00",
-      "departure_datetime": "2000-01-01T14:29:00"
+      "arrival_datetime": "2000-01-01T14:29:00+09:00",
+      "departure_datetime": "2000-01-01T14:29:00+09:00"
     },
     {
       "trip_id": "平日_14時40分_系統34401",
@@ -339,8 +339,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T15:02:00",
-      "departure_datetime": "2000-01-01T15:02:00"
+      "arrival_datetime": "2000-01-01T15:02:00+09:00",
+      "departure_datetime": "2000-01-01T15:02:00+09:00"
     },
     {
       "trip_id": "平日_14時45分_系統34402",
@@ -350,8 +350,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T14:45:00",
-      "departure_datetime": "2000-01-01T14:45:00"
+      "arrival_datetime": "2000-01-01T14:45:00+09:00",
+      "departure_datetime": "2000-01-01T14:45:00+09:00"
     },
     {
       "trip_id": "平日_15時00分_系統42201",
@@ -361,8 +361,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T15:00:00",
-      "departure_datetime": "2000-01-01T15:00:00"
+      "arrival_datetime": "2000-01-01T15:00:00+09:00",
+      "departure_datetime": "2000-01-01T15:00:00+09:00"
     },
     {
       "trip_id": "平日_15時30分_系統42202",
@@ -372,8 +372,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T15:47:00",
-      "departure_datetime": "2000-01-01T15:47:00"
+      "arrival_datetime": "2000-01-01T15:47:00+09:00",
+      "departure_datetime": "2000-01-01T15:47:00+09:00"
     },
     {
       "trip_id": "平日_16時00分_系統42201",
@@ -383,8 +383,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T16:00:00",
-      "departure_datetime": "2000-01-01T16:00:00"
+      "arrival_datetime": "2000-01-01T16:00:00+09:00",
+      "departure_datetime": "2000-01-01T16:00:00+09:00"
     },
     {
       "trip_id": "平日_16時25分_系統34401",
@@ -394,8 +394,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T16:47:00",
-      "departure_datetime": "2000-01-01T16:47:00"
+      "arrival_datetime": "2000-01-01T16:47:00+09:00",
+      "departure_datetime": "2000-01-01T16:47:00+09:00"
     },
     {
       "trip_id": "平日_16時30分_系統34402",
@@ -405,8 +405,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T16:30:00",
-      "departure_datetime": "2000-01-01T16:30:00"
+      "arrival_datetime": "2000-01-01T16:30:00+09:00",
+      "departure_datetime": "2000-01-01T16:30:00+09:00"
     },
     {
       "trip_id": "平日_16時40分_系統42202",
@@ -416,8 +416,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T16:57:00",
-      "departure_datetime": "2000-01-01T16:57:00"
+      "arrival_datetime": "2000-01-01T16:57:00+09:00",
+      "departure_datetime": "2000-01-01T16:57:00+09:00"
     },
     {
       "trip_id": "平日_17時20分_系統40301",
@@ -427,8 +427,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T17:20:00",
-      "departure_datetime": "2000-01-01T17:20:00"
+      "arrival_datetime": "2000-01-01T17:20:00+09:00",
+      "departure_datetime": "2000-01-01T17:20:00+09:00"
     },
     {
       "trip_id": "平日_17時30分_系統42201",
@@ -438,8 +438,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T17:30:00",
-      "departure_datetime": "2000-01-01T17:30:00"
+      "arrival_datetime": "2000-01-01T17:30:00+09:00",
+      "departure_datetime": "2000-01-01T17:30:00+09:00"
     },
     {
       "trip_id": "平日_17時45分_系統40302",
@@ -449,8 +449,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T18:05:00",
-      "departure_datetime": "2000-01-01T18:05:00"
+      "arrival_datetime": "2000-01-01T18:05:00+09:00",
+      "departure_datetime": "2000-01-01T18:05:00+09:00"
     },
     {
       "trip_id": "平日_17時50分_系統42201",
@@ -460,8 +460,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T17:50:00",
-      "departure_datetime": "2000-01-01T17:50:00"
+      "arrival_datetime": "2000-01-01T17:50:00+09:00",
+      "departure_datetime": "2000-01-01T17:50:00+09:00"
     },
     {
       "trip_id": "平日_17時50分_系統34401",
@@ -471,8 +471,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T18:12:00",
-      "departure_datetime": "2000-01-01T18:12:00"
+      "arrival_datetime": "2000-01-01T18:12:00+09:00",
+      "departure_datetime": "2000-01-01T18:12:00+09:00"
     },
     {
       "trip_id": "平日_18時00分_系統43001",
@@ -482,8 +482,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T18:00:00",
-      "departure_datetime": "2000-01-01T18:00:00"
+      "arrival_datetime": "2000-01-01T18:00:00+09:00",
+      "departure_datetime": "2000-01-01T18:00:00+09:00"
     },
     {
       "trip_id": "平日_18時10分_系統34401",
@@ -493,8 +493,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T18:32:00",
-      "departure_datetime": "2000-01-01T18:32:00"
+      "arrival_datetime": "2000-01-01T18:32:00+09:00",
+      "departure_datetime": "2000-01-01T18:32:00+09:00"
     },
     {
       "trip_id": "平日_18時15分_系統42201",
@@ -504,8 +504,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T18:15:00",
-      "departure_datetime": "2000-01-01T18:15:00"
+      "arrival_datetime": "2000-01-01T18:15:00+09:00",
+      "departure_datetime": "2000-01-01T18:15:00+09:00"
     },
     {
       "trip_id": "平日_18時30分_系統34402",
@@ -515,8 +515,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T18:30:00",
-      "departure_datetime": "2000-01-01T18:30:00"
+      "arrival_datetime": "2000-01-01T18:30:00+09:00",
+      "departure_datetime": "2000-01-01T18:30:00+09:00"
     },
     {
       "trip_id": "平日_19時00分_系統42201",
@@ -526,8 +526,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T19:00:00",
-      "departure_datetime": "2000-01-01T19:00:00"
+      "arrival_datetime": "2000-01-01T19:00:00+09:00",
+      "departure_datetime": "2000-01-01T19:00:00+09:00"
     },
     {
       "trip_id": "平日_19時30分_系統34401",
@@ -537,8 +537,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T19:52:00",
-      "departure_datetime": "2000-01-01T19:52:00"
+      "arrival_datetime": "2000-01-01T19:52:00+09:00",
+      "departure_datetime": "2000-01-01T19:52:00+09:00"
     },
     {
       "trip_id": "土日祝_07時30分_系統42202",
@@ -548,8 +548,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T07:47:00",
-      "departure_datetime": "2000-01-01T07:47:00"
+      "arrival_datetime": "2000-01-01T07:47:00+09:00",
+      "departure_datetime": "2000-01-01T07:47:00+09:00"
     },
     {
       "trip_id": "土日祝_08時00分_系統34401",
@@ -559,8 +559,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T08:22:00",
-      "departure_datetime": "2000-01-01T08:22:00"
+      "arrival_datetime": "2000-01-01T08:22:00+09:00",
+      "departure_datetime": "2000-01-01T08:22:00+09:00"
     },
     {
       "trip_id": "土日祝_08時50分_系統42202",
@@ -570,8 +570,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T09:07:00",
-      "departure_datetime": "2000-01-01T09:07:00"
+      "arrival_datetime": "2000-01-01T09:07:00+09:00",
+      "departure_datetime": "2000-01-01T09:07:00+09:00"
     },
     {
       "trip_id": "土日祝_10時10分_系統34401",
@@ -581,8 +581,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T10:32:00",
-      "departure_datetime": "2000-01-01T10:32:00"
+      "arrival_datetime": "2000-01-01T10:32:00+09:00",
+      "departure_datetime": "2000-01-01T10:32:00+09:00"
     },
     {
       "trip_id": "土日祝_10時15分_系統42201",
@@ -592,8 +592,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T10:15:00",
-      "departure_datetime": "2000-01-01T10:15:00"
+      "arrival_datetime": "2000-01-01T10:15:00+09:00",
+      "departure_datetime": "2000-01-01T10:15:00+09:00"
     },
     {
       "trip_id": "土日祝_10時50分_系統42202",
@@ -603,8 +603,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T11:07:00",
-      "departure_datetime": "2000-01-01T11:07:00"
+      "arrival_datetime": "2000-01-01T11:07:00+09:00",
+      "departure_datetime": "2000-01-01T11:07:00+09:00"
     },
     {
       "trip_id": "土日祝_11時30分_系統42201",
@@ -614,8 +614,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T11:30:00",
-      "departure_datetime": "2000-01-01T11:30:00"
+      "arrival_datetime": "2000-01-01T11:30:00+09:00",
+      "departure_datetime": "2000-01-01T11:30:00+09:00"
     },
     {
       "trip_id": "土日祝_12時05分_系統42202",
@@ -625,8 +625,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T12:22:00",
-      "departure_datetime": "2000-01-01T12:22:00"
+      "arrival_datetime": "2000-01-01T12:22:00+09:00",
+      "departure_datetime": "2000-01-01T12:22:00+09:00"
     },
     {
       "trip_id": "土日祝_13時00分_系統34402",
@@ -636,8 +636,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T13:00:00",
-      "departure_datetime": "2000-01-01T13:00:00"
+      "arrival_datetime": "2000-01-01T13:00:00+09:00",
+      "departure_datetime": "2000-01-01T13:00:00+09:00"
     },
     {
       "trip_id": "土日祝_14時00分_系統42201",
@@ -647,8 +647,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T14:00:00",
-      "departure_datetime": "2000-01-01T14:00:00"
+      "arrival_datetime": "2000-01-01T14:00:00+09:00",
+      "departure_datetime": "2000-01-01T14:00:00+09:00"
     },
     {
       "trip_id": "土日祝_14時35分_系統42202",
@@ -658,8 +658,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T14:52:00",
-      "departure_datetime": "2000-01-01T14:52:00"
+      "arrival_datetime": "2000-01-01T14:52:00+09:00",
+      "departure_datetime": "2000-01-01T14:52:00+09:00"
     },
     {
       "trip_id": "土日祝_15時00分_系統34401",
@@ -669,8 +669,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T15:22:00",
-      "departure_datetime": "2000-01-01T15:22:00"
+      "arrival_datetime": "2000-01-01T15:22:00+09:00",
+      "departure_datetime": "2000-01-01T15:22:00+09:00"
     },
     {
       "trip_id": "土日祝_15時40分_系統34402",
@@ -680,8 +680,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T15:40:00",
-      "departure_datetime": "2000-01-01T15:40:00"
+      "arrival_datetime": "2000-01-01T15:40:00+09:00",
+      "departure_datetime": "2000-01-01T15:40:00+09:00"
     },
     {
       "trip_id": "土日祝_15時50分_系統42201",
@@ -691,8 +691,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T15:50:00",
-      "departure_datetime": "2000-01-01T15:50:00"
+      "arrival_datetime": "2000-01-01T15:50:00+09:00",
+      "departure_datetime": "2000-01-01T15:50:00+09:00"
     },
     {
       "trip_id": "土日祝_16時35分_系統42202",
@@ -702,8 +702,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T16:52:00",
-      "departure_datetime": "2000-01-01T16:52:00"
+      "arrival_datetime": "2000-01-01T16:52:00+09:00",
+      "departure_datetime": "2000-01-01T16:52:00+09:00"
     },
     {
       "trip_id": "土日祝_16時40分_系統34402",
@@ -713,8 +713,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T16:40:00",
-      "departure_datetime": "2000-01-01T16:40:00"
+      "arrival_datetime": "2000-01-01T16:40:00+09:00",
+      "departure_datetime": "2000-01-01T16:40:00+09:00"
     },
     {
       "trip_id": "土日祝_17時40分_系統42201",
@@ -724,8 +724,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T17:40:00",
-      "departure_datetime": "2000-01-01T17:40:00"
+      "arrival_datetime": "2000-01-01T17:40:00+09:00",
+      "departure_datetime": "2000-01-01T17:40:00+09:00"
     },
     {
       "trip_id": "土日祝_18時20分_系統42202",
@@ -735,8 +735,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T18:37:00",
-      "departure_datetime": "2000-01-01T18:37:00"
+      "arrival_datetime": "2000-01-01T18:37:00+09:00",
+      "departure_datetime": "2000-01-01T18:37:00+09:00"
     },
     {
       "trip_id": "土日祝_18時30分_系統42201",
@@ -746,8 +746,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T18:30:00",
-      "departure_datetime": "2000-01-01T18:30:00"
+      "arrival_datetime": "2000-01-01T18:30:00+09:00",
+      "departure_datetime": "2000-01-01T18:30:00+09:00"
     },
     {
       "trip_id": "土日祝_18時40分_系統34401",
@@ -757,8 +757,8 @@
       "destination_display_name": null,
       "destination_stop_id": null,
       "stops": null,
-      "arrival_datetime": "2000-01-01T19:02:00",
-      "departure_datetime": "2000-01-01T19:02:00"
+      "arrival_datetime": "2000-01-01T19:02:00+09:00",
+      "departure_datetime": "2000-01-01T19:02:00+09:00"
     }
   ]
 }

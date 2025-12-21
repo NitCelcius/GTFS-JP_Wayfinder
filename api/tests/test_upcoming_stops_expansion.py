@@ -3,6 +3,7 @@ from fastapi.testclient import TestClient
 from gtfs_jp_wayfinder.main import app
 
 client = TestClient(app)
+TZ_SUFFIX = "+09:00"
 
 
 def test_upcoming_stops_expansion(monkeypatch, client):
@@ -41,8 +42,8 @@ def test_upcoming_stops_expansion(monkeypatch, client):
                 "trip_id": trip_id,
                 "arrival_time": "07:00:00",
                 "departure_time": "07:05:00",
-                "arrival_datetime": "2025-10-29T07:00:00",
-                "departure_datetime": "2025-10-29T07:05:00",
+                "arrival_datetime": f"2025-10-29T07:00:00{TZ_SUFFIX}",
+                "departure_datetime": f"2025-10-29T07:05:00{TZ_SUFFIX}",
                 "stop_id": "S100",
                 "stop_sequence": 1,
                 "stop_headsign": "Test Stop",
@@ -52,8 +53,8 @@ def test_upcoming_stops_expansion(monkeypatch, client):
                 "trip_id": trip_id,
                 "arrival_time": "07:10:00",
                 "departure_time": "07:12:00",
-                "arrival_datetime": "2025-10-29T07:10:00",
-                "departure_datetime": "2025-10-29T07:12:00",
+                "arrival_datetime": f"2025-10-29T07:10:00{TZ_SUFFIX}",
+                "departure_datetime": f"2025-10-29T07:12:00{TZ_SUFFIX}",
                 "stop_id": "S101",
                 "stop_sequence": 2,
                 "stop_headsign": "Next Stop",
@@ -136,8 +137,8 @@ def test_upcoming_combined_expansion(monkeypatch, client):
                 "trip_id": trip_id,
                 "arrival_time": "07:00:00",
                 "departure_time": "07:05:00",
-                "arrival_datetime": "2025-10-29T07:00:00",
-                "departure_datetime": "2025-10-29T07:05:00",
+                "arrival_datetime": f"2025-10-29T07:00:00{TZ_SUFFIX}",
+                "departure_datetime": f"2025-10-29T07:05:00{TZ_SUFFIX}",
                 "stop_id": "S100",
                 "stop_sequence": 1,
                 "stop_headsign": "Test Stop",

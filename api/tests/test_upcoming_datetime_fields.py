@@ -1,11 +1,14 @@
 """Test that arrival_datetime and departure_datetime fields are properly filled in upcoming endpoint with stops expansion."""
 
 import datetime
+from zoneinfo import ZoneInfo
 
 from fastapi.testclient import TestClient
 
 from gtfs_jp_wayfinder.main import app
 from gtfs_jp_wayfinder.services.wayfinder_adapter import merge_date_and_time_to_iso
+
+TZ_SUFFIX = "+09:00"
 
 client = TestClient(app)
 
@@ -82,7 +85,7 @@ def test_upcoming_stops_have_datetime_fields(monkeypatch, client):
     )
 
     # Call the endpoint with stops expansion
-    today = datetime.date.today().isoformat()
+    today = datetime.datetime.now(ZoneInfo("Asia/Tokyo")).date().isoformat()
     resp = client.get(f"/stops/{stop_id}/upcoming?expand=stops")
     assert resp.status_code == 200
     body = resp.json()
@@ -99,8 +102,8 @@ def test_upcoming_stops_have_datetime_fields(monkeypatch, client):
     # Verify that bus-level datetime fields are present
     assert "arrival_datetime" in bus
     assert "departure_datetime" in bus
-    assert bus["arrival_datetime"] == f"{today}T08:30:00"
-    assert bus["departure_datetime"] == f"{today}T08:32:00"
+    assert bus["arrival_datetime"] == f"{today}T08:30:00{TZ_SUFFIX}"
+    assert bus["departure_datetime"] == f"{today}T08:32:00{TZ_SUFFIX}"
 
     # Verify that stops are populated
     assert bus["stops"] is not None
@@ -113,8 +116,8 @@ def test_upcoming_stops_have_datetime_fields(monkeypatch, client):
     assert stop1["departure_time"] == "08:32:00"
     assert "arrival_datetime" in stop1
     assert "departure_datetime" in stop1
-    assert stop1["arrival_datetime"] == f"{today}T08:30:00"
-    assert stop1["departure_datetime"] == f"{today}T08:32:00"
+    assert stop1["arrival_datetime"] == f"{today}T08:30:00{TZ_SUFFIX}"
+    assert stop1["departure_datetime"] == f"{today}T08:32:00{TZ_SUFFIX}"
 
     stop2 = bus["stops"][1]
     assert stop2["stop_id"] == "S101"
@@ -122,8 +125,8 @@ def test_upcoming_stops_have_datetime_fields(monkeypatch, client):
     assert stop2["departure_time"] == "08:47:00"
     assert "arrival_datetime" in stop2
     assert "departure_datetime" in stop2
-    assert stop2["arrival_datetime"] == f"{today}T08:45:00"
-    assert stop2["departure_datetime"] == f"{today}T08:47:00"
+    assert stop2["arrival_datetime"] == f"{today}T08:45:00{TZ_SUFFIX}"
+    assert stop2["departure_datetime"] == f"{today}T08:47:00{TZ_SUFFIX}"
 
 
 def test_upcoming_with_begin_time_iso_format(monkeypatch, client):
@@ -192,5 +195,5 @@ def test_upcoming_with_begin_time_iso_format(monkeypatch, client):
     stop = bus["stops"][0]
 
     # Verify datetime fields use the specified date from begin_time
-    assert stop["arrival_datetime"] == f"{test_date}T10:15:00"
-    assert stop["departure_datetime"] == f"{test_date}T10:17:00"
+    assert stop["arrival_datetime"] == f"{test_date}T10:15:00{TZ_SUFFIX}"
+    assert stop["departure_datetime"] == f"{test_date}T10:17:00{TZ_SUFFIX}"

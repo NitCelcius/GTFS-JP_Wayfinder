@@ -1,6 +1,7 @@
 """Tests for wayfinder_adapter utility functions."""
 
 import datetime
+from zoneinfo import ZoneInfo
 
 import pytest
 
@@ -12,10 +13,11 @@ class TestParseSplitDateStr:
 
     def test_parse_split_date_str_with_hh_mm_ss(self):
         """Test parsing HH:MM:SS format."""
+        tokyo = ZoneInfo("Asia/Tokyo")
         reference_date, time_string = parse_split_date_str("14:30:00")
 
-        # Reference date should be today when only time is provided
-        assert reference_date == datetime.date.today()
+        # Reference date should be today in agency timezone when only time is provided
+        assert reference_date == datetime.datetime.now(tokyo).date()
         assert time_string == "14:30:00"
 
     def test_parse_split_date_str_with_iso_datetime(self):
@@ -34,10 +36,11 @@ class TestParseSplitDateStr:
 
     def test_parse_split_date_str_none(self):
         """Test that None returns current datetime."""
+        tokyo = ZoneInfo("Asia/Tokyo")
         reference_date, time_string = parse_split_date_str(None)
 
         # Should be today's date
-        assert reference_date == datetime.date.today()
+        assert reference_date == datetime.datetime.now(tokyo).date()
 
         # Time string should be in HH:MM:SS format
         time_parts = time_string.split(":")
