@@ -58,7 +58,8 @@ describe("Converter functions", () => {
       };
       const result = convertTripToBusInfo(trip);
 
-      expect(result.line).toBe("不明");
+      // Empty string fallback for missing route
+      expect(result.line).toBe("");
       expect(result.destination).toBe("不明");
     });
 
@@ -67,6 +68,39 @@ describe("Converter functions", () => {
       const result = convertTripToBusInfo(trip);
 
       expect(result.arrivalDatetime).toEqual(new Date("2025-11-01T14:00:00"));
+    });
+
+    it("should extract route number from Akita Chuo Kotsu trip_id format", () => {
+      const trip: EnrichedTripData = {
+        trip_id: "平日_05時11分_系統6001",
+        arrival_time: "14:00:00",
+        departure_time: "14:00:00",
+        arrival_datetime: "2025-11-01T14:00:00",
+        departure_datetime: "2025-11-01T14:00:00",
+        route_name: "都心循環線",
+        destination_display_name: "市役所前",
+      };
+      const result = convertTripToBusInfo(trip);
+
+      // Should extract from trip_id, not use route_name
+      expect(result.line).toBe("600");
+      expect(result.tripId).toBe("平日_05時11分_系統6001");
+    });
+
+    it("should fallback to route_name when trip_id doesn't match any extractor", () => {
+      const trip: EnrichedTripData = {
+        trip_id: "trip_001_001",
+        arrival_time: "14:00:00",
+        departure_time: "14:00:00",
+        arrival_datetime: "2025-11-01T14:00:00",
+        departure_datetime: "2025-11-01T14:00:00",
+        route_name: "都心循環線",
+        destination_display_name: "市役所前",
+      };
+      const result = convertTripToBusInfo(trip);
+
+      // Should fall back to route_name (mapped to route_short_name)
+      expect(result.line).toBe("都心循環線");
     });
   });
 

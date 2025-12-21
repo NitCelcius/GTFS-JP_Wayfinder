@@ -1,4 +1,6 @@
 // Conversion logic for transforming API responses to domain types
+import { extractRouteNumber } from "@/lib/routeNumber";
+
 import type { EnrichedTripData, NearbyStop, TripTimedStopData } from "./types";
 import type { BusInfo, BusStop, JourneyStopData } from "./types";
 
@@ -23,12 +25,17 @@ export function formatTime(timeString: string): string {
 
 /**
  * Convert EnrichedTripData to BusInfo
+ *
+ * @see {@link extractRouteNumber} for extraction logic details
  */
 export function convertTripToBusInfo(trip: EnrichedTripData): BusInfo {
-  // Extract system number from route_name if available
-  // const routeName = trip.route_name || "";
-  // const systemMatch = routeName.match(/系統(\d+)/);
-  // const system = systemMatch ? `系統${systemMatch[1]}` : "";
+  // Extract route number
+  // Note: trip.route_name can be null from API, filter it out explicitly
+  const routeNumber = extractRouteNumber({
+    trip_id: trip.trip_id,
+    route_short_name: trip.route_name ?? undefined,
+    // route_id and service_id not available in EnrichedTripData
+  });
 
   let arrivalDatetime: Date;
   try {
@@ -41,7 +48,7 @@ export function convertTripToBusInfo(trip: EnrichedTripData): BusInfo {
 
   return {
     tripId: trip.trip_id,
-    line: trip.route_name || "不明",
+    line: routeNumber,
     system: "", // TODO: APIにない
     destination: trip.destination_display_name || "不明", // TODO: nullableにすべきか
     direction: "行",
