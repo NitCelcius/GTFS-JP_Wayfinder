@@ -130,7 +130,7 @@ function convertBusDataToTripDetail(
 
   let stopsAway = 0;
   if (busLocationIndex >= 0 && currentStopIndex >= 0) {
-    stopsAway = Math.max(0, currentStopIndex - busLocationIndex);
+    stopsAway = currentStopIndex - busLocationIndex;
   }
 
   // Convert journey stops to component format
