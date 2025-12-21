@@ -13,11 +13,17 @@ class TestParseSplitDateStr:
     """Test cases for parse_split_date_str function."""
 
     def test_parse_split_date_str_with_hh_mm_ss(self):
-        """Test parsing HH:MM:SS format."""
+        """Test parsing HH:MM:SS format with default date."""
+        # When given HH:MM:SS without default_date, should return today's date
         reference_date, time_string = parse_split_date_str("14:30:00")
-
-        # When given HH:MM:SS, it should return today's date and the input time
         assert reference_date == datetime.date.today()
+        assert time_string == "14:30:00"
+
+        # When given HH:MM:SS with default_date, should return that date
+        reference_date, time_string = parse_split_date_str(
+            "14:30:00", default_date="2021-01-01"
+        )
+        assert reference_date == datetime.date(2021, 1, 1)
         assert time_string == "14:30:00"
 
     def test_parse_split_date_str_with_iso_datetime(self):

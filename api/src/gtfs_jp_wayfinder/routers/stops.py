@@ -259,10 +259,15 @@ async def get_upcoming(
         ),
     ),
 ):
+    # Get default date for consistent timezone-independent behavior
+    db_default_date = adapter.get_default_date()
+
     # Parse begin_time parameter to determine reference_date
     # (handles both HH:MM:SS and ISO datetime formats)
     try:
-        reference_date_obj, _ = adapter.parse_split_date_str(begin_time)
+        reference_date_obj, _ = adapter.parse_split_date_str(
+            begin_time, default_date=db_default_date
+        )
         reference_date = reference_date_obj.isoformat()
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e)) from e

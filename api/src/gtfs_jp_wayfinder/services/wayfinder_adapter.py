@@ -44,12 +44,17 @@ def _get_agency_zone() -> ZoneInfo:
         return ZoneInfo("UTC")
 
 
-def parse_split_date_str(begin_time_str: str | None) -> tuple[datetime.date, str]:
+def parse_split_date_str(
+    begin_time_str: str | None, default_date: str | None = None
+) -> tuple[datetime.date, str]:
     """Parse begin_time parameter which can be either HH:MM:SS or ISO datetime.
 
     Args:
         begin_time_str: Time string in HH:MM:SS format or ISO 8601 datetime
                        (e.g., "2025-10-28T14:30:00"). If None, uses current time.
+        default_date: Default date to use for relative time formats (e.g., "2021-01-01").
+                     If provided, this date is used instead of the current date for
+                     timezone-independent behavior.
 
     Returns:
         (reference_date, time_string) where time_string is HH:MM:SS
@@ -70,9 +75,16 @@ def parse_split_date_str(begin_time_str: str | None) -> tuple[datetime.date, str
         except ValueError as e:
             raise ValueError(f"Invalid ISO datetime format: {begin_time_str}") from e
 
-    # Use timezone-aware datetime for consistent date handling
-    now = datetime.datetime.now(tz)
-    return now.date(), begin_time_str
+    # For relative time formats (HH:MM:SS or HHMMSS), use default_date if provided
+    # to ensure consistent behavior across all timezones
+    if default_date:
+        ref_date = datetime.date.fromisoformat(default_date)
+    else:
+        # Fallback to current date in agency timezone
+        now = datetime.datetime.now(tz)
+        ref_date = now.date()
+    
+    return ref_date, begin_time_str
 
 
 async def initialize(data_dir: str):

@@ -66,17 +66,19 @@ async def timed_search(
                 detail="begin_time parameter is required for timed search",
             )
 
+        # Get default date for consistent timezone-independent behavior
+        db_default_date = adapter.get_default_date()
+
         # Parse begin_time parameter (handles both HH:MM:SS and ISO datetime formats)
         try:
             reference_date_obj, begin_time_str = adapter.parse_split_date_str(
-                begin_time
+                begin_time, default_date=db_default_date
             )
             reference_date = reference_date_obj.isoformat()
         except ValueError as e:
             raise HTTPException(status_code=400, detail=str(e)) from e
 
         # Convert begin_time string to numpy datetime64
-        db_default_date = adapter.get_default_date()
         begin_time_np = to_datetime(f"{db_default_date}T{begin_time_str}").to_numpy()
 
         # Get timed travels (returns empty list if no buses available)
