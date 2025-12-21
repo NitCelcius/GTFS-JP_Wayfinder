@@ -1,7 +1,9 @@
 import type { TripDetails } from "@/domains/route-search/SearchResultPage/types";
 import { createDatetime } from "@/lib/utils";
 
-export const mockTripDetails: TripDetails = {
+// Simple mock trip details with generic station names (hoge, fuga, piyo)
+// For realistic city data, use mockTripDetails from mockData.ts
+export const mockSimpleTripDetails: TripDetails = {
   fromStation: "hoge駅",
   toStation: "fuga駅",
   searchDateTime: "12:34",
@@ -80,4 +82,4 @@ export const mockTripDetails: TripDetails = {
   ],
 };
 
-export default mockTripDetails;
+export default mockSimpleTripDetails;
