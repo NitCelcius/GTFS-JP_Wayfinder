@@ -1,7 +1,7 @@
 .stopItem {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   gap: var(--halflineheight, 9px);
   background: transparent;
@@ -29,6 +29,16 @@
   min-width: 0;
 }
 
+.stopContent {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--halflineheight, 9px);
+  flex: 1;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
 .stopDot {
   width: 28px;
   height: 28px;
@@ -42,6 +52,7 @@
   color: var(--foreground, black);
   word-wrap: break-word;
   overflow-wrap: break-word;
+  flex: 1 1 auto;
 }
 
 .stopRight {
@@ -49,6 +60,7 @@
   flex-direction: row;
   align-items: center;
   gap: 18px;
+  margin-left: auto;
   flex-shrink: 0;
 }
 
@@ -75,7 +87,6 @@
   font-weight: 400;
   line-height: 1.2;
   white-space: nowrap;
-  width: 89px;
 }
 
 .arrivalTimeValue {
