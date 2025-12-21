@@ -249,7 +249,7 @@ function getPartsWithOffset(date: Date, offsetMinutes: number): DateParts {
     year: shifted.getUTCFullYear(),
     month: shifted.getUTCMonth() + 1,
     day: shifted.getUTCDate(),
-    hour: shifted.getUTCHours(),
+    hour: shifted.getUTCHours() % 24, // Normalize hour to 0-23 range
     minute: shifted.getUTCMinutes(),
   };
 }
@@ -278,7 +278,7 @@ function getPartsWithTimeZone(date: Date, timeZone: string): DateParts {
     year: parseInt(parts.year, 10),
     month: parseInt(parts.month, 10),
     day: parseInt(parts.day, 10),
-    hour: parseInt(parts.hour, 10),
+    hour: parseInt(parts.hour, 10) % 24, // Normalize hour to 0-23 range (handles 24:00 case)
     minute: parseInt(parts.minute, 10),
   };
 }
