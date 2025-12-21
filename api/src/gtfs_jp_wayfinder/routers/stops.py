@@ -104,7 +104,9 @@ async def get_nearby_stops(
             "content": {
                 "application/json": {
                     "examples": {
-                        "basic": {"value": {"stop_names": ["中央公園"], "platform_code": None}},
+                        "basic": {
+                            "value": {"stop_names": ["中央公園"], "platform_code": None}
+                        },
                         "with_platform": {
                             "value": {
                                 "stop_names": ["秋田駅西口"],
@@ -126,8 +128,7 @@ async def get_nearby_stops(
 )
 async def get_bus_stop_info(
     stop_id: str,
-    _fields: str
-    | None = Query(
+    _fields: str | None = Query(
         None,
         description="追加で取得するフィールド (例: location)。カンマ区切りで複数指定可能。",
     ),
@@ -145,14 +146,22 @@ async def get_bus_stop_info(
     platform_code = None
     try:
         platform_code = adapter.get_platform_code(stop_id)
+    except KeyError as e:
+        # If stop_id not found, raise 400 error
+        # This shouldn't happen if get_stop_names succeeded
+        warnings.warn(
+            f"Could not fetch platform_code for stop {stop_id}: {e}", stacklevel=2
+        )
+        raise HTTPException(status_code=400, detail=str(e)) from e
     except Exception as e:
-        # If platform_code not found, just omit it (platform_code remains None)
-        warnings.warn(f"Could not fetch platform_code for stop {stop_id}: {e}", stacklevel=2)
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
     # Parse requested fields (comma-separated)
     requested_fields = set()
     if _fields:
-        requested_fields = {field.strip() for field in _fields.split(",") if field.strip()}
+        requested_fields = {
+            field.strip() for field in _fields.split(",") if field.strip()
+        }
 
     # Check if location field is requested
     location = None
@@ -162,9 +171,13 @@ async def get_bus_stop_info(
             location = models.StopLatLon(lat=lat_lon[0], lon=lat_lon[1])
         except Exception as e:
             # If location not found, just omit it (location remains None)
-            warnings.warn(f"Could not fetch location for stop {stop_id}: {e}", stacklevel=2)
+            warnings.warn(
+                f"Could not fetch location for stop {stop_id}: {e}", stacklevel=2
+            )
 
-    return models.StopNameList(stop_names=names, platform_code=platform_code, location=location)
+    return models.StopNameList(
+        stop_names=names, platform_code=platform_code, location=location
+    )
 
 
 @router.get(
@@ -344,7 +357,9 @@ async def get_upcoming(
                 # Fallback to sequential if parallel approach fails
                 for trip_id in trip_ids:
                     try:
-                        stops_data = adapter.get_stops_from_trip(trip_id, reference_date)
+                        stops_data = adapter.get_stops_from_trip(
+                            trip_id, reference_date
+                        )
                         stops_map[trip_id] = stops_data
                     except Exception:
                         stops_map[trip_id] = None
