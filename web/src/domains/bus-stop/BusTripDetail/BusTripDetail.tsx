@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { Icon } from "@/components/common/Icon/Icon";
 
 import styles from "./BusTripDetail.module.css";
 import type { Stop } from "./internal/StopItem";
@@ -38,13 +38,7 @@ export function BusTripDetail({
             className={styles.backButton}
             aria-label="戻る"
           >
-            <Image
-              src="/icons/chevron-left.svg"
-              alt="戻る"
-              width={24}
-              height={24}
-              unoptimized
-            />
+            <Icon name="chevron-left" className="w-6 h-6" aria-hidden="true" />
           </button>
           <h2 className={styles.stopName}>{stopName}</h2>
         </div>

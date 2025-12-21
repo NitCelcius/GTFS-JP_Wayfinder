@@ -1,5 +1,6 @@
-import Image from "next/image";
 import React from "react";
+
+import { Icon } from "@/components/common/Icon/Icon";
 
 import styles from "./TopNavigation.module.css";
 
@@ -13,17 +14,11 @@ interface TopNavigationProps {
 
 function BackIcon() {
   return (
-    <div className="relative shrink-0 size-[var(--size-icon-lg)]">
-      <Image
-        src="/icons/arrow-back.svg"
-        alt=""
-        width={24}
-        height={24}
-        unoptimized
-        className="block size-full"
-        aria-hidden="true"
-      />
-    </div>
+    <Icon
+      name="arrow-back"
+      className="size-[var(--size-icon-lg)]"
+      aria-hidden="true"
+    />
   );
 }
 

@@ -1,8 +1,9 @@
-import Image from "next/image";
-
-import { BottomNavigation } from "@/components/common/BottomNavigation/BottomNavigation";
-import { LoadingSpinner } from "@/components/common/LoadingSpinner/LoadingSpinner";
-import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
+import {
+  BottomNavigation,
+  Icon,
+  LoadingSpinner,
+  TopNavigation,
+} from "@/components/common";
 
 import { useNearbyStops } from "../hooks/useNearbyStops";
 import type { BusStop } from "../types";
@@ -52,15 +53,7 @@ export function BusStopSearchPage({
   };
 
   const SearchLocationIcon = () => (
-    <Image
-      src="/icons/location-pin.svg"
-      alt=""
-      width={24}
-      height={24}
-      unoptimized
-      className="w-6 h-6"
-      aria-hidden="true"
-    />
+    <Icon name="location-pin" className="w-6 h-6" />
   );
 
   const handleSearch = (query: string) => {

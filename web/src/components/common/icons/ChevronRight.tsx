@@ -1,14 +1,5 @@
-import Image from "next/image";
+import { Icon } from "@/components/common/Icon/Icon";
 
 export function ChevronRight() {
-  return (
-    <Image
-      src="/icons/chevron-right.svg"
-      alt=""
-      width={24}
-      height={24}
-      unoptimized
-      style={{ width: "auto", height: "auto" }}
-    />
-  );
+  return <Icon name="chevron-right" className="w-6 h-6" />;
 }

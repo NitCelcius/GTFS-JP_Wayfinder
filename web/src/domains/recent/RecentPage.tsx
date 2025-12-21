@@ -1,6 +1,5 @@
-import Image from "next/image";
-
 import { BottomNavigation } from "@/components/common/BottomNavigation/BottomNavigation";
+import { Icon } from "@/components/common/Icon/Icon";
 import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
 import {
   useBusStopSearchHistory,
@@ -24,17 +23,7 @@ interface RecentPageProps {
 }
 
 function ClockIcon() {
-  return (
-    <Image
-      src="/icons/clock.svg"
-      alt=""
-      width={24}
-      height={24}
-      unoptimized
-      className="block size-full"
-      aria-hidden="true"
-    />
-  );
+  return <Icon name="clock" className="w-6 h-6" aria-hidden="true" />;
 }
 
 export function RecentPage({

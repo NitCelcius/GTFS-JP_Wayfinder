@@ -1,7 +1,7 @@
-import Image from "next/image";
 import React from "react";
 
 import { BusStopCard } from "@/components/common";
+import { Icon } from "@/components/common/Icon/Icon";
 
 import { RecentBusStopSearch } from "../types";
 import viewMoreStyles from "./ViewMoreButton.module.css";
@@ -13,17 +13,7 @@ interface RecentBusStopSearchesProps {
 }
 
 function LocationIcon() {
-  return (
-    <Image
-      src="/icons/location-pin.svg"
-      alt=""
-      width={24}
-      height={24}
-      unoptimized
-      className="block size-full"
-      aria-hidden="true"
-    />
-  );
+  return <Icon name="location-pin" className="w-6 h-6" aria-hidden="true" />;
 }
 
 function RecentBusStopItem({

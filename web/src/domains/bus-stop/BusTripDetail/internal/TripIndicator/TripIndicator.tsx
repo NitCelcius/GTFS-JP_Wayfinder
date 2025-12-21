@@ -1,5 +1,6 @@
-import Image from "next/image";
 import React from "react";
+
+import { Icon } from "@/components/common/Icon/Icon";
 
 import styles from "./TripIndicator.module.css";
 
@@ -33,13 +34,11 @@ export const TripIndicator: React.FC<TripIndicatorProps> = ({
   return (
     <div className={styles.tripIndicatorWrapper}>
       <div className={styles.busFront}>
-        <Image
-          src="/icons/bus-container-front.svg"
-          alt="Bus front"
-          width={100}
-          height={100}
-          unoptimized
+        <Icon
+          name="bus-container-front"
+          size={100}
           className={styles.busFrontSvg}
+          aria-hidden="true"
         />
       </div>
       <div className={styles.tripIndicatorContainer}>
@@ -48,13 +47,11 @@ export const TripIndicator: React.FC<TripIndicatorProps> = ({
           <div className={styles.routeDetails}>
             <p className={styles.routeName}>{routeName}</p>
             <div className={styles.destinationRow}>
-              <Image
-                src="/icons/location-pin.svg"
-                alt="目的地"
-                width={28}
-                height={28}
-                unoptimized
+              <Icon
+                name="location-pin"
+                size={28}
                 className={styles.locationIcon}
+                aria-hidden="true"
               />
               <p className={styles.destinationName}>{destinationName}行</p>
             </div>

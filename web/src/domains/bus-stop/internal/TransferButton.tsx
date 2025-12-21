@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { Icon } from "@/components/common";
 
 import styles from "./TransferButton.module.css";
 
@@ -8,17 +8,7 @@ interface TransferButtonProps {
 }
 
 function TransferIcon() {
-  return (
-    <Image
-      src="/icons/transfer.svg"
-      alt=""
-      width={24}
-      height={24}
-      unoptimized
-      className="block size-full"
-      aria-hidden="true"
-    />
-  );
+  return <Icon name="transfer" className="size-full" />;
 }
 
 export function TransferButton({
