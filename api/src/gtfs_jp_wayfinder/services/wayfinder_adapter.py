@@ -2,6 +2,7 @@ import asyncio
 import datetime
 import logging
 from typing import Any
+from zoneinfo import ZoneInfo
 
 import pandas as pd
 
@@ -13,6 +14,21 @@ from gtfs_jp_wayfinder.services import wayfinder as wf_service
 _initialized = False
 
 logger = logging.getLogger(__name__)
+
+
+def _get_agency_zone() -> ZoneInfo:
+    """Return the agency timezone, falling back to Asia/Tokyo then UTC."""
+    tz_name = "Asia/Tokyo"
+    try:
+        if wf_service.is_ready():
+            tz_name = wf_service.get_agency_timezone()
+        return ZoneInfo(tz_name)
+    except Exception:
+        logger.warning(
+            "Timezone not defined or not found. Falling back to UTC timezone (invalid or missing: %s)",
+            tz_name,
+        )
+        return ZoneInfo("UTC")
 
 
 def parse_split_date_str(begin_time_str: str | None) -> tuple[datetime.date, str]:
@@ -28,13 +44,17 @@ def parse_split_date_str(begin_time_str: str | None) -> tuple[datetime.date, str
     Raises:
         ValueError: If the ISO datetime format is invalid
     """
+    tz = _get_agency_zone()
+
     if not begin_time_str:
-        now = datetime.datetime.now()
+        now = datetime.datetime.now(tz)
         return now.date(), now.strftime("%H:%M:%S")
 
     if "T" in begin_time_str:
         try:
             dt = datetime.datetime.fromisoformat(begin_time_str)
+            if dt.tzinfo is None:
+                dt = dt.replace(tzinfo=tz)
             return dt.date(), dt.strftime("%H:%M:%S")
         except ValueError as e:
             raise ValueError(f"Invalid ISO datetime format: {begin_time_str}") from e
@@ -644,8 +664,11 @@ def merge_date_and_time_to_iso(
         days_to_add = hours // 24
         normalized_hours = hours % 24
 
-        # Create datetime object with normalized hours
-        reference_dt = datetime.datetime.fromisoformat(reference_date)
+        # Create datetime object with normalized hours in agency timezone
+        tz = _get_agency_zone()
+        reference_dt = datetime.datetime.fromisoformat(reference_date).replace(
+            tzinfo=tz
+        )
         result_dt = reference_dt.replace(
             hour=normalized_hours, minute=minutes, second=seconds
         )
@@ -655,7 +678,7 @@ def merge_date_and_time_to_iso(
             result_dt = result_dt + datetime.timedelta(days=days_to_add)
 
         # Return ISO format string
-        return result_dt.isoformat()
+        return result_dt.isoformat(timespec="seconds")
 
     except ValueError as e:
         raise ValueError(
