@@ -187,7 +187,7 @@ interface DateParts {
   minute: number;
 }
 
-const DEFAULT_TIMEZONE = "UTC";
+const DEFAULT_TIMEZONE = "Asia/Tokyo";
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
 
 function pad2(value: number): string {
