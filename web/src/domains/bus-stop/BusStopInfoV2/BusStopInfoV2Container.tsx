@@ -59,8 +59,11 @@ export function BusStopInfoV2Container({
           throw new Error("No data received from API");
         }
 
-        // Get stop info (name and location)
+        // Get stop info (name, platform_code and location)
         let stopName = busStopId;
+        let platformCode: string | null = null;
+        let lat: number | undefined;
+        let lon: number | undefined;
         try {
           const stopResponse = await apiClient.getStopInfo(
             busStopId,
@@ -70,6 +73,13 @@ export function BusStopInfoV2Container({
           const stopData = stopResponse.data as StopNameListData;
           if (stopData?.stop_names && stopData.stop_names.length > 0) {
             stopName = stopData.stop_names[0];
+          }
+          if (stopData?.platform_code) {
+            platformCode = stopData.platform_code;
+          }
+          if (stopData?.location) {
+            lat = stopData.location.lat;
+            lon = stopData.location.lon;
           }
         } catch (stopError) {
           console.warn("Failed to fetch stop info:", stopError);
@@ -83,9 +93,10 @@ export function BusStopInfoV2Container({
           upcomingData,
           stopName,
           busStopId,
+          platformCode,
           calculatedDistance,
-          undefined,
-          undefined,
+          lat,
+          lon,
           now
         );
 
