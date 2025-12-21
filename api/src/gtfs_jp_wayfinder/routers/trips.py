@@ -171,6 +171,7 @@ async def get_journey(
         404: {"description": "指定された trip_id が見つかりません"},
     },
 )
+# TODO: add route_id, route_short_name field so client: bus-stop/BusTripDetail can use conversion logic
 async def get_trip(trip_id: str):
     # First, check if the trip exists by attempting to get its route_id
     # This will raise ValueError if the trip doesn't exist
