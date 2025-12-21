@@ -203,7 +203,7 @@ class TimedTravelResponse(BaseModel):
 
 class StopNameList(BaseModel):
     stop_names: list[str]
-    platform_code: str | None = Field(None, description="のりば番号 (例: \"1\", \"2\"など)")
+    platform_code: str | None = Field(None, description='のりば番号 (例: "1", "2"など)')
     location: StopLatLon | None = None
     model_config = {
         "json_schema_extra": {
@@ -290,7 +290,7 @@ class PathResponse(BaseModel):
 # Enriched/batch models
 class TripInfo(BaseModel):
     trip_id: str
-    route_name: str | None = None
+    route_name: str | None
     destination_display_name: str | None = None
     destination_stop_id: str | None = None
 
@@ -334,7 +334,7 @@ class EnrichedTrip(BaseModel):
     departure_time: str
     arrival_datetime: str = Field(...)
     departure_datetime: str = Field(...)
-    route_name: str | None = None
+    route_name: str | None
     destination_display_name: str | None = None
     destination_stop_id: str | None = None
     stops: list[TripTimedStop] | None = None
