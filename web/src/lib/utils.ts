@@ -194,17 +194,53 @@ function pad2(value: number): string {
   return value.toString().padStart(2, "0");
 }
 
-function parseIsoOffsetMinutes(isoString: string): number | null {
-  const offsetMatch = isoString.match(/([+-])(\d{2}):?(\d{2})$/);
-  if (offsetMatch) {
-    const [, sign, h, m] = offsetMatch;
-    const minutes = parseInt(h, 10) * 60 + parseInt(m, 10);
-    return sign === "-" ? -minutes : minutes;
-  }
+/**
+ * Extract offset minutes from an ISO string using string operations (no regex).
+ * Returns null if no offset is present (naive datetime).
+ * Handles both colon-separated (±HH:MM) and compact (±HHMM) offset formats.
+ */
+function extractOffsetFromIso(isoString: string): number | null {
+  // Handle Z suffix (UTC)
   if (isoString.endsWith("Z")) {
     return 0;
   }
-  return null;
+
+  // Find the last + or - that indicates an offset (must appear after 'T')
+  const lastPlus = isoString.lastIndexOf("+");
+  const lastMinus = isoString.lastIndexOf("-");
+
+  // Offset separator must be after position 10 (minimum: YYYY-MM-DD)
+  const offsetIndex = Math.max(
+    lastPlus > 10 ? lastPlus : -1,
+    lastMinus > 10 ? lastMinus : -1
+  );
+
+  if (offsetIndex === -1) {
+    return null;
+  }
+
+  const offsetPart = isoString.slice(offsetIndex);
+  const sign = offsetPart[0];
+  const offsetStr = offsetPart.slice(1);
+
+  let hours: number;
+  let minutes: number;
+
+  if (offsetStr.includes(":")) {
+    // Colon-separated format: HH:MM or HH:MM:SS
+    const parts = offsetStr.split(":");
+    hours = parseInt(parts[0], 10);
+    minutes = parseInt(parts[1], 10);
+  } else if (offsetStr.length >= 2) {
+    // Compact format: HHMM or HH
+    hours = parseInt(offsetStr.slice(0, 2), 10);
+    minutes = offsetStr.length >= 4 ? parseInt(offsetStr.slice(2, 4), 10) : 0;
+  } else {
+    return null;
+  }
+
+  const totalMinutes = hours * 60 + minutes;
+  return sign === "-" ? -totalMinutes : totalMinutes;
 }
 
 function getPartsWithOffset(date: Date, offsetMinutes: number): DateParts {
@@ -278,18 +314,25 @@ export function formatRelativeDate(
   options: RelativeDateOptions = {}
 ): string {
   const date = input instanceof Date ? input : new Date(input);
-  const offsetMinutes =
-    typeof input === "string" ? parseIsoOffsetMinutes(input) : null;
-  const timeZone = options.timeZone ?? DEFAULT_TIMEZONE;
 
+  // Determine timezone: if ISO string with offset and no explicit timeZone option, preserve offset
+  const timeZone = options.timeZone ?? DEFAULT_TIMEZONE;
+  let offsetMinutes: number | null = null;
+
+  if (typeof input === "string" && options.timeZone === undefined) {
+    offsetMinutes = extractOffsetFromIso(input);
+  }
+
+  // If offset was found and no explicit timeZone, use offset for formatting
   const dateParts =
-    offsetMinutes !== null && options.timeZone === undefined
+    offsetMinutes !== null
       ? getPartsWithOffset(date, offsetMinutes)
       : getPartsWithTimeZone(date, timeZone);
 
+  // Use same timezone logic for "now"
   const now = new Date();
   const nowParts =
-    offsetMinutes !== null && options.timeZone === undefined
+    offsetMinutes !== null
       ? getPartsWithOffset(now, offsetMinutes)
       : getPartsWithTimeZone(now, timeZone);
 
