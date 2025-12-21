@@ -245,9 +245,9 @@ export function BusStopInfoV2({
             />
 
             {/* Remaining buses as slim indicators */}
-            {displayBuses.slice(1).map((bus, index) => (
+            {displayBuses.slice(1).map((bus) => (
               <SlimTripIndicator
-                key={index}
+                key={bus.tripId}
                 tripId={bus.tripId}
                 routeNumber={bus.cost?.toString() || bus.routeNumber}
                 routeName={bus.routeName}
