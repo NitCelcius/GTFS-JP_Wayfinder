@@ -1,5 +1,6 @@
-import Image from "next/image";
 import { useState } from "react";
+
+import { Icon } from "@/components/common";
 
 import styles from "./SearchInput.module.css";
 
@@ -8,17 +9,7 @@ interface SearchInputProps {
 }
 
 function SearchIcon() {
-  return (
-    <Image
-      src="/icons/search.svg"
-      alt=""
-      width={24}
-      height={24}
-      unoptimized
-      className={styles.iconSvg}
-      aria-hidden="true"
-    />
-  );
+  return <Icon name="search" className={styles.iconSvg} />;
 }
 
 export function SearchInput({ onSearch }: SearchInputProps) {

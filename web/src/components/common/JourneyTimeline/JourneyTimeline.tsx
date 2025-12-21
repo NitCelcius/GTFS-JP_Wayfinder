@@ -1,5 +1,8 @@
-import Image from "next/image";
 import React from "react";
+
+// Styles migrated to JourneyTimeline.module.css
+
+import { Icon } from "@/components/common/Icon/Icon";
 
 import styles from "./JourneyTimeline.module.css";
 
@@ -23,14 +26,12 @@ interface JourneyTimelineProps {
   renderRightContent?: (stop: JourneyStop) => React.ReactNode; // Optional custom render function for right section
 }
 
-// Styles migrated to JourneyTimeline.module.css
-
 function LocationIcon() {
-  return <Image src="/icons/location-pin.svg" alt="" width={24} height={24} unoptimized aria-hidden="true" />;
+  return <Icon name="location-pin" className="w-6 h-6" aria-hidden="true" />;
 }
 
 function FlagIcon() {
-  return <Image src="/icons/flag.svg" alt="" width={24} height={24} unoptimized aria-hidden="true" />;
+  return <Icon name="flag" className="w-6 h-6" aria-hidden="true" />;
 }
 
 function CircleIcon() {

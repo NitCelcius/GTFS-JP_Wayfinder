@@ -1,8 +1,7 @@
-import Image from "next/image";
 import { useState } from "react";
 
 import svgPaths from "@/app/imports/svg-uqfc70duf5";
-import { BusStopSearchModal } from "@/components/common";
+import { BusStopSearchModal, Icon } from "@/components/common";
 import type { BusStopSearchResult } from "@/types";
 
 import styles from "./RouteInputs.module.css";
@@ -50,17 +49,7 @@ function ArrowIcon() {
 }
 
 function SwapIcon() {
-  return (
-    <Image
-      src="/icons/swap.svg"
-      alt=""
-      width={24}
-      height={24}
-      unoptimized
-      className="block size-full"
-      aria-hidden="true"
-    />
-  );
+  return <Icon name="swap" className="size-full" />;
 }
 
 interface RouteInputProps {

@@ -1,44 +1,49 @@
-import Image from "next/image";
 import React from "react";
 
-interface IconProps {
+import Image, { type ImageProps } from "next/image";
+
+interface IconProps
+  extends Omit<ImageProps, "src" | "alt" | "width" | "height"> {
   name: string;
   size?: number | string;
-  className?: string;
-  style?: React.CSSProperties;
 }
 
 /**
  * Icon component that loads SVG icons from /public/icons directory.
- *
- * Usage:
- *   <Icon name="arrow-back" size={24} />
- *   <Icon name="search" className="w-6 h-6" />
+ * Uses `width` and `height` props for intrinsic sizing, allowing
+ * flexible overrides via `className` or `size`.
  */
-export function Icon({ name, size, className = "", style }: IconProps) {
+export function Icon({
+  name,
+  size = 24,
+  className = "",
+  style,
+  ...rest
+}: IconProps) {
   // Validate icon name to prevent directory traversal attacks
   if (!/^[a-z0-9-]+$/.test(name)) {
     console.error(`Invalid icon name: ${name}`);
     return null;
   }
 
-  const sizeStyle = size
-    ? {
-        width: typeof size === "number" ? `${size}px` : size,
-        height: typeof size === "number" ? `${size}px` : size,
-      }
-    : {};
+  const numericSize = typeof size === "number" ? size : 24;
+  const stringSize = typeof size === "string" ? size : undefined;
 
   return (
     <Image
       src={`/icons/${name}.svg`}
       alt=""
-      width={24}
-      height={24}
+      width={numericSize}
+      height={numericSize}
       unoptimized
       className={className}
-      style={{ ...sizeStyle, ...style }}
+      style={{
+        width: stringSize,
+        height: stringSize,
+        ...style,
+      }}
       aria-hidden="true"
+      {...rest}
     />
   );
 }

@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { Icon } from "@/components/common/Icon/Icon";
 
 import styles from "./WalkDirectionButton.module.css";
 
@@ -8,17 +8,7 @@ interface WalkDirectionButtonProps {
 }
 
 function WalkIcon() {
-  return (
-    <Image
-      src="/icons/walk.svg"
-      alt=""
-      width={24}
-      height={24}
-      unoptimized
-      className="block size-full"
-      aria-hidden="true"
-    />
-  );
+  return <Icon name="walk" className="w-6 h-6" aria-hidden="true" />;
 }
 
 /**

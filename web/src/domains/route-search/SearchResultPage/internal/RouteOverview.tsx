@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { Icon } from "@/components/common/Icon/Icon";
 
 import styles from "./RouteOverview.module.css";
 
@@ -10,17 +10,7 @@ interface RouteOverviewProps {
 }
 
 function ShareIcon() {
-  return (
-    <Image
-      src="/icons/share.svg"
-      alt=""
-      width={24}
-      height={24}
-      unoptimized
-      className="block size-full"
-      aria-hidden="true"
-    />
-  );
+  return <Icon name="share" className="w-6 h-6" aria-hidden="true" />;
 }
 
 export function RouteOverview({

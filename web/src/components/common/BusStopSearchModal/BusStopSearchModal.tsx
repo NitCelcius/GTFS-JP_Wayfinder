@@ -1,7 +1,7 @@
-import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
 import type { StopIdAndName } from "@/api/types.gen";
+import { Icon } from "@/components/common/Icon/Icon";
 import { ArrowRightIcon, LocationPinIcon } from "@/components/icons";
 import { apiClient } from "@/lib/api";
 import type { BusStopSearchResult } from "@/types";
@@ -148,15 +148,7 @@ export function BusStopSearchModal({
             onClick={onClose}
             aria-label="閉じる"
           >
-            <Image
-              src="/icons/close.svg"
-              alt=""
-              width={32}
-              height={32}
-              unoptimized
-              className="w-8 h-8"
-              aria-hidden="true"
-            />
+            <Icon name="close" className="w-8 h-8" aria-hidden="true" />
           </button>
         </div>
 
@@ -181,12 +173,9 @@ export function BusStopSearchModal({
             </div>
           ) : error ? (
             <div className={styles.emptyState}>
-              <Image
-                src="/icons/alert-triangle.svg"
-                alt=""
-                width={48}
-                height={48}
-                unoptimized
+              <Icon
+                name="alert-triangle"
+                size={48}
                 className={styles.emptyIcon}
                 aria-hidden="true"
               />
@@ -197,12 +186,9 @@ export function BusStopSearchModal({
             <div className={styles.emptyState}>
               {searchQuery.trim() ? (
                 <>
-                  <Image
-                    src="/icons/search.svg"
-                    alt=""
-                    width={48}
-                    height={48}
-                    unoptimized
+                  <Icon
+                    name="search"
+                    size={48}
                     className={styles.emptyIcon}
                     aria-hidden="true"
                   />
@@ -215,12 +201,9 @@ export function BusStopSearchModal({
                 </>
               ) : (
                 <>
-                  <Image
-                    src="/icons/location-pin.svg"
-                    alt=""
-                    width={48}
-                    height={48}
-                    unoptimized
+                  <Icon
+                    name="location-pin"
+                    size={48}
                     className={styles.emptyIcon}
                     aria-hidden="true"
                   />

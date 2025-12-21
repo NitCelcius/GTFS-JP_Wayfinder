@@ -1,5 +1,6 @@
-import Image from "next/image";
 import React from "react";
+
+import { Icon } from "@/components/common/Icon/Icon";
 
 import styles from "./BusStopHeader.module.css";
 
@@ -12,31 +13,11 @@ interface BusStopHeaderProps {
 }
 
 function LocationIcon() {
-  return (
-    <Image
-      src="/icons/location-pin.svg"
-      alt=""
-      width={24}
-      height={24}
-      unoptimized
-      className="block size-full"
-      aria-hidden="true"
-    />
-  );
+  return <Icon name="location-pin" className="w-6 h-6" aria-hidden="true" />;
 }
 
 function ShareIcon() {
-  return (
-    <Image
-      src="/icons/share.svg"
-      alt=""
-      width={24}
-      height={24}
-      unoptimized
-      className="block size-full"
-      aria-hidden="true"
-    />
-  );
+  return <Icon name="share" className="w-6 h-6" aria-hidden="true" />;
 }
 
 export function BusStopHeader({

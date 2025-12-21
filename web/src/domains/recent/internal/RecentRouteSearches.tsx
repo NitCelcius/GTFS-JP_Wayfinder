@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { Icon } from "@/components/common/Icon/Icon";
 
 import { RecentRouteSearch } from "../types";
 import styles from "./RecentRouteSearches.module.css";
@@ -17,17 +17,7 @@ interface RecentRouteSearchesProps {
 }
 
 function RouteIcon() {
-  return (
-    <Image
-      src="/icons/route.svg"
-      alt=""
-      width={24}
-      height={24}
-      unoptimized
-      className="block size-full"
-      aria-hidden="true"
-    />
-  );
+  return <Icon name="route" className="w-6 h-6" aria-hidden="true" />;
 }
 
 function RecentRouteItem({

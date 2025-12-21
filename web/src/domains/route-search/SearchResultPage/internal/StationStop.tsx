@@ -1,5 +1,6 @@
-import Image from "next/image";
 import React from "react";
+
+import { Icon } from "@/components/common/Icon/Icon";
 
 import { Station } from "../types";
 import styles from "./StationStop.module.css";
@@ -12,19 +13,21 @@ interface StationStopProps {
 }
 
 function PinIcon() {
-  return <Image src="/icons/location-pin-simple.svg" alt="" width={24} height={24} unoptimized aria-hidden="true" />;
+  return (
+    <Icon name="location-pin-simple" className="w-6 h-6" aria-hidden="true" />
+  );
 }
 
 function LocationIcon() {
-  return <Image src="/icons/location-dot.svg" alt="" width={24} height={24} unoptimized aria-hidden="true" />;
+  return <Icon name="location-dot" className="w-6 h-6" aria-hidden="true" />;
 }
 
 function FlagIcon() {
-  return <Image src="/icons/flag-simple.svg" alt="" width={24} height={24} unoptimized aria-hidden="true" />;
+  return <Icon name="flag-simple" className="w-6 h-6" aria-hidden="true" />;
 }
 
 function ArrowDownIcon() {
-  return <Image src="/icons/arrow-down-long.svg" alt="" width={24} height={24} unoptimized aria-hidden="true" />;
+  return <Icon name="arrow-down-long" className="w-6 h-6" aria-hidden="true" />;
 }
 
 export function StationStop({
