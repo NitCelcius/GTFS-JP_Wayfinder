@@ -36,6 +36,7 @@ interface BusStopInfoV2Props {
   distance?: string;
   pastBus?: UpcomingBusInfo | null;
   upcomingBuses: UpcomingBusInfo[];
+  platformCode?: string | null;
   isLoading?: boolean;
   error?: string | null;
   onBack?: () => void;
@@ -71,6 +72,7 @@ export function BusStopInfoV2({
   distance,
   pastBus,
   upcomingBuses,
+  platformCode,
   isLoading = false,
   error = null,
   onBack,
@@ -184,9 +186,18 @@ export function BusStopInfoV2({
             >
               <ChevronIcon className={styles.chevronRotated} />
             </button>
-            <h1 className={styles.busStopName}>{busStopName}</h1>
+            <div className={styles.busStopTitleContainer}>
+              <h1 className={styles.busStopName}>{busStopName}</h1>
+              <div className={styles.busStopSubInfo}>
+                {platformCode && (
+                  <p className={styles.platformCode}>{platformCode}番のりば</p>
+                )}
+                {distance && (
+                  <div className={styles.distanceLabel}>{distance}</div>
+                )}
+              </div>
+            </div>
           </div>
-          {distance && <div className={styles.distanceLabel}>{distance}</div>}
         </div>
 
         {/* Action buttons - horizontal scroll */}

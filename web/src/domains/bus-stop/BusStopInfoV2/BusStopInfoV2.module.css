@@ -63,10 +63,34 @@
   font-weight: var(--font-weight-medium);
   color: var(--foreground);
   margin: 0;
-  flex: 1;
+  flex-basis: auto;
+  flex-shrink: 1;
+  word-wrap: break-word;
+  min-width: 0;
+}
+.platformCode {
+  font-size: var(--defaulttextfontsize);
+  color: var(--foregroundl2);
+  margin: 0;
+  flex-shrink: 0;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+}
+.busStopTitleContainer {
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  flex-basis: auto;
+  align-items: center;
+  gap: var(--spacing-md);
+  min-width: 0;
+  flex-wrap: wrap;
+}
+.busStopSubInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  flex-shrink: 0;
+  margin-left: auto;
 }
 .distanceLabel {
   font-size: var(--defaulttextfontsize);
