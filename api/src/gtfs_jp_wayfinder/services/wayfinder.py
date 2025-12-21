@@ -173,4 +173,4 @@ def get_agency_timezone() -> str:
     """Get the agency timezone (IANA name) loaded from agency.txt."""
     if _wf is None:
         raise RuntimeError("Wayfinder not initialized")
-    return getattr(_wf, "agency_timezone", "UTC")
+    return _wf.agency_timezone

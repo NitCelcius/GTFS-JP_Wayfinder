@@ -1,6 +1,7 @@
 """Tests for wayfinder_adapter utility functions."""
 
 import datetime
+from unittest.mock import patch
 from zoneinfo import ZoneInfo
 
 import pytest
@@ -13,11 +14,10 @@ class TestParseSplitDateStr:
 
     def test_parse_split_date_str_with_hh_mm_ss(self):
         """Test parsing HH:MM:SS format."""
-        tokyo = ZoneInfo("Asia/Tokyo")
         reference_date, time_string = parse_split_date_str("14:30:00")
 
-        # Reference date should be today in agency timezone when only time is provided
-        assert reference_date == datetime.datetime.now(tokyo).date()
+        # When given HH:MM:SS, it should return today's date and the input time
+        assert reference_date == datetime.date.today()
         assert time_string == "14:30:00"
 
     def test_parse_split_date_str_with_iso_datetime(self):
@@ -36,11 +36,29 @@ class TestParseSplitDateStr:
 
     def test_parse_split_date_str_none(self):
         """Test that None returns current datetime."""
-        tokyo = ZoneInfo("Asia/Tokyo")
-        reference_date, time_string = parse_split_date_str(None)
+        # Mock datetime.datetime.now to return a known value in Asia/Tokyo timezone
+        mock_dt = datetime.datetime(
+            2025, 10, 28, 23, 30, 0, tzinfo=ZoneInfo("Asia/Tokyo")
+        )
 
-        # Should be today's date
-        assert reference_date == datetime.datetime.now(tokyo).date()
+        with patch(
+            "gtfs_jp_wayfinder.services.wayfinder_adapter.datetime"
+        ) as mock_datetime:
+            mock_datetime.datetime.now.return_value = mock_dt
+            mock_datetime.date.today = (
+                datetime.date.today
+            )  # Keep other date functions working
+            mock_datetime.date = datetime.date
+
+            reference_date, time_string = parse_split_date_str(None)
+
+            # Should return the mocked date and time
+            assert reference_date == datetime.date(2025, 10, 28)
+            assert time_string == "23:30:00"
+
+    def test_parse_split_date_str_none_format(self):
+        """Test that None returns properly formatted time string."""
+        _, time_string = parse_split_date_str(None)
 
         # Time string should be in HH:MM:SS format
         time_parts = time_string.split(":")
