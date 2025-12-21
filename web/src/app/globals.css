@@ -109,76 +109,17 @@
 
   --max-width-mobile: 24.5625rem; /* 393px - mobile container */
 
-  /* Figma Design Tokens - GTFS-JP-Wayfinder-Variables */
-  /* Colors */
-  --figma-primary-accent: rgb(
-    208,
-    229,
-    206
-  ); /* Light: #d0e5ce, Dark: #313930 */
-  --figma-primary-accent-inverted: rgb(
-    49,
-    57,
-    48
-  ); /* Light: #313930, Dark: #d0e5ce */
-  --figma-secondary-accent: rgb(
-    206,
-    216,
-    229
-  ); /* Light: #ced8e5, Dark: #2a384b */
-  --figma-text-placeholder: rgb(102, 102, 102); /* Light: #666, Dark: #a5a5a5 */
-  --figma-tab-switcher-active: rgb(
-    255,
-    228,
-    228
-  ); /* Light: #ffe4e4, Dark: #553131 */
-  --figma-tab-switcher-inactive: var(--figma-background-l2);
-  --figma-background: rgb(255, 255, 255); /* Light: #ffffff, Dark: #000000 */
-  --figma-foreground: rgb(0, 0, 0); /* Light: #000000, Dark: #efefef */
-  --figma-foreground-l2: rgb(28, 27, 31); /* Light: #1c1b1f, Dark: #d5d5d5 */
-  --figma-background-l2: rgb(226, 226, 226); /* Light: #e2e2e2, Dark: #171717 */
-  --figma-background-l3: rgb(
-    204,
-    204,
-    204
-  ); /* Light: #cccccc, Dark: #e2e2e2 in dark */
-  --figma-background-disabled: rgb(
-    153,
-    153,
-    153
-  ); /* Light: #999999, Dark: #282828 */
-  --figma-foreground-disabled: rgb(
-    41,
-    41,
-    41
-  ); /* Light: #292929, Dark: #a2a2a2 */
-  --figma-clickable-link: rgb(45, 63, 196); /* Light: #2d3fc4, Dark: #a8b1f3 */
-
-  /* Typography sizes (px) */
-  --figma-font-subscript: 14px;
-  --figma-font-default: 16px;
-  --figma-font-control-label: 18px;
-  --figma-font-header-2: 24px;
-  --figma-font-header-1: 28px;
-
-  /* Line heights */
-  --figma-line-height: 18px;
-  --figma-line-height-half: 9px;
-  --figma-line-height-quarter: 5px;
-
-  /* Borders */
-  --figma-border-thin: 1px;
-  --figma-border-divider: 2px;
-
-  /* Safe area */
-  --figma-iphone-safe-area-top: 48px;
-
   /* Bus Trip Detail Component Tokens (from Figma design) */
   --primaryaccent: #d0e5ce;
   --primaryaccentinverted: #313930;
   --backgroundl2: #e2e2e2;
+  --backgroundl3: #cccccc;
   --foregroundl2: #1c1b1f;
+  --foregrounddisabled: #292929;
+  --textplaceholder: #666666;
   --tabswitcherinactive: #e2e2e2;
+  --borderthin: 1px;
+  --borderdivider: 2px;
   --headerlevel1fontsize: 28px;
   --headerlevel2fontsize: 24px;
   --defaulttextfontsize: 16px;
@@ -236,20 +177,15 @@
   --gray-800: #f3f4f6;
   --gray-900: #f9fafb;
 
-  /* Figma Design Tokens - Dark Mode */
-  --figma-primary-accent: rgb(49, 57, 48); /* Inverted for dark */
-  --figma-primary-accent-inverted: rgb(208, 229, 206); /* Inverted for dark */
-  --figma-secondary-accent: rgb(42, 56, 75); /* Dark mode value */
-  --figma-text-placeholder: rgb(165, 165, 165); /* Dark mode value */
-  --figma-tab-switcher-active: rgb(85, 49, 49); /* Dark mode value */
-  --figma-background: rgb(0, 0, 0); /* Dark: #000000 */
-  --figma-foreground: rgb(239, 239, 239); /* Dark: #efefef */
-  --figma-foreground-l2: rgb(213, 213, 213); /* Dark: #d5d5d5 */
-  --figma-background-l2: rgb(23, 23, 23); /* Dark: #171717 */
-  --figma-background-l3: rgb(226, 226, 226); /* Same as light mode L2 in dark */
-  --figma-background-disabled: rgb(40, 40, 40); /* Dark: #282828 */
-  --figma-foreground-disabled: rgb(162, 162, 162); /* Dark: #a2a2a2 */
-  --figma-clickable-link: rgb(168, 177, 243); /* Dark: #a8b1f3 */
+  /* Dark mode overrides for design tokens */
+  --primaryaccent: rgb(49, 57, 48);
+  --primaryaccentinverted: rgb(208, 229, 206);
+  --backgroundl2: rgb(23, 23, 23);
+  --backgroundl3: rgb(226, 226, 226);
+  --foregroundl2: rgb(213, 213, 213);
+  --foregrounddisabled: rgb(162, 162, 162);
+  --textplaceholder: rgb(165, 165, 165);
+  --tabswitcherinactive: rgb(23, 23, 23);
 }
 
 @theme {

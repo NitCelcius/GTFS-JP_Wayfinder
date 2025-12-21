@@ -6,7 +6,7 @@
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
-  scrollbar-color: var(--figma-text-placeholder) transparent;
+  scrollbar-color: var(--textplaceholder) transparent;
 }
 
 .container::-webkit-scrollbar {
@@ -18,12 +18,12 @@
 }
 
 .container::-webkit-scrollbar-thumb {
-  background: var(--figma-text-placeholder);
+  background: var(--textplaceholder);
   border-radius: 3px;
 }
 
 .container::-webkit-scrollbar-thumb:hover {
-  background: var(--figma-foreground-l2);
+  background: var(--foregroundl2);
 }
 
 .button {
@@ -34,7 +34,7 @@
   gap: 2px;
   min-width: 88px;
   height: 60px;
-  background: var(--figma-primary-accent);
+  background: var(--primaryaccent);
   border: none;
   border-radius: var(--border-radius-md);
   cursor: pointer;
@@ -44,8 +44,8 @@
 }
 
 .button:hover {
-  background: var(--figma-primary-accent-inverted);
-  color: var(--figma-primary-accent);
+  background: var(--primaryaccentinverted);
+  color: var(--primaryaccent);
   transform: translateY(-1px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }

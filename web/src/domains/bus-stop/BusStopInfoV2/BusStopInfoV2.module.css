@@ -4,15 +4,15 @@
   height: 100vh;
   width: 100%;
   margin: 0 auto;
-  background: var(--figma-background);
-  color: var(--figma-foreground);
+  background: var(--background);
+  color: var(--foreground);
   padding-bottom: var(--spacing-4xl);
   overflow-x: hidden;
 }
 .actionBar {
   display: flex;
   flex-direction: column;
-  background: var(--figma-background);
+  background: var(--background);
   z-index: 10;
   flex-shrink: 0;
 }
@@ -38,7 +38,7 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  color: var(--figma-foreground);
+  color: var(--foreground);
   padding: 0;
   flex-shrink: 0;
   transition: transform 0.2s ease;
@@ -59,9 +59,9 @@
   transform: rotate(180deg);
 }
 .busStopName {
-  font-size: var(--figma-font-header-2);
+  font-size: var(--headerlevel2fontsize);
   font-weight: var(--font-weight-medium);
-  color: var(--figma-foreground);
+  color: var(--foreground);
   margin: 0;
   flex: 1;
   white-space: nowrap;
@@ -69,14 +69,14 @@
   text-overflow: ellipsis;
 }
 .distanceLabel {
-  font-size: var(--figma-font-default);
-  color: var(--figma-foreground-l2);
+  font-size: var(--defaulttextfontsize);
+  color: var(--foregroundl2);
   white-space: nowrap;
   flex-shrink: 0;
 }
 .divider {
-  height: var(--figma-border-divider);
-  background: var(--figma-background-l2);
+  height: var(--borderdivider);
+  background: var(--backgroundl2);
   margin-top: var(--spacing-md);
 }
 .scrollableContent {
@@ -92,15 +92,15 @@
   background: transparent;
 }
 .scrollableContent::-webkit-scrollbar-thumb {
-  background: var(--figma-text-placeholder);
+  background: var(--textplaceholder);
   border-radius: 4px;
   transition: background 0.2s ease;
 }
 .scrollableContent::-webkit-scrollbar-thumb:hover {
-  background: var(--figma-foreground-l2);
+  background: var(--foregroundl2);
 }
 .pastSection {
-  background: var(--figma-background-l2);
+  background: var(--backgroundl2);
   padding: var(--spacing-lg);
   box-sizing: border-box;
 }
@@ -111,14 +111,14 @@
   box-sizing: border-box;
 }
 .sectionTitle {
-  font-size: var(--figma-font-control-label);
+  font-size: var(--controllabelfontsize);
   font-weight: var(--font-weight-medium);
-  color: var(--figma-foreground);
+  color: var(--foreground);
   padding: 1rem var(--spacing-sm);
 }
 .sectionDivider {
-  height: var(--figma-border-thin);
-  background: var(--figma-background-l2);
+  height: var(--borderthin);
+  background: var(--backgroundl2);
 }
 .loadingContainer {
   display: flex;
@@ -127,8 +127,8 @@
   justify-content: center;
   gap: var(--spacing-lg);
   padding: var(--spacing-4xl);
-  color: var(--figma-foreground-l2);
-  font-size: var(--figma-font-default);
+  color: var(--foregroundl2);
+  font-size: var(--defaulttextfontsize);
 }
 .errorContainer {
   display: flex;
@@ -140,13 +140,13 @@
   text-align: center;
 }
 .errorMessage {
-  font-size: var(--figma-font-header-2);
+  font-size: var(--headerlevel2fontsize);
   font-weight: var(--font-weight-medium);
   color: var(--color-status-error);
   margin: 0;
 }
 .errorDetails {
-  font-size: var(--figma-font-default);
-  color: var(--figma-foreground-l2);
+  font-size: var(--defaulttextfontsize);
+  color: var(--foregroundl2);
   margin: 0;
 }
