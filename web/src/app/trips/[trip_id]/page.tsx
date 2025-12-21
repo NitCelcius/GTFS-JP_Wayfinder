@@ -130,7 +130,7 @@ export default function TripDetailPage() {
         // Extract route number using the extraction system
         const routeNumber = extractRouteNumber({
           trip_id: tripId,
-          route_long_name: tripData.route_name || undefined,
+          route_short_name: tripData.route_name || undefined,
         });
 
         setStops(formattedStops);
