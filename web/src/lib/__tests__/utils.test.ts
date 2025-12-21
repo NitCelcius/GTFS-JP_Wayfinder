@@ -46,4 +46,10 @@ describe("formatRelativeDate", () => {
     const result = formatRelativeDate(timestamp);
     expect(result).toBe("今日 00:00");
   });
+
+  it("should keep timezone offsets from ISO strings", () => {
+    const isoWithOffset = "2025-10-31T08:45:00+09:00";
+    const result = formatRelativeDate(isoWithOffset);
+    expect(result).toBe("今日 08:45");
+  });
 });
