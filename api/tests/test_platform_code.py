@@ -164,3 +164,100 @@ class TestPlatformCode:
         data = resp.json()
         assert data["platform_code"] == "7"
         assert isinstance(data["platform_code"], str)
+
+    def test_platform_code_with_empty_string(self, monkeypatch, client):
+        """Test that empty string platform_code returns None."""
+
+        def fake_get_stop_names(stop_id: str):
+            return ["テスト駅"]
+
+        def fake_get_platform_code(stop_id: str):
+            return None  # Empty string should be handled and return None
+
+        monkeypatch.setattr(
+            "gtfs_jp_wayfinder.services.wayfinder_adapter.get_stop_names",
+            fake_get_stop_names,
+        )
+        monkeypatch.setattr(
+            "gtfs_jp_wayfinder.services.wayfinder_adapter.get_platform_code",
+            fake_get_platform_code,
+        )
+
+        resp = client.get("/stops/test_empty_string")
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["platform_code"] is None
+
+    def test_platform_code_with_numeric_float_string(self, monkeypatch, client):
+        """Test that numeric float strings like '2.0' are returned as-is when already strings."""
+
+        def fake_get_stop_names(stop_id: str):
+            return ["テスト駅"]
+
+        def fake_get_platform_code(stop_id: str):
+            # Simulating database returning string "2.0"
+            return "2.0"  # String representation of float
+
+        monkeypatch.setattr(
+            "gtfs_jp_wayfinder.services.wayfinder_adapter.get_stop_names",
+            fake_get_stop_names,
+        )
+        monkeypatch.setattr(
+            "gtfs_jp_wayfinder.services.wayfinder_adapter.get_platform_code",
+            fake_get_platform_code,
+        )
+
+        resp = client.get("/stops/test_float_string")
+        assert resp.status_code == 200
+        data = resp.json()
+        # String "2.0" should be preserved as-is by the optimized logic
+        assert data["platform_code"] == "2.0"
+        assert isinstance(data["platform_code"], str)
+
+    def test_platform_code_with_alphanumeric(self, monkeypatch, client):
+        """Test that alphanumeric platform codes like '2A' are preserved."""
+
+        def fake_get_stop_names(stop_id: str):
+            return ["テスト駅"]
+
+        def fake_get_platform_code(stop_id: str):
+            return "2A"
+
+        monkeypatch.setattr(
+            "gtfs_jp_wayfinder.services.wayfinder_adapter.get_stop_names",
+            fake_get_stop_names,
+        )
+        monkeypatch.setattr(
+            "gtfs_jp_wayfinder.services.wayfinder_adapter.get_platform_code",
+            fake_get_platform_code,
+        )
+
+        resp = client.get("/stops/test_alphanumeric")
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["platform_code"] == "2A"
+        assert isinstance(data["platform_code"], str)
+
+    def test_platform_code_error_handling(self, monkeypatch, client):
+        """Test that unexpected errors in platform_code fetch raise HTTPException."""
+
+        def fake_get_stop_names(stop_id: str):
+            return ["テスト駅"]
+
+        def fake_get_platform_code(stop_id: str):
+            # Simulate an unexpected runtime error
+            raise RuntimeError("Database connection failed")
+
+        monkeypatch.setattr(
+            "gtfs_jp_wayfinder.services.wayfinder_adapter.get_stop_names",
+            fake_get_stop_names,
+        )
+        monkeypatch.setattr(
+            "gtfs_jp_wayfinder.services.wayfinder_adapter.get_platform_code",
+            fake_get_platform_code,
+        )
+
+        resp = client.get("/stops/test_error")
+        assert resp.status_code == 400
+        data = resp.json()
+        assert "Database connection failed" in data["detail"]
