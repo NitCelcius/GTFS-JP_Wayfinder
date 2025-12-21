@@ -1,8 +1,8 @@
 "use client";
 
 import {
+  getBusStopInfoStopsStopIdGet,
   getNearbyStopsStopsNearbyGet,
-  getStopStopsStopIdGet,
   getUpcomingStopsStopIdUpcomingGet,
   searchPathPathSearchGet,
   searchStopsStopsGet,
@@ -84,7 +84,7 @@ export class ApiClient {
 
   async getStopNames(stopId: string, fields?: string) {
     try {
-      return await getStopStopsStopIdGet({
+      return await getBusStopInfoStopsStopIdGet({
         path: { stop_id: stopId },
         ...(fields && { query: { _fields: fields } }),
         client: this.generatedClient,
