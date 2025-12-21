@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import { ChevronRight } from "@/components/common/icons";
 
 import styles from "./TripIndicator.module.css";
@@ -34,9 +36,12 @@ export function TripIndicator({
       data-trip-id={tripId}
     >
       <div className={styles.busIcon}>
-        <img
+        <Image
           src="/icons/bus-container-front.svg"
           alt=""
+          width={100}
+          height={100}
+          unoptimized
           className={styles.busIconImg}
         />
       </div>

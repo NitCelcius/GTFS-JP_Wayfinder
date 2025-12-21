@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React from "react";
 
 import styles from "./JourneyTimeline.module.css";
@@ -25,11 +26,11 @@ interface JourneyTimelineProps {
 // Styles migrated to JourneyTimeline.module.css
 
 function LocationIcon() {
-  return <img src="/icons/location-pin.svg" alt="" aria-hidden="true" />;
+  return <Image src="/icons/location-pin.svg" alt="" width={24} height={24} unoptimized aria-hidden="true" />;
 }
 
 function FlagIcon() {
-  return <img src="/icons/flag.svg" alt="" aria-hidden="true" />;
+  return <Image src="/icons/flag.svg" alt="" width={24} height={24} unoptimized aria-hidden="true" />;
 }
 
 function CircleIcon() {

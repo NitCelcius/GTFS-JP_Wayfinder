@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React from "react";
 
 import { Station } from "../types";
@@ -11,19 +12,19 @@ interface StationStopProps {
 }
 
 function PinIcon() {
-  return <img src="/icons/location-pin-simple.svg" alt="" aria-hidden="true" />;
+  return <Image src="/icons/location-pin-simple.svg" alt="" width={24} height={24} unoptimized aria-hidden="true" />;
 }
 
 function LocationIcon() {
-  return <img src="/icons/location-dot.svg" alt="" aria-hidden="true" />;
+  return <Image src="/icons/location-dot.svg" alt="" width={24} height={24} unoptimized aria-hidden="true" />;
 }
 
 function FlagIcon() {
-  return <img src="/icons/flag-simple.svg" alt="" aria-hidden="true" />;
+  return <Image src="/icons/flag-simple.svg" alt="" width={24} height={24} unoptimized aria-hidden="true" />;
 }
 
 function ArrowDownIcon() {
-  return <img src="/icons/arrow-down-long.svg" alt="" aria-hidden="true" />;
+  return <Image src="/icons/arrow-down-long.svg" alt="" width={24} height={24} unoptimized aria-hidden="true" />;
 }
 
 export function StationStop({

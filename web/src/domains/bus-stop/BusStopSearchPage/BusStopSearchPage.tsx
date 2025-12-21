@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import { BottomNavigation } from "@/components/common/BottomNavigation/BottomNavigation";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner/LoadingSpinner";
 import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
@@ -50,9 +52,12 @@ export function BusStopSearchPage({
   };
 
   const SearchLocationIcon = () => (
-    <img
+    <Image
       src="/icons/location-pin.svg"
       alt=""
+      width={24}
+      height={24}
+      unoptimized
       className="w-6 h-6"
       aria-hidden="true"
     />

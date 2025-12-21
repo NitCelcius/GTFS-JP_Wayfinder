@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React from "react";
 
 import styles from "./StopItem.module.css";
@@ -34,16 +35,14 @@ export const StopItem: React.FC<StopItemProps> = ({ stop }) => {
   const fareLabel = stop.fare ? `${stop.fare}円` : undefined;
   const currentLabel = stop.isCurrent ? "現在地" : undefined;
 
-  const iconSize = { width: 28, height: 28 };
-
   return (
     <div className={stopClasses}>
       {stop.isBusLocation ? (
-        <img src="/icons/bus-front.svg" alt="バス" {...iconSize} />
+        <Image src="/icons/bus-front.svg" alt="バス" width={28} height={28} unoptimized />
       ) : stop.isCurrent ? (
-        <img src="/icons/location-pin.svg" alt="現在地" {...iconSize} />
+        <Image src="/icons/location-pin.svg" alt="現在地" width={28} height={28} unoptimized />
       ) : stop.isDestination ? (
-        <img src="/icons/flag.svg" alt="目的地" {...iconSize} />
+        <Image src="/icons/flag.svg" alt="目的地" width={28} height={28} unoptimized />
       ) : (
         <div className={styles.stopDot} />
       )}

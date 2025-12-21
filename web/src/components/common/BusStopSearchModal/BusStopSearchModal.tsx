@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
 import type { StopIdAndName } from "@/api/types.gen";
@@ -147,9 +148,12 @@ export function BusStopSearchModal({
             onClick={onClose}
             aria-label="閉じる"
           >
-            <img
+            <Image
               src="/icons/close.svg"
               alt=""
+              width={32}
+              height={32}
+              unoptimized
               className="w-8 h-8"
               aria-hidden="true"
             />
@@ -177,9 +181,12 @@ export function BusStopSearchModal({
             </div>
           ) : error ? (
             <div className={styles.emptyState}>
-              <img
+              <Image
                 src="/icons/alert-triangle.svg"
                 alt=""
+                width={48}
+                height={48}
+                unoptimized
                 className={styles.emptyIcon}
                 aria-hidden="true"
               />
@@ -190,9 +197,12 @@ export function BusStopSearchModal({
             <div className={styles.emptyState}>
               {searchQuery.trim() ? (
                 <>
-                  <img
+                  <Image
                     src="/icons/search.svg"
                     alt=""
+                    width={48}
+                    height={48}
+                    unoptimized
                     className={styles.emptyIcon}
                     aria-hidden="true"
                   />
@@ -205,9 +215,12 @@ export function BusStopSearchModal({
                 </>
               ) : (
                 <>
-                  <img
+                  <Image
                     src="/icons/location-pin.svg"
                     alt=""
+                    width={48}
+                    height={48}
+                    unoptimized
                     className={styles.emptyIcon}
                     aria-hidden="true"
                   />

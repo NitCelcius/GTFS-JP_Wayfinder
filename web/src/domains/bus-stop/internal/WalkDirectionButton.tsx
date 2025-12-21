@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import styles from "./WalkDirectionButton.module.css";
 
 interface WalkDirectionButtonProps {
@@ -7,9 +9,12 @@ interface WalkDirectionButtonProps {
 
 function WalkIcon() {
   return (
-    <img
+    <Image
       src="/icons/walk.svg"
       alt=""
+      width={24}
+      height={24}
+      unoptimized
       className="block size-full"
       aria-hidden="true"
     />

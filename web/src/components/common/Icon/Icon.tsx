@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React from "react";
 
 interface IconProps {
@@ -29,9 +30,12 @@ export function Icon({ name, size, className = "", style }: IconProps) {
     : {};
 
   return (
-    <img
+    <Image
       src={`/icons/${name}.svg`}
       alt=""
+      width={24}
+      height={24}
+      unoptimized
       className={className}
       style={{ ...sizeStyle, ...style }}
       aria-hidden="true"

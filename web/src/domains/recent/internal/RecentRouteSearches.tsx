@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import { RecentRouteSearch } from "../types";
 import styles from "./RecentRouteSearches.module.css";
 import viewMoreStyles from "./ViewMoreButton.module.css";
@@ -16,9 +18,12 @@ interface RecentRouteSearchesProps {
 
 function RouteIcon() {
   return (
-    <img
+    <Image
       src="/icons/route.svg"
       alt=""
+      width={24}
+      height={24}
+      unoptimized
       className="block size-full"
       aria-hidden="true"
     />

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React from "react";
 
 import styles from "./BusStopHeader.module.css";
@@ -12,9 +13,12 @@ interface BusStopHeaderProps {
 
 function LocationIcon() {
   return (
-    <img
+    <Image
       src="/icons/location-pin.svg"
       alt=""
+      width={24}
+      height={24}
+      unoptimized
       className="block size-full"
       aria-hidden="true"
     />
@@ -23,9 +27,12 @@ function LocationIcon() {
 
 function ShareIcon() {
   return (
-    <img
+    <Image
       src="/icons/share.svg"
       alt=""
+      width={24}
+      height={24}
+      unoptimized
       className="block size-full"
       aria-hidden="true"
     />

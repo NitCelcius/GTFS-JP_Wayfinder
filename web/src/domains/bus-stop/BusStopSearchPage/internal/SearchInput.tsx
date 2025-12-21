@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { useState } from "react";
 
 import styles from "./SearchInput.module.css";
@@ -8,9 +9,12 @@ interface SearchInputProps {
 
 function SearchIcon() {
   return (
-    <img
+    <Image
       src="/icons/search.svg"
       alt=""
+      width={24}
+      height={24}
+      unoptimized
       className={styles.iconSvg}
       aria-hidden="true"
     />

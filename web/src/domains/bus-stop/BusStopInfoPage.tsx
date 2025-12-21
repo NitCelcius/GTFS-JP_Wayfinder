@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { useEffect, useState } from "react";
 
 import { BottomNavigation } from "@/components/common/BottomNavigation/BottomNavigation";
@@ -78,7 +79,7 @@ export function BusStopInfoPage({
   };
 
   const InfoIcon = () => (
-    <img src="/icons/info.svg" alt="" className="w-6 h-6" aria-hidden="true" />
+    <Image src="/icons/info.svg" alt="" width={24} height={24} unoptimized className="w-6 h-6" aria-hidden="true" />
   );
 
   // Handle error state

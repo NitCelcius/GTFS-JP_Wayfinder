@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { QRCodeSVG } from "qrcode.react";
 
 import { useState } from "react";
@@ -15,9 +16,12 @@ interface ShareButtonProps {
 
 function ShareIcon() {
   return (
-    <img
+    <Image
       src="/icons/share.svg"
       alt=""
+      width={24}
+      height={24}
+      unoptimized
       className="block size-full"
       aria-hidden="true"
     />
@@ -26,9 +30,12 @@ function ShareIcon() {
 
 function CloseIcon() {
   return (
-    <img
+    <Image
       src="/icons/close.svg"
       alt=""
+      width={24}
+      height={24}
+      unoptimized
       className="block size-full"
       aria-hidden="true"
     />
