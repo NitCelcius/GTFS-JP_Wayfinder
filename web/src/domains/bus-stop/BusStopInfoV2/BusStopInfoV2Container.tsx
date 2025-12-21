@@ -93,11 +93,13 @@ export function BusStopInfoV2Container({
           upcomingData,
           stopName,
           busStopId,
-          platformCode,
-          calculatedDistance,
-          lat,
-          lon,
-          now
+          {
+            platformCode,
+            distance: calculatedDistance,
+            lat,
+            lon,
+            currentTime: now,
+          }
         );
 
         // Convert to V2 format
