@@ -50,7 +50,8 @@ export function BusStopInfoV2Container({
           busStopId,
           undefined,
           50,
-          beginTime
+          beginTime,
+          abortController.signal
         );
         const upcomingData = upcomingResponse.data as UpcomingBusEnrichedData;
 
@@ -61,7 +62,11 @@ export function BusStopInfoV2Container({
         // Get stop info (name and location)
         let stopName = busStopId;
         try {
-          const stopResponse = await apiClient.getStopInfo(busStopId, true);
+          const stopResponse = await apiClient.getStopInfo(
+            busStopId,
+            true,
+            abortController.signal
+          );
           const stopData = stopResponse.data as StopNameListData;
           if (stopData?.stop_names && stopData.stop_names.length > 0) {
             stopName = stopData.stop_names[0];

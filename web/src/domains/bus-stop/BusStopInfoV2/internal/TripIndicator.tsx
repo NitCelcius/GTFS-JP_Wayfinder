@@ -31,11 +31,6 @@ export function TripIndicator({
       onClick={onClick}
       role="button"
       tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          onClick?.();
-        }
-      }}
       data-trip-id={tripId}
     >
       <div className={styles.busIcon}>

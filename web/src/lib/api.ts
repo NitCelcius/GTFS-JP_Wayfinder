@@ -46,11 +46,16 @@ export class ApiClient {
     }
   }
 
-  async getBusStopInfo(stopId: string, serviceId?: string) {
+  async getBusStopInfo(
+    stopId: string,
+    serviceId?: string,
+    signal?: AbortSignal
+  ) {
     try {
       return await getUpcomingStopsStopIdUpcomingGet({
         path: { stop_id: stopId },
         ...(serviceId && { query: { service_id: serviceId } }),
+        ...(signal && { request: { signal } }),
         client: this.generatedClient,
       });
     } catch (error) {
@@ -63,7 +68,8 @@ export class ApiClient {
     stopId: string,
     serviceId?: string,
     limit?: number,
-    beginTime?: string
+    beginTime?: string,
+    signal?: AbortSignal
   ) {
     try {
       return await getUpcomingStopsStopIdUpcomingGet({
@@ -74,6 +80,7 @@ export class ApiClient {
           ...(serviceId && { service_id: serviceId }),
           ...(beginTime && { begin_time: beginTime }),
         },
+        ...(signal && { request: { signal } }),
         client: this.generatedClient,
       });
     } catch (error) {
@@ -82,11 +89,12 @@ export class ApiClient {
     }
   }
 
-  async getStopNames(stopId: string, fields?: string) {
+  async getStopNames(stopId: string, fields?: string, signal?: AbortSignal) {
     try {
       return await getStopStopsStopIdGet({
         path: { stop_id: stopId },
         ...(fields && { query: { _fields: fields } }),
+        ...(signal && { request: { signal } }),
         client: this.generatedClient,
       });
     } catch (error) {
@@ -95,9 +103,17 @@ export class ApiClient {
     }
   }
 
-  async getStopInfo(stopId: string, includeLocation: boolean = false) {
+  async getStopInfo(
+    stopId: string,
+    includeLocation: boolean = false,
+    signal?: AbortSignal
+  ) {
     // Convenience method that calls getStopNames with location field if requested
-    return this.getStopNames(stopId, includeLocation ? "location" : undefined);
+    return this.getStopNames(
+      stopId,
+      includeLocation ? "location" : undefined,
+      signal
+    );
   }
 
   async searchRoutes(fromStop: string, toStop: string, serviceId?: string) {
