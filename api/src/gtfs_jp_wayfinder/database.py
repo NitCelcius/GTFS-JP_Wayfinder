@@ -1,6 +1,7 @@
 import logging
 import warnings
 from dataclasses import dataclass
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 import networkx as nx
 import numpy as np
@@ -83,16 +84,40 @@ class AkitaBusWayFinder:
     def initialize(self, base_dir="../data/"):
         logger.info("Loading dataframes...")
         # Agency info (timezone, etc.)
+        # Try to read agency_timezone from GTFS data; fall back to Asia/Tokyo, then UTC
         try:
             agency_df = pd.read_csv(base_dir + "agency.txt")
             if "agency_timezone" in agency_df.columns and not agency_df.empty:
                 tz_value = str(agency_df.iloc[0]["agency_timezone"])
                 if tz_value:
-                    self.agency_timezone = tz_value
-        except FileNotFoundError:
-            logger.warning("agency.txt not found; falling back to UTC timezone.")
+                    try:
+                        ZoneInfo(tz_value)  # Validate it's a valid IANA timezone
+                        self.agency_timezone = tz_value
+                    except ZoneInfoNotFoundError:
+                        logger.warning(
+                            "Invalid timezone in agency.txt: %s; falling back to Asia/Tokyo, then UTC.",
+                            tz_value,
+                        )
+        except FileNotFoundError as err:
+            raise FileNotFoundError(
+                "Required txt file for GTFS-JP agency.txt is not found!"
+            ) from err
         except Exception as exc:
-            logger.warning("Failed to read agency.txt (%s); falling back to UTC.", exc)
+            logger.warning(
+                "Failed to read agency.txt (%s); using default timezone Asia/Tokyo.",
+                exc,
+            )
+        # At this point, timezone is either from agency.txt, or the default "UTC" from __init__
+        # Try Asia/Tokyo as fallback for GTFS-JP data if still using UTC
+        if self.agency_timezone == "UTC":
+            try:
+                ZoneInfo("Asia/Tokyo")  # Validate Asia/Tokyo is available
+                logger.info("Using Asia/Tokyo as fallback timezone for GTFS-JP data.")
+                self.agency_timezone = "Asia/Tokyo"
+            except ZoneInfoNotFoundError:
+                logger.warning(
+                    "Asia/Tokyo timezone not available; keeping UTC as fallback."
+                )
         # バス停
         self.df_stops = pd.read_csv(base_dir + "stops.txt")
         # バス停の時刻、通過時刻と経路

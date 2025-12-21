@@ -17,16 +17,29 @@ logger = logging.getLogger(__name__)
 
 
 def _get_agency_zone() -> ZoneInfo:
-    """Return the agency timezone, falling back to Asia/Tokyo then UTC."""
-    tz_name = "Asia/Tokyo"
+    """Return the agency timezone, falling back to Asia/Tokyo then UTC.
+
+    Asia/Tokyo is appropriate as a fallback for GTFS-JP (Japan) data.
+    If that fails or is invalid, falls back to UTC.
+    """
+    default_tz = "Asia/Tokyo"  # Appropriate for GTFS-JP data
+    tz_name = default_tz
+
+    # Try to get timezone from wayfinder service
     try:
         if wf_service.is_ready():
             tz_name = wf_service.get_agency_timezone()
+    except Exception as e:
+        logger.warning("Failed to get agency timezone: %s", e)
+
+    # Try to create ZoneInfo with the determined timezone name
+    try:
         return ZoneInfo(tz_name)
     except Exception:
         logger.warning(
-            "Timezone not defined or not found. Falling back to UTC timezone (invalid or missing: %s)",
+            "Timezone not found: %s. Falling back to UTC.",
             tz_name,
+            exc_info=True,
         )
         return ZoneInfo("UTC")
 
@@ -53,13 +66,13 @@ def parse_split_date_str(begin_time_str: str | None) -> tuple[datetime.date, str
     if "T" in begin_time_str:
         try:
             dt = datetime.datetime.fromisoformat(begin_time_str)
-            if dt.tzinfo is None:
-                dt = dt.replace(tzinfo=tz)
             return dt.date(), dt.strftime("%H:%M:%S")
         except ValueError as e:
             raise ValueError(f"Invalid ISO datetime format: {begin_time_str}") from e
 
-    return datetime.date.today(), begin_time_str
+    # Use timezone-aware datetime for consistent date handling
+    now = datetime.datetime.now(tz)
+    return now.date(), begin_time_str
 
 
 async def initialize(data_dir: str):
@@ -666,9 +679,9 @@ def merge_date_and_time_to_iso(
 
         # Create datetime object with normalized hours in agency timezone
         tz = _get_agency_zone()
-        reference_dt = datetime.datetime.fromisoformat(reference_date).replace(
-            tzinfo=tz
-        )
+        reference_dt = datetime.datetime.fromisoformat(reference_date)
+        if reference_dt.tzinfo is None:
+            reference_dt = reference_dt.replace(tzinfo=tz)
         result_dt = reference_dt.replace(
             hour=normalized_hours, minute=minutes, second=seconds
         )
