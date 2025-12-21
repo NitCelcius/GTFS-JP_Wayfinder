@@ -58,7 +58,6 @@ describe("Converter functions", () => {
       };
       const result = convertTripToBusInfo(trip);
 
-      // Empty string fallback for missing route
       expect(result.line).toBe("");
       expect(result.destination).toBe("不明");
     });
