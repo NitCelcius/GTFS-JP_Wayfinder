@@ -248,7 +248,11 @@ class AkitaBusWayFinder:
         # Handle pandas NaN values and empty strings
         if pd.isna(platform_code) or platform_code == "":
             return None
-        return str(platform_code)
+        # Convert to int first if numeric (to remove .0 from floats), then to string
+        try:
+            return str(int(float(platform_code)))
+        except (ValueError, TypeError):
+            return str(platform_code)
 
     # バス停の名前からidに変換する
     #   None | DataFrame[{ "stop_id": str, "stop_name": str }]
