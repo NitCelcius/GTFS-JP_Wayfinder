@@ -1,7 +1,7 @@
 .container {
   display: flex;
   align-items: stretch;
-  background: var(--figma-background);
+  background: var(--background);
   cursor: pointer;
   transition: all 0.2s ease;
   text-decoration: none;
@@ -11,7 +11,7 @@
 }
 
 .container:hover {
-  background: var(--figma-background-l2);
+  background: var(--backgroundl2);
 }
 
 .container:active {
@@ -23,7 +23,7 @@
   align-items: center;
   flex-shrink: 0;
   width: 50px;
-  color: var(--figma-foreground);
+  color: var(--foreground);
   align-self: stretch;
 }
 
@@ -42,9 +42,9 @@
   gap: var(--spacing-sm);
   flex: 1;
   min-width: 0;
-  border-top: 3px solid var(--figma-foreground-disabled);
-  border-bottom: 3px solid var(--figma-foreground-disabled);
-  border-right: 3px solid var(--figma-foreground-disabled);
+  border-top: 3px solid var(--foregrounddisabled);
+  border-bottom: 3px solid var(--foregrounddisabled);
+  border-right: 3px solid var(--foregrounddisabled);
   border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0;
 }
 
@@ -60,11 +60,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--figma-primary-accent);
+  background: var(--primaryaccent);
   border-radius: var(--border-radius-md);
-  font-size: var(--figma-font-header-2);
+  font-size: var(--headerlevel2fontsize);
   font-weight: var(--font-weight-medium);
-  color: var(--figma-foreground);
+  color: var(--foreground);
   flex-shrink: 0;
 }
 
@@ -77,9 +77,9 @@
 }
 
 .routeLabel {
-  font-size: var(--figma-font-subscript);
+  font-size: var(--subscriptlabelfontsize);
   font-weight: var(--font-weight-medium);
-  color: var(--figma-foreground-l2);
+  color: var(--foregroundl2);
   word-wrap: break-word;
 }
 
@@ -90,14 +90,14 @@
 }
 
 .destination {
-  font-size: var(--figma-font-control-label);
+  font-size: var(--controllabelfontsize);
   font-weight: var(--font-weight-medium);
-  color: var(--figma-foreground);
+  color: var(--foreground);
 }
 
 .destinationLabel {
-  font-size: var(--figma-font-subscript);
-  color: var(--figma-foreground-l2);
+  font-size: var(--subscriptlabelfontsize);
+  color: var(--foregroundl2);
   white-space: nowrap;
   flex-shrink: 0;
 }
@@ -111,14 +111,14 @@
 }
 
 .timeValue {
-  font-size: var(--figma-font-header-1);
+  font-size: var(--headerlevel1fontsize);
   font-weight: var(--font-weight-medium);
-  color: var(--figma-foreground);
+  color: var(--foreground);
 }
 
 .timeSubtext {
-  font-size: var(--figma-font-default);
-  color: var(--figma-foreground-l2);
+  font-size: var(--defaulttextfontsize);
+  color: var(--foregroundl2);
 }
 
 .footer {
@@ -126,18 +126,18 @@
   align-items: center;
   justify-content: flex-end;
   padding-top: var(--spacing-xs);
-  border-top: var(--figma-border-thin) solid var(--figma-background-l2);
+  border-top: var(--borderthin) solid var(--backgroundl2);
 }
 
 .stopsInfo {
   text-align: end;
-  font-size: var(--figma-font-subscript);
-  color: var(--figma-foreground-l2);
+  font-size: var(--subscriptlabelfontsize);
+  color: var(--foregroundl2);
 }
 
 .chevron {
   width: 20px;
   height: 20px;
-  color: var(--figma-text-placeholder);
+  color: var(--textplaceholder);
   flex-shrink: 0;
 }

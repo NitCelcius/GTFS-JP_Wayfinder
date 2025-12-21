@@ -3,14 +3,14 @@
   align-items: center;
   gap: var(--spacing-md);
   padding: var(--spacing-md) var(--spacing-lg);
-  background: var(--figma-background);
-  border-top: var(--figma-border-divider) solid var(--figma-foreground-disabled);
+  background: var(--background);
+  border-top: var(--borderdivider) solid var(--foregrounddisabled);
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
 
 .container:hover {
-  background: var(--figma-background-l2);
+  background: var(--backgroundl2);
 }
 
 .container:active {
@@ -18,7 +18,7 @@
 }
 
 .container.past {
-  background: var(--figma-background-l2);
+  background: var(--backgroundl2);
 }
 
 .routeNumberBadge {
@@ -27,16 +27,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--figma-primary-accent);
+  background: var(--primaryaccent);
   border-radius: var(--border-radius-md);
-  font-size: var(--figma-font-header-2);
+  font-size: var(--headerlevel2fontsize);
   font-weight: var(--font-weight-medium);
-  color: var(--figma-foreground);
+  color: var(--foreground);
   flex-shrink: 0;
 }
 
 .container.past .routeNumberBadge {
-  background: var(--figma-background-l3);
+  background: var(--backgroundl3);
 }
 
 .content {
@@ -51,7 +51,7 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
-  font-size: var(--figma-font-subscript);
+  font-size: var(--subscriptlabelfontsize);
   margin: 0;
 }
 
@@ -61,17 +61,17 @@
 
 .routeName {
   font-weight: var(--font-weight-medium);
-  color: var(--figma-foreground);
+  color: var(--foreground);
 }
 
 .destination {
   font-weight: var(--font-weight-normal);
-  color: var(--figma-foreground);
+  color: var(--foreground);
 }
 
 .destinationLabel {
-  font-size: var(--figma-font-subscript);
-  color: var(--figma-foreground-l2);
+  font-size: var(--subscriptlabelfontsize);
+  color: var(--foregroundl2);
   white-space: nowrap;
   flex-shrink: 0;
 }
@@ -81,27 +81,27 @@
   align-items: baseline;
   gap: var(--spacing-sm);
   margin: 0;
-  font-size: var(--figma-font-subscript);
-  color: var(--figma-foreground-l2);
+  font-size: var(--subscriptlabelfontsize);
+  color: var(--foregroundl2);
 }
 
 .timeDisplay {
-  font-size: var(--figma-font-control-label);
+  font-size: var(--controllabelfontsize);
   font-weight: var(--font-weight-medium);
-  color: var(--figma-foreground);
+  color: var(--foreground);
 }
 
 .container.past .timeDisplay {
-  color: var(--figma-text-placeholder);
+  color: var(--textplaceholder);
 }
 
 .timeSubtext {
-  color: var(--figma-foreground-l2);
+  color: var(--foregroundl2);
 }
 
 .chevron {
   width: 24px;
   height: 24px;
-  color: var(--figma-foreground-l2);
+  color: var(--foregroundl2);
   flex-shrink: 0;
 }
