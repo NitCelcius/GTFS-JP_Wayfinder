@@ -87,11 +87,13 @@ export function useBusStopData(busStopId?: string): UseBusStopDataReturn {
           upcomingData,
           stopName,
           busStopId,
-          platformCode,
-          distance,
-          lat,
-          lon,
-          new Date() // Pass current time so logic picks best bus
+          {
+            platformCode,
+            distance,
+            lat,
+            lon,
+            currentTime: new Date(), // Pass current time so logic picks best bus
+          }
         );
 
         setComposedData(busStopInfo);

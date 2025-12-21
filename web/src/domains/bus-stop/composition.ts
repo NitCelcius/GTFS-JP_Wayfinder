@@ -9,6 +9,14 @@ import {
 } from "./converter";
 import type { BusStopInfo, UpcomingBusEnrichedData } from "./types";
 
+interface ComposeOptions {
+  platformCode?: string | null;
+  distance?: string;
+  lat?: number;
+  lon?: number;
+  currentTime?: Date;
+}
+
 /**
  * Compose BusStopInfo from API data with intelligent default bus selection.
  * Pre-computes all journeys and suggests the best bus index based on current time.
@@ -17,23 +25,17 @@ import type { BusStopInfo, UpcomingBusEnrichedData } from "./types";
  * @param enrichedData - Raw API response data
  * @param stopName - Stop name
  * @param stopId - Stop ID
- * @param platformCode - Platform code (optional)
- * @param distance - Distance to stop (optional)
- * @param lat - Stop latitude (optional)
- * @param lon - Stop longitude (optional)
- * @param currentTime - Reference time for selecting the best bus
+ * @param options - Optional fields: platformCode, distance, lat/lon, currentTime
  * @returns BusStopInfo with pre-computed journeys and best bus index suggestion
  */
 export function composeBusStopInfoWithLatestSelection(
   enrichedData: UpcomingBusEnrichedData,
   stopName: string,
   stopId: string,
-  platformCode?: string | null,
-  distance?: string,
-  lat?: number,
-  lon?: number,
-  currentTime: Date | undefined = undefined
+  options: ComposeOptions = {}
 ): BusStopInfo {
+  const { platformCode, distance, lat, lon, currentTime } = options;
+
   // Select the best bus index based on current time
   const bestBusIndex = computeBestBusIndex(enrichedData.buses, currentTime);
 

@@ -44,10 +44,7 @@ describe("composeBusStopInfoWithBestSelection", () => {
       mockData,
       "Test Stop",
       "1021_01",
-      undefined,
-      undefined,
-      undefined,
-      referenceTime
+      { currentTime: referenceTime }
     );
 
     // The next bus should be the first one (14:00 = earliest)
@@ -74,10 +71,7 @@ describe("composeBusStopInfoWithBestSelection", () => {
       mockData,
       "Test Stop",
       "1021_01",
-      undefined,
-      undefined,
-      undefined,
-      referenceTime
+      { currentTime: referenceTime }
     );
 
     // Should select the earliest bus (14:00), which is at index 1
@@ -100,10 +94,7 @@ describe("composeBusStopInfoWithBestSelection", () => {
       mockData,
       "Test Stop",
       "1021_01",
-      undefined,
-      undefined,
-      undefined,
-      referenceTime
+      { currentTime: referenceTime }
     );
 
     expect(
@@ -143,10 +134,7 @@ describe("composeBusStopInfoWithBestSelection", () => {
         mockData,
         "Test Stop",
         "1021_01",
-        undefined,
-        undefined,
-        undefined,
-        currentTime
+        { currentTime }
       );
 
       // Should pick 14:30 (earliest), NOT 23:00 (latest/last of day)
@@ -176,10 +164,7 @@ describe("composeBusStopInfoWithBestSelection", () => {
         mockData,
         "Test Stop",
         "1021_01",
-        undefined,
-        undefined,
-        undefined,
-        currentTime
+        { currentTime }
       );
 
       // Should pick 15:00 (earliest), NOT 23:00
@@ -209,10 +194,7 @@ describe("composeBusStopInfoWithBestSelection", () => {
         mockData,
         "Test Stop",
         "1021_01",
-        undefined,
-        undefined,
-        undefined,
-        currentTime
+        { currentTime }
       );
 
       // Should ALWAYS pick the earliest (14:00), never the last (23:00)
@@ -246,10 +228,7 @@ describe("composeBusStopInfoWithBestSelection", () => {
         mockData,
         "Test Stop",
         "1021_01",
-        undefined,
-        undefined,
-        undefined,
-        currentTime
+        { currentTime }
       );
 
       // Should pick 23:00 (the last/most recent) when all buses have passed
