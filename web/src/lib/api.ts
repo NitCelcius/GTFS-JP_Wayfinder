@@ -3,10 +3,13 @@
 import {
   getBusStopInfoStopsStopIdGet,
   getNearbyStopsStopsNearbyGet,
+  getTripTripsTripIdGet,
   getUpcomingStopsStopIdUpcomingGet,
   searchPathPathSearchGet,
   searchStopsStopsGet,
   timedSearchPathTimedSearchGet,
+  tripPassingTripsTripIdPassingGet,
+  tripStopsTripsTripIdStopsGet,
 } from "@/api";
 import { createClient } from "@/api/client";
 import type { Client } from "@/api/client";
@@ -167,6 +170,48 @@ export class ApiClient {
     } catch (error) {
       console.error("API Error:", error);
       throw new Error("Failed to search timed routes");
+    }
+  }
+
+  async getTripInfo(tripId: string, signal?: AbortSignal) {
+    try {
+      return await getTripTripsTripIdGet({
+        path: { trip_id: tripId },
+        ...(signal && { request: { signal } }),
+        client: this.generatedClient,
+      });
+    } catch (error) {
+      console.error("API Error:", error);
+      throw new Error(`Failed to fetch trip info for ${tripId}`);
+    }
+  }
+
+  async getTripStops(tripId: string, signal?: AbortSignal) {
+    try {
+      return await tripStopsTripsTripIdStopsGet({
+        path: { trip_id: tripId },
+        ...(signal && { request: { signal } }),
+        client: this.generatedClient,
+      });
+    } catch (error) {
+      console.error("API Error:", error);
+      throw new Error(`Failed to fetch trip stops for ${tripId}`);
+    }
+  }
+
+  async getTripPassing(tripId: string, stopId: string, signal?: AbortSignal) {
+    try {
+      return await tripPassingTripsTripIdPassingGet({
+        path: { trip_id: tripId },
+        query: { stop_id: stopId },
+        ...(signal && { request: { signal } }),
+        client: this.generatedClient,
+      });
+    } catch (error) {
+      console.error("API Error:", error);
+      throw new Error(
+        `Failed to fetch passing info for trip ${tripId} at stop ${stopId}`
+      );
     }
   }
 }
