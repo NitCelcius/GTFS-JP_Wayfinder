@@ -4,138 +4,374 @@
  * EnrichedTrip
  */
 export type EnrichedTrip = {
-    /**
-     * Trip Id
-     */
-    trip_id: string;
-    /**
-     * Arrival Time
-     */
-    arrival_time: string;
-    /**
-     * Departure Time
-     */
-    departure_time: string;
-    /**
-     * Arrival Datetime
-     */
-    arrival_datetime: string;
-    /**
-     * Departure Datetime
-     */
-    departure_datetime: string;
-    /**
-     * Route Name
-     */
-    route_name?: string | null;
-    /**
-     * Destination Display Name
-     */
-    destination_display_name?: string | null;
-    /**
-     * Destination Stop Id
-     */
-    destination_stop_id?: string | null;
-    /**
-     * Stops
-     */
-    stops?: Array<TripTimedStop> | null;
+  /**
+   * Trip Id
+   */
+  trip_id: string;
+  /**
+   * Arrival Time
+   */
+  arrival_time: string;
+  /**
+   * Departure Time
+   */
+  departure_time: string;
+  /**
+   * Arrival Datetime
+   */
+  arrival_datetime: string;
+  /**
+   * Departure Datetime
+   */
+  departure_datetime: string;
+  /**
+   * Route Name
+   */
+  route_name?: string | null;
+  /**
+   * Destination Display Name
+   */
+  destination_display_name?: string | null;
+  /**
+   * Destination Stop Id
+   */
+  destination_stop_id?: string | null;
+  /**
+   * Stops
+   */
+  stops?: Array<TripTimedStop> | null;
 };
 
 /**
  * FareResponse
  */
 export type FareResponse = {
-    /**
-     * Fare
-     */
-    fare: number;
+  /**
+   * Fare
+   */
+  fare: number;
 };
 
 /**
  * HTTPValidationError
  */
 export type HttpValidationError = {
-    /**
-     * Detail
-     */
-    detail?: Array<ValidationError>;
+  /**
+   * Detail
+   */
+  detail?: Array<ValidationError>;
 };
 
 /**
  * NearbyStop
  */
 export type NearbyStop = {
-    /**
-     * Stop Id
-     */
-    stop_id: string;
-    /**
-     * Stop Name
-     */
-    stop_name: string;
-    /**
-     * Distance Km
-     */
-    distance_km: number;
-    /**
-     * Lat
-     */
-    lat: number;
-    /**
-     * Lon
-     */
-    lon: number;
+  /**
+   * Stop Id
+   */
+  stop_id: string;
+  /**
+   * Stop Name
+   */
+  stop_name: string;
+  /**
+   * Distance Km
+   */
+  distance_km: number;
+  /**
+   * Lat
+   */
+  lat: number;
+  /**
+   * Lon
+   */
+  lon: number;
 };
 
 /**
  * NearbyStopsResponse
  */
 export type NearbyStopsResponse = {
-    /**
-     * Stops
-     */
-    stops: Array<NearbyStop>;
+  /**
+   * Stops
+   */
+  stops: Array<NearbyStop>;
 };
 
 /**
  * PathResponse
  */
 export type PathResponse = {
-    /**
-     * Path
-     */
-    path: Array<string>;
+  /**
+   * Path
+   */
+  path: Array<string>;
 };
 
 /**
  * StopIdAndName
  */
 export type StopIdAndName = {
-    /**
-     * Stop Id
-     */
-    stop_id: string;
-    /**
-     * Stop Name
-     */
-    stop_name: string;
+  /**
+   * Stop Id
+   */
+  stop_id: string;
+  /**
+   * Stop Name
+   */
+  stop_name: string;
 };
 
 /**
  * StopIdResponse
  */
 export type StopIdResponse = {
-    /**
-     * Stop Ids
-     */
-    stop_ids: Array<StopIdAndName>;
+  /**
+   * Stop Ids
+   */
+  stop_ids: Array<StopIdAndName>;
 };
 
 /**
  * StopLatLon
  */
 export type StopLatLon = {
+  /**
+   * 緯度 (度単位)
+   */
+  lat: number;
+  /**
+   * 経度 (度単位)
+   */
+  lon: number;
+};
+
+/**
+ * StopNameList
+ */
+export type StopNameList = {
+  /**
+   * Stop Names
+   */
+  stop_names: Array<string>;
+  /**
+   * Platform Code
+   * のりば番号 (例: "1", "2"など)
+   */
+  platform_code?: string | null;
+  location?: StopLatLon | null;
+};
+
+/**
+ * TimedTravelResponse
+ */
+export type TimedTravelResponse = {
+  /**
+   * Reference Date
+   */
+  reference_date?: string | null;
+  /**
+   * Travels
+   */
+  travels: Array<TravelOnceResponse>;
+};
+
+/**
+ * TravelOnceResponse
+ */
+export type TravelOnceResponse = {
+  /**
+   * Trip Id
+   */
+  trip_id: string;
+  /**
+   * Departure Time
+   */
+  departure_time: string;
+  /**
+   * Arrival Time
+   */
+  arrival_time: string;
+  /**
+   * Departure Datetime
+   */
+  departure_datetime: string;
+  /**
+   * Arrival Datetime
+   */
+  arrival_datetime: string;
+  /**
+   * From Stop Id
+   */
+  from_stop_id: string;
+  /**
+   * To Stop Id
+   */
+  to_stop_id: string;
+  /**
+   * Fare
+   */
+  fare: number;
+};
+
+/**
+ * TripIdList
+ */
+export type TripIdList = {
+  /**
+   * Trip Ids
+   */
+  trip_ids: Array<string>;
+};
+
+/**
+ * TripInfo
+ */
+export type TripInfo = {
+  /**
+   * Trip Id
+   */
+  trip_id: string;
+  /**
+   * Route Name
+   */
+  route_name?: string | null;
+  /**
+   * Destination Display Name
+   */
+  destination_display_name?: string | null;
+  /**
+   * Destination Stop Id
+   */
+  destination_stop_id?: string | null;
+};
+
+/**
+ * TripInfoList
+ */
+export type TripInfoList = {
+  /**
+   * Trips
+   */
+  trips: Array<TripInfo>;
+};
+
+/**
+ * TripRecord
+ */
+export type TripRecord = {
+  /**
+   * Trip Id
+   */
+  trip_id: string;
+  /**
+   * Stop Id
+   */
+  stop_id: string;
+  /**
+   * Fare
+   */
+  fare: number;
+  /**
+   * Departure Time
+   */
+  departure_time: string;
+  /**
+   * Arrival Time
+   */
+  arrival_time: string;
+  /**
+   * Departure Datetime
+   */
+  departure_datetime: string;
+  /**
+   * Arrival Datetime
+   */
+  arrival_datetime: string;
+};
+
+/**
+ * TripTimedStop
+ */
+export type TripTimedStop = {
+  /**
+   * Trip Id
+   */
+  trip_id: string;
+  /**
+   * Arrival Time
+   */
+  arrival_time: string;
+  /**
+   * Departure Time
+   */
+  departure_time: string;
+  /**
+   * Arrival Datetime
+   */
+  arrival_datetime: string;
+  /**
+   * Departure Datetime
+   */
+  departure_datetime: string;
+  /**
+   * Stop Id
+   */
+  stop_id: string;
+  /**
+   * Stop Sequence
+   */
+  stop_sequence: number;
+  /**
+   * Stop Headsign
+   */
+  stop_headsign: string;
+  /**
+   * Stop Name
+   */
+  stop_name?: string | null;
+};
+
+/**
+ * UpcomingBusEnriched
+ */
+export type UpcomingBusEnriched = {
+  /**
+   * Stop Id
+   */
+  stop_id: string;
+  /**
+   * Reference Date
+   */
+  reference_date?: string | null;
+  /**
+   * Buses
+   */
+  buses: Array<EnrichedTrip>;
+};
+
+/**
+ * ValidationError
+ */
+export type ValidationError = {
+  /**
+   * Location
+   */
+  loc: Array<string | number>;
+  /**
+   * Message
+   */
+  msg: string;
+  /**
+   * Error Type
+   */
+  type: string;
+};
+
+export type GetNearbyStopsStopsNearbyGetData = {
+  body?: never;
+  path?: never;
+  query: {
     /**
      * Lat
      * 緯度 (度単位)
@@ -146,777 +382,567 @@ export type StopLatLon = {
      * 経度 (度単位)
      */
     lon: number;
-};
-
-/**
- * StopNameList
- */
-export type StopNameList = {
     /**
-     * Stop Names
+     * Limit
+     * 取得する最大件数
      */
-    stop_names: Array<string>;
-    /**
-     * Platform Code
-     * のりば番号 (例: "1", "2"など)
-     */
-    platform_code?: string | null;
-    location?: StopLatLon | null;
-};
-
-/**
- * TimedTravelResponse
- */
-export type TimedTravelResponse = {
-    /**
-     * Reference Date
-     */
-    reference_date?: string | null;
-    /**
-     * Travels
-     */
-    travels: Array<TravelOnceResponse>;
-};
-
-/**
- * TravelOnceResponse
- */
-export type TravelOnceResponse = {
-    /**
-     * Trip Id
-     */
-    trip_id: string;
-    /**
-     * Departure Time
-     */
-    departure_time: string;
-    /**
-     * Arrival Time
-     */
-    arrival_time: string;
-    /**
-     * Departure Datetime
-     */
-    departure_datetime: string;
-    /**
-     * Arrival Datetime
-     */
-    arrival_datetime: string;
-    /**
-     * From Stop Id
-     */
-    from_stop_id: string;
-    /**
-     * To Stop Id
-     */
-    to_stop_id: string;
-    /**
-     * Fare
-     */
-    fare: number;
-};
-
-/**
- * TripIdList
- */
-export type TripIdList = {
-    /**
-     * Trip Ids
-     */
-    trip_ids: Array<string>;
-};
-
-/**
- * TripInfo
- */
-export type TripInfo = {
-    /**
-     * Trip Id
-     */
-    trip_id: string;
-    /**
-     * Route Name
-     */
-    route_name?: string | null;
-    /**
-     * Destination Display Name
-     */
-    destination_display_name?: string | null;
-    /**
-     * Destination Stop Id
-     */
-    destination_stop_id?: string | null;
-};
-
-/**
- * TripInfoList
- */
-export type TripInfoList = {
-    /**
-     * Trips
-     */
-    trips: Array<TripInfo>;
-};
-
-/**
- * TripRecord
- */
-export type TripRecord = {
-    /**
-     * Trip Id
-     */
-    trip_id: string;
-    /**
-     * Stop Id
-     */
-    stop_id: string;
-    /**
-     * Fare
-     */
-    fare: number;
-    /**
-     * Departure Time
-     */
-    departure_time: string;
-    /**
-     * Arrival Time
-     */
-    arrival_time: string;
-    /**
-     * Departure Datetime
-     */
-    departure_datetime: string;
-    /**
-     * Arrival Datetime
-     */
-    arrival_datetime: string;
-};
-
-/**
- * TripTimedStop
- */
-export type TripTimedStop = {
-    /**
-     * Trip Id
-     */
-    trip_id: string;
-    /**
-     * Arrival Time
-     */
-    arrival_time: string;
-    /**
-     * Departure Time
-     */
-    departure_time: string;
-    /**
-     * Arrival Datetime
-     */
-    arrival_datetime: string;
-    /**
-     * Departure Datetime
-     */
-    departure_datetime: string;
-    /**
-     * Stop Id
-     */
-    stop_id: string;
-    /**
-     * Stop Sequence
-     */
-    stop_sequence: number;
-    /**
-     * Stop Headsign
-     */
-    stop_headsign: string;
-    /**
-     * Stop Name
-     */
-    stop_name?: string | null;
-};
-
-/**
- * UpcomingBusEnriched
- */
-export type UpcomingBusEnriched = {
-    /**
-     * Stop Id
-     */
-    stop_id: string;
-    /**
-     * Reference Date
-     */
-    reference_date?: string | null;
-    /**
-     * Buses
-     */
-    buses: Array<EnrichedTrip>;
-};
-
-/**
- * ValidationError
- */
-export type ValidationError = {
-    /**
-     * Location
-     */
-    loc: Array<string | number>;
-    /**
-     * Message
-     */
-    msg: string;
-    /**
-     * Error Type
-     */
-    type: string;
-};
-
-export type GetNearbyStopsStopsNearbyGetData = {
-    body?: never;
-    path?: never;
-    query: {
-        /**
-         * Lat
-         * 緯度 (度単位)
-         */
-        lat: number;
-        /**
-         * Lon
-         * 経度 (度単位)
-         */
-        lon: number;
-        /**
-         * Limit
-         * 取得する最大件数
-         */
-        limit?: number | null;
-    };
-    url: '/stops/nearby';
+    limit?: number | null;
+  };
+  url: "/stops/nearby";
 };
 
 export type GetNearbyStopsStopsNearbyGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
+  /**
+   * Validation Error
+   */
+  422: HttpValidationError;
 };
 
-export type GetNearbyStopsStopsNearbyGetError = GetNearbyStopsStopsNearbyGetErrors[keyof GetNearbyStopsStopsNearbyGetErrors];
+export type GetNearbyStopsStopsNearbyGetError =
+  GetNearbyStopsStopsNearbyGetErrors[keyof GetNearbyStopsStopsNearbyGetErrors];
 
 export type GetNearbyStopsStopsNearbyGetResponses = {
-    /**
-     * 成功
-     */
-    200: NearbyStopsResponse;
+  /**
+   * 成功
+   */
+  200: NearbyStopsResponse;
 };
 
-export type GetNearbyStopsStopsNearbyGetResponse = GetNearbyStopsStopsNearbyGetResponses[keyof GetNearbyStopsStopsNearbyGetResponses];
+export type GetNearbyStopsStopsNearbyGetResponse =
+  GetNearbyStopsStopsNearbyGetResponses[keyof GetNearbyStopsStopsNearbyGetResponses];
 
 export type GetBusStopInfoStopsStopIdGetData = {
-    body?: never;
-    path: {
-        /**
-         * Stop Id
-         */
-        stop_id: string;
-    };
-    query?: {
-        /**
-         *  Fields
-         * 追加で取得するフィールド (例: location)。カンマ区切りで複数指定可能。
-         */
-        _fields?: string | null;
-    };
-    url: '/stops/{stop_id}';
+  body?: never;
+  path: {
+    /**
+     * Stop Id
+     */
+    stop_id: string;
+  };
+  query?: {
+    /**
+     *  Fields
+     * 追加で取得するフィールド (例: location)。カンマ区切りで複数指定可能。
+     */
+    _fields?: string | null;
+  };
+  url: "/stops/{stop_id}";
 };
 
 export type GetBusStopInfoStopsStopIdGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
+  /**
+   * Validation Error
+   */
+  422: HttpValidationError;
 };
 
-export type GetBusStopInfoStopsStopIdGetError = GetBusStopInfoStopsStopIdGetErrors[keyof GetBusStopInfoStopsStopIdGetErrors];
+export type GetBusStopInfoStopsStopIdGetError =
+  GetBusStopInfoStopsStopIdGetErrors[keyof GetBusStopInfoStopsStopIdGetErrors];
 
 export type GetBusStopInfoStopsStopIdGetResponses = {
-    /**
-     * 成功
-     */
-    200: StopNameList;
+  /**
+   * 成功
+   */
+  200: StopNameList;
 };
 
-export type GetBusStopInfoStopsStopIdGetResponse = GetBusStopInfoStopsStopIdGetResponses[keyof GetBusStopInfoStopsStopIdGetResponses];
+export type GetBusStopInfoStopsStopIdGetResponse =
+  GetBusStopInfoStopsStopIdGetResponses[keyof GetBusStopInfoStopsStopIdGetResponses];
 
 export type SearchStopsStopsGetData = {
-    body?: never;
-    path?: never;
-    query: {
-        /**
-         * Name
-         * 検索する停留所名
-         */
-        name: string;
-        /**
-         * Exact
-         * 厳密一致フラグ
-         */
-        exact?: boolean;
-    };
-    url: '/stops/';
+  body?: never;
+  path?: never;
+  query: {
+    /**
+     * Name
+     * 検索する停留所名
+     */
+    name: string;
+    /**
+     * Exact
+     * 厳密一致フラグ
+     */
+    exact?: boolean;
+  };
+  url: "/stops/";
 };
 
 export type SearchStopsStopsGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
+  /**
+   * Validation Error
+   */
+  422: HttpValidationError;
 };
 
-export type SearchStopsStopsGetError = SearchStopsStopsGetErrors[keyof SearchStopsStopsGetErrors];
+export type SearchStopsStopsGetError =
+  SearchStopsStopsGetErrors[keyof SearchStopsStopsGetErrors];
 
 export type SearchStopsStopsGetResponses = {
-    /**
-     * 成功
-     */
-    200: StopIdResponse;
+  /**
+   * 成功
+   */
+  200: StopIdResponse;
 };
 
-export type SearchStopsStopsGetResponse = SearchStopsStopsGetResponses[keyof SearchStopsStopsGetResponses];
+export type SearchStopsStopsGetResponse =
+  SearchStopsStopsGetResponses[keyof SearchStopsStopsGetResponses];
 
 export type GetUpcomingStopsStopIdUpcomingGetData = {
-    body?: never;
-    path: {
-        /**
-         * Stop Id
-         */
-        stop_id: string;
-    };
-    query?: {
-        /**
-         * Service Id
-         * サービスIDで絞り込む (例: 平日)
-         */
-        service_id?: string | null;
-        /**
-         * Expand
-         * 展開トークン (例: trip_info, stops)
-         */
-        expand?: string | null;
-        /**
-         * Limit
-         * クライアント側の最大件数
-         */
-        limit?: number | null;
-        /**
-         * Begin Time
-         * 開始時刻 (HH:MM:SS または ISO 8601 形式 (e.g., 2025-10-28T14:30:00). HH:MM:SS形式の場合、今日の日付が基準日として使用されます。ISO 8601形式の場合、`begin_time`で指定された日付が基準日として使用されます。
-         */
-        begin_time?: string | null;
-    };
-    url: '/stops/{stop_id}/upcoming';
+  body?: never;
+  path: {
+    /**
+     * Stop Id
+     */
+    stop_id: string;
+  };
+  query?: {
+    /**
+     * Service Id
+     * サービスIDで絞り込む (例: 平日)
+     */
+    service_id?: string | null;
+    /**
+     * Expand
+     * 展開トークン (例: trip_info, stops)
+     */
+    expand?: string | null;
+    /**
+     * Limit
+     * クライアント側の最大件数
+     */
+    limit?: number | null;
+    /**
+     * Begin Time
+     * 開始時刻 (HH:MM:SS または ISO 8601 形式 (e.g., 2025-10-28T14:30:00). HH:MM:SS形式の場合、今日の日付が基準日として使用されます。ISO 8601形式の場合、`begin_time`で指定された日付が基準日として使用されます。
+     */
+    begin_time?: string | null;
+  };
+  url: "/stops/{stop_id}/upcoming";
 };
 
 export type GetUpcomingStopsStopIdUpcomingGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
+  /**
+   * Validation Error
+   */
+  422: HttpValidationError;
 };
 
-export type GetUpcomingStopsStopIdUpcomingGetError = GetUpcomingStopsStopIdUpcomingGetErrors[keyof GetUpcomingStopsStopIdUpcomingGetErrors];
+export type GetUpcomingStopsStopIdUpcomingGetError =
+  GetUpcomingStopsStopIdUpcomingGetErrors[keyof GetUpcomingStopsStopIdUpcomingGetErrors];
 
 export type GetUpcomingStopsStopIdUpcomingGetResponses = {
-    /**
-     * 成功
-     */
-    200: UpcomingBusEnriched;
+  /**
+   * 成功
+   */
+  200: UpcomingBusEnriched;
 };
 
-export type GetUpcomingStopsStopIdUpcomingGetResponse = GetUpcomingStopsStopIdUpcomingGetResponses[keyof GetUpcomingStopsStopIdUpcomingGetResponses];
+export type GetUpcomingStopsStopIdUpcomingGetResponse =
+  GetUpcomingStopsStopIdUpcomingGetResponses[keyof GetUpcomingStopsStopIdUpcomingGetResponses];
 
 export type BatchTripsTripsBatchPostData = {
-    body: TripIdList;
-    path?: never;
-    query?: {
-        /**
-         * Limit
-         * 返却件数上限（オプション）
-         */
-        limit?: number | null;
-    };
-    url: '/trips/batch';
+  body: TripIdList;
+  path?: never;
+  query?: {
+    /**
+     * Limit
+     * 返却件数上限（オプション）
+     */
+    limit?: number | null;
+  };
+  url: "/trips/batch";
 };
 
 export type BatchTripsTripsBatchPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
+  /**
+   * Validation Error
+   */
+  422: HttpValidationError;
 };
 
-export type BatchTripsTripsBatchPostError = BatchTripsTripsBatchPostErrors[keyof BatchTripsTripsBatchPostErrors];
+export type BatchTripsTripsBatchPostError =
+  BatchTripsTripsBatchPostErrors[keyof BatchTripsTripsBatchPostErrors];
 
 export type BatchTripsTripsBatchPostResponses = {
-    /**
-     * 成功
-     */
-    200: TripInfoList;
+  /**
+   * 成功
+   */
+  200: TripInfoList;
 };
 
-export type BatchTripsTripsBatchPostResponse = BatchTripsTripsBatchPostResponses[keyof BatchTripsTripsBatchPostResponses];
+export type BatchTripsTripsBatchPostResponse =
+  BatchTripsTripsBatchPostResponses[keyof BatchTripsTripsBatchPostResponses];
 
 export type FareTripsFareGetData = {
-    body?: never;
-    path?: never;
-    query: {
-        /**
-         * From Id
-         * 出発停留所ID
-         */
-        from_id: string;
-        /**
-         * To Id
-         * 到着停留所ID
-         */
-        to_id: string;
-    };
-    url: '/trips/fare';
+  body?: never;
+  path?: never;
+  query: {
+    /**
+     * From Id
+     * 出発停留所ID
+     */
+    from_id: string;
+    /**
+     * To Id
+     * 到着停留所ID
+     */
+    to_id: string;
+  };
+  url: "/trips/fare";
 };
 
 export type FareTripsFareGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
+  /**
+   * Validation Error
+   */
+  422: HttpValidationError;
 };
 
-export type FareTripsFareGetError = FareTripsFareGetErrors[keyof FareTripsFareGetErrors];
+export type FareTripsFareGetError =
+  FareTripsFareGetErrors[keyof FareTripsFareGetErrors];
 
 export type FareTripsFareGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: FareResponse;
+  /**
+   * Successful Response
+   */
+  200: FareResponse;
 };
 
-export type FareTripsFareGetResponse = FareTripsFareGetResponses[keyof FareTripsFareGetResponses];
+export type FareTripsFareGetResponse =
+  FareTripsFareGetResponses[keyof FareTripsFareGetResponses];
 
 export type GetConnectionsTripsConnectionsGetData = {
-    body?: never;
-    path?: never;
-    query: {
-        /**
-         * From Stop
-         * 出発停留所ID
-         */
-        from_stop: string;
-        /**
-         * To Stop
-         * 到着停留所ID
-         */
-        to_stop: string;
-        /**
-         * Service Id
-         * サービスIDで絞り込み
-         */
-        service_id?: string | null;
-    };
-    url: '/trips/connections';
+  body?: never;
+  path?: never;
+  query: {
+    /**
+     * From Stop
+     * 出発停留所ID
+     */
+    from_stop: string;
+    /**
+     * To Stop
+     * 到着停留所ID
+     */
+    to_stop: string;
+    /**
+     * Service Id
+     * サービスIDで絞り込み
+     */
+    service_id?: string | null;
+  };
+  url: "/trips/connections";
 };
 
 export type GetConnectionsTripsConnectionsGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
+  /**
+   * Validation Error
+   */
+  422: HttpValidationError;
 };
 
-export type GetConnectionsTripsConnectionsGetError = GetConnectionsTripsConnectionsGetErrors[keyof GetConnectionsTripsConnectionsGetErrors];
+export type GetConnectionsTripsConnectionsGetError =
+  GetConnectionsTripsConnectionsGetErrors[keyof GetConnectionsTripsConnectionsGetErrors];
 
 export type GetConnectionsTripsConnectionsGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: TimedTravelResponse;
+  /**
+   * Successful Response
+   */
+  200: TimedTravelResponse;
 };
 
-export type GetConnectionsTripsConnectionsGetResponse = GetConnectionsTripsConnectionsGetResponses[keyof GetConnectionsTripsConnectionsGetResponses];
+export type GetConnectionsTripsConnectionsGetResponse =
+  GetConnectionsTripsConnectionsGetResponses[keyof GetConnectionsTripsConnectionsGetResponses];
 
 export type GetJourneyTripsJourneyGetData = {
-    body?: never;
-    path?: never;
-    query: {
-        /**
-         * Trip Id
-         * 運行ID
-         */
-        trip_id: string;
-        /**
-         * From Stop Id
-         * 起点の停留所ID
-         */
-        from_stop_id: string;
-    };
-    url: '/trips/journey';
+  body?: never;
+  path?: never;
+  query: {
+    /**
+     * Trip Id
+     * 運行ID
+     */
+    trip_id: string;
+    /**
+     * From Stop Id
+     * 起点の停留所ID
+     */
+    from_stop_id: string;
+  };
+  url: "/trips/journey";
 };
 
 export type GetJourneyTripsJourneyGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
+  /**
+   * Validation Error
+   */
+  422: HttpValidationError;
 };
 
-export type GetJourneyTripsJourneyGetError = GetJourneyTripsJourneyGetErrors[keyof GetJourneyTripsJourneyGetErrors];
+export type GetJourneyTripsJourneyGetError =
+  GetJourneyTripsJourneyGetErrors[keyof GetJourneyTripsJourneyGetErrors];
 
 export type GetJourneyTripsJourneyGetResponses = {
-    /**
-     * Response Get Journey Trips Journey Get
-     * Successful Response
-     */
-    200: Array<TripRecord>;
+  /**
+   * Response Get Journey Trips Journey Get
+   * Successful Response
+   */
+  200: Array<TripRecord>;
 };
 
-export type GetJourneyTripsJourneyGetResponse = GetJourneyTripsJourneyGetResponses[keyof GetJourneyTripsJourneyGetResponses];
+export type GetJourneyTripsJourneyGetResponse =
+  GetJourneyTripsJourneyGetResponses[keyof GetJourneyTripsJourneyGetResponses];
 
 export type GetTripTripsTripIdGetData = {
-    body?: never;
-    path: {
-        /**
-         * Trip Id
-         */
-        trip_id: string;
-    };
-    query?: never;
-    url: '/trips/{trip_id}';
+  body?: never;
+  path: {
+    /**
+     * Trip Id
+     */
+    trip_id: string;
+  };
+  query?: never;
+  url: "/trips/{trip_id}";
 };
 
 export type GetTripTripsTripIdGetErrors = {
-    /**
-     * 指定された trip_id が見つかりません
-     */
-    404: unknown;
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
+  /**
+   * 指定された trip_id が見つかりません
+   */
+  404: unknown;
+  /**
+   * Validation Error
+   */
+  422: HttpValidationError;
 };
 
-export type GetTripTripsTripIdGetError = GetTripTripsTripIdGetErrors[keyof GetTripTripsTripIdGetErrors];
+export type GetTripTripsTripIdGetError =
+  GetTripTripsTripIdGetErrors[keyof GetTripTripsTripIdGetErrors];
 
 export type GetTripTripsTripIdGetResponses = {
-    /**
-     * 成功
-     */
-    200: TripInfo;
+  /**
+   * 成功
+   */
+  200: TripInfo;
 };
 
-export type GetTripTripsTripIdGetResponse = GetTripTripsTripIdGetResponses[keyof GetTripTripsTripIdGetResponses];
+export type GetTripTripsTripIdGetResponse =
+  GetTripTripsTripIdGetResponses[keyof GetTripTripsTripIdGetResponses];
 
 export type TripStopsTripsTripIdStopsGetData = {
-    body?: never;
-    path: {
-        /**
-         * Trip Id
-         */
-        trip_id: string;
-    };
-    query?: never;
-    url: '/trips/{trip_id}/stops';
+  body?: never;
+  path: {
+    /**
+     * Trip Id
+     */
+    trip_id: string;
+  };
+  query?: never;
+  url: "/trips/{trip_id}/stops";
 };
 
 export type TripStopsTripsTripIdStopsGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
+  /**
+   * Validation Error
+   */
+  422: HttpValidationError;
 };
 
-export type TripStopsTripsTripIdStopsGetError = TripStopsTripsTripIdStopsGetErrors[keyof TripStopsTripsTripIdStopsGetErrors];
+export type TripStopsTripsTripIdStopsGetError =
+  TripStopsTripsTripIdStopsGetErrors[keyof TripStopsTripsTripIdStopsGetErrors];
 
 export type TripStopsTripsTripIdStopsGetResponses = {
-    /**
-     * Response Trip Stops Trips  Trip Id  Stops Get
-     * Successful Response
-     */
-    200: Array<TripTimedStop>;
+  /**
+   * Response Trip Stops Trips  Trip Id  Stops Get
+   * Successful Response
+   */
+  200: Array<TripTimedStop>;
 };
 
-export type TripStopsTripsTripIdStopsGetResponse = TripStopsTripsTripIdStopsGetResponses[keyof TripStopsTripsTripIdStopsGetResponses];
+export type TripStopsTripsTripIdStopsGetResponse =
+  TripStopsTripsTripIdStopsGetResponses[keyof TripStopsTripsTripIdStopsGetResponses];
 
 export type TripPassingTripsTripIdPassingGetData = {
-    body?: never;
-    path: {
-        /**
-         * Trip Id
-         */
-        trip_id: string;
-    };
-    query: {
-        /**
-         * Stop Id
-         * 停留所ID
-         */
-        stop_id: string;
-    };
-    url: '/trips/{trip_id}/passing';
+  body?: never;
+  path: {
+    /**
+     * Trip Id
+     */
+    trip_id: string;
+  };
+  query: {
+    /**
+     * Stop Id
+     * 停留所ID
+     */
+    stop_id: string;
+  };
+  url: "/trips/{trip_id}/passing";
 };
 
 export type TripPassingTripsTripIdPassingGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
+  /**
+   * Validation Error
+   */
+  422: HttpValidationError;
 };
 
-export type TripPassingTripsTripIdPassingGetError = TripPassingTripsTripIdPassingGetErrors[keyof TripPassingTripsTripIdPassingGetErrors];
+export type TripPassingTripsTripIdPassingGetError =
+  TripPassingTripsTripIdPassingGetErrors[keyof TripPassingTripsTripIdPassingGetErrors];
 
 export type TripPassingTripsTripIdPassingGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: TripRecord;
+  /**
+   * Successful Response
+   */
+  200: TripRecord;
 };
 
-export type TripPassingTripsTripIdPassingGetResponse = TripPassingTripsTripIdPassingGetResponses[keyof TripPassingTripsTripIdPassingGetResponses];
+export type TripPassingTripsTripIdPassingGetResponse =
+  TripPassingTripsTripIdPassingGetResponses[keyof TripPassingTripsTripIdPassingGetResponses];
 
 export type SearchPathPathSearchGetData = {
-    body?: never;
-    path?: never;
-    query: {
-        /**
-         * From Stop
-         * 出発停留所ID
-         */
-        from_stop: string;
-        /**
-         * To Stop
-         * 到着停留所ID
-         */
-        to_stop: string;
-        /**
-         * Service Id
-         * サービスIDで絞り込み
-         */
-        service_id?: string | null;
-    };
-    url: '/path/search';
+  body?: never;
+  path?: never;
+  query: {
+    /**
+     * From Stop
+     * 出発停留所ID
+     */
+    from_stop: string;
+    /**
+     * To Stop
+     * 到着停留所ID
+     */
+    to_stop: string;
+    /**
+     * Service Id
+     * サービスIDで絞り込み
+     */
+    service_id?: string | null;
+  };
+  url: "/path/search";
 };
 
 export type SearchPathPathSearchGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
+  /**
+   * Validation Error
+   */
+  422: HttpValidationError;
 };
 
-export type SearchPathPathSearchGetError = SearchPathPathSearchGetErrors[keyof SearchPathPathSearchGetErrors];
+export type SearchPathPathSearchGetError =
+  SearchPathPathSearchGetErrors[keyof SearchPathPathSearchGetErrors];
 
 export type SearchPathPathSearchGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: PathResponse;
+  /**
+   * Successful Response
+   */
+  200: PathResponse;
 };
 
-export type SearchPathPathSearchGetResponse = SearchPathPathSearchGetResponses[keyof SearchPathPathSearchGetResponses];
+export type SearchPathPathSearchGetResponse =
+  SearchPathPathSearchGetResponses[keyof SearchPathPathSearchGetResponses];
 
 export type TimedSearchPathTimedSearchGetData = {
-    body?: never;
-    path?: never;
-    query: {
-        /**
-         * From Stop
-         * 出発停留所ID
-         */
-        from_stop: string;
-        /**
-         * To Stop
-         * 到着停留所ID
-         */
-        to_stop: string;
-        /**
-         * Service Id
-         * サービスID
-         */
-        service_id?: string | null;
-        /**
-         * Begin Time
-         * 開始時刻 (HH:MM:SS形式またはISO 8601形式 例: 2025-10-28T14:30:00)
-         */
-        begin_time?: string | null;
-    };
-    url: '/path/timed_search';
+  body?: never;
+  path?: never;
+  query: {
+    /**
+     * From Stop
+     * 出発停留所ID
+     */
+    from_stop: string;
+    /**
+     * To Stop
+     * 到着停留所ID
+     */
+    to_stop: string;
+    /**
+     * Service Id
+     * サービスID
+     */
+    service_id?: string | null;
+    /**
+     * Begin Time
+     * 開始時刻 (HH:MM:SS形式またはISO 8601形式 例: 2025-10-28T14:30:00)
+     */
+    begin_time?: string | null;
+  };
+  url: "/path/timed_search";
 };
 
 export type TimedSearchPathTimedSearchGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
+  /**
+   * Validation Error
+   */
+  422: HttpValidationError;
 };
 
-export type TimedSearchPathTimedSearchGetError = TimedSearchPathTimedSearchGetErrors[keyof TimedSearchPathTimedSearchGetErrors];
+export type TimedSearchPathTimedSearchGetError =
+  TimedSearchPathTimedSearchGetErrors[keyof TimedSearchPathTimedSearchGetErrors];
 
 export type TimedSearchPathTimedSearchGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: TimedTravelResponse;
+  /**
+   * Successful Response
+   */
+  200: TimedTravelResponse;
 };
 
-export type TimedSearchPathTimedSearchGetResponse = TimedSearchPathTimedSearchGetResponses[keyof TimedSearchPathTimedSearchGetResponses];
+export type TimedSearchPathTimedSearchGetResponse =
+  TimedSearchPathTimedSearchGetResponses[keyof TimedSearchPathTimedSearchGetResponses];
 
 export type PathTravelsPathTravelsGetData = {
-    body?: never;
-    path?: never;
-    query: {
-        /**
-         * From Stop
-         */
-        from_stop: string;
-        /**
-         * To Stop
-         */
-        to_stop: string;
-        /**
-         * Service Id
-         */
-        service_id?: string | null;
-    };
-    url: '/path/travels';
+  body?: never;
+  path?: never;
+  query: {
+    /**
+     * From Stop
+     */
+    from_stop: string;
+    /**
+     * To Stop
+     */
+    to_stop: string;
+    /**
+     * Service Id
+     */
+    service_id?: string | null;
+  };
+  url: "/path/travels";
 };
 
 export type PathTravelsPathTravelsGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
+  /**
+   * Validation Error
+   */
+  422: HttpValidationError;
 };
 
-export type PathTravelsPathTravelsGetError = PathTravelsPathTravelsGetErrors[keyof PathTravelsPathTravelsGetErrors];
+export type PathTravelsPathTravelsGetError =
+  PathTravelsPathTravelsGetErrors[keyof PathTravelsPathTravelsGetErrors];
 
 export type PathTravelsPathTravelsGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: unknown;
+  /**
+   * Successful Response
+   */
+  200: unknown;
 };
 
 export type RootGetData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/';
+  body?: never;
+  path?: never;
+  query?: never;
+  url: "/";
 };
 
 export type RootGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: unknown;
+  /**
+   * Successful Response
+   */
+  200: unknown;
 };
 
 export type ClientOptions = {
-    baseUrl: `${string}://${string}` | (string & {});
+  baseUrl: `${string}://${string}` | (string & {});
 };
+
