@@ -85,6 +85,7 @@ export const Default: Story = {
     busStopId: "stop-001",
     busStopName: "hoge駅",
     distance: "約250m",
+    platformCode: "3",
     pastBus: mockPastBus,
     upcomingBuses: mockUpcomingBuses,
     isLoading: false,
