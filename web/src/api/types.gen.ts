@@ -123,20 +123,6 @@ export type StopIdAndName = {
 };
 
 /**
- * StopLatLon
- */
-export type StopLatLon = {
-    /**
-     * Lat
-     */
-    lat: number;
-    /**
-     * Lon
-     */
-    lon: number;
-};
-
-/**
  * StopIdResponse
  */
 export type StopIdResponse = {
@@ -144,6 +130,22 @@ export type StopIdResponse = {
      * Stop Ids
      */
     stop_ids: Array<StopIdAndName>;
+};
+
+/**
+ * StopLatLon
+ */
+export type StopLatLon = {
+    /**
+     * Lat
+     * 緯度 (度単位)
+     */
+    lat: number;
+    /**
+     * Lon
+     * 経度 (度単位)
+     */
+    lon: number;
 };
 
 /**
@@ -155,8 +157,10 @@ export type StopNameList = {
      */
     stop_names: Array<string>;
     /**
-     * Location
+     * Platform Code
+     * のりば番号 (例: "1", "2"など)
      */
+    platform_code?: string | null;
     location?: StopLatLon | null;
 };
 
@@ -164,6 +168,10 @@ export type StopNameList = {
  * TimedTravelResponse
  */
 export type TimedTravelResponse = {
+    /**
+     * Reference Date
+     */
+    reference_date?: string | null;
     /**
      * Travels
      */
@@ -335,6 +343,10 @@ export type UpcomingBusEnriched = {
      */
     stop_id: string;
     /**
+     * Reference Date
+     */
+    reference_date?: string | null;
+    /**
      * Buses
      */
     buses: Array<EnrichedTrip>;
@@ -399,7 +411,7 @@ export type GetNearbyStopsStopsNearbyGetResponses = {
 
 export type GetNearbyStopsStopsNearbyGetResponse = GetNearbyStopsStopsNearbyGetResponses[keyof GetNearbyStopsStopsNearbyGetResponses];
 
-export type GetStopStopsStopIdGetData = {
+export type GetBusStopInfoStopsStopIdGetData = {
     body?: never;
     path: {
         /**
@@ -410,30 +422,30 @@ export type GetStopStopsStopIdGetData = {
     query?: {
         /**
          *  Fields
-         * 追加で取得するフィールド (例: location)
+         * 追加で取得するフィールド (例: location)。カンマ区切りで複数指定可能。
          */
         _fields?: string | null;
     };
     url: '/stops/{stop_id}';
 };
 
-export type GetStopStopsStopIdGetErrors = {
+export type GetBusStopInfoStopsStopIdGetErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type GetStopStopsStopIdGetError = GetStopStopsStopIdGetErrors[keyof GetStopStopsStopIdGetErrors];
+export type GetBusStopInfoStopsStopIdGetError = GetBusStopInfoStopsStopIdGetErrors[keyof GetBusStopInfoStopsStopIdGetErrors];
 
-export type GetStopStopsStopIdGetResponses = {
+export type GetBusStopInfoStopsStopIdGetResponses = {
     /**
      * 成功
      */
     200: StopNameList;
 };
 
-export type GetStopStopsStopIdGetResponse = GetStopStopsStopIdGetResponses[keyof GetStopStopsStopIdGetResponses];
+export type GetBusStopInfoStopsStopIdGetResponse = GetBusStopInfoStopsStopIdGetResponses[keyof GetBusStopInfoStopsStopIdGetResponses];
 
 export type SearchStopsStopsGetData = {
     body?: never;
@@ -497,7 +509,7 @@ export type GetUpcomingStopsStopIdUpcomingGetData = {
         limit?: number | null;
         /**
          * Begin Time
-         * 開始時刻 (HH:MM:SS または ISO 8601 形式 (e.g., 2025-10-28T14:30:00). HH:MM:SS形式の場合、今日の日付が基準日として使用されます。ISO 8601形式の場合、`begon_time`で指定された日付が基準日として使用されます。
+         * 開始時刻 (HH:MM:SS または ISO 8601 形式 (e.g., 2025-10-28T14:30:00). HH:MM:SS形式の場合、今日の日付が基準日として使用されます。ISO 8601形式の場合、`begin_time`で指定された日付が基準日として使用されます。
          */
         begin_time?: string | null;
     };
@@ -681,6 +693,10 @@ export type GetTripTripsTripIdGetData = {
 
 export type GetTripTripsTripIdGetErrors = {
     /**
+     * 指定された trip_id が見つかりません
+     */
+    404: unknown;
+    /**
      * Validation Error
      */
     422: HttpValidationError;
@@ -690,7 +706,7 @@ export type GetTripTripsTripIdGetError = GetTripTripsTripIdGetErrors[keyof GetTr
 
 export type GetTripTripsTripIdGetResponses = {
     /**
-     * Successful Response
+     * 成功
      */
     200: TripInfo;
 };
@@ -826,7 +842,7 @@ export type TimedSearchPathTimedSearchGetData = {
         service_id?: string | null;
         /**
          * Begin Time
-         * 開始時刻 (HH:MM:SS or ISO 8601 datetime, e.g., 2025-10-28T14:30:00)
+         * 開始時刻 (HH:MM:SS形式またはISO 8601形式 例: 2025-10-28T14:30:00)
          */
         begin_time?: string | null;
     };
