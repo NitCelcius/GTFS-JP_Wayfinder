@@ -5,7 +5,7 @@ import numpy as np
 from fastapi import APIRouter, HTTPException, Query
 from pandas import to_datetime
 
-from gtfs_jp_wayfinder import models
+from gtfs_jp_wayfinder import models, realtime_mock
 from gtfs_jp_wayfinder.services import wayfinder as wf_service
 from gtfs_jp_wayfinder.services import wayfinder_adapter as adapter
 
@@ -107,7 +107,7 @@ async def get_connections(
     "/journey",
     response_model=list[models.TripRecord],
     summary="運行経路の旅程取得",
-    description="指定運行IDと停留所から、その運行の以降の到着/出発/運賃情報を返します。",
+    description="指定運行IDと停留所から、その運行の以降の到着/出発/運賃情報を返します。リアルタイム遅延情報も含まれます。",
 )
 async def get_journey(
     trip_id: str = Query(..., description="運行ID"),
@@ -142,6 +142,15 @@ async def get_journey(
                 reference_date, departure_time_str
             )
 
+            # Generate mock realtime update
+            realtime_update = realtime_mock.generate_mock_realtime_update(
+                trip_id=x.trip_id,
+                stop_id=x.stop_id,
+                scheduled_arrival_time=arrival_time_str,
+                scheduled_departure_time=departure_time_str,
+                reference_date=reference_date,
+            )
+
             records.append(
                 models.TripRecord(
                     trip_id=x.trip_id,
@@ -151,6 +160,7 @@ async def get_journey(
                     departure_time=np_datetime_to_datetime_time(x.departure_time),
                     arrival_datetime=arrival_datetime,
                     departure_datetime=departure_datetime,
+                    realtime_update=realtime_update,
                 )
             )
 

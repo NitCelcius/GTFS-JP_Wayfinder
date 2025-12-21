@@ -87,10 +87,16 @@ def test_upcoming_hardcoded(monkeypatch, client):
         ), f"Bus {i}: destination_stop_id mismatch"
         assert actual_bus["stops"] == expected_bus["stops"], f"Bus {i}: stops mismatch"
 
-        # Verify no extra fields
-        assert set(actual_bus.keys()) == set(expected_bus.keys()), (
-            f"Bus {i}: field set mismatch"
-        )
+        # Verify expected fields are present (allow new optional fields like realtime_update)
+        for key in expected_bus:
+            assert key in actual_bus, f"Bus {i}: missing expected field '{key}'"
+
+        # Verify realtime_update field exists and has correct structure if present
+        if "realtime_update" in actual_bus:
+            rt_update = actual_bus["realtime_update"]
+            if rt_update is not None:
+                assert "delay_seconds" in rt_update, "realtime_update missing delay_seconds"
+                assert isinstance(rt_update["delay_seconds"], int), "delay_seconds should be int"
 
     # Verify top-level fields include reference_date
     expected_top_level = {"stop_id", "buses", "reference_date"}
