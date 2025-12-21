@@ -38,46 +38,46 @@ export const StopItem: React.FC<StopItemProps> = ({ stop }) => {
 
   return (
     <div className={stopClasses}>
-      <div className={styles.stopLeft}>
-        {stop.isBusLocation ? (
-          <img src="/icons/bus-front.svg" alt="バス" {...iconSize} />
-        ) : stop.isCurrent ? (
-          <img src="/icons/location-pin.svg" alt="現在地" {...iconSize} />
-        ) : stop.isDestination ? (
-          <img src="/icons/flag.svg" alt="目的地" {...iconSize} />
-        ) : (
-          <div className={styles.stopDot} />
-        )}
+      {stop.isBusLocation ? (
+        <img src="/icons/bus-front.svg" alt="バス" {...iconSize} />
+      ) : stop.isCurrent ? (
+        <img src="/icons/location-pin.svg" alt="現在地" {...iconSize} />
+      ) : stop.isDestination ? (
+        <img src="/icons/flag.svg" alt="目的地" {...iconSize} />
+      ) : (
+        <div className={styles.stopDot} />
+      )}
+      <div className={styles.stopContent}>
         <div className={styles.stopName}>{stop.name}</div>
-      </div>
-      <div className={styles.stopRight}>
-        {stop.isCurrent ? (
-          <>
-            {currentLabel && (
-              <div className={styles.currentLabel}>{currentLabel}</div>
-            )}
-            <div className={styles.arrivalTimeContainer}>
-              <span className={styles.arrivalTimeValue}>
-                {arrivalTimeValue}
-              </span>
-              <span className={styles.arrivalTimeSuffix}>
-                {arrivalTimeSuffix}
-              </span>
-            </div>
-          </>
-        ) : (
-          <>
-            {fareLabel && <div className={styles.fareLabel}>{fareLabel}</div>}
-            <div className={styles.arrivalTimeContainer}>
-              <span className={styles.arrivalTimeValue}>
-                {arrivalTimeValue}
-              </span>
-              <span className={styles.arrivalTimeSuffix}>
-                {arrivalTimeSuffix}
-              </span>
-            </div>
-          </>
-        )}
+        <div className={styles.stopRight}>
+          {stop.isCurrent ? (
+            <>
+              {currentLabel && (
+                <div className={styles.currentLabel}>{currentLabel}</div>
+              )}
+              <div className={styles.arrivalTimeContainer}>
+                <span className={styles.arrivalTimeValue}>
+                  {arrivalTimeValue}
+                </span>
+                <span className={styles.arrivalTimeSuffix}>
+                  {arrivalTimeSuffix}
+                </span>
+              </div>
+            </>
+          ) : (
+            <>
+              {fareLabel && <div className={styles.fareLabel}>{fareLabel}</div>}
+              <div className={styles.arrivalTimeContainer}>
+                <span className={styles.arrivalTimeValue}>
+                  {arrivalTimeValue}
+                </span>
+                <span className={styles.arrivalTimeSuffix}>
+                  {arrivalTimeSuffix}
+                </span>
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
