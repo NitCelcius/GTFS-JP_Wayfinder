@@ -48,6 +48,7 @@ class AkitaBusWayFinder:
         self.graph = None
         self.graph_via_service_id = dict()
         self.default_date = "2021-01-01"
+        self.agency_timezone = "UTC"
 
         # Distance calculator - can be switched between Haversine and Euclidean
         self.distance_calculator: DistanceCalculator = (
@@ -81,6 +82,17 @@ class AkitaBusWayFinder:
 
     def initialize(self, base_dir="../data/"):
         logger.info("Loading dataframes...")
+        # Agency info (timezone, etc.)
+        try:
+            agency_df = pd.read_csv(base_dir + "agency.txt")
+            if "agency_timezone" in agency_df.columns and not agency_df.empty:
+                tz_value = str(agency_df.iloc[0]["agency_timezone"])
+                if tz_value:
+                    self.agency_timezone = tz_value
+        except FileNotFoundError:
+            logger.warning("agency.txt not found; falling back to UTC timezone.")
+        except Exception as exc:
+            logger.warning("Failed to read agency.txt (%s); falling back to UTC.", exc)
         # バス停
         self.df_stops = pd.read_csv(base_dir + "stops.txt")
         # バス停の時刻、通過時刻と経路
