@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 
+import { useRouter } from "next/navigation";
+
 import { ApiClient } from "@/lib/api";
 
 import { composeBusStopInfoWithLatestSelection } from "../composition";
@@ -19,6 +21,7 @@ export function BusStopInfoV2Container({
   onBack,
   onNavigateToRoute,
 }: BusStopInfoV2ContainerProps) {
+  const router = useRouter();
   const [busStopName, setBusStopName] = useState<string>("");
   const [distance, setDistance] = useState<string>("");
   const [pastBus, setPastBus] = useState<UpcomingBusInfo | null>(null);
@@ -163,7 +166,13 @@ export function BusStopInfoV2Container({
       onWalkDirections={() => console.log("Walk directions")} // TODO: Implement transition to walk directions
       onTransfer={() => console.log("Transfer")} // TODO: Implement transition to transfer search
       onRouteList={() => console.log("Route list")} // TODO: Implement transition to route list
-      onBusClick={(bus) => console.log("Bus clicked:", bus)} // TODO: Implement transition to bus details
+      onBusClick={(bus) => {
+        const params = new URLSearchParams();
+        if (busStopId) {
+          params.set("stop_id", busStopId);
+        }
+        router.push(`/trips/${bus.tripId}?${params.toString()}`);
+      }}
     />
   );
 }
