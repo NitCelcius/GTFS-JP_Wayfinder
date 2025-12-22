@@ -6,7 +6,10 @@ from zoneinfo import ZoneInfo
 
 import pytest
 
-from gtfs_jp_wayfinder.services.wayfinder_adapter import parse_split_date_str
+from gtfs_jp_wayfinder.services.wayfinder_adapter import (
+    _get_agency_zone,
+    parse_split_date_str,
+)
 
 
 class TestParseSplitDateStr:
@@ -16,8 +19,10 @@ class TestParseSplitDateStr:
         """Test parsing HH:MM:SS format."""
         reference_date, time_string = parse_split_date_str("14:30:00")
 
-        # When given HH:MM:SS, it should return today's date and the input time
-        assert reference_date == datetime.date.today()
+        # When given HH:MM:SS, it should return today's date in the agency timezone
+        # Use the same timezone-aware date that the implementation uses
+        expected_date = datetime.datetime.now(_get_agency_zone()).date()
+        assert reference_date == expected_date
         assert time_string == "14:30:00"
 
     def test_parse_split_date_str_with_iso_datetime(self):
