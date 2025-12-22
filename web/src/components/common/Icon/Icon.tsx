@@ -89,3 +89,53 @@ export function Icon({
     />
   );
 }
+
+/**
+ * StretchableIcon component for icons that should stretch to fill their container.
+ * Use this only for icons in containers where CSS controls the sizing (e.g., flexbox containers with width/height constraints).
+ * The Icon component is preferred for most use cases.
+ *
+ * @param {string} name - Icon filename without extension (e.g., "bus-container-front")
+ * @param {string} [className=""] - CSS classes for styling (width/height will be controlled by CSS)
+ * @param {...} rest - Additional Image props (aria-hidden is always "true" for decorative icons)
+ *
+ * @example
+ * // Container controls sizing via CSS
+ * <div style={{ width: "40px" }} className={styles.iconContainer}>
+ *   <StretchableIcon name="bus-container-front" className={styles.icon} />
+ * </div>
+ *
+ * @note Use this for icons in containers like TripIndicator where parent container controls dimensions.
+ * @note Does NOT accept size prop - sizing is controlled entirely by CSS and parent container.
+ */
+export function StretchableIcon({
+  name,
+  className = "",
+  ...rest
+}: Omit<IconProps, "size">) {
+  // Validate icon name to prevent directory traversal attacks
+  if (!/^[a-z0-9-]+$/.test(name)) {
+    console.error(`Invalid icon name: ${name}`);
+    return null;
+  }
+
+  // Use a high intrinsic size as placeholder for Next.js Image
+  // Actual rendering will be controlled by CSS styles
+  return (
+    <Image
+      src={`/icons/${name}.svg`}
+      alt=""
+      width={256}
+      height={256}
+      unoptimized
+      className={className}
+      style={{
+        width: "100%",
+        height: "100%",
+        display: "block",
+      }}
+      aria-hidden="true"
+      {...rest}
+    />
+  );
+}

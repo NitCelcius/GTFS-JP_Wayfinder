@@ -1,4 +1,4 @@
-import { Icon } from "@/components/common";
+import { StretchableIcon } from "@/components/common";
 import { ChevronRight } from "@/components/common/icons";
 
 import styles from "./TripIndicator.module.css";
@@ -35,11 +35,9 @@ export function TripIndicator({
       data-trip-id={tripId}
     >
       <div className={styles.busIcon}>
-        <Icon
+        <StretchableIcon
           name="bus-container-front"
-          size={100}
           className={styles.busIconImg}
-          aria-hidden="true"
         />
       </div>
       <div className={styles.content}>
