@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Icon } from "@/components/common";
+import { Icon, StretchableIcon } from "@/components/common";
 
 import styles from "./TripIndicator.module.css";
 
@@ -34,11 +34,9 @@ export const TripIndicator: React.FC<TripIndicatorProps> = ({
   return (
     <div className={styles.tripIndicatorWrapper}>
       <div className={styles.busFront}>
-        <Icon
+        <StretchableIcon
           name="bus-container-front"
-          size={100}
           className={styles.busFrontSvg}
-          aria-hidden="true"
         />
       </div>
       <div className={styles.tripIndicatorContainer}>
