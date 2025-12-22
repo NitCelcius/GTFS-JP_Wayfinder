@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import type { StopIdAndName } from "@/api/types.gen";
-import { Icon } from "@/components/common/Icon/Icon";
+import { Icon } from "@/components/common";
 import { ArrowRightIcon, LocationPinIcon } from "@/components/icons";
 import { apiClient } from "@/lib/api";
 import type { BusStopSearchResult } from "@/types";

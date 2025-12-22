@@ -1,4 +1,4 @@
-import { Icon } from "@/components/common/Icon/Icon";
+import { Icon } from "@/components/common";
 
 import { RecentRouteSearch } from "../types";
 import styles from "./RecentRouteSearches.module.css";

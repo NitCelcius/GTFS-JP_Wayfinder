@@ -1,4 +1,4 @@
-import { Icon } from "@/components/common/Icon/Icon";
+import { Icon } from "@/components/common";
 
 export function TransferIcon() {
   return <Icon name="transfer" className="w-6 h-6" />;

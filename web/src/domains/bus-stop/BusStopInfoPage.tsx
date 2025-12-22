@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { BottomNavigation } from "@/components/common/BottomNavigation/BottomNavigation";
-import { Icon } from "@/components/common/Icon/Icon";
-import { JourneyTimeline } from "@/components/common/JourneyTimeline/JourneyTimeline";
+import { BottomNavigation, Icon, JourneyTimeline } from "@/components/common";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner/LoadingSpinner";
 import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
 import { useTimeDisplay } from "@/hooks";

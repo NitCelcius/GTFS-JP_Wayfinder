@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Icon } from "@/components/common/Icon/Icon";
+import { Icon } from "@/components/common";
 
 import styles from "./StopItem.module.css";
 
