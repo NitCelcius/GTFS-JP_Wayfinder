@@ -26,7 +26,7 @@ export function BusStopItem({ busStop, onSelect }: BusStopItemProps) {
     <BusStopCard
       title={busStop.name}
       subtitle={busStop.distance}
-      icon={<LocationIcon className="w-[1.5rem] h-[1.5rem]" />}
+      icon={<LocationIcon size={24} />}
       actionLabel="選択"
       onClick={handleCardClick}
       onActionClick={handleActionClick}

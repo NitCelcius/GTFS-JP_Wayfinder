@@ -38,7 +38,7 @@ export function BusTripDetail({
             className={styles.backButton}
             aria-label="戻る"
           >
-            <Icon name="chevron-left" className="w-6 h-6" aria-hidden="true" />
+            <Icon name="chevron-left" size={24} aria-hidden="true" />
           </button>
           <h2 className={styles.stopName}>{stopName}</h2>
         </div>

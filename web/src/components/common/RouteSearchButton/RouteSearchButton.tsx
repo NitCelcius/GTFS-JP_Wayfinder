@@ -12,7 +12,7 @@ interface RouteSearchButtonProps {
 }
 
 function SearchIcon() {
-  return <Icon name="search" className="w-6 h-6" aria-hidden="true" />;
+  return <Icon name="search" size={24} aria-hidden="true" />;
 }
 
 export function RouteSearchButton({

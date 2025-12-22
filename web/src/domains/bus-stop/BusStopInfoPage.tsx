@@ -76,9 +76,7 @@ export function BusStopInfoPage({
     }
   };
 
-  const InfoIcon = () => (
-    <Icon name="info" className="w-6 h-6" aria-hidden="true" />
-  );
+  const InfoIcon = () => <Icon name="info" size={24} aria-hidden="true" />;
 
   // Handle error state
   if (error && !isLoading) {

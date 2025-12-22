@@ -12,7 +12,7 @@ interface RecentBusStopSearchesProps {
 }
 
 function LocationIcon() {
-  return <Icon name="location-pin" className="w-6 h-6" aria-hidden="true" />;
+  return <Icon name="location-pin" size={24} aria-hidden="true" />;
 }
 
 function RecentBusStopItem({

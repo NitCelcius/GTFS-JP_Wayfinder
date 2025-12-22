@@ -1,5 +1,5 @@
 import { Icon } from "@/components/common";
 
 export function ChevronRight() {
-  return <Icon name="chevron-right" className="w-6 h-6" />;
+  return <Icon name="chevron-right" size={24} />;
 }

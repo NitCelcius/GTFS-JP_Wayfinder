@@ -13,21 +13,19 @@ interface StationStopProps {
 }
 
 function PinIcon() {
-  return (
-    <Icon name="location-pin-simple" className="w-6 h-6" aria-hidden="true" />
-  );
+  return <Icon name="location-pin-simple" size={24} aria-hidden="true" />;
 }
 
 function LocationIcon() {
-  return <Icon name="location-dot" className="w-6 h-6" aria-hidden="true" />;
+  return <Icon name="location-dot" size={24} aria-hidden="true" />;
 }
 
 function FlagIcon() {
-  return <Icon name="flag-simple" className="w-6 h-6" aria-hidden="true" />;
+  return <Icon name="flag-simple" size={24} aria-hidden="true" />;
 }
 
 function ArrowDownIcon() {
-  return <Icon name="arrow-down-long" className="w-6 h-6" aria-hidden="true" />;
+  return <Icon name="arrow-down-long" size={24} aria-hidden="true" />;
 }
 
 export function StationStop({
