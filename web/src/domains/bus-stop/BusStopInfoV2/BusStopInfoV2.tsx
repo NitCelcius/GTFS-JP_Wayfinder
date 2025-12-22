@@ -10,6 +10,7 @@ import {
 } from "@/components/common/icons";
 
 import styles from "./BusStopInfoV2.module.css";
+import { BusStopHeader } from "./internal/BusStopHeader";
 import { SlimTripIndicator } from "./internal/SlimTripIndicator";
 import { TripIndicator } from "./internal/TripIndicator";
 import { formatMinutesUntilDeparture } from "./utils/timeFormatter";
@@ -45,26 +46,6 @@ interface BusStopInfoV2Props {
   onTransfer?: () => void;
   onRouteList?: () => void;
   onBusClick?: (bus: UpcomingBusInfo) => void;
-}
-
-interface ChevronIconProps {
-  className?: string;
-}
-
-function ChevronIcon({ className }: ChevronIconProps) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <polyline points="9 18 15 12 9 6" />
-    </svg>
-  );
 }
 
 export function BusStopInfoV2({
@@ -147,19 +128,12 @@ export function BusStopInfoV2({
     return (
       <div className={styles.page}>
         <div className={styles.actionBar}>
-          <div className={styles.headerRow}>
-            <div className={styles.headerLeft}>
-              <button
-                className={styles.backButton}
-                onClick={onBack}
-                aria-label="Go back"
-              >
-                <ChevronIcon className={styles.chevronRotated} />
-              </button>
-              <h1 className={styles.busStopName}>{busStopName}</h1>
-            </div>
-            {distance && <div className={styles.distanceLabel}>{distance}</div>}
-          </div>
+          <BusStopHeader
+            busStopName={busStopName}
+            platformCode={platformCode}
+            distance={distance}
+            onBack={onBack}
+          />
         </div>
 
         <div className={styles.scrollableContent}>
@@ -177,28 +151,12 @@ export function BusStopInfoV2({
       {/* Action Bar */}
       <div className={styles.actionBar}>
         {/* Header Row with back button, name, and distance */}
-        <div className={styles.headerRow}>
-          <div className={styles.headerLeft}>
-            <button
-              className={styles.backButton}
-              onClick={onBack}
-              aria-label="Go back"
-            >
-              <ChevronIcon className={styles.chevronRotated} />
-            </button>
-            <div className={styles.busStopTitleContainer}>
-              <h1 className={styles.busStopName}>{busStopName}</h1>
-              <div className={styles.busStopSubInfo}>
-                {platformCode && (
-                  <p className={styles.platformCode}>{platformCode}番のりば</p>
-                )}
-                {distance && (
-                  <div className={styles.distanceLabel}>{distance}</div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
+        <BusStopHeader
+          busStopName={busStopName}
+          platformCode={platformCode}
+          distance={distance}
+          onBack={onBack}
+        />
 
         {/* Action buttons - horizontal scroll */}
         <ActionButtonBar buttons={actionButtons} />
