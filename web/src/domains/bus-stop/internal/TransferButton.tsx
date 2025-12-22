@@ -8,7 +8,7 @@ interface TransferButtonProps {
 }
 
 function TransferIcon() {
-  return <Icon name="transfer" className="size-full" />;
+  return <Icon name="transfer" className="size-full" aria-hidden="true" />;
 }
 
 export function TransferButton({

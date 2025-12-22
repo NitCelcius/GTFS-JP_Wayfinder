@@ -1,6 +1,4 @@
-import { BottomNavigation } from "@/components/common/BottomNavigation/BottomNavigation";
-import { Icon } from "@/components/common/Icon/Icon";
-import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
+import { BottomNavigation, Icon, TopNavigation } from "@/components/common";
 import {
   useBusStopSearchHistory,
   useRouteSearchHistory,

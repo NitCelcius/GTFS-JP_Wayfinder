@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Icon } from "@/components/common/Icon/Icon";
+import { Icon } from "@/components/common";
 
 import { Station } from "../types";
 import styles from "./StationStop.module.css";

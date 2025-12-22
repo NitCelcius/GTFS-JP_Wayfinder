@@ -2,7 +2,7 @@ import React from "react";
 
 // Styles migrated to JourneyTimeline.module.css
 
-import { Icon } from "@/components/common/Icon/Icon";
+import { Icon } from "@/components/common";
 
 import styles from "./JourneyTimeline.module.css";
 

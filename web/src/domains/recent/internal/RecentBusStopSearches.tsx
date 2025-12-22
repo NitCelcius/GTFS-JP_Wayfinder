@@ -1,7 +1,6 @@
 import React from "react";
 
-import { BusStopCard } from "@/components/common";
-import { Icon } from "@/components/common/Icon/Icon";
+import { BusStopCard, Icon } from "@/components/common";
 
 import { RecentBusStopSearch } from "../types";
 import viewMoreStyles from "./ViewMoreButton.module.css";

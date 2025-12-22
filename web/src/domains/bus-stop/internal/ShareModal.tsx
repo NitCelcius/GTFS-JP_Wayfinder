@@ -2,7 +2,7 @@
 
 import { QRCodeSVG } from "qrcode.react";
 
-import { Icon } from "@/components/common/Icon/Icon";
+import { Icon } from "@/components/common";
 import { useEnvValue } from "@/hooks";
 
 import styles from "./ShareModal.module.css";

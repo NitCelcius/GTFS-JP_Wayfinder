@@ -1,4 +1,4 @@
-import { Icon } from "@/components/common/Icon/Icon";
+import { Icon } from "@/components/common";
 
 import { LoadingSpinner } from "../LoadingSpinner/LoadingSpinner";
 import styles from "./RouteSearchButton.module.css";
