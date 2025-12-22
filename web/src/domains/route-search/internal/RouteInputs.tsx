@@ -49,7 +49,7 @@ function ArrowIcon() {
 }
 
 function SwapIcon() {
-  return <Icon name="swap" className="size-full" />;
+  return <Icon name="swap" />;
 }
 
 interface RouteInputProps {

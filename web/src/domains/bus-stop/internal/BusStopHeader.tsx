@@ -13,11 +13,11 @@ interface BusStopHeaderProps {
 }
 
 function LocationIcon() {
-  return <Icon name="location-pin" className="w-6 h-6" aria-hidden="true" />;
+  return <Icon name="location-pin" size={24} aria-hidden="true" />;
 }
 
 function ShareIcon() {
-  return <Icon name="share" className="w-6 h-6" aria-hidden="true" />;
+  return <Icon name="share" size={24} aria-hidden="true" />;
 }
 
 export function BusStopHeader({

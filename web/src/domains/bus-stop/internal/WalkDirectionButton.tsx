@@ -8,7 +8,7 @@ interface WalkDirectionButtonProps {
 }
 
 function WalkIcon() {
-  return <Icon name="walk" className="w-6 h-6" aria-hidden="true" />;
+  return <Icon name="walk" size={24} aria-hidden="true" />;
 }
 
 /**

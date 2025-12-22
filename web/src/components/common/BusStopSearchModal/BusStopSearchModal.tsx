@@ -148,7 +148,7 @@ export function BusStopSearchModal({
             onClick={onClose}
             aria-label="閉じる"
           >
-            <Icon name="close" className="w-8 h-8" aria-hidden="true" />
+            <Icon name="close" size={32} aria-hidden="true" />
           </button>
         </div>
 

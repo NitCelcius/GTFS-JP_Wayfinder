@@ -15,11 +15,11 @@ interface ShareButtonProps {
 }
 
 function ShareIcon() {
-  return <Icon name="share" className="w-6 h-6" aria-hidden="true" />;
+  return <Icon name="share" size={24} aria-hidden="true" />;
 }
 
 function CloseIcon() {
-  return <Icon name="close" className="w-6 h-6" aria-hidden="true" />;
+  return <Icon name="close" size={24} aria-hidden="true" />;
 }
 
 export function ShareButton({ busStopId, busStopName }: ShareButtonProps) {

@@ -10,7 +10,7 @@ interface RouteOverviewProps {
 }
 
 function ShareIcon() {
-  return <Icon name="share" className="w-6 h-6" aria-hidden="true" />;
+  return <Icon name="share" size={24} aria-hidden="true" />;
 }
 
 export function RouteOverview({

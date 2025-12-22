@@ -1,5 +1,5 @@
 import { Icon } from "@/components/common";
 
 export function SearchIcon() {
-  return <Icon name="search" className="w-6 h-6" />;
+  return <Icon name="search" size={24} />;
 }

@@ -17,7 +17,7 @@ interface RecentRouteSearchesProps {
 }
 
 function RouteIcon() {
-  return <Icon name="route" className="w-6 h-6" aria-hidden="true" />;
+  return <Icon name="route" size={24} aria-hidden="true" />;
 }
 
 function RecentRouteItem({

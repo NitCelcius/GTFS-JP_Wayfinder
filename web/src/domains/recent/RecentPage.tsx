@@ -21,7 +21,7 @@ interface RecentPageProps {
 }
 
 function ClockIcon() {
-  return <Icon name="clock" className="w-6 h-6" aria-hidden="true" />;
+  return <Icon name="clock" size={24} aria-hidden="true" />;
 }
 
 export function RecentPage({

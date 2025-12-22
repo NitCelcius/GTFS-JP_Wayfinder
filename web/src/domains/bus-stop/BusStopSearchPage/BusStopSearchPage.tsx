@@ -52,9 +52,7 @@ export function BusStopSearchPage({
     }
   };
 
-  const SearchLocationIcon = () => (
-    <Icon name="location-pin" className="w-6 h-6" />
-  );
+  const SearchLocationIcon = () => <Icon name="location-pin" size={24} />;
 
   const handleSearch = (query: string) => {
     // Placeholder for search functionality

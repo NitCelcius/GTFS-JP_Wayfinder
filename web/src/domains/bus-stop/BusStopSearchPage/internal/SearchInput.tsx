@@ -9,7 +9,7 @@ interface SearchInputProps {
 }
 
 function SearchIcon() {
-  return <Icon name="search" className={styles.iconSvg} aria-hidden="true" />;
+  return <Icon name="search" size={24} aria-hidden="true" />;
 }
 
 export function SearchInput({ onSearch }: SearchInputProps) {

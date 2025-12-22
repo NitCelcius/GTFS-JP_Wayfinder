@@ -15,7 +15,7 @@ interface ShareModalProps {
 }
 
 function CloseIcon() {
-  return <Icon name="close" className="w-6 h-6" aria-hidden="true" />;
+  return <Icon name="close" size={24} aria-hidden="true" />;
 }
 
 export function ShareModal({
