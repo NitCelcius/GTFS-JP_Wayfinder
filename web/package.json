@@ -17,12 +17,13 @@
     "prettier:fix": "prettier --write .",
     "openapi-ts": "openapi-ts",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "chromatic": "pnpx chromatic --exit-zero-on-changes"
   },
   "dependencies": {
-    "@hey-api/openapi-ts": "^0.83.1",
     "@dotenvx/dotenvx": "^1.50.1",
     "@faker-js/faker": "^10.0.0",
+    "@hey-api/openapi-ts": "^0.83.1",
     "@tailwindcss/postcss": "^4.1.13",
     "@vercel/analytics": "^1.5.0",
     "autoprefixer": "^10.4.21",
@@ -56,6 +57,7 @@
     "@types/react-dom": "^19",
     "@typescript-eslint/eslint-plugin": "^8.44.1",
     "@typescript-eslint/parser": "^8.44.1",
+    "chromatic": "^13.3.4",
     "eslint": "^9.36.0",
     "eslint-config-next": "15.5.3",
     "eslint-plugin-react-hooks": "^5.2.0",
