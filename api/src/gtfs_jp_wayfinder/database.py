@@ -30,7 +30,9 @@ class TravelOnce:
     departure_time: np.datetime64 | None
     from_stop_id: str
     to_stop_id: str
-    is_walk_transfer: bool = False  # True when transferring between platforms at same stop
+    is_walk_transfer: bool = (
+        False  # True when transferring between platforms at same stop
+    )
 
 
 @dataclass
@@ -674,9 +676,7 @@ class AkitaBusWayFinder:
 
             # Check if this is a walk transfer (same-name stops)
             if self.is_walk_transfer(prev_stop, current_stop):
-                logger.info(
-                    "Walk transfer detected: %s -> %s", prev_stop, current_stop
-                )
+                logger.info("Walk transfer detected: %s -> %s", prev_stop, current_stop)
                 # Walk transfers are instant - no trip needed, no fare, same time
                 travel_list.append(
                     TravelOnce(
