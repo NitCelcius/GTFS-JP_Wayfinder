@@ -35,34 +35,34 @@ jobs:
           fetch-depth: 0
 
       - name: Install mise
-        uses: jdx/mise-action@v2
+        uses: jdx/mise-action@v3.5.1
         with:
-          version: 2025.9.16
+          version: 2025.12.12
+          cache: true
+          install: true
 
-      - name: Cache mise tools
-        uses: actions/cache@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4.2.0
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v7.1.6
         with:
-          path: ~/.local/share/mise
-          key: ${{ runner.os }}-mise-${{ hashFiles('**/.mise.toml', '**/.tool-versions') }}
-          restore-keys: |
-            ${{ runner.os }}-mise-
+          enable-cache: true
 
       - name: Install tools with mise
         run: mise install
 
-      - name: Get pnpm store directory
-        id: pnpm-cache
-        shell: bash
-        run: |
-          echo "pnpm_store_path=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
+      - name: Get pnpm cache directory
+        id: pnpm-cache-dir
+        run: echo "dir=$(pnpm store path)" >> $GITHUB_OUTPUT
 
       - name: Cache pnpm dependencies
         uses: actions/cache@v4
         with:
-          path: ${{ steps.pnpm-cache.outputs.pnpm_store_path }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          path: ${{ steps.pnpm-cache-dir.outputs.dir }}
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+            ${{ runner.os }}-pnpm-
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
