@@ -5,6 +5,7 @@ import { JourneyTimeline } from "@/components/common/JourneyTimeline/JourneyTime
 import { LoadingSpinner } from "@/components/common/LoadingSpinner/LoadingSpinner";
 import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
 import { ShareModal } from "@/domains/bus-stop/internal/ShareModal";
+import { WalkTransferIndicator } from "@/domains/route-search/internal/components";
 import { useTimeDisplay } from "@/hooks";
 
 import styles from "./SearchResultPage.module.css";
@@ -58,6 +59,8 @@ export function SearchResultPage({
     arrivalDatetime: station.arrivalDatetime,
     departureDatetime: station.departureDatetime,
     cost: station.cost,
+    isWalkTransfer: station.isWalkTransfer,
+    walkTransferPlatformCode: station.platformCode,
   }));
 
   const handleBottomNavClick = (tab: "bus-stop" | "route" | "recent") => {
@@ -158,6 +161,12 @@ export function SearchResultPage({
                       )}
                     </div>
                   </>
+                )}
+                renderWalkTransfer={(stop, nextStop) => (
+                  <WalkTransferIndicator
+                    stationName={nextStop.name}
+                    platformCode={stop.walkTransferPlatformCode}
+                  />
                 )}
               />
             </div>

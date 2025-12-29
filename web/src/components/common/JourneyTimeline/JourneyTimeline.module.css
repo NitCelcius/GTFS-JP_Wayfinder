@@ -95,3 +95,12 @@
   background: #9ca3af;
   border-radius: 9999px;
 }
+
+/* Walk transfer indicator container between stops */
+.walkTransferContainer {
+  position: relative;
+  width: 100%;
+  padding: var(--size-spacing-sm) 0;
+  padding-left: 2rem; /* Align with stop info text */
+  z-index: 15;
+}

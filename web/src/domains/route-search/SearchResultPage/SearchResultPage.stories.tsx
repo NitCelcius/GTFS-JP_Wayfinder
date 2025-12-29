@@ -9,13 +9,27 @@ const meta = {
   component: SearchResultPage,
   parameters: {
     layout: "fullscreen",
+    docs: {
+      description: {
+        component:
+          "バス経路検索結果を表示するページ。乗り換え情報、料金、時刻表を含む詳細な経路情報を表示します。",
+      },
+    },
   },
   args: {
     onRouteSelect: (routeId: string) => console.log("Route selected:", routeId),
     onBack: () => console.log("Back clicked"),
     onNavigateToBusStop: () => console.log("Navigate to bus stop"),
     onNavigateToRecent: () => console.log("Navigate to recent"),
+    showCosts: true,
   },
+  decorators: [
+    (Story) => (
+      <div style={{ maxWidth: "393px", margin: "0 auto" }}>
+        <Story />
+      </div>
+    ),
+  ],
 } satisfies Meta<typeof SearchResultPage>;
 
 export default meta;
