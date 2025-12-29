@@ -9,6 +9,9 @@ const meta: Meta<typeof BusStopSearchModal> = {
   component: BusStopSearchModal,
   parameters: {
     layout: "fullscreen",
+    chromatic: {
+      pauseAnimationAtEnd: true,
+    },
   },
   tags: ["autodocs"],
   argTypes: {
