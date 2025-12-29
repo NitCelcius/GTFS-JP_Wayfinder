@@ -29,24 +29,3 @@ export const WithMessage: Story = {
 export const WithoutMessage: Story = {
   args: {},
 };
-
-/**
- * Error boundary with reset functionality
- */
-export const WithReset: Story = {
-  args: {
-    message: "検索結果の読み込みに失敗しました",
-    onReset: () => console.log("Reset clicked"),
-  },
-};
-
-/**
- * Long error message example
- */
-export const LongMessage: Story = {
-  args: {
-    message:
-      "ネットワーク接続エラーが発生しました。インターネット接続を確認してから、もう一度お試しください。",
-    onReset: () => console.log("Reset clicked"),
-  },
-};
