@@ -10,6 +10,7 @@
     "build": "turbo run build",
     "test": "turbo run test",
     "lint": "turbo run lint",
+    "lint:fix": "turbo run lint:fix",
     "prepush": "turbo run lint",
     "openapi-generate": "node ./scripts/generate-openapi.js",
     "storybook": "pnpm --filter web storybook",
