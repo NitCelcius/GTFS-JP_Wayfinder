@@ -43,8 +43,7 @@ const meta = {
   },
   args: {
     routeData: mockRouteData,
-    onRouteSelect: (tripId: string) =>
-      console.log("Route selected:", tripId),
+    onRouteSelect: (tripId: string) => console.log("Route selected:", tripId),
     onBack: () => console.log("Back clicked"),
     onNavigateToBusStop: () => console.log("Navigate to bus stop"),
     onNavigateToRecent: () => console.log("Navigate to recent"),

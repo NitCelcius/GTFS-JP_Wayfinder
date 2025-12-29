@@ -1,5 +1,3 @@
-import type { TravelOnceResponse } from "@/api/types.gen";
-
 export interface RouteOption {
   id: string;
   departureTime: string;

@@ -16,7 +16,10 @@ export default function HomePage() {
     destinationStopName: string;
     beginTime: string;
   }) => {
-    console.log("🔍 Navigating to route-overview with search params:", searchParams);
+    console.log(
+      "🔍 Navigating to route-overview with search params:",
+      searchParams
+    );
 
     // Save to history before navigating
     await addSearch(

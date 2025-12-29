@@ -1,8 +1,8 @@
 import { BottomNavigation } from "@/components/common/BottomNavigation/BottomNavigation";
 import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
 
-import { RouteOptionCard, SearchSummary } from "./internal";
 import styles from "./RouteOverviewPage.module.css";
+import { RouteOptionCard, SearchSummary } from "./internal";
 import type { RouteOverviewPageProps } from "./types";
 
 export function RouteOverviewPage({
@@ -28,11 +28,7 @@ export function RouteOverviewPage({
 
   return (
     <div className={styles.page}>
-      <TopNavigation
-        title="経路を選択"
-        showBackButton={true}
-        onBack={onBack}
-      />
+      <TopNavigation title="経路を選択" showBackButton={true} onBack={onBack} />
 
       <div className={styles.scrollArea}>
         <div className={styles.content}>

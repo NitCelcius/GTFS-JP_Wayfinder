@@ -1,7 +1,8 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { ErrorFullScreen } from "@/components/common";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner/LoadingSpinner";
@@ -76,9 +77,7 @@ export function RouteOverviewPageContainer({
       } catch (error) {
         console.error("経路検索エラー:", error);
         setError(
-          error instanceof Error
-            ? error.message
-            : "経路の検索に失敗しました。"
+          error instanceof Error ? error.message : "経路の検索に失敗しました。"
         );
       } finally {
         setIsLoading(false);
