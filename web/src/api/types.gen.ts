@@ -214,6 +214,11 @@ export type TravelOnceResponse = {
      * Fare
      */
     fare: number;
+    /**
+     * Is Walk Transfer
+     * True if this is a walk transfer between platforms at the same stop
+     */
+    is_walk_transfer?: boolean;
 };
 
 /**
