@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { ErrorBoundary } from "@/components/common";
+import { ErrorFullScreen } from "@/components/common";
 
 import { useBusStopData } from "../hooks";
 import type { BusWithJourney } from "../types";
@@ -48,9 +48,7 @@ export function BusTripDetailContainer({
   // Handle error state
   if (error || !busStop) {
     return (
-      <ErrorBoundary
-        message={error || "バス停情報を読み込めませんでした"}
-      />
+      <ErrorFullScreen message={error || "バス停情報を読み込めませんでした"} />
     );
   }
 

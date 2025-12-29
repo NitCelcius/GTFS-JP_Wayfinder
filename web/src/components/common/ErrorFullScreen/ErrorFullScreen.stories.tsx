@@ -1,21 +1,21 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { ErrorBoundary } from "./ErrorBoundary";
+import { ErrorFullScreen } from "./ErrorFullScreen";
 
 const meta = {
-  title: "Components/Common/ErrorBoundary",
-  component: ErrorBoundary,
+  title: "Components/Common/ErrorFullScreen",
+  component: ErrorFullScreen,
   parameters: {
     layout: "fullscreen",
   },
   tags: ["autodocs"],
-} satisfies Meta<typeof ErrorBoundary>;
+} satisfies Meta<typeof ErrorFullScreen>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 /**
- * Basic error boundary with a custom message
+ * Basic error message with a custom message
  */
 export const WithMessage: Story = {
   args: {
@@ -24,7 +24,7 @@ export const WithMessage: Story = {
 };
 
 /**
- * Error boundary without a specific message (shows only standard error text)
+ * Error message without a specific message (shows only standard error text)
  */
 export const WithoutMessage: Story = {
   args: {},

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-import { ErrorBoundary } from "@/components/common";
+import { ErrorFullScreen } from "@/components/common";
 import { ActionButtonBar } from "@/components/common/ActionButtonBar";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner/LoadingSpinner";
 import {
@@ -126,7 +126,7 @@ export function BusStopInfoV2({
   ];
 
   if (error && !isLoading) {
-    return <ErrorBoundary message={error} />;
+    return <ErrorFullScreen message={error} />;
   }
 
   return (

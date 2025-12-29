@@ -1,8 +1,8 @@
 import Link from "next/link";
 
-import styles from "./ErrorBoundary.module.css";
+import styles from "./ErrorFullScreen.module.css";
 
-interface ErrorBoundaryProps {
+interface ErrorFullScreen {
   message?: string;
 }
 
@@ -11,7 +11,7 @@ interface ErrorBoundaryProps {
  * Shows a standard "エラーが発生しました" message with optional details
  * and a link to return to the home page.
  */
-export function ErrorBoundary({ message }: ErrorBoundaryProps) {
+export function ErrorFullScreen({ message }: ErrorFullScreen) {
   return (
     <div className={styles.root}>
       <div className={styles.container}>

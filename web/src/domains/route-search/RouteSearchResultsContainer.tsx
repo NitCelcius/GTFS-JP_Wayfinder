@@ -1,6 +1,6 @@
 import { useSearchParams } from "next/navigation";
 
-import { ErrorBoundary } from "@/components/common";
+import { ErrorFullScreen } from "@/components/common";
 
 import { SearchResultPage } from "./SearchResultPage";
 import {
@@ -40,7 +40,7 @@ export function RouteSearchResultsContainer({
 
   // Error state
   if (error) {
-    return <ErrorBoundary message={error} />;
+    return <ErrorFullScreen message={error} />;
   }
 
   // No trip details state

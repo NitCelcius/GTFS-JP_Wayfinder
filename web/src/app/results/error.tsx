@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 
-import { ErrorBoundary } from "@/components/common";
+import { ErrorFullScreen } from "@/components/common";
 
 export default function Error({
   error,
@@ -13,5 +13,5 @@ export default function Error({
     console.error(error);
   }, [error]);
 
-  return <ErrorBoundary message="検索結果の読み込みに失敗しました" />;
+  return <ErrorFullScreen message="検索結果の読み込みに失敗しました" />;
 }

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 
-import { ErrorBoundary } from "@/components/common";
+import { ErrorFullScreen } from "@/components/common";
 import { BusTripDetail } from "@/domains/bus-stop";
 import type { Stop } from "@/domains/bus-stop/BusTripDetail/internal/StopItem";
 import { apiClient } from "@/lib/api";
@@ -185,7 +185,9 @@ export default function TripDetailPage() {
   // Error state
   if (error || !tripInfo) {
     return (
-      <ErrorBoundary message={error || "トリップ情報を読み込めませんでした"} />
+      <ErrorFullScreen
+        message={error || "トリップ情報を読み込めませんでした"}
+      />
     );
   }
 
