@@ -70,6 +70,8 @@
   background: white;
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius-md);
+  width: 100%;
+  max-width: 100%;
 }
 
 .qrCodeWrapper {
@@ -78,6 +80,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
+  max-width: 100%;
+}
+
+.qrCode {
+  width: 100%;
+  height: auto;
+  max-width: 256px;
+  display: block;
 }
 
 .urlText {
