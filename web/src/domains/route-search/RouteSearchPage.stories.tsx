@@ -1,12 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
-import {
-  mockAlternativeRouteSearchResult,
-  mockEmptyRouteSearchResult,
-  mockRouteSearchResult,
-  mockSingleRouteSearchResult,
-} from "@/mocks/routeSearchMocks";
-
 import { RouteSearchPage } from "./RouteSearchPage";
 
 const meta = {
@@ -47,10 +40,3 @@ export const WithSearchCallback: Story = {
   },
 };
 
-// Export mock data for other stories to use
-export {
-  mockRouteSearchResult,
-  mockEmptyRouteSearchResult,
-  mockSingleRouteSearchResult,
-  mockAlternativeRouteSearchResult,
-};
