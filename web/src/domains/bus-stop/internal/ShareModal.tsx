@@ -85,12 +85,14 @@ export function ShareModal({
 
         <div className={styles.modalBody}>
           <div className={styles.qrCodeContainer}>
-            <QRCodeSVG
-              value={fullShareUrl}
-              size={400}
-              level="M"
-              includeMargin={true}
-            />
+            <div className={styles.qrCodeWrapper}>
+              <QRCodeSVG
+                value={fullShareUrl}
+                size={400}
+                level="M"
+                includeMargin={false}
+              />
+            </div>
           </div>
 
           <p className={styles.urlText}>{fullShareUrl}</p>
