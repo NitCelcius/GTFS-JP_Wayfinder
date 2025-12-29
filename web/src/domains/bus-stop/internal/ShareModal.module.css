@@ -85,7 +85,7 @@
 .qrCode {
   width: 100%;
   height: auto;
-  max-width: 256px;
+  max-width: 400px;
   display: block;
 }
 
