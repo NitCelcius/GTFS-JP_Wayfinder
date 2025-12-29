@@ -1,9 +1,10 @@
 import { useSearchParams } from "next/navigation";
 
+import { ErrorBoundary } from "@/components/common";
+
 import { SearchResultPage } from "./SearchResultPage";
 import {
   EmptyState,
-  ErrorState,
   LoadingState,
   NoRoutesFoundState,
 } from "./internal/components";
@@ -39,7 +40,7 @@ export function RouteSearchResultsContainer({
 
   // Error state
   if (error) {
-    return <ErrorState error={error} onBack={onBack} />;
+    return <ErrorBoundary message={error} />;
   }
 
   // No trip details state

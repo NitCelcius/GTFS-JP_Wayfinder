@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import { ActionButtonBar } from "@/components/common/ActionButtonBar";
+import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner/LoadingSpinner";
 import {
   MapIcon,
@@ -125,25 +126,7 @@ export function BusStopInfoV2({
   ];
 
   if (error && !isLoading) {
-    return (
-      <div className={styles.page}>
-        <div className={styles.actionBar}>
-          <BusStopHeader
-            busStopName={busStopName}
-            platformCode={platformCode}
-            distance={distance}
-            onBack={onBack}
-          />
-        </div>
-
-        <div className={styles.scrollableContent}>
-          <div className={styles.errorContainer}>
-            <p className={styles.errorMessage}>エラーが発生しました</p>
-            <p className={styles.errorDetails}>{error}</p>
-          </div>
-        </div>
-      </div>
-    );
+    return <ErrorBoundary message={error} />;
   }
 
   return (
