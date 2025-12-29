@@ -20,23 +20,3 @@ type Story = StoryObj<typeof meta>;
 
 // Default story - shows the route search form
 export const Default: Story = {};
-
-// Story with search callback that logs results
-export const WithSearchCallback: Story = {
-  args: {
-    onSearch: (result) => {
-      console.log("Route search completed:", result);
-      alert(
-        `${result.originStopName} から ${result.destinationStopName} への経路が検索されました`
-      );
-    },
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: `Search form with callback handler. When user performs a search, the onSearch callback receives the route result data.`,
-      },
-    },
-  },
-};
-

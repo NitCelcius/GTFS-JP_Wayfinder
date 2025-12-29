@@ -24,10 +24,3 @@ export const Default: Story = {
     distance: "120m",
   },
 };
-
-export const LongName: Story = {
-  args: {
-    name: "あきた芸術劇場ミルハス・にぎわい交流館 AU 前",
-    distance: "300m",
-  },
-};

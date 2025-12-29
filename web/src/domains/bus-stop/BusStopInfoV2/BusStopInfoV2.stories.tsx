@@ -129,24 +129,3 @@ export const NoPastBus: Story = {
     pastBus: null,
   },
 };
-
-export const SingleUpcomingBus: Story = {
-  args: {
-    ...Default.args,
-    upcomingBuses: [mockUpcomingBuses[0]],
-  },
-};
-
-export const ManyBuses: Story = {
-  args: {
-    ...Default.args,
-    upcomingBuses: [
-      ...mockUpcomingBuses,
-      ...mockUpcomingBuses.map((bus, idx) => ({
-        ...bus,
-        routeNumber: `${parseInt(bus.routeNumber) + 100 + idx}`,
-        minutesUntilDeparture: bus.minutesUntilDeparture + (idx + 1) * 15,
-      })),
-    ],
-  },
-};

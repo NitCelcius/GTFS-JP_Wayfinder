@@ -47,17 +47,6 @@ export const ArrivingSoon: Story = {
   },
 };
 
-export const LongWait: Story = {
-  args: {
-    routeNumber: "004",
-    routeName: "南北縦断線",
-    destinationName: "大学病院",
-    arrivalMinutes: 45,
-    arrivalTime: "18:30",
-    stopsAway: 8,
-  },
-};
-
 export const PassedStop: Story = {
   args: {
     routeNumber: "001",
