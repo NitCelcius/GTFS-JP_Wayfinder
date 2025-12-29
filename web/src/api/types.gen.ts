@@ -180,10 +180,23 @@ export type TimedTravelResponse = {
 
 /**
  * TravelOnceResponse
+ * A single travel segment in a route.
+ *
+ * This model represents either a bus ride or a walk transfer between platforms.
+ * The `is_walk_transfer` field indicates the type of segment.
+ *
+ * For walk transfers:
+ * - `trip_id` will be the reserved value "WALK_TRANSFER"
+ * - `fare` will be 0
+ * - `departure_time` and `arrival_time` will be the same
+ *
+ * TODO: Refactor to discriminated union with `type` field for better type safety.
+ * See GitHub issue: https://github.com/NitCelcius/GTFS-JP_Wayfinder/issues/143
  */
 export type TravelOnceResponse = {
     /**
      * Trip Id
+     * GTFS trip ID, or 'WALK_TRANSFER' for platform transfers
      */
     trip_id: string;
     /**
