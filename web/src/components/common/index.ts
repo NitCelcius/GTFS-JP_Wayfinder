@@ -3,6 +3,7 @@ export * from "./Button/Button";
 export * from "./BusStopCard/BusStopCard";
 export * from "./BusStopSearchModal";
 export * from "./Card/Card";
+export * from "./ErrorBoundary/ErrorBoundary";
 export * from "./Icon/Icon";
 export * from "./JourneyTimeline/JourneyTimeline";
 export * from "./LoadingSpinner/LoadingSpinner";
