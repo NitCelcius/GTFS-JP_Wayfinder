@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import { ActionButtonBar } from "@/components/common/ActionButtonBar";
-import { ErrorBoundary } from "@/components/common/ErrorBoundary";
+import { ErrorBoundary } from "@/components/common";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner/LoadingSpinner";
 import {
   MapIcon,
