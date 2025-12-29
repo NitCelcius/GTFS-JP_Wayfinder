@@ -71,6 +71,7 @@ jobs:
         uses: chromaui/action@latest
         with:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          storybookBaseDir: web
           onlyChanged: true
           untraced: "package.json,pnpm-lock.yaml,**/package.json,**/pnpm-lock.yaml" # Do not retake for package updates
           skip: "dependabot/**"
