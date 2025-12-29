@@ -5,13 +5,15 @@ import {
   TopNavigation,
 } from "@/components/common";
 
-import { useNearbyStops } from "../hooks/useNearbyStops";
 import type { BusStop } from "../types";
 import styles from "./BusStopSearchPage.module.css";
 import { BusStopList, BusStopListProps } from "./internal/BusStopList";
 import { SearchInput } from "./internal/SearchInput";
 
 interface BusStopSearchPageProps {
+  nearbyStops: BusStop[];
+  isLoadingNearby: boolean;
+  hasLocationPermission: boolean;
   onNavigateToRoute?: () => void;
   onNavigateToRecent?: () => void;
   onNavigateToBusStopInfo?: (
@@ -29,15 +31,13 @@ const fallbackNearestBusStop: BusStop = {
 };
 
 export function BusStopSearchPage({
+  nearbyStops,
+  isLoadingNearby,
+  hasLocationPermission,
   onNavigateToRoute,
   onNavigateToRecent,
   onNavigateToBusStopInfo,
 }: BusStopSearchPageProps) {
-  const {
-    nearbyStops,
-    isLoading: isLoadingNearby,
-    hasLocationPermission,
-  } = useNearbyStops();
   const handleBottomNavClick = (tab: "bus-stop" | "route" | "recent") => {
     switch (tab) {
       case "route":

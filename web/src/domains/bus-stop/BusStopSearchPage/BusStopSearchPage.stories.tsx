@@ -1,80 +1,65 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { BusStopSearchPage } from "@/domains";
+import type { BusStop } from "../types";
+import { BusStopSearchPage } from "./BusStopSearchPage";
 
-const mockBusStopsList = [
+const mockBusStopsList: BusStop[] = [
   {
     id: "1021_01",
     name: "秋田駅東口",
-    distance: "徒歩3分",
-    selectUrl: "/bus-stop/1021_01",
+    distance: "約50m (徒歩1分)",
   },
   {
     id: "shiyakusho-mae",
     name: "市役所前",
-    distance: "徒歩5分",
-    selectUrl: "/bus-stop/shiyakusho-mae",
+    distance: "約350m (徒歩5分)",
   },
   {
     id: "aobadai",
     name: "青葉台",
-    distance: "徒歩8分",
-    selectUrl: "/bus-stop/aobadai",
+    distance: "約600m (徒歩8分)",
   },
   {
     id: "sakura-dori",
     name: "さくら通り",
-    distance: "徒歩7分",
-    selectUrl: "/bus-stop/sakura-dori",
+    distance: "約500m (徒歩7分)",
   },
   {
     id: "midori-ga-oka",
     name: "緑が丘",
-    distance: "徒歩6分",
-    selectUrl: "/bus-stop/midori-ga-oka",
+    distance: "約450m (徒歩6分)",
   },
   {
     id: "higashi-eki",
     name: "東駅",
-    distance: "徒歩2分",
-    selectUrl: "/bus-stop/higashi-eki",
+    distance: "約150m (徒歩2分)",
   },
   {
     id: "nishi-guchi",
     name: "西口",
-    distance: "徒歩1分",
-    selectUrl: "/bus-stop/nishi-guchi",
+    distance: "約100m (徒歩1分)",
   },
   {
     id: "minami-machi",
     name: "南町",
-    distance: "徒歩12分",
-    selectUrl: "/bus-stop/minami-machi",
+    distance: "約900m (徒歩12分)",
   },
   {
     id: "kita-ko-mae",
     name: "北高前",
-    distance: "徒歩9分",
-    selectUrl: "/bus-stop/kita-ko-mae",
+    distance: "約650m (徒歩9分)",
   },
   {
     id: "daigaku-byoin",
     name: "大学病院",
-    distance: "徒歩15分",
-    selectUrl: "/bus-stop/daigaku-byoin",
+    distance: "約1.1km (徒歩15分)",
   },
   {
     id: "miruhas-au",
     name: "あきた芸術劇場ミルハス・にぎわい交流館 AU 前",
-    distance: "徒歩20分",
-    selectUrl: "/bus-stop/miruhas-au",
+    distance: "約1.5km (徒歩20分)",
   },
 ];
-
-// Mock data constants that were moved from the main component
-// These are kept here for documentation and Storybook stories
-const MOCK_NEAREST_BUS_STOP = mockBusStopsList[5]; // 東駅 as nearest
-const MOCK_SEARCH_RESULTS = mockBusStopsList.slice(0, 3);
 
 const meta = {
   title: "Domains/BusStop/BusStopSearchPage",
@@ -83,66 +68,111 @@ const meta = {
     layout: "fullscreen",
   },
   tags: ["autodocs"],
+  args: {
+    onNavigateToRoute: () => console.log("Navigate to route"),
+    onNavigateToRecent: () => console.log("Navigate to recent"),
+    onNavigateToBusStopInfo: (busStopId: string, name?: string) =>
+      console.log("Navigate to bus stop info:", busStopId, name),
+  },
 } satisfies Meta<typeof BusStopSearchPage>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+/**
+ * Default state with nearby stops loaded (location permission granted)
+ */
 export const Default: Story = {
   args: {
-    onNavigateToRoute: () => console.log("Navigate to route"),
-    onNavigateToRecent: () => console.log("Navigate to recent"),
-    onNavigateToBusStopInfo: (busStopId: string) =>
-      console.log("Navigate to bus stop info:", busStopId),
+    nearbyStops: mockBusStopsList.slice(0, 5),
+    isLoadingNearby: false,
+    hasLocationPermission: true,
   },
 };
 
-export const WithLocationDenied: Story = {
+/**
+ * Loading state while fetching user location and nearby stops
+ */
+export const Loading: Story = {
   args: {
-    ...Default.args,
+    nearbyStops: [],
+    isLoadingNearby: true,
+    hasLocationPermission: false,
+  },
+};
+
+/**
+ * Location permission denied - shows fallback bus stop
+ */
+export const LocationDenied: Story = {
+  args: {
+    nearbyStops: [],
+    isLoadingNearby: false,
+    hasLocationPermission: false,
   },
   parameters: {
     docs: {
       description: {
         story: `
-This story simulates the behavior when geolocation permission is denied.
-In this case, only the fallback bus stop "秋田駅東口" will be shown as the nearest stop.
+When geolocation permission is denied, the page displays a fallback bus stop "秋田駅東口" 
+with a "位置情報無効" (location disabled) distance indicator.
         `,
       },
     },
   },
 };
 
-export const WithMockData: Story = {
+/**
+ * With many nearby stops (scrollable list)
+ */
+export const WithManyStops: Story = {
   args: {
-    ...Default.args,
+    nearbyStops: mockBusStopsList,
+    isLoadingNearby: false,
+    hasLocationPermission: true,
   },
   parameters: {
     docs: {
       description: {
         story: `
-This story shows the BusStopSearchPage behavior. The component now integrates with:
-
-**Real API Integration:**
-- Uses the \`/stops/nearby\` API endpoint to fetch actual nearby bus stops
-- Requests geolocation permission from the browser
-- Falls back gracefully when location access is denied
-
-**Mock Data (moved to Storybook):**
-The following mock data was previously hardcoded in the component but has been moved here:
-
-- **Previous Nearest Bus Stop**: ${MOCK_NEAREST_BUS_STOP.name} (${MOCK_NEAREST_BUS_STOP.id})
-- **Previous Search Results**: ${MOCK_SEARCH_RESULTS.map((stop) => stop.name).join(", ")}
-
-**Current Behavior:**
-- Shows "秋田駅東口" as a fallback when location permission is denied
-- Displays real nearby stops from the API when location permission is granted
-- Maintains the search results section with mock data for now
+Shows the full list of ${mockBusStopsList.length} nearby bus stops, demonstrating the scrollable behavior.
         `,
       },
     },
   },
 };
 
-// Export mock data for use in tests or other components
-export { MOCK_NEAREST_BUS_STOP, MOCK_SEARCH_RESULTS };
+/**
+ * Single nearby stop found
+ */
+export const SingleStop: Story = {
+  args: {
+    nearbyStops: [mockBusStopsList[5]], // 東駅
+    isLoadingNearby: false,
+    hasLocationPermission: true,
+  },
+};
+
+/**
+ * Empty results - location enabled but no stops found
+ */
+export const NoStopsFound: Story = {
+  args: {
+    nearbyStops: [],
+    isLoadingNearby: false,
+    hasLocationPermission: true,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: `
+Edge case: User has granted location permission, but no bus stops were found nearby.
+Shows fallback behavior similar to location denied state.
+        `,
+      },
+    },
+  },
+};
+
+// Export mock data for use in tests or other stories
+export { mockBusStopsList };

@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 
-import { BusStopSearchPage } from "@/domains/bus-stop";
+import { BusStopSearchPageContainer } from "@/domains/bus-stop";
 import { useBusStopSearchHistory } from "@/hooks/useSearchHistory";
 
 export default function BusStopSearchPageRoute() {
@@ -24,7 +24,7 @@ export default function BusStopSearchPageRoute() {
   };
 
   return (
-    <BusStopSearchPage
+    <BusStopSearchPageContainer
       onNavigateToRoute={() => router.push("/")}
       onNavigateToRecent={() => router.push("/recent")}
       onNavigateToBusStopInfo={navigateToInfo}
