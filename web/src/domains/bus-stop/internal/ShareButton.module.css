@@ -115,6 +115,14 @@
   border-radius: var(--border-radius-md);
 }
 
+.qrCodeWrapper {
+  padding: 5%;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .urlText {
   font-size: 0.875rem;
   color: #6b7280;

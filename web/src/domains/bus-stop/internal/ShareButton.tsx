@@ -104,12 +104,14 @@ export function ShareButton({ busStopId, busStopName }: ShareButtonProps) {
 
             <div className={styles.modalBody}>
               <div className={styles.qrCodeContainer}>
-                <QRCodeSVG
-                  value={shareUrl}
-                  size={400}
-                  level="M"
-                  includeMargin={true}
-                />
+                <div className={styles.qrCodeWrapper}>
+                  <QRCodeSVG
+                    value={shareUrl}
+                    size={400}
+                    level="M"
+                    includeMargin={false}
+                  />
+                </div>
               </div>
 
               <p className={styles.urlText}>{shareUrl}</p>
