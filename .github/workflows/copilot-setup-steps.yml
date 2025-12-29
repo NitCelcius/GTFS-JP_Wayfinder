@@ -1,0 +1,66 @@
+name: Copilot Setup Steps
+
+# This workflow defines the minimal setup steps for the development environment.
+# It's primarily documentation for GitHub Copilot to understand how to set up
+# this project. For detailed development commands and workflows, see copilot-instructions.md.
+
+on:
+  workflow_dispatch: # Manual trigger only
+
+jobs:
+  setup-environment:
+    name: Setup Development Environment
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Install mise
+      - name: Install mise
+        uses: jdx/mise-action@v3.5.1
+        with:
+          version: 2025.12.12
+          cache: true
+          install: true
+
+      # Step 3: Setup pnpm
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4.2.0
+
+      # Step 4: Setup uv with built-in caching
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v7.1.6
+        with:
+          enable-cache: true
+
+      # Step 5: Install development tools from mise.toml
+      - name: Install tools with mise
+        run: mise install
+
+      # Step 6: Get pnpm cache directory
+      - name: Get pnpm cache directory
+        id: pnpm-cache-dir
+        run: echo "dir=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      # Step 7: Cache pnpm dependencies
+      - name: Cache pnpm dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-cache-dir.outputs.dir }}
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+
+      # Step 8: Cache Turbo
+      - name: Cache Turbo
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
+
+      # Step 9: Install all workspace dependencies
+      - name: Install project dependencies
+        run: pnpm install
