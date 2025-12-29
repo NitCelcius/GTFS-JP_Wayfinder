@@ -51,6 +51,14 @@ class AkitaBusWayFinder:
         self.default_date = "2021-01-01"
         self.agency_timezone = "UTC"
 
+        # Performance optimization: Lookup indices built during initialize()
+        # These caches trade memory for significant query speedup in route search
+        self._trip_to_service_id: dict[str, str] = {}  # trip_id -> service_id
+        self._stop_to_trips: dict[str, list[str]] = {}  # stop_id -> [trip_ids]
+        self._trip_stop_times: dict[
+            tuple[str, str], tuple[np.datetime64, np.datetime64, int]
+        ] = {}  # (trip_id, stop_id) -> (arrival_time, departure_time, stop_sequence)
+
         # Distance calculator - can be switched between Haversine and Euclidean
         self.distance_calculator: DistanceCalculator = (
             HaversineDistanceCalculator()
@@ -139,6 +147,9 @@ class AkitaBusWayFinder:
         # 日付から service id に変換
         self.date_to_service_id = None
 
+        logger.info("Building lookup indices for performance...")
+        self._build_lookup_indices()
+
         logger.info("Generating Calendar...")
         self.generate_calendar(base_dir)
 
@@ -147,11 +158,61 @@ class AkitaBusWayFinder:
 
         logger.info("Preparation completed!")
 
+    def _build_lookup_indices(self):
+        """Build lookup indices for faster query performance.
+
+        This method creates in-memory dictionaries that trade memory for
+        significant speed improvements in route search operations.
+        """
+        # Build trip_id -> service_id lookup (used by get_trip_service_id)
+        self._trip_to_service_id = dict(
+            zip(
+                self.df_trips["trip_id"],
+                self.df_trips["service_id"],
+                strict=True,
+            )
+        )
+        logger.info(
+            "Built trip->service_id index with %d entries",
+            len(self._trip_to_service_id),
+        )
+
+        # Build stop_id -> [trip_ids] lookup (used by get_trips_from_stops)
+        self._stop_to_trips = {}
+        for stop_id, trip_id in zip(
+            self.df_stop_times["stop_id"],
+            self.df_stop_times["trip_id"],
+            strict=True,
+        ):
+            if stop_id not in self._stop_to_trips:
+                self._stop_to_trips[stop_id] = []
+            if trip_id not in self._stop_to_trips[stop_id]:
+                self._stop_to_trips[stop_id].append(trip_id)
+        logger.info(
+            "Built stop->trips index with %d stops",
+            len(self._stop_to_trips),
+        )
+
+        # Build (trip_id, stop_id) -> (arrival_time, departure_time, stop_sequence) lookup
+        # Used by get_trip_times and get_trips_from_stops for faster sequence lookups
+        self._trip_stop_times = {}
+        for _, row in self.df_stop_times.iterrows():
+            key = (row["trip_id"], row["stop_id"])
+            self._trip_stop_times[key] = (
+                row["arrival_time"],
+                row["departure_time"],
+                row["stop_sequence"],
+            )
+        logger.info(
+            "Built (trip,stop)->times index with %d entries",
+            len(self._trip_stop_times),
+        )
+
     def generate_graph(self):
-        def generate_edges_from_trips(trip_ids, get_trip_df):
+        def generate_edges_from_grouped_trips(grouped_df):
+            """Generate edges from pre-grouped DataFrame (more efficient than per-trip lookups)."""
             edges = []
-            for trip in trip_ids:
-                df_trip = get_trip_df(trip)
+            for _trip_id, df_trip in grouped_df:
                 df_trip = df_trip.sort_values(by=["stop_sequence"])
                 stop_ids = df_trip["stop_id"].values
                 stop_ids_count = len(stop_ids)
@@ -169,27 +230,41 @@ class AkitaBusWayFinder:
         logger.info("Generating merged graph...")
         self.graph = nx.DiGraph()
 
-        all_trip_ids = list(self.df_stop_times["trip_id"].value_counts().index)
-        all_edges = generate_edges_from_trips(
-            all_trip_ids,
-            lambda trip: self.df_stop_times[self.df_stop_times["trip_id"] == trip],
-        )
+        # Use groupby for single-pass iteration instead of per-trip DataFrame filters
+        all_trips_grouped = self.df_stop_times.groupby("trip_id")
+        all_edges = generate_edges_from_grouped_trips(all_trips_grouped)
         self.graph.add_edges_from(all_edges)
 
         logger.info("Generating graphs for each service_id...")
         self.graph_via_service_id = dict()
 
+        # Pre-compute service_id -> trip_ids mapping for efficient filtering
+        service_to_trips = {}
         for service_id in self.df_trips["service_id"].value_counts().index:
+            service_to_trips[service_id] = set(
+                self.df_trips[self.df_trips["service_id"] == service_id]["trip_id"]
+            )
+
+        for service_id, trip_ids_set in service_to_trips.items():
             logger.info("Generating graph for service_id: %s", service_id)
             self.graph_via_service_id[service_id] = nx.DiGraph()
 
-            service_trip_ids = list(
-                self.df_trips[self.df_trips["service_id"] == service_id]["trip_id"],
-            )
-            service_edges = generate_edges_from_trips(
-                service_trip_ids,
-                lambda trip: self.df_stop_times[self.df_stop_times["trip_id"] == trip],
-            )
+            # Filter grouped trips by service_id
+            service_edges = []
+            for trip_id, df_trip in all_trips_grouped:
+                if trip_id not in trip_ids_set:
+                    continue
+                df_trip = df_trip.sort_values(by=["stop_sequence"])
+                stop_ids = df_trip["stop_id"].values
+                stop_ids_count = len(stop_ids)
+
+                service_edges.extend(
+                    [
+                        (stop_ids[i], stop_ids[j])
+                        for i in range(stop_ids_count)
+                        for j in range(i + 1, stop_ids_count)
+                    ],
+                )
             self.graph_via_service_id[service_id].add_edges_from(service_edges)
 
     def generate_calendar(self, base_dir):
@@ -311,33 +386,42 @@ class AkitaBusWayFinder:
     # 修正: from -> to の順番でなければ受け付けない
     def get_trips_from_stops(self, from_id, to_id, service_id=None):
         res = []
-        if service_id is None:
-            candidates = self.df_stop_times[self.df_stop_times["stop_id"] == from_id][
-                "trip_id"
-            ].values
+
+        # Use pre-built stop->trips index for O(1) lookup instead of DataFrame filter
+        if from_id in self._stop_to_trips:
+            candidates = self._stop_to_trips[from_id]
         else:
-            candidates = self.df_stop_times[(self.df_stop_times["stop_id"] == from_id)][
-                "trip_id"
-            ].values
+            # Fallback to DataFrame if cache miss
+            candidates = list(
+                self.df_stop_times[self.df_stop_times["stop_id"] == from_id][
+                    "trip_id"
+                ].values
+            )
+
+        # Filter by service_id using cached lookup
+        if service_id is not None:
             candidates = [
                 x for x in candidates if self.get_trip_service_id(x) == service_id
             ]
+
         for trip_id in candidates:
-            from_seq = self.df_stop_times[
-                (self.df_stop_times["trip_id"] == trip_id)
-                & (self.df_stop_times["stop_id"] == from_id)
-            ]["stop_sequence"].values[0]
-            if (
-                self.df_stop_times[
-                    (self.df_stop_times["trip_id"] == trip_id)
-                    & (self.df_stop_times["stop_id"] == to_id)
-                    & (self.df_stop_times["stop_sequence"] > from_seq)
-                ].shape[0]
-                > 0
-            ):
+            # Use pre-built (trip_id, stop_id) -> times index for O(1) lookup
+            from_key = (trip_id, from_id)
+            to_key = (trip_id, to_id)
+
+            # Check if trip stops at both from and to stops
+            if from_key not in self._trip_stop_times:
+                continue
+            if to_key not in self._trip_stop_times:
+                continue
+
+            from_seq = self._trip_stop_times[from_key][2]  # stop_sequence is index 2
+            to_seq = self._trip_stop_times[to_key][2]
+
+            # Verify to_stop comes after from_stop in sequence
+            if to_seq > from_seq:
                 res.append(trip_id)
-        #            if self.df_stop_times[self.df_stop_times["trip_id"] == trip_id]["stop_id"].isin([to_id]).any():
-        #                res.append(trip_id)
+
         return res
 
     # ある路線を通じた出発、到着時間を取得
@@ -345,33 +429,33 @@ class AkitaBusWayFinder:
     #   戻り値: tuple: (departure, arrival)
     #   07.25 修正: 逆の順番は受け付けない
     def get_trip_times(self, from_id, to_id, trip_id):
-        if self.df_stop_times[self.df_stop_times["trip_id"] == trip_id].shape[0] == 0:
+        # Use pre-built index for O(1) lookup instead of DataFrame filters
+        from_key = (trip_id, from_id)
+        to_key = (trip_id, to_id)
+
+        # Check if trip exists (validate trip_id)
+        if (
+            trip_id not in self._trip_to_service_id
+            and self.df_stop_times[self.df_stop_times["trip_id"] == trip_id].shape[0]
+            == 0
+        ):
             raise ValueError("trip_id not found")
 
-        dep_time_df = self.df_stop_times[
-            (self.df_stop_times["trip_id"] == trip_id)
-            & (self.df_stop_times["stop_id"] == from_id)
-        ][["departure_time", "stop_sequence"]]
-        if dep_time_df.shape[0] == 0:
+        # Get departure time and sequence from cache
+        if from_key not in self._trip_stop_times:
             raise ValueError(
                 "The trip " + trip_id + " does not involve a stop: " + from_id,
             )
-        dep_time = dep_time_df["departure_time"].values[0]
-        dep_stop_seq = dep_time_df["stop_sequence"].values[0]
+        _from_arr_time, dep_time, dep_stop_seq = self._trip_stop_times[from_key]
 
-        arr_time = self.df_stop_times[
-            (self.df_stop_times["trip_id"] == trip_id)
-            & (self.df_stop_times["stop_id"] == to_id)
-            & (self.df_stop_times["stop_sequence"] > dep_stop_seq)
-        ]["arrival_time"].values
-        if arr_time.shape[0] == 0:
-            # 変更のためではあるが、sequence を無視したかを判断する
-            arr_seqless_df = self.df_stop_times[
-                (self.df_stop_times["trip_id"] == trip_id)
-                & (self.df_stop_times["stop_id"] == to_id)
-            ]
-            if arr_seqless_df.shape[0] == 0:
-                raise ValueError("The trip " + trip_id + " does not stop at: " + to_id)
+        # Get arrival time from cache
+        if to_key not in self._trip_stop_times:
+            raise ValueError("The trip " + trip_id + " does not stop at: " + to_id)
+
+        arr_time, _to_dep_time, to_stop_seq = self._trip_stop_times[to_key]
+
+        # Verify sequence order
+        if to_stop_seq <= dep_stop_seq:
             raise ValueError(
                 "The trip "
                 + trip_id
@@ -380,7 +464,6 @@ class AkitaBusWayFinder:
                 + " after the stop "
                 + from_id,
             )
-        arr_time = arr_time[0]
 
         return dep_time, arr_time
 
@@ -653,6 +736,10 @@ class AkitaBusWayFinder:
 
     # trip_id から service_id を得る
     def get_trip_service_id(self, trip_id):
+        # Use pre-built cache for O(1) lookup instead of DataFrame filter
+        if trip_id in self._trip_to_service_id:
+            return self._trip_to_service_id[trip_id]
+        # Fallback to DataFrame lookup if cache miss (shouldn't happen after initialize)
         sid_series = self.df_trips[self.df_trips["trip_id"] == trip_id]["service_id"]
         if sid_series.shape[0] == 0:
             raise ValueError("No trip with given trip_id found")
