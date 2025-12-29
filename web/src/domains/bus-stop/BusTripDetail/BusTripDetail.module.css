@@ -27,7 +27,6 @@
 }
 
 .topNavTitle {
-  font-family: "Inter", "Noto Sans JP", sans-serif;
   font-size: var(--headerlevel1fontsize, 28px);
   font-weight: 400;
   margin: 0;
@@ -68,7 +67,6 @@
 }
 
 .stopName {
-  font-family: "Inter", "Noto Sans JP", sans-serif;
   font-size: var(--headerlevel1fontsize, 28px);
   font-weight: 400;
   margin: 0;
@@ -109,7 +107,6 @@
 }
 
 .stopsTitle {
-  font-family: "Inter", "Noto Sans JP", sans-serif;
   font-size: var(--subscriptlabelfontsize, 14px);
   font-weight: 400;
   margin: 0;

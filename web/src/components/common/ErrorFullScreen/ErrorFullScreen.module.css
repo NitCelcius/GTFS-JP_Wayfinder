@@ -55,7 +55,6 @@
     transform 0.15s ease;
   text-decoration: none;
   border: none;
-  font-family: Inter, "Noto Sans JP", sans-serif;
   white-space: nowrap;
   background: var(--route-inactive-bg);
   color: var(--foreground);
