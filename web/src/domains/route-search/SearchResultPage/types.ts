@@ -5,6 +5,8 @@ export interface Station {
   arrivalDatetime?: Date; // Should be present only when arrivalTime is present
   departureDatetime?: Date; // Should be present only when departureTime is present
   isTransfer?: boolean;
+  isWalkTransfer?: boolean; // True for walk transfer between platforms at same station
+  platformCode?: string; // Platform code from API's GET /stops/{stop_id} → platform_code field (future enhancement)
   cost?: number;
 }
 

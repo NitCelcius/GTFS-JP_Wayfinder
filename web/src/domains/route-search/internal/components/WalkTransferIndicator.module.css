@@ -1,0 +1,24 @@
+.container {
+  display: flex;
+  align-items: center;
+  gap: var(--size-spacing-sm, 0.5rem);
+  padding: var(--size-spacing-md, 0.75rem) var(--size-spacing-lg, 1rem);
+  background-color: var(--color-bg-subtle, #f5f5f5);
+  border-radius: var(--radius-md, 0.5rem);
+  border-left: 3px solid var(--color-accent-walk, #6b7280);
+  margin: var(--size-spacing-sm, 0.5rem) 0;
+}
+
+.iconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-secondary, #6b7280);
+  flex-shrink: 0;
+}
+
+.text {
+  font-size: var(--font-size-sm, 0.875rem);
+  color: var(--color-text-secondary, #4b5563);
+  line-height: 1.4;
+}
