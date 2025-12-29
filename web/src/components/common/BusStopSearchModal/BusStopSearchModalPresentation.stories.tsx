@@ -1,0 +1,172 @@
+import type { Meta, StoryObj } from "@storybook/react";
+
+import type { StopIdAndName } from "@/api/types.gen";
+
+import { BusStopSearchModalPresentation } from "./BusStopSearchModalPresentation";
+
+const meta: Meta<typeof BusStopSearchModalPresentation> = {
+  title: "Common/BusStopSearchModal/Presentation",
+  component: BusStopSearchModalPresentation,
+  parameters: {
+    layout: "fullscreen",
+  },
+  tags: ["autodocs"],
+  argTypes: {
+    isOpen: { control: "boolean" },
+    onCanceled: { action: "canceled" },
+    onSelected: { action: "selected" },
+    title: { control: "text" },
+    placeholder: { control: "text" },
+    searchQuery: { control: "text" },
+    onSearchQueryChange: { action: "searchQueryChanged" },
+    isLoading: { control: "boolean" },
+    error: { control: "text" },
+  },
+};
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+// Mock search results based on the city mock data
+const mockSearchResults: StopIdAndName[] = [
+  { stop_id: "1021_01", stop_name: "秋田駅東口" },
+  { stop_id: "shiyakusho-mae", stop_name: "市役所前" },
+  { stop_id: "aobadai", stop_name: "青葉台" },
+  { stop_id: "sakura-dori", stop_name: "さくら通り" },
+  { stop_id: "midori-ga-oka", stop_name: "緑が丘" },
+];
+
+/**
+ * Empty state - shown when no input has been entered yet
+ */
+export const Empty: Story = {
+  args: {
+    isOpen: true,
+    title: "バス停を検索",
+    placeholder: "バス停名を入力してください",
+    searchQuery: "",
+    searchResults: [],
+    isLoading: false,
+    error: null,
+  },
+};
+
+/**
+ * Loading state - shown while searching for bus stops
+ */
+export const Loading: Story = {
+  args: {
+    isOpen: true,
+    title: "バス停を検索",
+    placeholder: "バス停名を入力してください",
+    searchQuery: "秋田",
+    searchResults: [],
+    isLoading: true,
+    error: null,
+  },
+};
+
+/**
+ * Search results state - shown when search results are available
+ */
+export const WithResults: Story = {
+  args: {
+    isOpen: true,
+    title: "バス停を検索",
+    placeholder: "バス停名を入力してください",
+    searchQuery: "秋田",
+    searchResults: mockSearchResults,
+    isLoading: false,
+    error: null,
+  },
+};
+
+/**
+ * No results found - shown when search returns no results
+ */
+export const NoResults: Story = {
+  args: {
+    isOpen: true,
+    title: "バス停を検索",
+    placeholder: "バス停名を入力してください",
+    searchQuery: "存在しないバス停",
+    searchResults: [],
+    isLoading: false,
+    error: null,
+  },
+};
+
+/**
+ * Error state - shown when an error occurs during search
+ */
+export const Error: Story = {
+  args: {
+    isOpen: true,
+    title: "バス停を検索",
+    placeholder: "バス停名を入力してください",
+    searchQuery: "秋田",
+    searchResults: [],
+    isLoading: false,
+    error: "バス停の検索に失敗しました。もう一度お試しください。",
+  },
+};
+
+/**
+ * Closed state - modal is not visible
+ */
+export const Closed: Story = {
+  args: {
+    isOpen: false,
+    title: "バス停を検索",
+    placeholder: "バス停名を入力してください",
+    searchQuery: "",
+    searchResults: [],
+    isLoading: false,
+    error: null,
+  },
+};
+
+/**
+ * Custom title and placeholder
+ */
+export const CustomTitleAndPlaceholder: Story = {
+  args: {
+    isOpen: true,
+    title: "出発地を選択",
+    placeholder: "出発するバス停名を入力",
+    searchQuery: "",
+    searchResults: [],
+    isLoading: false,
+    error: null,
+  },
+};
+
+/**
+ * With many results - tests scrolling behavior
+ */
+export const WithManyResults: Story = {
+  args: {
+    isOpen: true,
+    title: "バス停を検索",
+    placeholder: "バス停名を入力してください",
+    searchQuery: "バス停",
+    searchResults: [
+      { stop_id: "1021_01", stop_name: "秋田駅東口" },
+      { stop_id: "shiyakusho-mae", stop_name: "市役所前" },
+      { stop_id: "aobadai", stop_name: "青葉台" },
+      { stop_id: "sakura-dori", stop_name: "さくら通り" },
+      { stop_id: "midori-ga-oka", stop_name: "緑が丘" },
+      { stop_id: "higashi-eki", stop_name: "東駅" },
+      { stop_id: "nishi-guchi", stop_name: "西口" },
+      { stop_id: "minami-machi", stop_name: "南町" },
+      { stop_id: "kita-ko-mae", stop_name: "北高前" },
+      { stop_id: "daigaku-byoin", stop_name: "大学病院" },
+      {
+        stop_id: "miruhas-au",
+        stop_name: "あきた芸術劇場ミルハス・にぎわい交流館 AU 前",
+      },
+    ],
+    isLoading: false,
+    error: null,
+  },
+};
