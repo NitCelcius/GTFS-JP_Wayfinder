@@ -112,6 +112,7 @@ async def timed_search(
                     from_stop_id=travel.from_stop_id,
                     to_stop_id=travel.to_stop_id,
                     fare=travel.fare,
+                    is_walk_transfer=travel.is_walk_transfer,
                 )
             )
 
@@ -147,6 +148,7 @@ async def path_travels(
                         "departure_time": None,
                         "from_stop_id": t.from_stop_id,
                         "to_stop_id": t.to_stop_id,
+                        "is_walk_transfer": t.is_walk_transfer,
                     },
                 )
             else:

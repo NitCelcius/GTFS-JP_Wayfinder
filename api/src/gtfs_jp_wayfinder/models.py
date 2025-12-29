@@ -120,7 +120,24 @@ class TripRecord(BaseModel):
 
 
 class TravelOnceResponse(BaseModel):
-    trip_id: str
+    """A single travel segment in a route.
+
+    This model represents either a bus ride or a walk transfer between platforms.
+    The `is_walk_transfer` field indicates the type of segment.
+
+    For walk transfers:
+    - `trip_id` will be the reserved value "WALK_TRANSFER"
+    - `fare` will be 0
+    - `departure_time` and `arrival_time` will be the same
+
+    TODO: Refactor to discriminated union with `type` field for better type safety.
+          See GitHub issue: https://github.com/NitCelcius/GTFS-JP_Wayfinder/issues/143
+    """
+
+    trip_id: str = Field(
+        ...,
+        description="GTFS trip ID, or 'WALK_TRANSFER' for platform transfers",
+    )
     departure_time: str
     arrival_time: str
     departure_datetime: str = Field(...)
@@ -128,6 +145,10 @@ class TravelOnceResponse(BaseModel):
     from_stop_id: str
     to_stop_id: str
     fare: int
+    is_walk_transfer: bool = Field(
+        default=False,
+        description="True if this is a walk transfer between platforms at the same stop",
+    )
 
     model_config = {
         "json_schema_extra": {
@@ -141,6 +162,18 @@ class TravelOnceResponse(BaseModel):
                     "from_stop_id": "1021_01",
                     "to_stop_id": "6037_01",
                     "fare": 170,
+                    "is_walk_transfer": False,
+                },
+                {
+                    "trip_id": "WALK_TRANSFER",
+                    "departure_time": "08:30:00",
+                    "arrival_time": "08:30:00",
+                    "departure_datetime": "2025-10-28T08:30:00",
+                    "arrival_datetime": "2025-10-28T08:30:00",
+                    "from_stop_id": "1021_01",
+                    "to_stop_id": "1021_03",
+                    "fare": 0,
+                    "is_walk_transfer": True,
                 },
             ],
         },

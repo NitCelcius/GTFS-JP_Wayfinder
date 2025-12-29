@@ -13,6 +13,12 @@ from gtfs_jp_wayfinder.utils.distance import (
     HaversineDistanceCalculator,
 )
 
+# Reserved trip ID for walk transfers between platforms at the same station.
+# GTFS data must NOT contain this ID.
+# TODO: Refactor to discriminated union with `type` field for type safety.
+#       See GitHub issue for details: https://github.com/NitCelcius/GTFS-JP_Wayfinder/issues/143
+WALK_TRANSFER_TRIP_ID = "WALK_TRANSFER"
+
 logger = logging.getLogger(__name__)
 
 
@@ -24,6 +30,7 @@ class TravelOnce:
     departure_time: np.datetime64 | None
     from_stop_id: str
     to_stop_id: str
+    is_walk_transfer: bool = False  # True when transferring between platforms at same stop
 
 
 @dataclass
@@ -50,6 +57,7 @@ class AkitaBusWayFinder:
         self.graph_via_service_id = dict()
         self.default_date = "2021-01-01"
         self.agency_timezone = "UTC"
+        self._walk_transfer_pairs: set[tuple[str, str]] = set()
 
         # Distance calculator - can be switched between Haversine and Euclidean
         self.distance_calculator: DistanceCalculator = (
@@ -134,6 +142,14 @@ class AkitaBusWayFinder:
         self.df_fare_id_cost = pd.read_csv(base_dir + "fare_attributes.txt")
         # trip 関連
         self.df_trips = pd.read_csv(base_dir + "trips.txt")
+
+        # Validate that GTFS data doesn't contain reserved trip ID
+        if WALK_TRANSFER_TRIP_ID in self.df_trips["trip_id"].values:
+            raise ValueError(
+                f"GTFS data contains reserved trip_id '{WALK_TRANSFER_TRIP_ID}'. "
+                "This ID is reserved for internal walk transfer representation."
+            )
+
         # route の short_name 関連
         self.df_routes = pd.read_csv(base_dir + "routes.txt")
         # 日付から service id に変換
@@ -176,6 +192,15 @@ class AkitaBusWayFinder:
         )
         self.graph.add_edges_from(all_edges)
 
+        # Add zero-weight edges between stops with the same name (platform transfers)
+        logger.info("Adding walk transfer edges between same-name stops...")
+        walk_transfer_edges = self._generate_walk_transfer_edges()
+        self.graph.add_edges_from(walk_transfer_edges)
+        logger.info("Added %d walk transfer edges", len(walk_transfer_edges))
+
+        # Build set of walk transfer pairs for quick lookup
+        self._walk_transfer_pairs = set(walk_transfer_edges)
+
         logger.info("Generating graphs for each service_id...")
         self.graph_via_service_id = dict()
 
@@ -191,6 +216,35 @@ class AkitaBusWayFinder:
                 lambda trip: self.df_stop_times[self.df_stop_times["trip_id"] == trip],
             )
             self.graph_via_service_id[service_id].add_edges_from(service_edges)
+            # Also add walk transfer edges to service-specific graphs
+            self.graph_via_service_id[service_id].add_edges_from(walk_transfer_edges)
+
+    def _generate_walk_transfer_edges(self) -> list[tuple[str, str]]:
+        """Generate bidirectional edges between stops with the same name.
+
+        This enables routing through platform transfers at the same station.
+        Returns a list of (from_stop_id, to_stop_id) tuples.
+        """
+        edges = []
+        # Group stops by name
+        stops_by_name = self.df_stops.groupby("stop_name")["stop_id"].apply(list)
+
+        # Note: Using .items() is correct here because stops_by_name is a pandas Series
+        # where we need both the index (stop_name) and values (stop_ids list).
+        # The ruff PERF102 suggestion to use .values() is incorrect for pandas Series.
+        for _stop_name, stop_ids in stops_by_name.items():  # noqa: PERF102
+            if len(stop_ids) > 1:
+                # Create bidirectional edges between all stops with the same name
+                for i, stop_id_a in enumerate(stop_ids):
+                    for stop_id_b in stop_ids[i + 1 :]:
+                        edges.append((stop_id_a, stop_id_b))
+                        edges.append((stop_id_b, stop_id_a))
+
+        return edges
+
+    def is_walk_transfer(self, from_stop_id: str, to_stop_id: str) -> bool:
+        """Check if the transition between two stops is a walk transfer (same-name stops)."""
+        return (from_stop_id, to_stop_id) in self._walk_transfer_pairs
 
     def generate_calendar(self, base_dir):
         df_base_calendar = pd.read_csv(base_dir + "calendar.txt")
@@ -452,6 +506,23 @@ class AkitaBusWayFinder:
             if prev_stop is None:
                 prev_stop = current_stop
                 continue
+
+            # Check if this is a walk transfer (same-name stops)
+            if self.is_walk_transfer(prev_stop, current_stop):
+                travel_list.append(
+                    TravelOnce(
+                        trip_id=WALK_TRANSFER_TRIP_ID,
+                        fare=0,
+                        arrival_time=None,
+                        departure_time=None,
+                        from_stop_id=prev_stop,
+                        to_stop_id=current_stop,
+                        is_walk_transfer=True,
+                    ),
+                )
+                prev_stop = current_stop
+                continue
+
             # find trips that go from the previous stop to the current stop
             trips = self.get_trips_from_stops(prev_stop, current_stop, service_id)
             travel_list.append(
@@ -462,6 +533,7 @@ class AkitaBusWayFinder:
                     departure_time=None,
                     from_stop_id=prev_stop,
                     to_stop_id=current_stop,
+                    is_walk_transfer=False,
                 ),
             )
             prev_stop = current_stop
@@ -493,8 +565,29 @@ class AkitaBusWayFinder:
             if prev_stop is None:
                 prev_stop = current_stop
                 continue
-            candidate_trips = dict()
+
             logger.info("@ %s %s -> %s", cur_time, prev_stop, current_stop)
+
+            # Check if this is a walk transfer (same-name stops)
+            if self.is_walk_transfer(prev_stop, current_stop):
+                logger.info(
+                    "Walk transfer detected: %s -> %s", prev_stop, current_stop
+                )
+                # Walk transfers are instant - no trip needed, no fare, same time
+                travel_list.append(
+                    TravelOnce(
+                        trip_id=WALK_TRANSFER_TRIP_ID,
+                        arrival_time=cur_time,
+                        departure_time=cur_time,
+                        fare=0,
+                        from_stop_id=prev_stop,
+                        to_stop_id=current_stop,
+                        is_walk_transfer=True,
+                    ),
+                )
+                # cur_time stays the same for walk transfers
+                prev_stop = current_stop
+                continue
 
             # Validate that cur_time is not None before using it
             # This should never happen as begin_time is validated and arr_time is validated
@@ -509,6 +602,7 @@ class AkitaBusWayFinder:
                     "This may indicate data corruption in the GTFS data."
                 )
 
+            candidate_trips = dict()
             for target_trip in self.get_trips_from_stops(
                 prev_stop,
                 current_stop,
@@ -563,6 +657,7 @@ class AkitaBusWayFinder:
                     fare=self.get_fare_from_stops(prev_stop, current_stop),
                     from_stop_id=prev_stop,
                     to_stop_id=current_stop,
+                    is_walk_transfer=False,
                 ),
             )
             cur_time = arr_time
