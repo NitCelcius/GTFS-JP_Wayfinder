@@ -28,6 +28,22 @@ const config: StorybookConfig = {
       esbuild: {
         jsx: "automatic",
       },
+      define: {
+        // Polyfill process.env for Next.js components (like next/image)
+        "process.env": JSON.stringify(process.env),
+        "process.env.NODE_ENV": JSON.stringify(
+          process.env.NODE_ENV || "development"
+        ),
+        // Next.js Image component configuration
+        "process.env.__NEXT_IMAGE_OPTS": JSON.stringify({
+          deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+          imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+          path: "/_next/image",
+          loader: "default",
+          dangerouslyAllowSVG: false,
+          unoptimized: false,
+        }),
+      },
     });
   },
 };
