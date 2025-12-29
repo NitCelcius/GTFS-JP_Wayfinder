@@ -34,13 +34,13 @@
 
 .buttonRow {
   display: flex;
+  flex-direction: column;
   gap: var(--spacing-md);
   flex-wrap: wrap;
   justify-content: center;
   margin-top: var(--spacing-md);
 }
 
-.resetButton,
 .homeButton {
   display: inline-flex;
   align-items: center;
@@ -55,19 +55,10 @@
   border: none;
   font-family: Inter, "Noto Sans JP", sans-serif;
   white-space: nowrap;
-}
-
-.resetButton:hover,
-.homeButton:hover {
-  opacity: 0.9;
-}
-
-.resetButton {
-  background: var(--color-action-primary);
-  color: #fff;
-}
-
-.homeButton {
   background: var(--route-inactive-bg);
   color: var(--foreground);
+}
+
+.homeButton:hover {
+  opacity: 0.9;
 }
