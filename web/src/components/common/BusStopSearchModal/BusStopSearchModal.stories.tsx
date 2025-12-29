@@ -2,11 +2,11 @@ import type { Meta, StoryObj } from "@storybook/react";
 
 import type { StopIdAndName } from "@/api/types.gen";
 
-import { BusStopSearchModalPresentation } from "./BusStopSearchModalPresentation";
+import { BusStopSearchModal } from "./BusStopSearchModal";
 
-const meta: Meta<typeof BusStopSearchModalPresentation> = {
-  title: "Common/BusStopSearchModal/Presentation",
-  component: BusStopSearchModalPresentation,
+const meta: Meta<typeof BusStopSearchModal> = {
+  title: "Common/BusStopSearchModal",
+  component: BusStopSearchModal,
   parameters: {
     layout: "fullscreen",
   },
@@ -121,51 +121,6 @@ export const Closed: Story = {
     placeholder: "バス停名を入力してください",
     searchQuery: "",
     searchResults: [],
-    isLoading: false,
-    error: null,
-  },
-};
-
-/**
- * Custom title and placeholder
- */
-export const CustomTitleAndPlaceholder: Story = {
-  args: {
-    isOpen: true,
-    title: "出発地を選択",
-    placeholder: "出発するバス停名を入力",
-    searchQuery: "",
-    searchResults: [],
-    isLoading: false,
-    error: null,
-  },
-};
-
-/**
- * With many results - tests scrolling behavior
- */
-export const WithManyResults: Story = {
-  args: {
-    isOpen: true,
-    title: "バス停を検索",
-    placeholder: "バス停名を入力してください",
-    searchQuery: "バス停",
-    searchResults: [
-      { stop_id: "1021_01", stop_name: "秋田駅東口" },
-      { stop_id: "shiyakusho-mae", stop_name: "市役所前" },
-      { stop_id: "aobadai", stop_name: "青葉台" },
-      { stop_id: "sakura-dori", stop_name: "さくら通り" },
-      { stop_id: "midori-ga-oka", stop_name: "緑が丘" },
-      { stop_id: "higashi-eki", stop_name: "東駅" },
-      { stop_id: "nishi-guchi", stop_name: "西口" },
-      { stop_id: "minami-machi", stop_name: "南町" },
-      { stop_id: "kita-ko-mae", stop_name: "北高前" },
-      { stop_id: "daigaku-byoin", stop_name: "大学病院" },
-      {
-        stop_id: "miruhas-au",
-        stop_name: "あきた芸術劇場ミルハス・にぎわい交流館 AU 前",
-      },
-    ],
     isLoading: false,
     error: null,
   },
