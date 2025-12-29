@@ -17,6 +17,15 @@ def get_cors_origins():
     cors_origins = os.getenv("CORS_ORIGINS")
 
     if cors_origins:
+        # Check for asterisk (wildcard) - development only
+        if cors_origins.strip() == "*":
+            logger.warning(
+                "CORS_ORIGINS is set to '*' (allow all origins). "
+                "This should ONLY be used for development purposes. "
+                "Never use this in production as it poses a security risk.",
+            )
+            return ["*"]
+
         # Split comma-separated origins and strip whitespace
         origins = [origin.strip() for origin in cors_origins.split(",")]
         logger.info(f"CORS origins from environment: {origins}")
