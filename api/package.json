@@ -8,7 +8,7 @@
     "start": "uv run python -m uvicorn src.gtfs_jp_wayfinder.main:app --host 0.0.0.0 --port ${PORT:-8002}",
     "build": "uv build",
     "lint": "uv run ruff check",
-    "lint:fix": "uv run ruff --fix",
+    "lint:fix": "uv run ruff check --fix",
     "test": "uv run python -m pytest",
     "dev": "uv run python -m uvicorn src.gtfs_jp_wayfinder.main:app --host 0.0.0.0 --port 8002 --reload",
     "dev:network": "dotenvx run -f .env.debug.network -- uv run python -m uvicorn src.gtfs_jp_wayfinder.main:app --host ${NETWORK_HOST} --port 8002 --reload"

@@ -7,6 +7,12 @@
       ],
       "outputs": []
     },
+    "lint:fix": {
+      "dependsOn": [
+        "^lint:fix"
+      ],
+      "outputs": []
+    },
     "test": {
       "dependsOn": [
         "^test"
