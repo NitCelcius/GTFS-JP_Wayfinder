@@ -259,10 +259,10 @@ async def get_upcoming(
         ),
     ),
 ):
-    # Parse begin_time parameter to determine reference_date
+    # Parse begin_time parameter to determine reference_date and time filter
     # (handles both HH:MM:SS and ISO datetime formats)
     try:
-        reference_date_obj, _ = adapter.parse_split_date_str(begin_time)
+        reference_date_obj, min_arrival_time = adapter.parse_split_date_str(begin_time)
         reference_date = reference_date_obj.isoformat()
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e)) from e
@@ -297,9 +297,11 @@ async def get_upcoming(
 
     # OPTIMIZATION 1: Batch fetch all arrival/departure times at once instead of N individual queries
     # Use the new max_items parameter to apply limit at the batch level for better performance
+    # Pass min_arrival_time to filter out buses that have already departed
     time_map = adapter.get_times_from_trips_and_stop_batch(
         trips_list,
         stop_id,
+        min_arrival_time=min_arrival_time if begin_time else None,
         max_items=limit,
     )
 
