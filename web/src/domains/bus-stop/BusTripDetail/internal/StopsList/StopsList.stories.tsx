@@ -7,6 +7,7 @@ const meta: Meta<typeof StopsList> = {
   component: StopsList,
   parameters: {
     layout: "padded",
+    chromatic: { disableSnapshot: true }, // Visual changes tested in BusTripDetail story, skipping
   },
   tags: ["autodocs"],
 };
