@@ -73,7 +73,6 @@
 .navItemText {
   display: flex;
   flex-direction: column;
-  font-family: "Inter:Regular", "Noto_Sans_JP:Regular", sans-serif;
   font-weight: normal;
   justify-content: center;
   line-height: 1;
