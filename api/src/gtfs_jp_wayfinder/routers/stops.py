@@ -290,14 +290,12 @@ async def get_upcoming(
             buses=[],
         )
 
-    # Apply client limit if provided
+    # Convert to list for processing
     trips_list = list(trips)
-    if limit is not None:
-        trips_list = trips_list[:limit]
 
     # OPTIMIZATION 1: Batch fetch all arrival/departure times at once instead of N individual queries
-    # Use the new max_items parameter to apply limit at the batch level for better performance
     # Pass min_arrival_time to filter out buses that have already departed
+    # The max_items parameter is applied after filtering, ensuring we get the right number of results
     time_map = adapter.get_times_from_trips_and_stop_batch(
         trips_list,
         stop_id,
