@@ -36,11 +36,19 @@ def test_upcoming_hardcoded(monkeypatch, client):
     )
 
     # Mock the new batch function to return the batch time data
+    # The mock should respect the max_items parameter for limiting results
+    def mock_get_times_batch(trip_ids, stop_id, max_items=None, **kwargs):
+        result = {
+            trip_id: time_map[trip_id] for trip_id in trip_ids if trip_id in time_map
+        }
+        # Apply max_items limit if specified
+        if max_items is not None and len(result) > max_items:
+            result = dict(list(result.items())[:max_items])
+        return result
+
     monkeypatch.setattr(
         "gtfs_jp_wayfinder.services.wayfinder_adapter.get_times_from_trips_and_stop_batch",
-        lambda trip_ids, stop_id, **kwargs: {
-            trip_id: time_map[trip_id] for trip_id in trip_ids if trip_id in time_map
-        },
+        mock_get_times_batch,
     )
 
     # Mock get_trip_info_batch to return trip info with route_name from the fixture
