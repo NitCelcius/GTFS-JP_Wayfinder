@@ -71,13 +71,26 @@ async def lifespan(_app: FastAPI):  # _app retained for FastAPI signature (ARG00
 
 # Create FastAPI app with async lifespan and include routers
 app = FastAPI(title="GTFS-JP Wayfinder API", lifespan=lifespan)
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=get_cors_origins(),
-    allow_credentials=False,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+
+# Configure CORS with special handling for wildcard
+cors_origins = get_cors_origins()
+if cors_origins == ["*"]:
+    # FastAPI requires allow_origin_regex for wildcard CORS
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origin_regex=".*",  # Match all origins
+        allow_credentials=False,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+else:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=cors_origins,
+        allow_credentials=False,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
 app.include_router(stops.router, prefix="/stops", tags=["stops"])
 app.include_router(trips.router, prefix="/trips", tags=["trips"])
