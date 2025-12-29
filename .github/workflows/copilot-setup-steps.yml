@@ -8,7 +8,7 @@ on:
   workflow_dispatch: # Manual trigger only
 
 jobs:
-  setup-environment:
+  copilot-setup-steps:
     name: Setup Development Environment
     runs-on: ubuntu-latest
     steps:
