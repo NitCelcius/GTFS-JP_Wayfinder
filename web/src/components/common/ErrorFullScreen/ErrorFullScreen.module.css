@@ -50,7 +50,9 @@
   font-size: var(--defaulttextfontsize);
   font-weight: var(--font-weight-normal);
   cursor: pointer;
-  transition: opacity 0.15s;
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease;
   text-decoration: none;
   border: none;
   font-family: Inter, "Noto Sans JP", sans-serif;
@@ -61,4 +63,8 @@
 
 .homeButton:hover {
   opacity: 0.9;
+}
+
+.homeButton:active {
+  transform: scale(0.98);
 }
