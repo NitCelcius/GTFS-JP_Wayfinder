@@ -16,7 +16,7 @@ export default function HomePage() {
     destinationStopName: string;
     beginTime: string;
   }) => {
-    console.log("🔍 Navigating to results with search params:", searchParams);
+    console.log("🔍 Navigating to route-overview with search params:", searchParams);
 
     // Save to history before navigating
     await addSearch(
@@ -26,9 +26,8 @@ export default function HomePage() {
       searchParams.destinationStopName
     );
 
-    // Navigate to results page with search parameters
+    // Navigate to route-overview page with search parameters
     const urlParams = new URLSearchParams({
-      search: "true",
       from: searchParams.originStopId,
       to: searchParams.destinationStopId,
       fromName: searchParams.originStopName,
@@ -36,7 +35,7 @@ export default function HomePage() {
       time: searchParams.beginTime,
     });
 
-    router.push(`/results?${urlParams.toString()}`);
+    router.push(`/route-overview?${urlParams.toString()}`);
   };
 
   return (
