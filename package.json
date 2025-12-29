@@ -12,6 +12,8 @@
     "lint": "turbo run lint",
     "prepush": "turbo run lint",
     "openapi-generate": "node ./scripts/generate-openapi.js",
+    "storybook": "pnpm --filter web storybook",
+    "build-storybook": "pnpm --filter web build-storybook",
     "preinstall": "npx only-allow pnpm",
     "postinstall": "git config core.hooksPath .githooks || true",
     "hooks:install": "git config core.hooksPath .githooks"
