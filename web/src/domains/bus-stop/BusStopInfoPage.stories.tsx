@@ -8,6 +8,7 @@ const meta = {
   parameters: {
     layout: "fullscreen",
   },
+  tags: ["!autodocs", "!dev"], // Exclude from Storybook and Chromatic - component is deprecated
   args: {
     busStopId: "1021_01",
   },
