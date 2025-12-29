@@ -105,11 +105,13 @@ export function SearchResultPage({
           </div>
         ) : (
           <>
-            <RouteTabs
-              routes={tripDetails.routes}
-              selectedIndex={selectedRouteIndex}
-              onTabChange={handleRouteChange}
-            />
+            {tripDetails.routes.length > 1 && (
+              <RouteTabs
+                routes={tripDetails.routes}
+                selectedIndex={selectedRouteIndex}
+                onTabChange={handleRouteChange}
+              />
+            )}
 
             <TripSummary route={selectedRoute} />
 
