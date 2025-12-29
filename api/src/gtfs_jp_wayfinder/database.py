@@ -178,16 +178,12 @@ class AkitaBusWayFinder:
         )
 
         # Build stop_id -> [trip_ids] lookup (used by get_trips_from_stops)
-        self._stop_to_trips = {}
-        for stop_id, trip_id in zip(
-            self.df_stop_times["stop_id"],
-            self.df_stop_times["trip_id"],
-            strict=True,
-        ):
-            if stop_id not in self._stop_to_trips:
-                self._stop_to_trips[stop_id] = []
-            if trip_id not in self._stop_to_trips[stop_id]:
-                self._stop_to_trips[stop_id].append(trip_id)
+        # Use groupby for efficient deduplication instead of O(n²) membership checks
+        self._stop_to_trips = (
+            self.df_stop_times.groupby("stop_id")["trip_id"]
+            .apply(lambda x: list(x.unique()))
+            .to_dict()
+        )
         logger.info(
             "Built stop->trips index with %d stops",
             len(self._stop_to_trips),
@@ -195,13 +191,14 @@ class AkitaBusWayFinder:
 
         # Build (trip_id, stop_id) -> (arrival_time, departure_time, stop_sequence) lookup
         # Used by get_trip_times and get_trips_from_stops for faster sequence lookups
+        # Use itertuples() for better performance than iterrows()
         self._trip_stop_times = {}
-        for _, row in self.df_stop_times.iterrows():
-            key = (row["trip_id"], row["stop_id"])
+        for row in self.df_stop_times.itertuples(index=False):
+            key = (row.trip_id, row.stop_id)
             self._trip_stop_times[key] = (
-                row["arrival_time"],
-                row["departure_time"],
-                row["stop_sequence"],
+                row.arrival_time,
+                row.departure_time,
+                row.stop_sequence,
             )
         logger.info(
             "Built (trip,stop)->times index with %d entries",
@@ -433,12 +430,8 @@ class AkitaBusWayFinder:
         from_key = (trip_id, from_id)
         to_key = (trip_id, to_id)
 
-        # Check if trip exists (validate trip_id)
-        if (
-            trip_id not in self._trip_to_service_id
-            and self.df_stop_times[self.df_stop_times["trip_id"] == trip_id].shape[0]
-            == 0
-        ):
+        # Check if trip exists using the cache (built from same data, so complete)
+        if trip_id not in self._trip_to_service_id:
             raise ValueError("trip_id not found")
 
         # Get departure time and sequence from cache
