@@ -74,3 +74,4 @@ jobs:
           onlyChanged: true
           untraced: "package.json,pnpm-lock.yaml,**/package.json,**/pnpm-lock.yaml" # Do not retake for package updates
           skip: "dependabot/**"
+          exitOnceUploaded: true
