@@ -43,30 +43,10 @@ const longNameBusInfo: BusInfo = {
   status: "当バス停着",
 };
 
-const futureBusInfo: BusInfo = {
-  tripId: "trip-003",
-  line: "青葉台線",
-  system: "系統002",
-  destination: "緑が丘",
-  direction: "行",
-  arrivalTime: "15:45",
-  arrivalDatetime: new Date("2025-11-04T15:45:00"),
-  status: "当バス停着",
-};
-
 /**
- * Default state showing next bus without navigation options
+ * Default state with navigation enabled
  */
 export const Default: Story = {
-  args: {
-    busInfo: defaultBusInfo,
-  },
-};
-
-/**
- * With navigation enabled - can go to previous and next buses
- */
-export const WithNavigation: Story = {
   args: {
     busInfo: defaultBusInfo,
     canShowPrevious: true,
@@ -108,29 +88,5 @@ export const LongDestinationName: Story = {
     busInfo: longNameBusInfo,
     canShowPrevious: true,
     canShowNext: true,
-  },
-};
-
-/**
- * Future bus with later arrival time
- */
-export const FutureBus: Story = {
-  args: {
-    busInfo: futureBusInfo,
-    canShowPrevious: true,
-    canShowNext: true,
-  },
-};
-
-/**
- * Interactive story with handlers that log to console
- */
-export const Interactive: Story = {
-  args: {
-    busInfo: defaultBusInfo,
-    canShowPrevious: true,
-    canShowNext: true,
-    onPreviousBus: () => console.log("Navigated to previous bus"),
-    onNextBus: () => console.log("Navigated to next bus"),
   },
 };

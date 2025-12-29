@@ -27,23 +27,3 @@ export const Default: Story = {
     lon: 140.13113,
   },
 };
-
-/**
- * Button for あきた芸術劇場ミルハス (Akita Art Theater Miruhas)
- */
-export const ArtTheater: Story = {
-  args: {
-    lat: 39.71833,
-    lon: 140.10278,
-  },
-};
-
-/**
- * Button for 秋田駅前 (Akita Station)
- */
-export const AkitaStation: Story = {
-  args: {
-    lat: 39.71861,
-    lon: 140.10278,
-  },
-};

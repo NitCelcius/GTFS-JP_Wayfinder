@@ -42,10 +42,3 @@ export const LongName: Story = {
     onSelect: (busStopId: string) => console.log("Selected:", busStopId),
   },
 };
-
-export const NoSelection: Story = {
-  args: {
-    busStop: sampleBusStop,
-    // No onSelect handler
-  },
-};
