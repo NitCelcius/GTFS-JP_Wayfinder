@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import svgPaths from "@/app/imports/svg-uqfc70duf5";
-import { BusStopSearchModal, Icon } from "@/components/common";
+import { BusStopSearchModalContainer, Icon } from "@/components/common";
 import type { BusStopSearchResult } from "@/types";
 
 import styles from "./RouteInputs.module.css";
@@ -165,18 +165,18 @@ export function RouteInputs({
       </div>
 
       {/* Modals */}
-      <BusStopSearchModal
+      <BusStopSearchModalContainer
         isOpen={isOriginModalOpen}
-        onClose={() => setIsOriginModalOpen(false)}
-        onSelectBusStop={handleOriginSelect}
+        onCanceled={() => setIsOriginModalOpen(false)}
+        onSelected={handleOriginSelect}
         title="出発地を選択"
         placeholder="出発するバス停名を入力"
       />
 
-      <BusStopSearchModal
+      <BusStopSearchModalContainer
         isOpen={isDestinationModalOpen}
-        onClose={() => setIsDestinationModalOpen(false)}
-        onSelectBusStop={handleDestinationSelect}
+        onCanceled={() => setIsDestinationModalOpen(false)}
+        onSelected={handleDestinationSelect}
         title="目的地を選択"
         placeholder="行きたいバス停名を入力"
       />

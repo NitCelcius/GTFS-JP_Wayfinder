@@ -4,7 +4,7 @@ import type { StopIdAndName } from "@/api/types.gen";
 import { apiClient } from "@/lib/api";
 import type { BusStopSearchResult } from "@/types";
 
-import { BusStopSearchModalPresentation } from "./BusStopSearchModalPresentation";
+import { BusStopSearchModal } from "./BusStopSearchModal";
 
 interface BusStopSearchModalContainerProps {
   isOpen: boolean;
@@ -83,7 +83,7 @@ export function BusStopSearchModalContainer({
   }, []);
 
   return (
-    <BusStopSearchModalPresentation
+    <BusStopSearchModal
       isOpen={isOpen}
       onCanceled={onCanceled}
       onSelected={onSelected}
