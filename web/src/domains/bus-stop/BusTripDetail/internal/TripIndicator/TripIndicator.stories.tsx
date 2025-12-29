@@ -52,7 +52,7 @@ export const PassedStop: Story = {
     routeNumber: "001",
     routeName: "都心循環線",
     destinationName: "東駅",
-    arrivalMinutes: 5,
+    arrivalMinutes: -5,
     arrivalTime: "14:25",
     stopsAway: -2,
   },
