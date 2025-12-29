@@ -11,12 +11,16 @@ jobs:
   copilot-setup-steps:
     name: Setup Development Environment
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       # Step 1: Checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       # Step 2: Install mise
       - name: Install mise
