@@ -173,6 +173,3 @@ Shows fallback behavior similar to location denied state.
     },
   },
 };
-
-// Export mock data for use in tests or other stories
-export { mockBusStopsList };
