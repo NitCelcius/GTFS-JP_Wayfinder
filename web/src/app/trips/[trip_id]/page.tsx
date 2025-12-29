@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 
+import { ErrorBoundary } from "@/components/common";
 import { BusTripDetail } from "@/domains/bus-stop";
 import type { Stop } from "@/domains/bus-stop/BusTripDetail/internal/StopItem";
 import { apiClient } from "@/lib/api";
@@ -184,29 +185,7 @@ export default function TripDetailPage() {
   // Error state
   if (error || !tripInfo) {
     return (
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          height: "100vh",
-          padding: "20px",
-        }}
-      >
-        <p
-          style={{
-            fontSize: "18px",
-            color: "var(--error)",
-            marginBottom: "8px",
-          }}
-        >
-          エラーが発生しました
-        </p>
-        <p style={{ fontSize: "14px", color: "var(--foregroundl2)" }}>
-          {error || "トリップ情報を読み込めませんでした"}
-        </p>
-      </div>
+      <ErrorBoundary message={error || "トリップ情報を読み込めませんでした"} />
     );
   }
 

@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 
+import { ErrorBoundary } from "@/components/common";
+
 import { useBusStopData } from "../hooks";
 import type { BusWithJourney } from "../types";
 import { BusTripDetail } from "./BusTripDetail";
@@ -46,29 +48,9 @@ export function BusTripDetailContainer({
   // Handle error state
   if (error || !busStop) {
     return (
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          height: "100vh",
-          padding: "20px",
-        }}
-      >
-        <p
-          style={{
-            fontSize: "18px",
-            color: "var(--error)",
-            marginBottom: "8px",
-          }}
-        >
-          エラーが発生しました
-        </p>
-        <p style={{ fontSize: "14px", color: "var(--foregroundl2)" }}>
-          {error || "バス停情報を読み込めませんでした"}
-        </p>
-      </div>
+      <ErrorBoundary
+        message={error || "バス停情報を読み込めませんでした"}
+      />
     );
   }
 
