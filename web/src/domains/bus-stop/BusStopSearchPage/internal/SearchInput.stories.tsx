@@ -24,11 +24,3 @@ export const Default: Story = {
     },
   },
 };
-
-export const Interactive: Story = {
-  args: {
-    onSearch: (query: string) => {
-      console.log("Search query:", query);
-    },
-  },
-};
