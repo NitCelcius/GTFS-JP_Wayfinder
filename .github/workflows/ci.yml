@@ -17,41 +17,27 @@ jobs:
       - name: Install mise
         uses: jdx/mise-action@v2
         with:
-          version: 2025.9.16
+          version: 2025.12.12
+          cache: true
+          install: true
 
-      - name: Cache mise tools
-        uses: actions/cache@v4
-        with:
-          path: ~/.local/share/mise
-          key: ${{ runner.os }}-mise-${{ hashFiles('**/.mise.toml', '**/.tool-versions') }}
-          restore-keys: |
-            ${{ runner.os }}-mise-
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4.2.0
 
-      # 'mise install' を実行するステップ
-      - name: Install tools with mise
-        run: mise install
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v7.1.6
 
-      - name: Get pnpm store directory
-        id: pnpm-cache
-        shell: bash
-        run: |
-          echo "pnpm_store_path=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
+      - name: Get pnpm cache directory
+        id: pnpm-cache-dir
+        run: echo "dir=$(pnpm store path)" >> $GITHUB_OUTPUT
 
       - name: Cache pnpm dependencies
         uses: actions/cache@v4
         with:
-          path: ${{ steps.pnpm-cache.outputs.pnpm_store_path }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          path: ${{ steps.pnpm-cache-dir.outputs.dir }}
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
-      - name: Cache uv
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/uv
-          key: ${{ runner.os }}-uv-${{ hashFiles('**/requirements.txt', '**/pyproject.toml') }}
-          restore-keys: |
-            ${{ runner.os }}-uv-
+            ${{ runner.os }}-pnpm-
 
       - name: Bootstrap repository dependencies
         run: |
