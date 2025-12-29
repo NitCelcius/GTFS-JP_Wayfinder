@@ -32,15 +32,11 @@ const config: StorybookConfig = {
         // Only expose safe environment variables to Storybook
         // Filter to NEXT_PUBLIC_* prefix to avoid exposing sensitive credentials
         "process.env": JSON.stringify(
-          Object.keys(process.env)
-            .filter((key) => key.startsWith("NEXT_PUBLIC_"))
-            .reduce(
-              (acc, key) => {
-                acc[key] = process.env[key];
-                return acc;
-              },
-              {} as Record<string, string | undefined>
-            )
+          Object.fromEntries(
+            Object.keys(process.env)
+              .filter((key) => key.startsWith("NEXT_PUBLIC_"))
+              .map((key) => [key, process.env[key]])
+          )
         ),
         "process.env.NODE_ENV": JSON.stringify(
           process.env.NODE_ENV || "development"
