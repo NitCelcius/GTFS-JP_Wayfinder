@@ -92,6 +92,7 @@ export function useRouteSearch(): UseRouteSearchResult {
         const fromStop = searchParams.get("from");
         const toStop = searchParams.get("to");
         const beginTime = searchParams.get("time");
+        const selectedTrip = searchParams.get("selectedTrip");
 
         if ((forceReal || performSearch) && fromStop && toStop) {
           setIsLoading(true);
@@ -113,6 +114,17 @@ export function useRouteSearch(): UseRouteSearchResult {
 
             const convertedTripDetails =
               convertRouteSearchToTripDetails(resultWithNames);
+            
+            // If a specific trip was selected from route overview, pre-select it
+            if (selectedTrip) {
+              const routeIndex = resultWithNames.travels.findIndex(
+                (travel) => travel.trip_id === selectedTrip
+              );
+              if (routeIndex >= 0) {
+                convertedTripDetails.selectedRouteId = `route-${routeIndex + 1}`;
+              }
+            }
+            
             setTripDetails(convertedTripDetails);
           } else {
             throw new Error("API呼び出しから結果が得られませんでした");
