@@ -72,23 +72,3 @@
   color: var(--foregroundl2);
   font-size: var(--defaulttextfontsize);
 }
-.errorContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--spacing-md);
-  padding: var(--spacing-4xl) var(--spacing-lg);
-  text-align: center;
-}
-.errorMessage {
-  font-size: var(--headerlevel2fontsize);
-  font-weight: var(--font-weight-medium);
-  color: var(--color-status-error);
-  margin: 0;
-}
-.errorDetails {
-  font-size: var(--defaulttextfontsize);
-  color: var(--foregroundl2);
-  margin: 0;
-}
