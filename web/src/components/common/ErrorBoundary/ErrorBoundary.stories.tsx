@@ -19,7 +19,7 @@ type Story = StoryObj<typeof meta>;
  */
 export const WithMessage: Story = {
   args: {
-    message: "バス停情報の取得に失敗しました",
+    message: "バス停情報の取得に失敗しました。もう一度お試しください。",
   },
 };
 
