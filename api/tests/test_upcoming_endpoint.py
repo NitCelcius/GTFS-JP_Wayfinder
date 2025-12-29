@@ -36,11 +36,31 @@ def test_upcoming_hardcoded(monkeypatch, client):
     )
 
     # Mock the new batch function to return the batch time data
-    # The mock should respect the max_items parameter for limiting results
-    def mock_get_times_batch(trip_ids, stop_id, max_items=None, **kwargs):
-        result = {
-            trip_id: time_map[trip_id] for trip_id in trip_ids if trip_id in time_map
-        }
+    # The mock should respect both min_arrival_time and max_items parameters
+    def mock_get_times_batch(
+        trip_ids, stop_id, min_arrival_time=None, max_items=None, **kwargs
+    ):
+        # Apply min_arrival_time filter if provided
+        if min_arrival_time:
+
+            def time_to_seconds(time_str):
+                parts = time_str.split(":")
+                return int(parts[0]) * 3600 + int(parts[1]) * 60 + int(parts[2])
+
+            min_seconds = time_to_seconds(min_arrival_time)
+            result = {
+                trip_id: time_map[trip_id]
+                for trip_id in trip_ids
+                if trip_id in time_map
+                and time_to_seconds(time_map[trip_id]["arrival_time"]) >= min_seconds
+            }
+        else:
+            result = {
+                trip_id: time_map[trip_id]
+                for trip_id in trip_ids
+                if trip_id in time_map
+            }
+
         # Apply max_items limit if specified
         if max_items is not None and len(result) > max_items:
             result = dict(list(result.items())[:max_items])
