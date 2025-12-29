@@ -74,22 +74,26 @@ app = FastAPI(title="GTFS-JP Wayfinder API", lifespan=lifespan)
 
 # Configure CORS with special handling for wildcard
 cors_origins = get_cors_origins()
+
+# Common CORS parameters
+cors_params = {
+    "allow_credentials": False,
+    "allow_methods": ["*"],
+    "allow_headers": ["*"],
+}
+
 if cors_origins == ["*"]:
     # FastAPI requires allow_origin_regex for wildcard CORS
     app.add_middleware(
         CORSMiddleware,
         allow_origin_regex=".*",  # Match all origins
-        allow_credentials=False,
-        allow_methods=["*"],
-        allow_headers=["*"],
+        **cors_params,
     )
 else:
     app.add_middleware(
         CORSMiddleware,
         allow_origins=cors_origins,
-        allow_credentials=False,
-        allow_methods=["*"],
-        allow_headers=["*"],
+        **cors_params,
     )
 
 app.include_router(stops.router, prefix="/stops", tags=["stops"])
