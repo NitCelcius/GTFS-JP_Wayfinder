@@ -29,8 +29,19 @@ const config: StorybookConfig = {
         jsx: "automatic",
       },
       define: {
-        // Polyfill process.env for Next.js components (like next/image)
-        "process.env": JSON.stringify(process.env),
+        // Only expose safe environment variables to Storybook
+        // Filter to NEXT_PUBLIC_* prefix to avoid exposing sensitive credentials
+        "process.env": JSON.stringify(
+          Object.keys(process.env)
+            .filter((key) => key.startsWith("NEXT_PUBLIC_"))
+            .reduce(
+              (acc, key) => {
+                acc[key] = process.env[key];
+                return acc;
+              },
+              {} as Record<string, string | undefined>
+            )
+        ),
         "process.env.NODE_ENV": JSON.stringify(
           process.env.NODE_ENV || "development"
         ),
