@@ -7,6 +7,10 @@ const meta = {
   component: BusStopInfoV2,
   parameters: {
     layout: "fullscreen",
+    chromatic: {
+      delay: 300,
+      pauseAnimationAtEnd: true,
+    },
   },
   tags: ["autodocs"],
 } satisfies Meta<typeof BusStopInfoV2>;
