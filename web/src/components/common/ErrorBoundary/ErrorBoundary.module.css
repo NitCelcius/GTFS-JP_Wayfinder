@@ -1,0 +1,73 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: var(--spacing-lg);
+  background: var(--background);
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: var(--max-width-mobile);
+  width: 100%;
+  gap: var(--spacing-lg);
+}
+
+.title {
+  font-size: var(--text-xl);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-status-error);
+  margin: 0;
+}
+
+.message {
+  color: var(--gray-600);
+  font-size: var(--defaulttextfontsize);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.buttonRow {
+  display: flex;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: var(--spacing-md);
+}
+
+.resetButton,
+.homeButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem var(--spacing-3xl);
+  border-radius: var(--border-radius-md);
+  font-size: var(--defaulttextfontsize);
+  font-weight: var(--font-weight-normal);
+  cursor: pointer;
+  transition: opacity 0.15s;
+  text-decoration: none;
+  border: none;
+  font-family: Inter, "Noto Sans JP", sans-serif;
+  white-space: nowrap;
+}
+
+.resetButton:hover,
+.homeButton:hover {
+  opacity: 0.9;
+}
+
+.resetButton {
+  background: var(--color-action-primary);
+  color: #fff;
+}
+
+.homeButton {
+  background: var(--route-inactive-bg);
+  color: var(--foreground);
+}
