@@ -7,8 +7,8 @@ import { mockTravelOnceResponses } from "./routeSearchMocks";
  * Creates a Route mock for RouteDetailPage
  * Uses the first travel from routeSearchMocks for consistency
  */
-export async function createMockRoute(): Promise<Route> {
-  return await convertRouteSearchToRouteDetail(
+export function createMockRoute(): Route {
+  return convertRouteSearchToRouteDetail(
     mockTravelOnceResponses[0],
     "東駅",
     "大学病院"
