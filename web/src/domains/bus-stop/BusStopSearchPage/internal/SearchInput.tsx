@@ -1,11 +1,9 @@
 import { Search } from "lucide-react";
 
-import { useState } from "react";
-
 import styles from "./SearchInput.module.css";
 
 interface SearchInputProps {
-  onSearch: (query: string) => void;
+  onSearch: () => void;
 }
 
 function SearchIcon() {
@@ -13,36 +11,37 @@ function SearchIcon() {
 }
 
 export function SearchInput({ onSearch }: SearchInputProps) {
-  const [query, setQuery] = useState("");
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSearch(query);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      onSearch(query);
-    }
+  const handleClick = () => {
+    onSearch();
   };
 
   return (
     <div className={styles.container}>
-      <form onSubmit={handleSubmit} className={styles.form}>
-        <div className={styles.inputWrapper}>
+      <div className={styles.form}>
+        <div
+          className={styles.inputWrapper}
+          onClick={handleClick}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              handleClick();
+            }
+          }}
+          style={{ cursor: "pointer" }}
+        >
           <div className={styles.icon}>
             <SearchIcon />
           </div>
           <input
             type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={handleKeyDown}
             placeholder="バス停・場所名を入力"
             className={styles.input}
+            readOnly
+            style={{ cursor: "pointer" }}
           />
         </div>
-      </form>
+      </div>
     </div>
   );
 }

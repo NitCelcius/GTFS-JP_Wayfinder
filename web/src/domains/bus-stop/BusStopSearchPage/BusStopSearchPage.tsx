@@ -1,10 +1,14 @@
 import { MapPin } from "lucide-react";
 
+import { useState } from "react";
+
 import {
   BottomNavigation,
+  BusStopSearchModalContainer,
   LoadingSpinner,
   TopNavigation,
 } from "@/components/common";
+import type { BusStopSearchResult } from "@/types";
 
 import type { BusStop } from "../types";
 import styles from "./BusStopSearchPage.module.css";
@@ -39,6 +43,8 @@ export function BusStopSearchPage({
   onNavigateToRecent,
   onNavigateToBusStopInfo,
 }: BusStopSearchPageProps) {
+  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
+
   const handleBottomNavClick = (tab: "bus-stop" | "route" | "recent") => {
     switch (tab) {
       case "route":
@@ -55,9 +61,17 @@ export function BusStopSearchPage({
 
   const SearchLocationIcon = () => <MapPin size={24} />;
 
-  const handleSearch = (query: string) => {
-    // Placeholder for search functionality
-    console.log("Searching for:", query);
+  const handleSearchClick = () => {
+    setIsSearchModalOpen(true);
+  };
+
+  const handleSearchModalSelect = (result: BusStopSearchResult) => {
+    // Use the first candidate stop ID (consistent with route search behavior)
+    const busStopId = result.candidate_stop_id_list[0];
+    if (busStopId) {
+      onNavigateToBusStopInfo?.(busStopId, result.stop_name);
+    }
+    setIsSearchModalOpen(false);
   };
 
   // Store bus stop data for history tracking
@@ -111,7 +125,7 @@ export function BusStopSearchPage({
       <div className={styles.content}>
         {/* Search Input */}
         <div className={styles.searchSection}>
-          <SearchInput onSearch={handleSearch} />
+          <SearchInput onSearch={handleSearchClick} />
         </div>
 
         {/* Nearest Bus Stop Section */}
@@ -149,6 +163,15 @@ export function BusStopSearchPage({
       <BottomNavigation
         activeTab="bus-stop"
         onTabClick={handleBottomNavClick}
+      />
+
+      {/* Bus Stop Search Modal */}
+      <BusStopSearchModalContainer
+        isOpen={isSearchModalOpen}
+        onCanceled={() => setIsSearchModalOpen(false)}
+        onSelected={handleSearchModalSelect}
+        title="バス停を検索"
+        placeholder="バス停名を入力してください"
       />
     </div>
   );
