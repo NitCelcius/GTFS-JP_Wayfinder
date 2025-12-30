@@ -19,8 +19,8 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    onSearch: (query: string) => {
-      console.log("Search query:", query);
+    onSearch: () => {
+      console.log("Search clicked");
     },
   },
 };
