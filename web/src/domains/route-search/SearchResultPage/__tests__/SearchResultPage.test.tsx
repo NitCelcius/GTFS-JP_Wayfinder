@@ -40,9 +40,12 @@ describe("SearchResultPage", () => {
       />
     );
 
-    // Should display route tabs
+    // Should display route tabs with sequential numbering
     expect(screen.getByText("経路 1")).toBeInTheDocument();
     expect(screen.getByText("経路 2")).toBeInTheDocument();
+
+    // Verify we actually have 2 routes in the mock
+    expect(mockTwoRoutesTripDetails.routes).toHaveLength(2);
   });
 
   it("should display station names for single route", () => {
