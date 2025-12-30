@@ -14,7 +14,11 @@ const mockRouteData: RouteOverviewData = {
       arrivalTime: "08:12",
       duration: "12分",
       fare: 150,
+      transfers: 0,
       tripId: "trip_001_001",
+      originStation: "東駅",
+      destinationStation: "大学病院",
+      relativeTimeUntilDeparture: "3分後にバス停発",
     },
     {
       id: "route-2",
@@ -22,7 +26,11 @@ const mockRouteData: RouteOverviewData = {
       arrivalTime: "08:30",
       duration: "25分",
       fare: 200,
+      transfers: 1,
       tripId: "trip_002_001",
+      originStation: "東駅",
+      destinationStation: "大学病院",
+      relativeTimeUntilDeparture: "8分後にバス停発",
     },
     {
       id: "route-3",
@@ -30,7 +38,11 @@ const mockRouteData: RouteOverviewData = {
       arrivalTime: "08:12",
       duration: "17分",
       fare: 180,
+      transfers: 0,
       tripId: "trip_003_001",
+      originStation: "東駅",
+      destinationStation: "大学病院",
+      relativeTimeUntilDeparture: "2分前に出発済み",
     },
   ],
 };
@@ -40,7 +52,14 @@ const meta = {
   component: RouteOverviewPage,
   parameters: {
     layout: "fullscreen",
+    docs: {
+      description: {
+        component:
+          "Overview page displaying multiple route options from a search result. Shows route cards with time, duration, fare, and visual comparison of trip lengths via proportional progress bars. Allows users to select a specific route to view detailed journey information. Relative departure times are pre-calculated in the container to avoid time-based re-renders in the presentational component.",
+      },
+    },
   },
+  tags: ["autodocs"],
   args: {
     routeData: mockRouteData,
     onRouteSelect: (tripId: string) => console.log("Route selected:", tripId),
@@ -54,12 +73,14 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 /**
- * Default view with multiple route options
+ * Default view with multiple route options.
+ * Note: Relative times are pre-calculated in the container and passed as props.
+ * Progress bars are proportional to the relative duration of each route.
  */
 export const Default: Story = {};
 
 /**
- * Single route option
+ * Single route option - shows minimal list with one result
  */
 export const SingleRoute: Story = {
   args: {

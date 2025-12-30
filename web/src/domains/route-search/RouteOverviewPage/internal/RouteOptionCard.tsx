@@ -1,41 +1,86 @@
-import { Card } from "@/components/common";
+import {
+  ArrivalFlagIcon,
+  ChevronRight,
+  DeparturePinIcon,
+} from "@/components/common/icons";
 
-import type { RouteOption } from "../types";
 import styles from "./RouteOptionCard.module.css";
 
-interface RouteOptionCardProps {
-  route: RouteOption;
-  onSelect: () => void;
+/**
+ * Props for the RouteOptionCard component
+ */
+export interface RouteOptionCardProps {
+  /** Relative time description (e.g., "5分後にバス停発") */
+  relativeTimeUntilDeparture: string;
+  /** Departure time in HH:MM format */
+  departureTime: string;
+  /** Arrival time in HH:MM format */
+  arrivalTime: string;
+  /** Duration display string (e.g., "15分") */
+  duration: string;
+  /** Fare in yen (optional) */
+  fare?: number;
+  /** Number of transfers required */
+  transfers: number;
+  /** Progress bar width percentage (0-100) for visual comparison */
+  progressPercentage: number;
+  /** Callback when the card is clicked */
+  onClick: () => void;
 }
 
-export function RouteOptionCard({ route, onSelect }: RouteOptionCardProps) {
+/**
+ * Card component displaying a single route option with time, duration, fare, and visual progress indicator.
+ * Used in the route overview page to show available route options.
+ */
+export function RouteOptionCard({
+  relativeTimeUntilDeparture,
+  departureTime,
+  arrivalTime,
+  duration,
+  fare,
+  transfers,
+  progressPercentage,
+  onClick,
+}: RouteOptionCardProps) {
   return (
-    <Card onClick={onSelect}>
-      <div className={styles.container}>
-        <div className={styles.timeSection}>
-          <div className={styles.timeRow}>
-            <span className={styles.timeLabel}>出発</span>
-            <span className={styles.timeValue}>{route.departureTime}</span>
-          </div>
-          <div className={styles.timeRow}>
-            <span className={styles.timeLabel}>到着</span>
-            <span className={styles.timeValue}>{route.arrivalTime}</span>
+    <div className={styles.ticketContainer} onClick={onClick}>
+      <div className={styles.ticketContent}>
+        <div className={styles.header}>
+          <div className={styles.relativeTime}>
+            {relativeTimeUntilDeparture}
           </div>
         </div>
 
-        <div className={styles.detailsSection}>
-          <div className={styles.detailRow}>
-            <span className={styles.detailLabel}>所要時間</span>
-            <span className={styles.detailValue}>{route.duration}</span>
+        <div className={styles.timeDetails}>
+          {departureTime} 発 → {arrivalTime} 着 (所要 {duration})
+        </div>
+
+        <div className={styles.progressBarContainer}>
+          <div
+            className={styles.progressBar}
+            style={{ width: `${progressPercentage}%` }}
+          >
+            <span className={styles.departurePin}>
+              <DeparturePinIcon size={16} />
+            </span>
+            <div className={styles.progressLine} />
+            <span className={styles.arrivalFlag}>
+              <ArrivalFlagIcon size={16} />
+            </span>
           </div>
-          {route.fare !== undefined && (
-            <div className={styles.detailRow}>
-              <span className={styles.detailLabel}>運賃</span>
-              <span className={styles.detailValue}>{route.fare}円</span>
-            </div>
+        </div>
+
+        <div className={styles.detailsRow}>
+          {fare !== undefined && (
+            <span className={styles.detailText}>運賃 {fare}円</span>
           )}
+          <span className={styles.detailText}>乗り換え {transfers}回</span>
         </div>
       </div>
-    </Card>
+
+      <div className={styles.chevronContainer}>
+        <ChevronRight />
+      </div>
+    </div>
   );
 }

@@ -1,12 +1,15 @@
 "use client";
 
+import { Suspense } from "react";
+
 import { useRouter } from "next/navigation";
 
+import { LoadingSpinner } from "@/components/common/LoadingSpinner/LoadingSpinner";
 import { RouteOverviewPageContainer } from "@/domains/route-search";
 
 export const dynamic = "force-dynamic";
 
-export default function RouteOverviewPage() {
+function RouteOverviewContent() {
   const router = useRouter();
 
   return (
@@ -15,5 +18,26 @@ export default function RouteOverviewPage() {
       onNavigateToBusStop={() => router.push("/bus-stop")}
       onNavigateToRecent={() => router.push("/recent")}
     />
+  );
+}
+
+export default function RouteOverviewPage() {
+  return (
+    <Suspense
+      fallback={
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            minHeight: "100vh",
+          }}
+        >
+          <LoadingSpinner />
+        </div>
+      }
+    >
+      <RouteOverviewContent />
+    </Suspense>
   );
 }

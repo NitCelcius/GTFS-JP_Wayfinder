@@ -14,12 +14,23 @@ import { RouteOverviewPage } from "./RouteOverviewPage";
 import type { RouteOverviewData } from "./types";
 import { convertToRouteOverviewData } from "./utils";
 
+/**
+ * Props for the RouteOverviewPageContainer
+ */
 interface RouteOverviewPageContainerProps {
+  /** Callback when user navigates back */
   onBack: () => void;
+  /** Callback to navigate to bus stop search page */
   onNavigateToBusStop: () => void;
+  /** Callback to navigate to recent searches page */
   onNavigateToRecent: () => void;
 }
 
+/**
+ * Container component that handles data fetching and state management for the RouteOverviewPage.
+ * Fetches route options from the API based on URL search parameters and converts
+ * the API response to UI-friendly format.
+ */
 export function RouteOverviewPageContainer({
   onBack,
   onNavigateToBusStop,
@@ -28,6 +39,9 @@ export function RouteOverviewPageContainer({
   const router = useRouter();
   const searchParams = useSearchParams();
   const [routeData, setRouteData] = useState<RouteOverviewData | null>(null);
+  const [searchResult, setSearchResult] = useState<RouteSearchResult | null>(
+    null
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -65,12 +79,24 @@ export function RouteOverviewPageContainer({
           return;
         }
 
+        // Sort travels by arrival time (earliest first)
+        const sortedTravels = [...response.data.travels].sort((a, b) => {
+          const parseTime = (timeStr: string) => {
+            const [hours, minutes] = timeStr.split(":").map(Number);
+            return hours * 60 + minutes;
+          };
+          return parseTime(a.arrival_time) - parseTime(b.arrival_time);
+        });
+
         const result: RouteSearchResult = {
-          travels: response.data.travels,
+          travels: sortedTravels,
           originStopName: fromName || `バス停 ${fromStop}`,
           destinationStopName: toName || `バス停 ${toStop}`,
           searchTime: time,
         };
+
+        // Store the result for later use to avoid duplicate API calls
+        setSearchResult(result);
 
         const overviewData = convertToRouteOverviewData(result);
         setRouteData(overviewData);
@@ -88,6 +114,12 @@ export function RouteOverviewPageContainer({
   }, [searchParams]);
 
   const handleRouteSelect = (tripId: string) => {
+    // Store the complete search result in localStorage to avoid duplicate API calls
+    // The results page will check localStorage first before making an API call
+    if (searchResult) {
+      localStorage.setItem("routeSearchResult", JSON.stringify(searchResult));
+    }
+
     // Navigate to the detailed results page with the selected trip
     const params = new URLSearchParams({
       from: searchParams.get("from") || "",
@@ -96,7 +128,6 @@ export function RouteOverviewPageContainer({
       toName: searchParams.get("toName") || "",
       time: searchParams.get("time") || getCurrentTimeString(),
       selectedTrip: tripId,
-      search: "true",
     });
 
     router.push(`/results?${params.toString()}`);
@@ -104,18 +135,9 @@ export function RouteOverviewPageContainer({
 
   if (isLoading) {
     return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          minHeight: "100vh",
-          flexDirection: "column",
-          gap: "var(--spacing-lg)",
-        }}
-      >
+      <div className="flex min-h-screen flex-col items-center justify-center gap-[var(--spacing-lg)]">
         <LoadingSpinner size="lg" />
-        <p style={{ color: "var(--gray-600)" }}>経路を検索中...</p>
+        <p className="text-[var(--gray-600)]">経路を検索中...</p>
       </div>
     );
   }

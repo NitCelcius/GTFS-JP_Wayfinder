@@ -1,55 +1,132 @@
-.container {
+/* Ticket-like container with border */
+.ticketContainer {
   display: flex;
-  flex-direction: column;
-  gap: var(--spacing-lg);
-}
-
-.timeSection {
-  display: flex;
-  flex-direction: column;
+  align-items: center;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-2xl);
+  cursor: pointer;
+  transition: all 0.2s ease;
   gap: var(--spacing-md);
 }
 
-.timeRow {
+.ticketContainer:hover {
+  border-color: var(--gray-400);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.ticketContainer:active {
+  transform: scale(0.98);
+}
+
+@custom-variant dark (&:is(.dark *));
+
+@dark {
+  .ticketContainer {
+    background: var(--card);
+    border-color: var(--border);
+  }
+}
+
+.ticketContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  flex: 1;
+  min-width: 0;
+}
+
+.header {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.timeLabel {
+.relativeTime {
+  font-size: 1.375rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--gray-900);
+  line-height: 1.2;
+}
+
+.chevronContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gray-900);
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.timeDetails {
   font-size: 0.875rem;
   color: var(--gray-600);
   font-weight: var(--font-weight-normal);
 }
 
-.timeValue {
-  font-size: 1.25rem;
-  font-weight: var(--font-weight-medium);
-  color: var(--gray-900);
+.progressBarContainer {
+  width: 100%;
 }
 
-.detailsSection {
+.progressBar {
+  position: relative;
   display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
-  padding-top: var(--spacing-md);
+  align-items: center;
+  height: 1.5rem;
+  transition: width 0.3s ease;
+}
+
+.departurePin {
+  position: absolute;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background-color: var(--background);
+  box-shadow: 0 0 0 2px var(--color-action-primary);
+  z-index: 2;
+  color: var(--color-action-primary);
+}
+
+.progressLine {
+  position: absolute;
+  left: 0.75rem;
+  right: 0.75rem;
+  height: 4px;
+  background: linear-gradient(to right, var(--gray-400), var(--gray-300));
+  border-radius: 2px;
+  z-index: 1;
+}
+
+.arrivalFlag {
+  position: absolute;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background-color: var(--background);
+  box-shadow: 0 0 0 2px var(--color-action-primary);
+  z-index: 2;
+  color: var(--color-action-primary);
+}
+
+.detailsRow {
+  display: flex;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+  padding-top: var(--spacing-sm);
   border-top: 1px solid var(--gray-200);
 }
 
-.detailRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.detailLabel {
+.detailText {
   font-size: 0.875rem;
   color: var(--gray-600);
   font-weight: var(--font-weight-normal);
-}
-
-.detailValue {
-  font-size: 0.875rem;
-  font-weight: var(--font-weight-medium);
-  color: var(--gray-800);
 }

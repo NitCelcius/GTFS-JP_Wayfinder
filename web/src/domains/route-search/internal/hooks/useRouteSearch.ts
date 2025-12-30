@@ -72,8 +72,17 @@ export function useRouteSearch(): UseRouteSearchResult {
             setError("バス停名の取得に失敗したため、IDで表示しています。");
           }
 
+          // Sort travels by arrival time (earliest first)
+          const sortedTravels = [...response.data.travels].sort((a, b) => {
+            const parseTime = (timeStr: string) => {
+              const [hours, minutes] = timeStr.split(":").map(Number);
+              return hours * 60 + minutes;
+            };
+            return parseTime(a.arrival_time) - parseTime(b.arrival_time);
+          });
+
           const result: RouteSearchResult = {
-            travels: response.data.travels,
+            travels: sortedTravels,
             originStopName,
             destinationStopName,
             searchTime: time,
@@ -88,13 +97,62 @@ export function useRouteSearch(): UseRouteSearchResult {
 
       try {
         const forceReal = searchParams.get("real") === "true";
-        const performSearch = searchParams.get("search") === "true";
         const fromStop = searchParams.get("from");
         const toStop = searchParams.get("to");
         const beginTime = searchParams.get("time");
         const selectedTrip = searchParams.get("selectedTrip");
 
-        if ((forceReal || performSearch) && fromStop && toStop) {
+        // Check localStorage first to avoid duplicate API calls
+        const storedResult = localStorage.getItem("routeSearchResult");
+        let useCache = false;
+
+        if (storedResult && !forceReal) {
+          try {
+            const cached: RouteSearchResult = JSON.parse(storedResult);
+            // Verify cached data matches current search parameters
+            // Note: We don't check exact time match to allow some flexibility
+            if (
+              fromStop &&
+              toStop &&
+              cached.travels &&
+              cached.travels.length > 0
+            ) {
+              useCache = true;
+              const fromName =
+                searchParams.get("fromName") || cached.originStopName;
+              const toName =
+                searchParams.get("toName") || cached.destinationStopName;
+
+              const resultWithNames = {
+                ...cached,
+                originStopName: fromName,
+                destinationStopName: toName,
+              };
+
+              const convertedTripDetails =
+                convertRouteSearchToTripDetails(resultWithNames);
+
+              // If a specific trip was selected from route overview, pre-select it
+              if (selectedTrip) {
+                const routeIndex = resultWithNames.travels.findIndex(
+                  (travel) => travel.trip_id === selectedTrip
+                );
+                if (routeIndex >= 0) {
+                  convertedTripDetails.selectedRouteId = `route-${routeIndex + 1}`;
+                }
+              }
+
+              setTripDetails(convertedTripDetails);
+              localStorage.removeItem("routeSearchResult");
+            }
+          } catch (e) {
+            console.warn("Failed to parse cached route data:", e);
+            useCache = false;
+          }
+        }
+
+        // Fall back to API call if cache miss or direct navigation
+        if (!useCache && fromStop && toStop) {
           setIsLoading(true);
 
           const fromName = searchParams.get("fromName") || `バス停 ${fromStop}`;
@@ -114,7 +172,7 @@ export function useRouteSearch(): UseRouteSearchResult {
 
             const convertedTripDetails =
               convertRouteSearchToTripDetails(resultWithNames);
-            
+
             // If a specific trip was selected from route overview, pre-select it
             if (selectedTrip) {
               const routeIndex = resultWithNames.travels.findIndex(
@@ -124,23 +182,13 @@ export function useRouteSearch(): UseRouteSearchResult {
                 convertedTripDetails.selectedRouteId = `route-${routeIndex + 1}`;
               }
             }
-            
+
             setTripDetails(convertedTripDetails);
           } else {
             throw new Error("API呼び出しから結果が得られませんでした");
           }
-        } else {
-          const storedResult = localStorage.getItem("routeSearchResult");
-
-          if (storedResult) {
-            const searchResult: RouteSearchResult = JSON.parse(storedResult);
-            const convertedTripDetails =
-              convertRouteSearchToTripDetails(searchResult);
-            setTripDetails(convertedTripDetails);
-            localStorage.removeItem("routeSearchResult");
-          } else {
-            setError("検索結果が見つかりません。検索を実行してください。");
-          }
+        } else if (!useCache) {
+          setError("検索結果が見つかりません。検索を実行してください。");
         }
       } catch (error) {
         console.error("検索結果の読み込みでエラーが発生:", error);
