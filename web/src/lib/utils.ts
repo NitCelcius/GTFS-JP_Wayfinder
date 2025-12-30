@@ -85,67 +85,109 @@ export const getCurrentTimeString = (): string => {
   return `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}:00`;
 };
 
+/**
+ * Parse a time string (HH:MM or HH:MM:SS) to total minutes
+ * @param timeStr - Time string in HH:MM or HH:MM:SS format
+ * @returns Total minutes from the time string
+ * @throws Error if the time string is in an invalid format
+ */
+export function parseTimeToMinutes(timeStr: string): number {
+  if (!timeStr || typeof timeStr !== "string") {
+    throw new Error(
+      `Invalid time string: expected non-empty string, got "${timeStr}"`
+    );
+  }
+
+  const timeFormatRegex = /^\d{1,2}:\d{2}(:\d{2})?$/;
+  if (!timeFormatRegex.test(timeStr)) {
+    throw new Error(
+      `Invalid time format. Please use HH:MM or HH:MM:SS format. Input: "${timeStr}"`
+    );
+  }
+
+  const parts = timeStr.split(":").map(Number);
+  const hours = parts[0];
+  const minutes = parts[1];
+
+  if (isNaN(hours) || isNaN(minutes)) {
+    throw new Error(
+      `Invalid time components. Hours and minutes must be numeric. Input: "${timeStr}"`
+    );
+  }
+
+  // Allow hours up to 47 for next-day arrivals (as per existing calculateDurationStr validation)
+  if (hours < 0 || hours > 47) {
+    throw new Error(`Invalid hours. Must be between 0-47. Input: "${hours}"`);
+  }
+
+  if (minutes < 0 || minutes > 59) {
+    throw new Error(
+      `Invalid minutes. Must be between 0-59. Input: "${minutes}"`
+    );
+  }
+
+  return hours * 60 + minutes;
+}
+
+/**
+ * Calculate duration in minutes between two time strings (HH:MM or HH:MM:SS format)
+ * Handles overnight trips (when arrival is earlier than departure)
+ * @param startTime - Start time in HH:MM or HH:MM:SS format
+ * @param endTime - End time in HH:MM or HH:MM:SS format
+ * @returns Duration in minutes
+ */
+export function calculateDurationMinutes(
+  startTime: string,
+  endTime: string
+): number {
+  const startTotalMinutes = parseTimeToMinutes(startTime);
+  const endTotalMinutes = parseTimeToMinutes(endTime);
+
+  let durationMinutes = endTotalMinutes - startTotalMinutes;
+
+  // Handle overnight trips
+  if (durationMinutes < 0) {
+    durationMinutes += 24 * 60;
+  }
+
+  return durationMinutes;
+}
+
+/**
+ * Sort travels by arrival time (earliest first)
+ * Handles overnight trips by treating times after midnight as next-day arrivals
+ * @param travels - Array of travel objects with arrival_time property
+ * @returns Sorted array of travels
+ */
+export function sortTravelsByArrivalTime<T extends { arrival_time: string }>(
+  travels: T[]
+): T[] {
+  return [...travels].sort((a, b) => {
+    let aMinutes = parseTimeToMinutes(a.arrival_time);
+    let bMinutes = parseTimeToMinutes(b.arrival_time);
+
+    // If arrival time is in early morning hours (00:00-04:00), assume it's next day
+    // Add 24 hours to treat it as later than same-day arrivals
+    const EARLY_MORNING_CUTOFF = 4 * 60; // 04:00
+    if (aMinutes < EARLY_MORNING_CUTOFF) {
+      aMinutes += 24 * 60;
+    }
+    if (bMinutes < EARLY_MORNING_CUTOFF) {
+      bMinutes += 24 * 60;
+    }
+
+    return aMinutes - bMinutes;
+  });
+}
+
 // Helper function to calculate duration between two time strings, accepts both HH:MM and HH:MM:SS formats
 export function calculateDurationStr(
   departureTime: string,
   arrivalTime: string
 ): string {
-  // Validate input format - now accepts both HH:MM and HH:MM:SS
-  const timeFormatRegex = /^\d{1,2}:\d{2}(:\d{2})?$/;
-  const MAX_HOUR = 47; // may exceed 24 for next day arrivals
-
-  if (!timeFormatRegex.test(departureTime)) {
-    throw new Error(
-      `Invalid departure time format. Please use HH:MM or HH:MM:SS format. Input: "${departureTime}"`
-    );
-  }
-
-  if (!timeFormatRegex.test(arrivalTime)) {
-    throw new Error(
-      `Invalid arrival time format. Please use HH:MM or HH:MM:SS format. Input: "${arrivalTime}"`
-    );
-  }
-
-  // Parse time components - handle both HH:MM and HH:MM:SS formats
-  const parseTimeString = (timeStr: string) => {
-    const parts = timeStr.split(":").map(Number);
-    const hour = parts[0];
-    const minute = parts[1];
-    const second = parts[2] || 0; // Default to 0 if seconds not provided
-    return { hour, minute, second };
-  };
-
-  const depTime = parseTimeString(departureTime);
-  const arrTime = parseTimeString(arrivalTime);
-
-  // Validate time ranges
-  if (depTime.hour < 0 || depTime.hour > MAX_HOUR || isNaN(depTime.hour)) {
-    throw new Error(
-      `Invalid departure hour. Must be between 0-${MAX_HOUR}. Input: "${depTime.hour}"`
-    );
-  }
-
-  if (depTime.minute < 0 || depTime.minute > 59 || isNaN(depTime.minute)) {
-    throw new Error(
-      `Invalid departure minutes. Must be between 0-59. Input: "${depTime.minute}"`
-    );
-  }
-
-  if (arrTime.hour < 0 || arrTime.hour > MAX_HOUR || isNaN(arrTime.hour)) {
-    throw new Error(
-      `Invalid arrival hour. Must be between 0-${MAX_HOUR}. Input: "${arrTime.hour}"`
-    );
-  }
-
-  if (arrTime.minute < 0 || arrTime.minute > 59 || isNaN(arrTime.minute)) {
-    throw new Error(
-      `Invalid arrival minutes. Must be between 0-59. Input: "${arrTime.minute}"`
-    );
-  }
-
-  // Convert to total minutes (seconds are ignored for duration calculation)
-  const depTotalMin = depTime.hour * 60 + depTime.minute;
-  const arrTotalMin = arrTime.hour * 60 + arrTime.minute;
+  // Use parseTimeToMinutes which already has comprehensive validation
+  const depTotalMin = parseTimeToMinutes(departureTime);
+  const arrTotalMin = parseTimeToMinutes(arrivalTime);
 
   let diffMin = arrTotalMin - depTotalMin;
 
@@ -155,6 +197,30 @@ export function calculateDurationStr(
   }
 
   return `${diffMin}分`;
+}
+
+/**
+ * Calculate duration and format in Japanese (e.g., "45分" or "1時間30分")
+ * @param startTime - Start time in HH:MM or HH:MM:SS format
+ * @param endTime - End time in HH:MM or HH:MM:SS format
+ * @returns Japanese formatted duration string
+ */
+export function calculateDurationJapanese(
+  startTime: string,
+  endTime: string
+): string {
+  const durationMinutes = calculateDurationMinutes(startTime, endTime);
+
+  const hours = Math.floor(durationMinutes / 60);
+  const minutes = durationMinutes % 60;
+
+  if (hours > 0) {
+    if (minutes === 0) {
+      return `${hours}時間`;
+    }
+    return `${hours}時間${minutes}分`;
+  }
+  return `${minutes}分`;
 }
 
 /**
