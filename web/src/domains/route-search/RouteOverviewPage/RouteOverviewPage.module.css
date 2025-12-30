@@ -1,0 +1,35 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--background);
+}
+
+.scrollArea {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: var(--spacing-4xl);
+}
+
+.content {
+  max-width: var(--max-w-mobile);
+  margin: 0 auto;
+  padding: var(--spacing-lg);
+}
+
+.routesSection {
+  margin-top: var(--spacing-lg);
+}
+
+.sectionTitle {
+  font-size: 1rem;
+  font-weight: var(--font-weight-medium);
+  color: var(--gray-900);
+  margin-bottom: var(--spacing-lg);
+}
+
+.routesList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
