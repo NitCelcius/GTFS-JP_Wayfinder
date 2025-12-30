@@ -56,8 +56,8 @@ class AkitaBusWayFinder:
         self._trip_to_service_id: dict[str, str] = {}  # trip_id -> service_id
         self._stop_to_trips: dict[str, list[str]] = {}  # stop_id -> [trip_ids]
         self._trip_stop_times: dict[
-            tuple[str, str], tuple[np.datetime64, np.datetime64, int]
-        ] = {}  # (trip_id, stop_id) -> (arrival_time, departure_time, stop_sequence)
+            tuple[str, str], list[tuple[np.datetime64, np.datetime64, int]]
+        ] = {}  # (trip_id, stop_id) -> [(arrival_time, departure_time, stop_sequence), ...]
 
         # Distance calculator - can be switched between Haversine and Euclidean
         self.distance_calculator: DistanceCalculator = (
@@ -189,20 +189,29 @@ class AkitaBusWayFinder:
             len(self._stop_to_trips),
         )
 
-        # Build (trip_id, stop_id) -> (arrival_time, departure_time, stop_sequence) lookup
+        # Build (trip_id, stop_id) -> list[(arrival_time, departure_time, stop_sequence)]
         # Used by get_trip_times and get_trips_from_stops for faster sequence lookups
+        # Note: Some trips visit the same stop multiple times (circular routes), so we store a list
         # Use itertuples() for better performance than iterrows()
         self._trip_stop_times = {}
         for row in self.df_stop_times.itertuples(index=False):
             key = (row.trip_id, row.stop_id)
-            self._trip_stop_times[key] = (
+            entry = (
                 row.arrival_time,
                 row.departure_time,
                 row.stop_sequence,
             )
+            if key not in self._trip_stop_times:
+                self._trip_stop_times[key] = [entry]
+            else:
+                self._trip_stop_times[key].append(entry)
+
+        # Count total entries (including multiple visits to same stop)
+        total_entries = sum(len(v) for v in self._trip_stop_times.values())
         logger.info(
-            "Built (trip,stop)->times index with %d entries",
+            "Built (trip,stop)->times index with %d unique keys, %d total entries",
             len(self._trip_stop_times),
+            total_entries,
         )
 
     def generate_graph(self):
@@ -412,11 +421,21 @@ class AkitaBusWayFinder:
             if to_key not in self._trip_stop_times:
                 continue
 
-            from_seq = self._trip_stop_times[from_key][2]  # stop_sequence is index 2
-            to_seq = self._trip_stop_times[to_key][2]
+            # Handle multiple visits to same stop (circular routes)
+            # Check all combinations where from_stop comes before to_stop in sequence
+            from_entries = self._trip_stop_times[from_key]
+            to_entries = self._trip_stop_times[to_key]
 
-            # Verify to_stop comes after from_stop in sequence
-            if to_seq > from_seq:
+            found_valid_sequence = False
+            for _from_arr, _from_dep, from_seq in from_entries:
+                for _to_arr, _to_dep, to_seq in to_entries:
+                    if to_seq > from_seq:
+                        found_valid_sequence = True
+                        break
+                if found_valid_sequence:
+                    break
+
+            if found_valid_sequence:
                 res.append(trip_id)
 
         return res
@@ -439,16 +458,35 @@ class AkitaBusWayFinder:
             raise ValueError(
                 "The trip " + trip_id + " does not involve a stop: " + from_id,
             )
-        _from_arr_time, dep_time, dep_stop_seq = self._trip_stop_times[from_key]
 
         # Get arrival time from cache
         if to_key not in self._trip_stop_times:
             raise ValueError("The trip " + trip_id + " does not stop at: " + to_id)
 
-        arr_time, _to_dep_time, to_stop_seq = self._trip_stop_times[to_key]
+        # Handle multiple visits to same stop (circular routes)
+        # Find the first valid sequence where from_stop comes before to_stop
+        from_entries = self._trip_stop_times[from_key]
+        to_entries = self._trip_stop_times[to_key]
+
+        dep_time = None
+        arr_time = None
+        dep_stop_seq = None
+        to_stop_seq = None
+
+        for _from_arr, from_dep, from_seq in from_entries:
+            for to_arr, _to_dep, to_seq in to_entries:
+                if to_seq > from_seq:
+                    # Found valid sequence - use first occurrence
+                    dep_time = from_dep
+                    arr_time = to_arr
+                    dep_stop_seq = from_seq
+                    to_stop_seq = to_seq
+                    break
+            if dep_time is not None:
+                break
 
         # Verify sequence order
-        if to_stop_seq <= dep_stop_seq:
+        if dep_time is None or to_stop_seq is None or to_stop_seq <= dep_stop_seq:
             raise ValueError(
                 "The trip "
                 + trip_id
