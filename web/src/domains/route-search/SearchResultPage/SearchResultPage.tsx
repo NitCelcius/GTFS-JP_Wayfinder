@@ -15,6 +15,7 @@ import { SearchConditionsSummary } from "./internal/SearchConditionsSummary";
 import { TripSummary } from "./internal/TripSummary";
 import { SearchResultPageProps } from "./types";
 
+// DEPRECATED: Use RouteOverviewPageContainer instead
 export function SearchResultPage({
   tripDetails,
   searchUrl,

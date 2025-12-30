@@ -7,6 +7,9 @@ const meta: Meta<typeof RouteOverview> = {
   component: RouteOverview,
   parameters: {
     layout: "centered",
+    chromatic: {
+      disableSnapshot: true,
+    },
   },
   tags: ["autodocs"],
   argTypes: {

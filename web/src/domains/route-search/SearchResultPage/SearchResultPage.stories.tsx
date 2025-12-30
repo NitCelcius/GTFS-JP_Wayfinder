@@ -5,7 +5,7 @@ import { mockSingleRouteTripDetails, mockTwoRoutesTripDetails } from "@/mocks";
 import { SearchResultPage } from "./SearchResultPage";
 
 const meta = {
-  title: "Domains/RouteSearch/SearchResultPage",
+  title: "deprecated/Domains/RouteSearch/SearchResultPage",
   component: SearchResultPage,
   parameters: {
     layout: "fullscreen",
@@ -14,6 +14,9 @@ const meta = {
         component:
           "バス経路検索結果を表示するページ。乗り換え情報、料金、時刻表を含む詳細な経路情報を表示します。",
       },
+    },
+    chromatic: {
+      disableSnapshot: true,
     },
   },
   args: {

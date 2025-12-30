@@ -6,10 +6,13 @@ import { Station } from "../types";
 import { StationStop } from "./StationStop";
 
 const meta: Meta<typeof StationStop> = {
-  title: "RouteSearch/SearchResultPage/Internal/StationStop",
+  title: "Deprecated/RouteSearch/SearchResultPage/Internal/StationStop",
   component: StationStop,
   parameters: {
     layout: "centered",
+    chromatic: {
+      disableSnapshot: true,
+    },
   },
   tags: ["autodocs"],
   argTypes: {
