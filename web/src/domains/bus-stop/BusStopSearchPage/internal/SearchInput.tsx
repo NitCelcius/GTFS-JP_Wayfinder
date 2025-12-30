@@ -28,7 +28,6 @@ export function SearchInput({ onSearch }: SearchInputProps) {
               handleClick();
             }
           }}
-          style={{ cursor: "pointer" }}
         >
           <div className={styles.icon}>
             <SearchIcon />
@@ -38,7 +37,6 @@ export function SearchInput({ onSearch }: SearchInputProps) {
             placeholder="バス停・場所名を入力"
             className={styles.input}
             readOnly
-            style={{ cursor: "pointer" }}
           />
         </div>
       </div>
