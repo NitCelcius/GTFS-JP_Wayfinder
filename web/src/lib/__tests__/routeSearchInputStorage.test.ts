@@ -93,6 +93,10 @@ describe("routeSearchInputStorage", () => {
     });
 
     it("should return null when data is older than 1 hour", () => {
+      // Mock current time
+      const now = 1000000000000; // Fixed timestamp
+      jest.spyOn(Date, "now").mockReturnValue(now);
+
       // Manually create expired data
       const expiredState = {
         originStopId: "stop1",
@@ -101,7 +105,7 @@ describe("routeSearchInputStorage", () => {
         destinationStopName: "中央公園",
         originCandidateStopIds: ["stop1"],
         destinationCandidateStopIds: ["stop2"],
-        timestamp: Date.now() - 61 * 60 * 1000, // 61 minutes ago
+        timestamp: now - 61 * 60 * 1000, // 61 minutes ago
       };
 
       localStorage.setItem(
@@ -115,9 +119,16 @@ describe("routeSearchInputStorage", () => {
       // Should also clear the expired data
       const stored = localStorage.getItem("gtfs-route-search-inputs");
       expect(stored).toBeNull();
+
+      // Restore Date.now()
+      jest.restoreAllMocks();
     });
 
     it("should return data when exactly at 1 hour boundary", () => {
+      // Mock current time
+      const now = 1000000000000; // Fixed timestamp
+      jest.spyOn(Date, "now").mockReturnValue(now);
+
       // Data that is exactly 1 hour old should still be returned
       const boundaryState = {
         originStopId: "stop1",
@@ -126,7 +137,7 @@ describe("routeSearchInputStorage", () => {
         destinationStopName: "中央公園",
         originCandidateStopIds: ["stop1"],
         destinationCandidateStopIds: ["stop2"],
-        timestamp: Date.now() - 60 * 60 * 1000, // Exactly 1 hour ago
+        timestamp: now - 60 * 60 * 1000, // Exactly 1 hour ago
       };
 
       localStorage.setItem(
@@ -136,6 +147,9 @@ describe("routeSearchInputStorage", () => {
 
       const result = getRouteSearchInputs();
       expect(result).not.toBeNull();
+
+      // Restore Date.now()
+      jest.restoreAllMocks();
     });
 
     it("should handle invalid JSON gracefully", () => {
