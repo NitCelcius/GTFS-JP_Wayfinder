@@ -188,10 +188,36 @@ def test_get_timed_travels_from_path_includes_walk_transfers(
 
     monkeypatch.setattr(wayfinder_instance, "is_walk_transfer", mock_is_walk_transfer)
 
-    # Mock get_trips_from_stops to return empty list
+    # Mock get_trips_from_stops to return trip IDs for non-walk-transfer segments
+    def mock_get_trips_from_stops(from_stop, to_stop, service_id):
+        # Only return trips for regular bus segments (not walk transfers)
+        if from_stop == "chuo-koen_01" and to_stop == "akita-eki_01":
+            return ["trip_001"]
+        if from_stop == "akita-eki_02" and to_stop == "ion-mall_01":
+            return ["trip_002"]
+        return []
+
     monkeypatch.setattr(
-        wayfinder_instance, "get_trips_from_stops", lambda *args, **kwargs: []
+        wayfinder_instance, "get_trips_from_stops", mock_get_trips_from_stops
     )
+
+    # Mock get_trip_times to return departure and arrival times
+    def mock_get_trip_times(from_stop, to_stop, trip_id):
+        if trip_id == "trip_001":
+            # chuo-koen_01 -> akita-eki_01: depart 10:00, arrive 10:15
+            return (
+                wayfinder_instance.time_str_to_np_datetime("10:00:00"),
+                wayfinder_instance.time_str_to_np_datetime("10:15:00"),
+            )
+        if trip_id == "trip_002":
+            # akita-eki_02 -> ion-mall_01: depart 10:20, arrive 10:45
+            return (
+                wayfinder_instance.time_str_to_np_datetime("10:20:00"),
+                wayfinder_instance.time_str_to_np_datetime("10:45:00"),
+            )
+        return (None, None)
+
+    monkeypatch.setattr(wayfinder_instance, "get_trip_times", mock_get_trip_times)
 
     # Mock get_fare_from_stops to return a dummy fare
     monkeypatch.setattr(wayfinder_instance, "get_fare_from_stops", lambda *args: 100)
