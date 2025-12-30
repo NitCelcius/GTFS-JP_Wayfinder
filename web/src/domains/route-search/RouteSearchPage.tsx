@@ -1,10 +1,15 @@
 import { MapPinned } from "lucide-react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { BottomNavigation } from "@/components/common/BottomNavigation/BottomNavigation";
 import { RouteSearchButton } from "@/components/common/RouteSearchButton/RouteSearchButton";
 import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
+import {
+  clearRouteSearchInputs,
+  getRouteSearchInputs,
+  saveRouteSearchInputs,
+} from "@/lib/routeSearchInputStorage";
 import { getCurrentTimeString } from "@/lib/utils";
 import type { BusStopSearchResult, RouteSearchState } from "@/types";
 
@@ -86,20 +91,58 @@ export function RouteSearchPage({
     error: null,
   });
 
+  // Restore saved inputs on mount (if within 1 hour)
+  useEffect(() => {
+    const savedInputs = getRouteSearchInputs();
+    if (savedInputs) {
+      console.log("Restoring saved route search inputs:", savedInputs);
+      setOriginValue(savedInputs.originStopName);
+      setDestinationValue(savedInputs.destinationStopName);
+      setOriginCandidateStopIds(savedInputs.originCandidateStopIds);
+      setDestinationCandidateStopIds(savedInputs.destinationCandidateStopIds);
+    }
+  }, []);
+
   const handleOriginStopSelect = (result: BusStopSearchResult) => {
-    setOriginCandidateStopIds(result.candidate_stop_id_list);
+    const candidateIds = result.candidate_stop_id_list;
+    setOriginCandidateStopIds(candidateIds);
     console.log("Origin bus stop selected:", {
       stop_name: result.stop_name,
-      candidate_stop_id_list: result.candidate_stop_id_list,
+      candidate_stop_id_list: candidateIds,
     });
+
+    // Save inputs if both stops are now selected
+    if (candidateIds.length > 0 && destinationCandidateStopIds.length > 0) {
+      saveRouteSearchInputs({
+        originStopId: candidateIds[0],
+        destinationStopId: destinationCandidateStopIds[0],
+        originStopName: result.stop_name,
+        destinationStopName: destinationValue,
+        originCandidateStopIds: candidateIds,
+        destinationCandidateStopIds,
+      });
+    }
   };
 
   const handleDestinationStopSelect = (result: BusStopSearchResult) => {
-    setDestinationCandidateStopIds(result.candidate_stop_id_list);
+    const candidateIds = result.candidate_stop_id_list;
+    setDestinationCandidateStopIds(candidateIds);
     console.log("Destination bus stop selected:", {
       stop_name: result.stop_name,
-      candidate_stop_id_list: result.candidate_stop_id_list,
+      candidate_stop_id_list: candidateIds,
     });
+
+    // Save inputs if both stops are now selected
+    if (originCandidateStopIds.length > 0 && candidateIds.length > 0) {
+      saveRouteSearchInputs({
+        originStopId: originCandidateStopIds[0],
+        destinationStopId: candidateIds[0],
+        originStopName: originValue,
+        destinationStopName: result.stop_name,
+        originCandidateStopIds,
+        destinationCandidateStopIds: candidateIds,
+      });
+    }
   };
 
   const handleBottomNavClick = (tab: "bus-stop" | "route" | "recent") => {
@@ -144,6 +187,10 @@ export function RouteSearchPage({
     };
 
     console.log("Search initiated with params:", searchParams);
+
+    // Clear saved inputs after successful search initiation
+    clearRouteSearchInputs();
+
     onSearch?.(searchParams);
   };
 
