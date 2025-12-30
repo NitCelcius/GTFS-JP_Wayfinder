@@ -15,6 +15,13 @@ export function SearchInput({ onSearch }: SearchInputProps) {
     onSearch();
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      handleClick();
+    }
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.form}>
@@ -23,21 +30,13 @@ export function SearchInput({ onSearch }: SearchInputProps) {
           onClick={handleClick}
           role="button"
           tabIndex={0}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              handleClick();
-            }
-          }}
+          onKeyDown={handleKeyDown}
+          aria-label="バス停・場所名を入力"
         >
           <div className={styles.icon}>
             <SearchIcon />
           </div>
-          <input
-            type="text"
-            placeholder="バス停・場所名を入力"
-            className={styles.input}
-            readOnly
-          />
+          <span className={styles.input}>バス停・場所名を入力</span>
         </div>
       </div>
     </div>
