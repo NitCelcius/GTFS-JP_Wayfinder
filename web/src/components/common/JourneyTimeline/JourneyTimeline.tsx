@@ -22,8 +22,6 @@ export interface JourneyStop {
   walkTransferPlatformCode?: string; // Platform code for the walk transfer destination
 }
 
-export type { JourneyStop };
-
 interface JourneyTimelineProps {
   stops: JourneyStop[];
   title?: string;
