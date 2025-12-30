@@ -46,8 +46,29 @@ def _np_datetime_to_time_str(np_datetime: np.datetime64) -> str:
     "/batch",
     response_model=models.TripInfoList,
     summary="運行情報のバッチ取得",
-    description="複数の運行IDを一括で渡して TripInfo を取得します。バッチサイズは環境変数で制御されます。",
-    responses={200: {"description": "成功"}},
+    description="複数の運行IDを一括で渡して TripInfo を取得します。バッチサイズは環境変数 API_BATCH_MAX_TRIP_IDS で制御されます（デフォルト: 10）。",
+    responses={
+        200: {"description": "成功"},
+        400: {
+            "description": "バリデーションエラー",
+            "content": {
+                "application/json": {
+                    "examples": {
+                        "batch_limit_exceeded": {
+                            "summary": "バッチ制限を超過",
+                            "value": {
+                                "detail": "batch limit exceeded; max is 10"
+                            },
+                        },
+                        "limit_too_large": {
+                            "summary": "limitが最大値を超過",
+                            "value": {"detail": "limit too large; max is 10"},
+                        },
+                    },
+                },
+            },
+        },
+    },
 )
 async def batch_trips(
     body: models.TripIdList,
@@ -72,6 +93,16 @@ async def batch_trips(
     response_model=models.FareResponse,
     summary="運賃取得",
     description="2つの停留所ID間の運賃を返します。",
+    responses={
+        400: {
+            "description": "エラー",
+            "content": {
+                "application/json": {
+                    "example": {"detail": "エラーメッセージ"},
+                },
+            },
+        },
+    },
 )
 async def fare(
     from_id: str = Query(..., description="出発停留所ID"),
@@ -89,6 +120,16 @@ async def fare(
     response_model=models.TimedTravelResponse,
     summary="経路と便の取得",
     description="最短経路とその経路に沿った便（travels）を返します。",
+    responses={
+        400: {
+            "description": "エラー",
+            "content": {
+                "application/json": {
+                    "example": {"detail": "エラーメッセージ"},
+                },
+            },
+        },
+    },
 )
 async def get_connections(
     from_stop: str = Query(..., description="出発停留所ID"),
@@ -108,6 +149,24 @@ async def get_connections(
     response_model=list[models.TripRecord],
     summary="運行経路の旅程取得",
     description="指定運行IDと停留所から、その運行の以降の到着/出発/運賃情報を返します。",
+    responses={
+        400: {
+            "description": "エラー",
+            "content": {
+                "application/json": {
+                    "example": {"detail": "エラーメッセージ"},
+                },
+            },
+        },
+        404: {
+            "description": "見つかりません",
+            "content": {
+                "application/json": {
+                    "example": {"detail": "not found"},
+                },
+            },
+        },
+    },
 )
 async def get_journey(
     trip_id: str = Query(..., description="運行ID"),
@@ -168,7 +227,14 @@ async def get_journey(
     description="単一の運行IDから TripInfo を取得します。指定された trip_id が存在しない場合は 404 を返します。",
     responses={
         200: {"description": "成功"},
-        404: {"description": "指定された trip_id が見つかりません"},
+        404: {
+            "description": "見つかりません",
+            "content": {
+                "application/json": {
+                    "example": {"detail": "trip not found"},
+                },
+            },
+        },
     },
 )
 # TODO: add route_id, route_short_name field so client: bus-stop/BusTripDetail can use conversion logic
@@ -193,6 +259,16 @@ async def get_trip(trip_id: str):
     response_model=list[models.TripTimedStop],
     summary="運行の停留所一覧取得",
     description="運行に紐づく停留所と時刻の一覧を返します。",
+    responses={
+        400: {
+            "description": "エラー",
+            "content": {
+                "application/json": {
+                    "example": {"detail": "エラーメッセージ"},
+                },
+            },
+        },
+    },
 )
 async def trip_stops(trip_id: str):
     try:
@@ -209,6 +285,16 @@ async def trip_stops(trip_id: str):
     response_model=models.TripRecord,
     summary="通過時刻の取得",
     description="指定運行が指定停留所を通過する到着/出発時刻と運賃を返します。",
+    responses={
+        400: {
+            "description": "エラー",
+            "content": {
+                "application/json": {
+                    "example": {"detail": "エラーメッセージ"},
+                },
+            },
+        },
+    },
 )
 async def trip_passing(trip_id: str, stop_id: str = Query(..., description="停留所ID")):
     try:
