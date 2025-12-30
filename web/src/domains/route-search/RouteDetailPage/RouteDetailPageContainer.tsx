@@ -7,10 +7,10 @@ import { useSearchParams } from "next/navigation";
 import { ErrorFullScreen } from "@/components/common";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner/LoadingSpinner";
 import { apiClient } from "@/lib/api";
-import { getCurrentTimeString } from "@/lib/utils";
-import type { RouteSearchResult } from "@/types";
+import { getCurrentTimeString, sortTravelsByArrivalTime } from "@/lib/utils";
 
 import { convertRouteSearchToRouteDetail } from "../internal/utils";
+import { clearRouteCacheResult, getCachedRouteSearchResult } from "../utils";
 import { RouteDetailPage } from "./RouteDetailPage";
 import type { Route } from "./types";
 
@@ -61,18 +61,8 @@ export function RouteDetailPageContainer({
 
         setIsLoading(true);
 
-        // Check localStorage first (set by RouteOverviewPage)
-        const storedResult = localStorage.getItem("routeSearchResult");
-        let searchResult: RouteSearchResult | null = null;
-
-        if (storedResult) {
-          try {
-            searchResult = JSON.parse(storedResult);
-            localStorage.removeItem("routeSearchResult");
-          } catch (e) {
-            console.warn("Failed to parse cached route data:", e);
-          }
-        }
+        // Check sessionStorage first with validation (set by RouteOverviewPage)
+        let searchResult = getCachedRouteSearchResult(fromStop, toStop);
 
         // Fall back to API call if no cache
         if (!searchResult) {
@@ -94,13 +84,7 @@ export function RouteDetailPageContainer({
           }
 
           // Sort travels by arrival time
-          const sortedTravels = [...response.data.travels].sort((a, b) => {
-            const parseTime = (timeStr: string) => {
-              const [hours, minutes] = timeStr.split(":").map(Number);
-              return hours * 60 + minutes;
-            };
-            return parseTime(a.arrival_time) - parseTime(b.arrival_time);
-          });
+          const sortedTravels = sortTravelsByArrivalTime(response.data.travels);
 
           searchResult = {
             travels: sortedTravels,
@@ -122,7 +106,7 @@ export function RouteDetailPageContainer({
         }
 
         // Convert to Route format
-        const routeDetail = await convertRouteSearchToRouteDetail(
+        const routeDetail = convertRouteSearchToRouteDetail(
           selectedTravel,
           searchResult.originStopName,
           searchResult.destinationStopName
@@ -131,6 +115,9 @@ export function RouteDetailPageContainer({
         setRoute(routeDetail);
         setFromStation(searchResult.originStopName);
         setToStation(searchResult.destinationStopName);
+
+        // Clear the cache after successful use
+        clearRouteCacheResult(fromStop, toStop);
       } catch (error) {
         console.error("経路詳細の読み込みエラー:", error);
         setError(

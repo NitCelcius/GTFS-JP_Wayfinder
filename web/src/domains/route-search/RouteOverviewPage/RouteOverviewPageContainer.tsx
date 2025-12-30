@@ -7,9 +7,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { ErrorFullScreen } from "@/components/common";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner/LoadingSpinner";
 import { apiClient } from "@/lib/api";
-import { getCurrentTimeString } from "@/lib/utils";
+import { getCurrentTimeString, sortTravelsByArrivalTime } from "@/lib/utils";
 import type { RouteSearchResult } from "@/types";
 
+import { cacheRouteSearchResult } from "../utils";
 import { RouteOverviewPage } from "./RouteOverviewPage";
 import type { RouteOverviewData } from "./types";
 import { convertToRouteOverviewData } from "./utils";
@@ -80,13 +81,7 @@ export function RouteOverviewPageContainer({
         }
 
         // Sort travels by arrival time (earliest first)
-        const sortedTravels = [...response.data.travels].sort((a, b) => {
-          const parseTime = (timeStr: string) => {
-            const [hours, minutes] = timeStr.split(":").map(Number);
-            return hours * 60 + minutes;
-          };
-          return parseTime(a.arrival_time) - parseTime(b.arrival_time);
-        });
+        const sortedTravels = sortTravelsByArrivalTime(response.data.travels);
 
         const result: RouteSearchResult = {
           travels: sortedTravels,
@@ -114,16 +109,19 @@ export function RouteOverviewPageContainer({
   }, [searchParams]);
 
   const handleRouteSelect = (tripId: string) => {
-    // Store the complete search result in localStorage to avoid duplicate API calls
-    // The results page will check localStorage first before making an API call
-    if (searchResult) {
-      localStorage.setItem("routeSearchResult", JSON.stringify(searchResult));
+    const fromStop = searchParams.get("from");
+    const toStop = searchParams.get("to");
+
+    // Store the complete search result in sessionStorage with validation
+    // to avoid duplicate API calls while maintaining security
+    if (searchResult && fromStop && toStop) {
+      cacheRouteSearchResult(searchResult, fromStop, toStop);
     }
 
     // Navigate to the detailed results page with the selected trip
     const params = new URLSearchParams({
-      from: searchParams.get("from") || "",
-      to: searchParams.get("to") || "",
+      from: fromStop || "",
+      to: toStop || "",
       fromName: searchParams.get("fromName") || "",
       toName: searchParams.get("toName") || "",
       time: searchParams.get("time") || getCurrentTimeString(),

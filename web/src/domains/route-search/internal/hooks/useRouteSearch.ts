@@ -4,9 +4,10 @@ import { useSearchParams } from "next/navigation";
 
 import type { TripDetails } from "@/domains/route-search/SearchResultPage/types";
 import { apiClient } from "@/lib/api";
-import { getCurrentTimeString } from "@/lib/utils";
+import { getCurrentTimeString, sortTravelsByArrivalTime } from "@/lib/utils";
 import type { RouteSearchResult } from "@/types";
 
+import { clearRouteCacheResult, getCachedRouteSearchResult } from "../../utils";
 import { convertRouteSearchToTripDetails } from "../utils";
 
 export interface UseRouteSearchResult {
@@ -73,13 +74,7 @@ export function useRouteSearch(): UseRouteSearchResult {
           }
 
           // Sort travels by arrival time (earliest first)
-          const sortedTravels = [...response.data.travels].sort((a, b) => {
-            const parseTime = (timeStr: string) => {
-              const [hours, minutes] = timeStr.split(":").map(Number);
-              return hours * 60 + minutes;
-            };
-            return parseTime(a.arrival_time) - parseTime(b.arrival_time);
-          });
+          const sortedTravels = sortTravelsByArrivalTime(response.data.travels);
 
           const result: RouteSearchResult = {
             travels: sortedTravels,
@@ -102,52 +97,45 @@ export function useRouteSearch(): UseRouteSearchResult {
         const beginTime = searchParams.get("time");
         const selectedTrip = searchParams.get("selectedTrip");
 
-        // Check localStorage first to avoid duplicate API calls
-        const storedResult = localStorage.getItem("routeSearchResult");
+        // Check sessionStorage first with validation to avoid duplicate API calls
+        let cachedResult: RouteSearchResult | null = null;
+        if (fromStop && toStop && !forceReal) {
+          cachedResult = getCachedRouteSearchResult(fromStop, toStop);
+        }
+
         let useCache = false;
 
-        if (storedResult && !forceReal) {
-          try {
-            const cached: RouteSearchResult = JSON.parse(storedResult);
-            // Verify cached data matches current search parameters
-            // Note: We don't check exact time match to allow some flexibility
-            if (
-              fromStop &&
-              toStop &&
-              cached.travels &&
-              cached.travels.length > 0
-            ) {
-              useCache = true;
-              const fromName =
-                searchParams.get("fromName") || cached.originStopName;
-              const toName =
-                searchParams.get("toName") || cached.destinationStopName;
+        if (cachedResult) {
+          useCache = true;
+          const fromName =
+            searchParams.get("fromName") || cachedResult.originStopName;
+          const toName =
+            searchParams.get("toName") || cachedResult.destinationStopName;
 
-              const resultWithNames = {
-                ...cached,
-                originStopName: fromName,
-                destinationStopName: toName,
-              };
+          const resultWithNames = {
+            ...cachedResult,
+            originStopName: fromName,
+            destinationStopName: toName,
+          };
 
-              const convertedTripDetails =
-                convertRouteSearchToTripDetails(resultWithNames);
+          const convertedTripDetails =
+            convertRouteSearchToTripDetails(resultWithNames);
 
-              // If a specific trip was selected from route overview, pre-select it
-              if (selectedTrip) {
-                const routeIndex = resultWithNames.travels.findIndex(
-                  (travel) => travel.trip_id === selectedTrip
-                );
-                if (routeIndex >= 0) {
-                  convertedTripDetails.selectedRouteId = `route-${routeIndex + 1}`;
-                }
-              }
-
-              setTripDetails(convertedTripDetails);
-              localStorage.removeItem("routeSearchResult");
+          // If a specific trip was selected from route overview, pre-select it
+          if (selectedTrip) {
+            const routeIndex = resultWithNames.travels.findIndex(
+              (travel) => travel.trip_id === selectedTrip
+            );
+            if (routeIndex >= 0) {
+              convertedTripDetails.selectedRouteId = `route-${routeIndex + 1}`;
             }
-          } catch (e) {
-            console.warn("Failed to parse cached route data:", e);
-            useCache = false;
+          }
+
+          setTripDetails(convertedTripDetails);
+
+          // Clear the cache after successful use
+          if (fromStop && toStop) {
+            clearRouteCacheResult(fromStop, toStop);
           }
         }
 

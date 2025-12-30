@@ -1,56 +1,8 @@
 import { DefaultTimeFormatter } from "@/hooks/TimeFormatterBase";
+import { calculateDurationJapanese, parseTimeToMinutes } from "@/lib/utils";
 import type { RouteSearchResult } from "@/types";
 
 import type { RouteOption, RouteOverviewData } from "./types";
-
-/**
- * Calculate duration in minutes between two time strings (HH:MM format)
- */
-function calculateDuration(startTime: string, endTime: string): string {
-  const [startHours, startMinutes] = startTime.split(":").map(Number);
-  const [endHours, endMinutes] = endTime.split(":").map(Number);
-
-  const startTotalMinutes = startHours * 60 + startMinutes;
-  const endTotalMinutes = endHours * 60 + endMinutes;
-
-  let durationMinutes = endTotalMinutes - startTotalMinutes;
-
-  // Handle overnight trips
-  if (durationMinutes < 0) {
-    durationMinutes += 24 * 60;
-  }
-
-  const hours = Math.floor(durationMinutes / 60);
-  const minutes = durationMinutes % 60;
-
-  if (hours > 0) {
-    return `${hours}時間${minutes}分`;
-  }
-  return `${minutes}分`;
-}
-
-/**
- * Calculate duration in minutes for progress bar
- */
-export function calculateDurationMinutes(
-  startTime: string,
-  endTime: string
-): number {
-  const [startHours, startMinutes] = startTime.split(":").map(Number);
-  const [endHours, endMinutes] = endTime.split(":").map(Number);
-
-  const startTotalMinutes = startHours * 60 + startMinutes;
-  const endTotalMinutes = endHours * 60 + endMinutes;
-
-  let durationMinutes = endTotalMinutes - startTotalMinutes;
-
-  // Handle overnight trips
-  if (durationMinutes < 0) {
-    durationMinutes += 24 * 60;
-  }
-
-  return durationMinutes;
-}
 
 /**
  * Calculate relative time from now to departure (in minutes)
@@ -62,8 +14,7 @@ export function calculateRelativeTime(departureTime: string): number {
   const currentMinutes = now.getMinutes();
   const currentTotalMinutes = currentHours * 60 + currentMinutes;
 
-  const [depHours, depMinutes] = departureTime.split(":").map(Number);
-  const depTotalMinutes = depHours * 60 + depMinutes;
+  const depTotalMinutes = parseTimeToMinutes(departureTime);
 
   let diff = depTotalMinutes - currentTotalMinutes;
 
@@ -110,7 +61,10 @@ export function convertToRouteOverviewData(
       id: `route-${index}`,
       departureTime: travel.departure_time,
       arrivalTime: travel.arrival_time,
-      duration: calculateDuration(travel.departure_time, travel.arrival_time),
+      duration: calculateDurationJapanese(
+        travel.departure_time,
+        travel.arrival_time
+      ),
       fare: travel.fare,
       // Known limitation: Transfer count is currently hardcoded to 0
       // The API response does not yet include information about transfers/connections
