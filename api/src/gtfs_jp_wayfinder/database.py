@@ -1,5 +1,4 @@
 import logging
-import os
 import pickle
 import warnings
 from dataclasses import dataclass

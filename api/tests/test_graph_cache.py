@@ -1,10 +1,8 @@
 """Tests for graph caching functionality."""
 
-import os
-import pickle
 import tempfile
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import networkx as nx
 import pytest
@@ -32,7 +30,9 @@ def temp_gtfs_dir():
             filepath = Path(tmpdir) / filename
             # Create minimal content for each file
             if filename == "agency.txt":
-                filepath.write_text("agency_id,agency_name,agency_timezone\n1,Test,UTC\n")
+                filepath.write_text(
+                    "agency_id,agency_name,agency_timezone\n1,Test,UTC\n"
+                )
             elif filename == "stops.txt":
                 filepath.write_text(
                     "stop_id,stop_name,stop_lat,stop_lon\nS1,Stop1,0.0,0.0\n"
@@ -62,7 +62,7 @@ def temp_gtfs_dir():
                 )
             elif filename == "calendar_dates.txt":
                 filepath.write_text("service_id,date,exception_type\n")
-        
+
         yield tmpdir
 
 
@@ -86,25 +86,25 @@ class TestGraphCache:
     def test_cache_save_and_load(self, temp_gtfs_dir):
         """Test that graph cache can be saved and loaded."""
         wf = AkitaBusWayFinder()
-        
+
         # Create mock graph data
         wf.graph = nx.DiGraph()
         wf.graph.add_edge("S1", "S2")
         wf.graph_via_service_id = {"SVC1": nx.DiGraph()}
         wf.graph_via_service_id["SVC1"].add_edge("S1", "S2")
         wf.date_to_service_id = {"20210101": ["SVC1"]}
-        
+
         # Save cache
         wf._save_graph_cache(temp_gtfs_dir)
-        
+
         # Verify cache file exists
         cache_path = wf._get_cache_path(temp_gtfs_dir)
         assert cache_path.exists()
-        
+
         # Load cache in a new instance
         wf2 = AkitaBusWayFinder()
         loaded = wf2._load_graph_cache(temp_gtfs_dir)
-        
+
         assert loaded is True
         assert wf2.graph is not None
         assert wf2.graph.has_edge("S1", "S2")
@@ -114,26 +114,27 @@ class TestGraphCache:
     def test_cache_invalidation_on_data_change(self, temp_gtfs_dir):
         """Test that cache is invalidated when GTFS data changes."""
         wf = AkitaBusWayFinder()
-        
+
         # Create and save initial cache
         wf.graph = nx.DiGraph()
         wf.graph.add_edge("S1", "S2")
         wf.graph_via_service_id = {}
         wf.date_to_service_id = {}
         wf._save_graph_cache(temp_gtfs_dir)
-        
+
         # Modify a GTFS file to update its mtime
         stops_file = Path(temp_gtfs_dir) / "stops.txt"
         import time
+
         time.sleep(0.1)  # Ensure mtime changes
         stops_file.write_text(
             "stop_id,stop_name,stop_lat,stop_lon\nS1,Stop1,0.0,0.0\nS2,Stop2,1.0,1.0\n"
         )
-        
+
         # Try to load cache - should fail due to stale data
         wf2 = AkitaBusWayFinder()
         loaded = wf2._load_graph_cache(temp_gtfs_dir)
-        
+
         assert loaded is False
 
     def test_no_cache_file_returns_false(self, temp_gtfs_dir):
@@ -146,11 +147,11 @@ class TestGraphCache:
         """Test initialization without caching (default behavior)."""
         wf = AkitaBusWayFinder()
         wf.initialize(temp_gtfs_dir + "/", cache_graph=False)
-        
+
         # Verify graph was generated
         assert wf.graph is not None
         assert wf.date_to_service_id is not None
-        
+
         # Verify cache file was not created
         cache_path = wf._get_cache_path(temp_gtfs_dir)
         assert not cache_path.exists()
@@ -159,11 +160,11 @@ class TestGraphCache:
         """Test initialization with caching enabled and no existing cache."""
         wf = AkitaBusWayFinder()
         wf.initialize(temp_gtfs_dir + "/", cache_graph=True)
-        
+
         # Verify graph was generated
         assert wf.graph is not None
         assert wf.date_to_service_id is not None
-        
+
         # Verify cache file was created
         cache_path = wf._get_cache_path(temp_gtfs_dir)
         assert cache_path.exists()
@@ -173,23 +174,24 @@ class TestGraphCache:
         # First initialization to create cache
         wf1 = AkitaBusWayFinder()
         wf1.initialize(temp_gtfs_dir + "/", cache_graph=True)
-        
+
         # Store the generated graph for comparison
         original_graph_edges = list(wf1.graph.edges())
-        
+
         # Second initialization should load from cache
         wf2 = AkitaBusWayFinder()
-        
+
         # Mock generate_graph and generate_calendar to verify they're not called
-        with patch.object(wf2, "generate_graph") as mock_gen_graph, \
-             patch.object(wf2, "generate_calendar") as mock_gen_calendar:
-            
+        with (
+            patch.object(wf2, "generate_graph") as mock_gen_graph,
+            patch.object(wf2, "generate_calendar") as mock_gen_calendar,
+        ):
             wf2.initialize(temp_gtfs_dir + "/", cache_graph=True)
-            
+
             # Verify graph/calendar generation methods were not called
             mock_gen_graph.assert_not_called()
             mock_gen_calendar.assert_not_called()
-            
+
         # Verify the loaded graph matches original
         assert wf2.graph is not None
         assert list(wf2.graph.edges()) == original_graph_edges
@@ -198,11 +200,11 @@ class TestGraphCache:
         """Test that corrupted cache is handled gracefully."""
         wf = AkitaBusWayFinder()
         cache_path = wf._get_cache_path(temp_gtfs_dir)
-        
+
         # Create a corrupted cache file
         with open(cache_path, "wb") as f:
             f.write(b"corrupted data")
-        
+
         # Loading should return False
         loaded = wf._load_graph_cache(temp_gtfs_dir)
         assert loaded is False
