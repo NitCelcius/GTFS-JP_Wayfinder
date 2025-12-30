@@ -11,12 +11,31 @@ function isValidRouteSearchResult(data: unknown): data is RouteSearchResult {
 
   const result = data as Record<string, unknown>;
 
-  return (
-    Array.isArray(result.travels) &&
-    result.travels.length > 0 &&
-    typeof result.originStopName === "string" &&
-    typeof result.destinationStopName === "string"
-  );
+  // Check required top-level fields
+  if (
+    !Array.isArray(result.travels) ||
+    result.travels.length === 0 ||
+    typeof result.originStopName !== "string" ||
+    typeof result.destinationStopName !== "string"
+  ) {
+    return false;
+  }
+
+  // Validate essential fields in each travel object
+  return result.travels.every((travel: unknown) => {
+    if (!travel || typeof travel !== "object") {
+      return false;
+    }
+    const t = travel as Record<string, unknown>;
+    return (
+      typeof t.trip_id === "string" &&
+      t.trip_id.length > 0 &&
+      typeof t.departure_time === "string" &&
+      typeof t.arrival_time === "string" &&
+      typeof t.departure_datetime === "string" &&
+      typeof t.arrival_datetime === "string"
+    );
+  });
 }
 
 /**

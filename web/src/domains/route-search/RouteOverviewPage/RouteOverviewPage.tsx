@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+
 import { BottomNavigation } from "@/components/common/BottomNavigation/BottomNavigation";
 import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
 import { calculateDurationMinutes } from "@/lib/utils";
@@ -38,17 +40,25 @@ export function RouteOverviewPage({
     }
   };
 
-  // Calculate max duration for relative progress bar sizing
-  const maxDuration = Math.max(
-    ...routeData.routes.map((route) =>
-      calculateDurationMinutes(route.departureTime, route.arrivalTime)
-    )
+  // Calculate durations once for all routes to avoid redundant calculations
+  const routesWithDurations = useMemo(
+    () =>
+      routeData.routes.map((route) => ({
+        route,
+        durationMinutes: calculateDurationMinutes(
+          route.departureTime,
+          route.arrivalTime
+        ),
+      })),
+    [routeData.routes]
   );
 
+  // Calculate min/max from pre-calculated durations
+  const maxDuration = Math.max(
+    ...routesWithDurations.map((r) => r.durationMinutes)
+  );
   const minDuration = Math.min(
-    ...routeData.routes.map((route) =>
-      calculateDurationMinutes(route.departureTime, route.arrivalTime)
-    )
+    ...routesWithDurations.map((r) => r.durationMinutes)
   );
 
   return (
@@ -68,11 +78,7 @@ export function RouteOverviewPage({
               検索結果 ({routeData.routes.length}件)
             </h2>
             <div className={styles.routesList}>
-              {routeData.routes.map((route) => {
-                const durationMinutes = calculateDurationMinutes(
-                  route.departureTime,
-                  route.arrivalTime
-                );
+              {routesWithDurations.map(({ route, durationMinutes }) => {
                 const durationRange = maxDuration - minDuration;
                 const progressPercentage =
                   durationRange === 0
