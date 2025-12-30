@@ -21,7 +21,7 @@ function RouteOverviewContent() {
   );
 }
 
-export default function RouteOverviewPage() {
+export default function RouteOverviewPageWrapper() {
   return (
     <Suspense
       fallback={
