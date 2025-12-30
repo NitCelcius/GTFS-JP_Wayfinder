@@ -32,6 +32,7 @@ export function SearchInput({ onSearch }: SearchInputProps) {
           tabIndex={0}
           onKeyDown={handleKeyDown}
           aria-label="バス停・場所名を入力"
+          aria-pressed="false"
         >
           <div className={styles.icon}>
             <SearchIcon />

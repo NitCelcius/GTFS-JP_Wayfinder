@@ -70,8 +70,10 @@ export function BusStopSearchPage({
     const busStopId = result.candidate_stop_id_list[0];
     if (busStopId) {
       onNavigateToBusStopInfo?.(busStopId, result.stop_name);
+      setIsSearchModalOpen(false);
+    } else {
+      console.error("No candidate stop IDs available for:", result.stop_name);
     }
-    setIsSearchModalOpen(false);
   };
 
   // Store bus stop data for history tracking
