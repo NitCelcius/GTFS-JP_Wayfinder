@@ -55,6 +55,7 @@ describe("Converter functions", () => {
         departure_time: "14:00:00",
         arrival_datetime: "2025-11-01T14:00:00",
         departure_datetime: "2025-11-01T14:00:00",
+        route_name: null,
       };
       const result = convertTripToBusInfo(trip);
 
