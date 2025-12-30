@@ -164,8 +164,8 @@ export function SearchResultPage({
                 )}
                 renderWalkTransfer={(stop, nextStop) => (
                   <WalkTransferIndicator
-                    stationName={nextStop.name}
-                    platformCode={stop.walkTransferPlatformCode}
+                    transferStationName={nextStop.name}
+                    platformCode={nextStop.walkTransferPlatformCode}
                   />
                 )}
               />

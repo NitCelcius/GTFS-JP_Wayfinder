@@ -6,7 +6,7 @@ export interface WalkTransferIndicatorProps {
   /**
    * Name of the station where the transfer occurs (from API's stop_names[0])
    */
-  stationName: string;
+  transferStationName: string;
   /**
    * Platform number from API's platform_code field (via GET /stops/{stop_id})
    * Optional - if undefined, will display transfer without platform number
@@ -26,14 +26,14 @@ export interface WalkTransferIndicatorProps {
  * Example: "秋田駅東口 2番のりばで乗り換え"
  */
 export function WalkTransferIndicator({
-  stationName,
+  transferStationName,
   platformCode,
   className,
 }: WalkTransferIndicatorProps) {
   // Build the transfer message
   const transferMessage = platformCode
-    ? `${stationName} ${platformCode}番のりばで乗り換え`
-    : `${stationName}で乗り換え`;
+    ? `${transferStationName} ${platformCode}番のりばへ乗り換え`
+    : `${transferStationName}へ乗り換え`;
 
   return (
     <div className={`${styles.container} ${className ?? ""}`}>
