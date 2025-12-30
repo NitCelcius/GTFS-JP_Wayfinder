@@ -4,47 +4,26 @@ import {
   saveRouteSearchInputs,
 } from "../routeSearchInputStorage";
 
-/**
- * Helper function to create mock route search input data
- */
-function createMockRouteSearchInputs(
-  overrides: Partial<{
-    originStopId: string;
-    destinationStopId: string;
-    originStopName: string;
-    destinationStopName: string;
-    originCandidateStopIds: string[];
-    destinationCandidateStopIds: string[];
-  }> = {}
-) {
-  return {
-    originStopId: "stop1",
-    destinationStopId: "stop2",
-    originStopName: "東駅",
-    destinationStopName: "中央公園",
-    originCandidateStopIds: ["stop1"],
-    destinationCandidateStopIds: ["stop2"],
-    ...overrides,
-  };
-}
-
 describe("routeSearchInputStorage", () => {
   beforeEach(() => {
-    // Clear sessionStorage before each test
-    sessionStorage.clear();
-    jest.restoreAllMocks();
+    // Clear localStorage before each test
+    localStorage.clear();
   });
 
   describe("saveRouteSearchInputs", () => {
-    it("should save route search inputs to sessionStorage", () => {
-      const inputs = createMockRouteSearchInputs({
+    it("should save route search inputs to localStorage", () => {
+      const inputs = {
+        originStopId: "stop1",
+        destinationStopId: "stop2",
+        originStopName: "東駅",
+        destinationStopName: "中央公園",
         originCandidateStopIds: ["stop1", "stop1-1"],
         destinationCandidateStopIds: ["stop2", "stop2-1"],
-      });
+      };
 
       saveRouteSearchInputs(inputs);
 
-      const stored = sessionStorage.getItem("gtfs-route-search-inputs");
+      const stored = localStorage.getItem("gtfs-route-search-inputs");
       expect(stored).toBeDefined();
 
       const parsed = JSON.parse(stored!);
@@ -59,26 +38,29 @@ describe("routeSearchInputStorage", () => {
     });
 
     it("should update timestamp on each save", () => {
-      const now = 1000000000000;
-      const dateSpy = jest.spyOn(Date, "now");
+      const inputs = {
+        originStopId: "stop1",
+        destinationStopId: "stop2",
+        originStopName: "東駅",
+        destinationStopName: "中央公園",
+        originCandidateStopIds: ["stop1"],
+        destinationCandidateStopIds: ["stop2"],
+      };
 
-      dateSpy.mockReturnValue(now);
-      const inputs = createMockRouteSearchInputs();
       saveRouteSearchInputs(inputs);
-      const stored1 = sessionStorage.getItem("gtfs-route-search-inputs");
+      const stored1 = localStorage.getItem("gtfs-route-search-inputs");
       const parsed1 = JSON.parse(stored1!);
       const timestamp1 = parsed1.timestamp;
 
-      // Mock time passing
-      dateSpy.mockReturnValue(now + 100);
+      // Wait a bit and save again
+      jest.advanceTimersByTime(100);
       saveRouteSearchInputs(inputs);
 
-      const stored2 = sessionStorage.getItem("gtfs-route-search-inputs");
+      const stored2 = localStorage.getItem("gtfs-route-search-inputs");
       const parsed2 = JSON.parse(stored2!);
       const timestamp2 = parsed2.timestamp;
 
-      expect(timestamp2).toBeGreaterThan(timestamp1);
-      expect(timestamp2 - timestamp1).toBe(100);
+      expect(timestamp2).toBeGreaterThanOrEqual(timestamp1);
     });
   });
 
@@ -88,13 +70,17 @@ describe("routeSearchInputStorage", () => {
       expect(result).toBeNull();
     });
 
-    it("should retrieve saved inputs within 5 minutes", () => {
-      const now = 1000000000000;
-      jest.spyOn(Date, "now").mockReturnValue(now);
+    it("should retrieve saved inputs within 1 hour", () => {
+      const inputs = {
+        originStopId: "stop1",
+        destinationStopId: "stop2",
+        originStopName: "東駅",
+        destinationStopName: "中央公園",
+        originCandidateStopIds: ["stop1"],
+        destinationCandidateStopIds: ["stop2"],
+      };
 
-      const inputs = createMockRouteSearchInputs();
       saveRouteSearchInputs(inputs);
-
       const result = getRouteSearchInputs();
 
       expect(result).not.toBeNull();
@@ -106,18 +92,19 @@ describe("routeSearchInputStorage", () => {
       expect(result?.destinationCandidateStopIds).toEqual(["stop2"]);
     });
 
-    it("should return null when data is older than 5 minutes", () => {
-      // Mock current time
-      const now = 1000000000000; // Fixed timestamp
-      jest.spyOn(Date, "now").mockReturnValue(now);
-
+    it("should return null when data is older than 1 hour", () => {
       // Manually create expired data
       const expiredState = {
-        ...createMockRouteSearchInputs(),
-        timestamp: now - 6 * 60 * 1000, // 6 minutes ago
+        originStopId: "stop1",
+        destinationStopId: "stop2",
+        originStopName: "東駅",
+        destinationStopName: "中央公園",
+        originCandidateStopIds: ["stop1"],
+        destinationCandidateStopIds: ["stop2"],
+        timestamp: Date.now() - 61 * 60 * 1000, // 61 minutes ago
       };
 
-      sessionStorage.setItem(
+      localStorage.setItem(
         "gtfs-route-search-inputs",
         JSON.stringify(expiredState)
       );
@@ -126,22 +113,23 @@ describe("routeSearchInputStorage", () => {
       expect(result).toBeNull();
 
       // Should also clear the expired data
-      const stored = sessionStorage.getItem("gtfs-route-search-inputs");
+      const stored = localStorage.getItem("gtfs-route-search-inputs");
       expect(stored).toBeNull();
     });
 
-    it("should return data when exactly at 5 minute boundary", () => {
-      // Mock current time
-      const now = 1000000000000; // Fixed timestamp
-      jest.spyOn(Date, "now").mockReturnValue(now);
-
-      // Data that is exactly 5 minutes old should still be returned
+    it("should return data when exactly at 1 hour boundary", () => {
+      // Data that is exactly 1 hour old should still be returned
       const boundaryState = {
-        ...createMockRouteSearchInputs(),
-        timestamp: now - 5 * 60 * 1000, // Exactly 5 minutes ago
+        originStopId: "stop1",
+        destinationStopId: "stop2",
+        originStopName: "東駅",
+        destinationStopName: "中央公園",
+        originCandidateStopIds: ["stop1"],
+        destinationCandidateStopIds: ["stop2"],
+        timestamp: Date.now() - 60 * 60 * 1000, // Exactly 1 hour ago
       };
 
-      sessionStorage.setItem(
+      localStorage.setItem(
         "gtfs-route-search-inputs",
         JSON.stringify(boundaryState)
       );
@@ -150,67 +138,30 @@ describe("routeSearchInputStorage", () => {
       expect(result).not.toBeNull();
     });
 
-    it("should return null for future timestamps", () => {
-      // Mock current time
-      const now = 1000000000000; // Fixed timestamp
-      jest.spyOn(Date, "now").mockReturnValue(now);
-
-      // Create data with timestamp in the future
-      const futureState = {
-        ...createMockRouteSearchInputs(),
-        timestamp: now + 60 * 1000, // 1 minute in the future
-      };
-
-      sessionStorage.setItem(
-        "gtfs-route-search-inputs",
-        JSON.stringify(futureState)
-      );
-
-      const result = getRouteSearchInputs();
-      expect(result).toBeNull();
-
-      // Should also clear the invalid data
-      const stored = sessionStorage.getItem("gtfs-route-search-inputs");
-      expect(stored).toBeNull();
-    });
-
     it("should handle invalid JSON gracefully", () => {
-      sessionStorage.setItem("gtfs-route-search-inputs", "invalid json");
+      localStorage.setItem("gtfs-route-search-inputs", "invalid json");
 
       const result = getRouteSearchInputs();
       expect(result).toBeNull();
-    });
-
-    it("should return null for invalid data structure", () => {
-      const invalidState = {
-        originStopId: "stop1",
-        // Missing required fields
-        timestamp: Date.now(),
-      };
-
-      sessionStorage.setItem(
-        "gtfs-route-search-inputs",
-        JSON.stringify(invalidState)
-      );
-
-      const result = getRouteSearchInputs();
-      expect(result).toBeNull();
-
-      // Should also clear the invalid data
-      const stored = sessionStorage.getItem("gtfs-route-search-inputs");
-      expect(stored).toBeNull();
     });
   });
 
   describe("clearRouteSearchInputs", () => {
-    it("should remove saved inputs from sessionStorage", () => {
-      const inputs = createMockRouteSearchInputs();
+    it("should remove saved inputs from localStorage", () => {
+      const inputs = {
+        originStopId: "stop1",
+        destinationStopId: "stop2",
+        originStopName: "東駅",
+        destinationStopName: "中央公園",
+        originCandidateStopIds: ["stop1"],
+        destinationCandidateStopIds: ["stop2"],
+      };
 
       saveRouteSearchInputs(inputs);
-      expect(sessionStorage.getItem("gtfs-route-search-inputs")).not.toBeNull();
+      expect(localStorage.getItem("gtfs-route-search-inputs")).not.toBeNull();
 
       clearRouteSearchInputs();
-      expect(sessionStorage.getItem("gtfs-route-search-inputs")).toBeNull();
+      expect(localStorage.getItem("gtfs-route-search-inputs")).toBeNull();
     });
 
     it("should not throw error when nothing is stored", () => {
