@@ -48,6 +48,17 @@ def get_cors_origins():
     return default_origins
 
 
+def get_cache_graph_enabled():
+    """Get cache graph setting from environment variable."""
+    cache_graph = os.getenv("CACHE_GRAPH", "false").lower()
+    enabled = cache_graph in ("true", "1", "yes")
+    if enabled:
+        logger.info("Graph caching is ENABLED")
+    else:
+        logger.info("Graph caching is DISABLED")
+    return enabled
+
+
 @asynccontextmanager
 async def lifespan(_app: FastAPI):  # _app retained for FastAPI signature (ARG001)
     """Async lifespan for FastAPI so initialization runs via asyncio.to_thread.
@@ -56,9 +67,10 @@ async def lifespan(_app: FastAPI):  # _app retained for FastAPI signature (ARG00
     process without blocking the event loop while heavy I/O (pandas read) runs.
     """
     data_dir = "./data/gtfs-akita-chuo-kotsu/"
+    cache_graph = get_cache_graph_enabled()
     try:
         # Use adapter's async initialize which delegates to the blocking initializer
-        await wayfinder_adapter.initialize(data_dir)
+        await wayfinder_adapter.initialize(data_dir, cache_graph=cache_graph)
         logger.info("Wayfinder initialized (async lifespan)")
     except Exception:
         logger.exception("Wayfinder initialization failed")

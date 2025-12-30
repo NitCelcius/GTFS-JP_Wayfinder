@@ -8,3 +8,7 @@ wheels/
 
 # venv
 .venv
+
+# graph cache
+data/**/.graph_cache.pkl
+.graph_cache.pkl

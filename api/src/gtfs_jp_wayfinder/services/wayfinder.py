@@ -14,12 +14,12 @@ _wf: AkitaBusWayFinder | None = None
 _wf_lock = threading.Lock()
 
 
-def initialize(data_dir: str):
+def initialize(data_dir: str, cache_graph: bool = False):
     global _wf
     with _wf_lock:
         if _wf is None:
             wf = AkitaBusWayFinder()
-            wf.initialize(data_dir)
+            wf.initialize(data_dir, cache_graph=cache_graph)
             _wf = wf
     return _wf
 

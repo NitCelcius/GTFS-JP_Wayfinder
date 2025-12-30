@@ -75,7 +75,7 @@ def parse_split_date_str(begin_time_str: str | None) -> tuple[datetime.date, str
     return now.date(), begin_time_str
 
 
-async def initialize(data_dir: str):
+async def initialize(data_dir: str, cache_graph: bool = False):
     """Async initialize wrapper that runs the blocking initialization in a thread."""
     global _initialized
     # if already initialized, no-op
@@ -84,7 +84,7 @@ async def initialize(data_dir: str):
         return wf_service
 
     # run the blocking initialize in a thread
-    await asyncio.to_thread(wf_service.initialize, data_dir)
+    await asyncio.to_thread(wf_service.initialize, data_dir, cache_graph)
     _initialized = True
     return wf_service
 

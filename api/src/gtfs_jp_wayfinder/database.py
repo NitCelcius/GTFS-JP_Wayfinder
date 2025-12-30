@@ -1,6 +1,9 @@
 import logging
+import os
+import pickle
 import warnings
 from dataclasses import dataclass
+from pathlib import Path
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 import networkx as nx
@@ -99,7 +102,78 @@ class AkitaBusWayFinder:
             return time_only_dot_split[0]
         return time_only
 
-    def initialize(self, base_dir="../data/"):
+    def _get_cache_path(self, base_dir: str) -> Path:
+        """Get the path for the graph cache file."""
+        return Path(base_dir) / ".graph_cache.pkl"
+
+    def _get_data_mtime(self, base_dir: str) -> float:
+        """Get the latest modification time of GTFS data files."""
+        data_files = [
+            "stops.txt",
+            "stop_times.txt",
+            "trips.txt",
+            "calendar.txt",
+            "calendar_dates.txt",
+        ]
+        max_mtime = 0.0
+        for filename in data_files:
+            filepath = Path(base_dir) / filename
+            if filepath.exists():
+                mtime = filepath.stat().st_mtime
+                max_mtime = max(max_mtime, mtime)
+        return max_mtime
+
+    def _save_graph_cache(self, base_dir: str) -> None:
+        """Save generated graphs to cache file."""
+        cache_path = self._get_cache_path(base_dir)
+        cache_data = {
+            "graph": self.graph,
+            "graph_via_service_id": self.graph_via_service_id,
+            "date_to_service_id": self.date_to_service_id,
+            "data_mtime": self._get_data_mtime(base_dir),
+        }
+        try:
+            with open(cache_path, "wb") as f:
+                pickle.dump(cache_data, f, protocol=pickle.HIGHEST_PROTOCOL)
+            logger.info("Graph cache saved to %s", cache_path)
+        except Exception as e:
+            logger.warning("Failed to save graph cache: %s", e)
+
+    def _load_graph_cache(self, base_dir: str) -> bool:
+        """Load graphs from cache if valid. Returns True if loaded successfully."""
+        cache_path = self._get_cache_path(base_dir)
+
+        if not cache_path.exists():
+            logger.info("No graph cache found at %s", cache_path)
+            return False
+
+        try:
+            with open(cache_path, "rb") as f:
+                cache_data = pickle.load(f)
+
+            # Validate cache freshness
+            cached_mtime = cache_data.get("data_mtime", 0)
+            current_mtime = self._get_data_mtime(base_dir)
+
+            if current_mtime > cached_mtime:
+                logger.info(
+                    "Graph cache is stale (data modified since cache creation), regenerating..."
+                )
+                return False
+
+            # Load cached data
+            self.graph = cache_data["graph"]
+            self.graph_via_service_id = cache_data["graph_via_service_id"]
+            self.date_to_service_id = cache_data["date_to_service_id"]
+
+            logger.info("Graph cache loaded successfully from %s", cache_path)
+            return True
+
+        except Exception as e:
+            logger.warning("Failed to load graph cache: %s", e)
+            return False
+
+    def initialize(self, base_dir="../data/", cache_graph: bool = False):
         logger.info("Loading dataframes...")
         # Agency info (timezone, etc.)
         # Try to read agency_timezone from GTFS data; fall back to Asia/Tokyo, then UTC
@@ -168,11 +242,20 @@ class AkitaBusWayFinder:
         logger.info("Building lookup indices for performance...")
         self._build_lookup_indices()
 
-        logger.info("Generating Calendar...")
-        self.generate_calendar(base_dir)
+        # Try to load from cache if enabled
+        if cache_graph and self._load_graph_cache(base_dir):
+            logger.info("Using cached graph data")
+        else:
+            # Generate graph from scratch
+            logger.info("Generating Calendar...")
+            self.generate_calendar(base_dir)
 
-        logger.info("Generating Stops graph...")
-        self.generate_graph()
+            logger.info("Generating Stops graph...")
+            self.generate_graph()
+
+            # Save to cache if enabled
+            if cache_graph:
+                self._save_graph_cache(base_dir)
 
         logger.info("Preparation completed!")
 
