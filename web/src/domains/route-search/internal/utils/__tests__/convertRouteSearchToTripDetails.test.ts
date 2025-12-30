@@ -172,8 +172,9 @@ describe("convertRouteSearchToTripDetails", () => {
   });
 
   it("should detect walk transfers (platform code requires API fetch)", () => {
-    // Simulate route: akita-eki_01 -> WALK_TRANSFER to akita-eki_02 -> destination
-    // Walk transfers occur between stops with same display name but different platforms
+    // Simulate route: origin_01 -> akita-eki_01 -> WALK_TRANSFER to akita-eki_02 -> ion-mall_01
+    // This represents a realistic journey: bus from origin to transfer station,
+    // walk between platforms at the same station, then continue on a different bus
     // Platform codes should be fetched from API's GET /stops/{stop_id} → platform_code
     const result: RouteSearchResult = {
       travels: [
@@ -183,7 +184,7 @@ describe("convertRouteSearchToTripDetails", () => {
           arrival_time: "10:15:00",
           departure_datetime: "2024-01-01T10:00:00",
           arrival_datetime: "2024-01-01T10:15:00",
-          from_stop_id: "akita-eki_01",
+          from_stop_id: "origin_01",
           to_stop_id: "akita-eki_01",
           fare: 200,
         },
@@ -210,7 +211,7 @@ describe("convertRouteSearchToTripDetails", () => {
           fare: 350,
         },
       ],
-      originStopName: "秋田駅東口",
+      originStopName: "出発地",
       destinationStopName: "イオンモール秋田",
       searchTime: "10:00:00",
     };
