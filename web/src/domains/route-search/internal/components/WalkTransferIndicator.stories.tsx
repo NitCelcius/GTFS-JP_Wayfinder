@@ -25,7 +25,7 @@ type Story = StoryObj<typeof meta>;
  */
 export const Default: Story = {
   args: {
-    stationName: "秋田駅東口",
+    transferStationName: "秋田駅東口",
     platformCode: "2",
   },
 };
@@ -35,7 +35,7 @@ export const Default: Story = {
  */
 export const WithoutPlatform: Story = {
   args: {
-    stationName: "秋田駅西口",
+    transferStationName: "秋田駅西口",
   },
 };
 
@@ -44,7 +44,7 @@ export const WithoutPlatform: Story = {
  */
 export const LongStationName: Story = {
   args: {
-    stationName: "あきた芸術劇場ミルハス・にぎわい交流館 AU 前",
+    transferStationName: "あきた芸術劇場ミルハス・にぎわい交流館 AU 前",
     platformCode: "1",
   },
 };
@@ -54,7 +54,7 @@ export const LongStationName: Story = {
  */
 export const JapanesePlatform: Story = {
   args: {
-    stationName: "中央公園",
+    transferStationName: "中央公園",
     platformCode: "北",
   },
 };
@@ -64,14 +64,14 @@ export const JapanesePlatform: Story = {
  */
 export const MultipleTransfers: Story = {
   args: {
-    stationName: "東駅",
+    transferStationName: "東駅",
     platformCode: "1",
   },
   render: () => (
     <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-      <WalkTransferIndicator stationName="東駅" platformCode="1" />
-      <WalkTransferIndicator stationName="中央公園" platformCode="3" />
-      <WalkTransferIndicator stationName="市役所前" />
+      <WalkTransferIndicator transferStationName="東駅" platformCode="1" />
+      <WalkTransferIndicator transferStationName="中央公園" platformCode="3" />
+      <WalkTransferIndicator transferStationName="市役所前" />
     </div>
   ),
 };
@@ -81,7 +81,7 @@ export const MultipleTransfers: Story = {
  */
 export const MobileWidth: Story = {
   args: {
-    stationName: "秋田駅東口",
+    transferStationName: "秋田駅東口",
     platformCode: "2",
   },
   decorators: [
