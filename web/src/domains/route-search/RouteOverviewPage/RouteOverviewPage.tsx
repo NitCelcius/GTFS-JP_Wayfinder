@@ -1,10 +1,10 @@
 import { BottomNavigation } from "@/components/common/BottomNavigation/BottomNavigation";
 import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
+import { calculateDurationMinutes } from "@/lib/utils";
 
 import styles from "./RouteOverviewPage.module.css";
 import { RouteOptionCard, SearchSummary } from "./internal";
 import type { RouteOverviewPageProps } from "./types";
-import { calculateDurationMinutes } from "./utils";
 
 // Progress bar visualization constants
 // Base width (50%) ensures even the fastest route has visible progress
