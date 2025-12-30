@@ -217,10 +217,7 @@ class AkitaBusWayFinder:
                 row.departure_time,
                 row.stop_sequence,
             )
-            if key not in self._trip_stop_times:
-                self._trip_stop_times[key] = [entry]
-            else:
-                self._trip_stop_times[key].append(entry)
+            self._trip_stop_times.setdefault(key, []).append(entry)
 
         # Count total entries (including multiple visits to same stop)
         total_entries = sum(len(v) for v in self._trip_stop_times.values())
@@ -231,10 +228,17 @@ class AkitaBusWayFinder:
         )
 
     def generate_graph(self):
-        def generate_edges_from_grouped_trips(grouped_df):
-            """Generate edges from pre-grouped DataFrame (more efficient than per-trip lookups)."""
+        def generate_edges_from_grouped_trips(grouped_trips):
+            """Generate edges from grouped trips iterable.
+
+            Args:
+                grouped_trips: Iterable of (trip_id, df_trip) tuples
+
+            Returns:
+                List of (from_stop, to_stop) edge tuples
+            """
             edges = []
-            for _trip_id, df_trip in grouped_df:
+            for _trip_id, df_trip in grouped_trips:
                 df_trip = df_trip.sort_values(by=["stop_sequence"])
                 stop_ids = df_trip["stop_id"].values
                 stop_ids_count = len(stop_ids)
@@ -252,8 +256,9 @@ class AkitaBusWayFinder:
         logger.info("Generating merged graph...")
         self.graph = nx.DiGraph()
 
-        # Use groupby for single-pass iteration instead of per-trip DataFrame filters
-        all_trips_grouped = self.df_stop_times.groupby("trip_id")
+        # Convert GroupBy to list so it can be iterated multiple times
+        # (GroupBy objects can only be iterated once)
+        all_trips_grouped = list(self.df_stop_times.groupby("trip_id"))
         all_edges = generate_edges_from_grouped_trips(all_trips_grouped)
         self.graph.add_edges_from(all_edges)
 
@@ -280,22 +285,11 @@ class AkitaBusWayFinder:
             logger.info("Generating graph for service_id: %s", service_id)
             self.graph_via_service_id[service_id] = nx.DiGraph()
 
-            # Filter grouped trips by service_id
-            service_edges = []
-            for trip_id, df_trip in all_trips_grouped:
-                if trip_id not in trip_ids_set:
-                    continue
-                df_trip = df_trip.sort_values(by=["stop_sequence"])
-                stop_ids = df_trip["stop_id"].values
-                stop_ids_count = len(stop_ids)
-
-                service_edges.extend(
-                    [
-                        (stop_ids[i], stop_ids[j])
-                        for i in range(stop_ids_count)
-                        for j in range(i + 1, stop_ids_count)
-                    ],
-                )
+            # Filter grouped trips by service_id and reuse helper function
+            service_trips = [
+                (tid, df) for tid, df in all_trips_grouped if tid in trip_ids_set
+            ]
+            service_edges = generate_edges_from_grouped_trips(service_trips)
             self.graph_via_service_id[service_id].add_edges_from(service_edges)
             # Also add walk transfer edges to service-specific graphs
             self.graph_via_service_id[service_id].add_edges_from(walk_transfer_edges)
@@ -524,8 +518,6 @@ class AkitaBusWayFinder:
 
         dep_time = None
         arr_time = None
-        dep_stop_seq = None
-        to_stop_seq = None
 
         for _from_arr, from_dep, from_seq in from_entries:
             for to_arr, _to_dep, to_seq in to_entries:
@@ -533,14 +525,12 @@ class AkitaBusWayFinder:
                     # Found valid sequence - use first occurrence
                     dep_time = from_dep
                     arr_time = to_arr
-                    dep_stop_seq = from_seq
-                    to_stop_seq = to_seq
                     break
             if dep_time is not None:
                 break
 
-        # Verify sequence order
-        if dep_time is None or to_stop_seq is None or to_stop_seq <= dep_stop_seq:
+        # Verify that a valid (from_seq, to_seq) pair was found
+        if dep_time is None:
             raise ValueError(
                 "The trip "
                 + trip_id
