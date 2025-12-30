@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+
 import { useState } from "react";
 
 import { BottomNavigation } from "./BottomNavigation";
@@ -22,22 +23,26 @@ type Story = StoryObj<typeof meta>;
  * - Clicking the same tab again shows a gray (disabled) ripple
  */
 export const Interactive: Story = {
-  render: () => {
-    const [activeTab, setActiveTab] =
-      useState<"bus-stop" | "route" | "recent">("route");
+  render: function InteractiveStory() {
+    const [activeTab, setActiveTab] = useState<"bus-stop" | "route" | "recent">(
+      "route"
+    );
 
     return (
-      <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
+      <div
+        style={{ height: "100vh", display: "flex", flexDirection: "column" }}
+      >
         <div style={{ flex: 1, padding: "20px" }}>
           <h1>Click the tabs below to see the ripple animation</h1>
           <p>Current active tab: {activeTab}</p>
           <ul>
             <li>
-              <strong>Switching tabs:</strong> Shows green (primary color) ripple
+              <strong>Switching tabs:</strong> Shows green (primary color)
+              ripple
             </li>
             <li>
-              <strong>Clicking the same tab:</strong> Shows gray (disabled color)
-              ripple
+              <strong>Clicking the same tab:</strong> Shows gray (disabled
+              color) ripple
             </li>
           </ul>
         </div>
