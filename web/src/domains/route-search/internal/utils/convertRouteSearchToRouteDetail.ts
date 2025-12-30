@@ -10,11 +10,11 @@ import { calculateDurationStr } from "@/lib/utils";
  * @param destinationStopName - Name of the destination stop
  * @returns Route object for display
  */
-export async function convertRouteSearchToRouteDetail(
+export function convertRouteSearchToRouteDetail(
   travel: TravelOnceResponse,
   originStopName: string,
   destinationStopName: string
-): Promise<Route> {
+): Route {
   return {
     id: travel.trip_id,
     name: "選択された経路",
