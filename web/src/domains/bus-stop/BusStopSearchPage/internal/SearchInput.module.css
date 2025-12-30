@@ -42,7 +42,7 @@
   background: transparent;
   border: none;
   outline: none;
-  color: inherit;
+  color: var(--color-text-secondary, #9ca3af);
   caret-color: currentColor;
   cursor: pointer;
 }
