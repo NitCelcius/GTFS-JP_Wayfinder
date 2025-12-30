@@ -10,7 +10,7 @@ import { apiClient } from "@/lib/api";
 import { getCurrentTimeString, sortTravelsByArrivalTime } from "@/lib/utils";
 
 import { convertRouteSearchToRouteDetail } from "../internal/utils";
-import { clearRouteCacheResult, getCachedRouteSearchResult } from "../utils";
+import { getCachedRouteSearchResult } from "../utils";
 import { RouteDetailPage } from "./RouteDetailPage";
 import type { Route } from "./types";
 
@@ -29,7 +29,7 @@ interface RouteDetailPageContainerProps {
 /**
  * Container component that handles data fetching and state management for RouteDetailPage.
  * Fetches a single route's detailed information based on URL parameters.
- * Uses localStorage cache from RouteOverviewPage when available.
+ * Uses sessionStorage cache from RouteOverviewPage when available.
  */
 export function RouteDetailPageContainer({
   onBack,
@@ -116,8 +116,8 @@ export function RouteDetailPageContainer({
         setFromStation(searchResult.originStopName);
         setToStation(searchResult.destinationStopName);
 
-        // Clear the cache after successful use
-        clearRouteCacheResult(fromStop, toStop);
+        // Note: Cache is not cleared here to allow back button navigation
+        // Cache will expire naturally after 5 minutes or be overwritten by new searches
       } catch (error) {
         console.error("経路詳細の読み込みエラー:", error);
         setError(

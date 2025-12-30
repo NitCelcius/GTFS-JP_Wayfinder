@@ -155,6 +155,7 @@ export function calculateDurationMinutes(
 
 /**
  * Sort travels by arrival time (earliest first)
+ * Handles overnight trips by treating times after midnight as next-day arrivals
  * @param travels - Array of travel objects with arrival_time property
  * @returns Sorted array of travels
  */
@@ -162,9 +163,20 @@ export function sortTravelsByArrivalTime<T extends { arrival_time: string }>(
   travels: T[]
 ): T[] {
   return [...travels].sort((a, b) => {
-    return (
-      parseTimeToMinutes(a.arrival_time) - parseTimeToMinutes(b.arrival_time)
-    );
+    let aMinutes = parseTimeToMinutes(a.arrival_time);
+    let bMinutes = parseTimeToMinutes(b.arrival_time);
+
+    // If arrival time is in early morning hours (00:00-04:00), assume it's next day
+    // Add 24 hours to treat it as later than same-day arrivals
+    const EARLY_MORNING_CUTOFF = 4 * 60; // 04:00
+    if (aMinutes < EARLY_MORNING_CUTOFF) {
+      aMinutes += 24 * 60;
+    }
+    if (bMinutes < EARLY_MORNING_CUTOFF) {
+      bMinutes += 24 * 60;
+    }
+
+    return aMinutes - bMinutes;
   });
 }
 
@@ -203,6 +215,9 @@ export function calculateDurationJapanese(
   const minutes = durationMinutes % 60;
 
   if (hours > 0) {
+    if (minutes === 0) {
+      return `${hours}時間`;
+    }
     return `${hours}時間${minutes}分`;
   }
   return `${minutes}分`;

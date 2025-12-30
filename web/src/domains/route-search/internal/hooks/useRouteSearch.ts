@@ -7,7 +7,7 @@ import { apiClient } from "@/lib/api";
 import { getCurrentTimeString, sortTravelsByArrivalTime } from "@/lib/utils";
 import type { RouteSearchResult } from "@/types";
 
-import { clearRouteCacheResult, getCachedRouteSearchResult } from "../../utils";
+import { getCachedRouteSearchResult } from "../../utils";
 import { convertRouteSearchToTripDetails } from "../utils";
 
 export interface UseRouteSearchResult {
@@ -133,10 +133,8 @@ export function useRouteSearch(): UseRouteSearchResult {
 
           setTripDetails(convertedTripDetails);
 
-          // Clear the cache after successful use
-          if (fromStop && toStop) {
-            clearRouteCacheResult(fromStop, toStop);
-          }
+          // Note: Cache is not cleared here to allow back button navigation
+          // Cache will expire naturally after 5 minutes or be overwritten by new searches
         }
 
         // Fall back to API call if cache miss or direct navigation

@@ -9,6 +9,10 @@
   cursor: pointer;
   transition: all 0.2s ease;
   gap: var(--spacing-md);
+  width: 100%;
+  text-align: left;
+  font-family: inherit;
+  font-size: inherit;
 }
 
 .ticketContainer:hover {

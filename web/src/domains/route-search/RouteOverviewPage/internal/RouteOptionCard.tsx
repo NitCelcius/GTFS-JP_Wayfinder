@@ -42,8 +42,20 @@ export function RouteOptionCard({
   progressPercentage,
   onClick,
 }: RouteOptionCardProps) {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      onClick();
+    }
+  };
+
   return (
-    <div className={styles.ticketContainer} onClick={onClick}>
+    <button
+      className={styles.ticketContainer}
+      onClick={onClick}
+      onKeyDown={handleKeyDown}
+      aria-label={`${relativeTimeUntilDeparture}、${departureTime}発 ${arrivalTime}着、所要時間${duration}の経路を選択`}
+    >
       <div className={styles.ticketContent}>
         <div className={styles.header}>
           <div className={styles.relativeTime}>
@@ -81,6 +93,6 @@ export function RouteOptionCard({
       <div className={styles.chevronContainer}>
         <ChevronRight />
       </div>
-    </div>
+    </button>
   );
 }
