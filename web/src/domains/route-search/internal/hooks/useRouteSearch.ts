@@ -4,9 +4,10 @@ import { useSearchParams } from "next/navigation";
 
 import type { TripDetails } from "@/domains/route-search/SearchResultPage/types";
 import { apiClient } from "@/lib/api";
-import { getCurrentTimeString } from "@/lib/utils";
+import { getCurrentTimeString, sortTravelsByArrivalTime } from "@/lib/utils";
 import type { RouteSearchResult } from "@/types";
 
+import { getCachedRouteSearchResult } from "../../utils";
 import { convertRouteSearchToTripDetails } from "../utils";
 
 export interface UseRouteSearchResult {
@@ -72,8 +73,11 @@ export function useRouteSearch(): UseRouteSearchResult {
             setError("バス停名の取得に失敗したため、IDで表示しています。");
           }
 
+          // Sort travels by arrival time (earliest first)
+          const sortedTravels = sortTravelsByArrivalTime(response.data.travels);
+
           const result: RouteSearchResult = {
-            travels: response.data.travels,
+            travels: sortedTravels,
             originStopName,
             destinationStopName,
             searchTime: time,
@@ -88,12 +92,53 @@ export function useRouteSearch(): UseRouteSearchResult {
 
       try {
         const forceReal = searchParams.get("real") === "true";
-        const performSearch = searchParams.get("search") === "true";
         const fromStop = searchParams.get("from");
         const toStop = searchParams.get("to");
         const beginTime = searchParams.get("time");
+        const selectedTrip = searchParams.get("selectedTrip");
 
-        if ((forceReal || performSearch) && fromStop && toStop) {
+        // Check sessionStorage first with validation to avoid duplicate API calls
+        let cachedResult: RouteSearchResult | null = null;
+        if (fromStop && toStop && !forceReal) {
+          cachedResult = getCachedRouteSearchResult(fromStop, toStop);
+        }
+
+        let useCache = false;
+
+        if (cachedResult) {
+          useCache = true;
+          const fromName =
+            searchParams.get("fromName") || cachedResult.originStopName;
+          const toName =
+            searchParams.get("toName") || cachedResult.destinationStopName;
+
+          const resultWithNames = {
+            ...cachedResult,
+            originStopName: fromName,
+            destinationStopName: toName,
+          };
+
+          const convertedTripDetails =
+            convertRouteSearchToTripDetails(resultWithNames);
+
+          // If a specific trip was selected from route overview, pre-select it
+          if (selectedTrip) {
+            const routeIndex = resultWithNames.travels.findIndex(
+              (travel) => travel.trip_id === selectedTrip
+            );
+            if (routeIndex >= 0) {
+              convertedTripDetails.selectedRouteId = `route-${routeIndex + 1}`;
+            }
+          }
+
+          setTripDetails(convertedTripDetails);
+
+          // Note: Cache is not cleared here to allow back button navigation
+          // Cache will expire naturally after 5 minutes or be overwritten by new searches
+        }
+
+        // Fall back to API call if cache miss or direct navigation
+        if (!useCache && fromStop && toStop) {
           setIsLoading(true);
 
           const fromName = searchParams.get("fromName") || `バス停 ${fromStop}`;
@@ -113,22 +158,23 @@ export function useRouteSearch(): UseRouteSearchResult {
 
             const convertedTripDetails =
               convertRouteSearchToTripDetails(resultWithNames);
+
+            // If a specific trip was selected from route overview, pre-select it
+            if (selectedTrip) {
+              const routeIndex = resultWithNames.travels.findIndex(
+                (travel) => travel.trip_id === selectedTrip
+              );
+              if (routeIndex >= 0) {
+                convertedTripDetails.selectedRouteId = `route-${routeIndex + 1}`;
+              }
+            }
+
             setTripDetails(convertedTripDetails);
           } else {
             throw new Error("API呼び出しから結果が得られませんでした");
           }
-        } else {
-          const storedResult = localStorage.getItem("routeSearchResult");
-
-          if (storedResult) {
-            const searchResult: RouteSearchResult = JSON.parse(storedResult);
-            const convertedTripDetails =
-              convertRouteSearchToTripDetails(searchResult);
-            setTripDetails(convertedTripDetails);
-            localStorage.removeItem("routeSearchResult");
-          } else {
-            setError("検索結果が見つかりません。検索を実行してください。");
-          }
+        } else if (!useCache) {
+          setError("検索結果が見つかりません。検索を実行してください。");
         }
       } catch (error) {
         console.error("検索結果の読み込みでエラーが発生:", error);
