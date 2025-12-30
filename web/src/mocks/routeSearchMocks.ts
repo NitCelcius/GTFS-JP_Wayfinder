@@ -94,7 +94,8 @@ export const mockAlternativeRouteSearchResult: RouteSearchResult = {
 };
 
 // Mock with walk transfer between platforms at the same station
-// Simulates a route like: 秋田駅東口 1番のりば → 秋田駅東口 2番のりば → destination
+// Simulates a realistic route: origin -> transfer station (platform 1) -> walk to platform 2 -> destination
+// This represents a journey where the bus arrives at one platform and the next bus departs from a different platform
 export const mockWalkTransferRouteSearchResult: RouteSearchResult = {
   travels: [
     {
@@ -103,7 +104,7 @@ export const mockWalkTransferRouteSearchResult: RouteSearchResult = {
       arrival_time: "10:15",
       departure_datetime: "2021-01-01T10:00:00",
       arrival_datetime: "2021-01-01T10:15:00",
-      from_stop_id: "akita-eki-higashi_01",
+      from_stop_id: "chuo-koen_01",
       to_stop_id: "akita-eki-higashi_01",
       fare: 200,
     },
@@ -130,7 +131,7 @@ export const mockWalkTransferRouteSearchResult: RouteSearchResult = {
       fare: 350,
     },
   ],
-  originStopName: "秋田駅東口",
+  originStopName: "中央公園",
   destinationStopName: "イオンモール秋田",
   searchTime: "10:00",
 };
