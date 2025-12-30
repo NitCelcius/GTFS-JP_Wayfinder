@@ -162,7 +162,7 @@ export function SearchResultPage({
                     </div>
                   </>
                 )}
-                renderWalkTransfer={(stop, nextStop) => (
+                renderWalkTransfer={(_stop, nextStop) => (
                   <WalkTransferIndicator
                     transferStationName={nextStop.name}
                     platformCode={nextStop.walkTransferPlatformCode}
