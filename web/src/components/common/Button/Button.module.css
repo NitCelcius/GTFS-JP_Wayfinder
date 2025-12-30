@@ -34,11 +34,3 @@
   white-space: pre;
   margin: 0;
 }
-
-.default {
-  background: var(--color-route-origin-bg);
-}
-
-.reset {
-  background: var(--color-route-inactive-bg);
-}

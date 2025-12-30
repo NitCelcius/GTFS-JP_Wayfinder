@@ -8,32 +8,6 @@
   margin: 0 auto;
 }
 
-/* Top Navigation */
-.topNav {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  padding: 8px;
-  width: 100%;
-}
-
-.topNavIcon {
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--foreground, black);
-}
-
-.topNavTitle {
-  font-size: var(--headerlevel1fontsize, 28px);
-  font-weight: 400;
-  margin: 0;
-  color: var(--foreground, black);
-  flex: 1;
-}
-
 /* Bus Stop Header */
 .busStopHeader {
   display: flex;
