@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 
-import { RouteSearchResultsContainer } from "@/domains/route-search";
+import { RouteDetailPageContainer } from "@/domains/route-search";
 
 // Static generation is disabled for this page because it fetches real-time bus information and search results
 // based on user input (query parameters) at runtime. The data required to render this page cannot be determined
@@ -14,8 +14,8 @@ export default function ResultsPage() {
   const router = useRouter();
 
   return (
-    <RouteSearchResultsContainer
-      onBack={() => router.push("/")}
+    <RouteDetailPageContainer
+      onBack={() => router.back()}
       onNavigateToBusStop={() => router.push("/bus-stop")}
       onNavigateToRecent={() => router.push("/recent")}
     />
