@@ -4,6 +4,9 @@ import { useRef } from "react";
 
 import styles from "./BottomNavigation.module.css";
 
+// Animation duration in milliseconds - must match CSS animation duration
+const RIPPLE_ANIMATION_DURATION = 600;
+
 function BusStopIcon() {
   return (
     <div className={styles.locationIcon} data-name="bus_stop">
@@ -63,8 +66,10 @@ function NavItem({ icon, label, isActive = false, onClick }: NavItemProps) {
 
     // Remove ripple after animation completes
     setTimeout(() => {
-      ripple.remove();
-    }, 600);
+      if (ripple.parentNode) {
+        ripple.remove();
+      }
+    }, RIPPLE_ANIMATION_DURATION);
 
     onClick();
   };
