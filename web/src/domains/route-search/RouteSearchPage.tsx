@@ -6,7 +6,6 @@ import { BottomNavigation } from "@/components/common/BottomNavigation/BottomNav
 import { RouteSearchButton } from "@/components/common/RouteSearchButton/RouteSearchButton";
 import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
 import {
-  clearRouteSearchInputs,
   getRouteSearchInputs,
   saveRouteSearchInputs,
 } from "@/lib/routeSearchInputStorage";
@@ -191,9 +190,6 @@ export function RouteSearchPage({
     };
 
     console.log("Search initiated with params:", searchParams);
-
-    // Clear saved inputs after successful search initiation
-    clearRouteSearchInputs();
 
     onSearch?.(searchParams);
   };
