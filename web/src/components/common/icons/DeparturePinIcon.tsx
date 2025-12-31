@@ -10,7 +10,7 @@ interface DeparturePinIconProps {
  * Used to mark the starting point in route visualizations.
  */
 export function DeparturePinIcon({
-  size = 16,
+  size = 24,
   className,
 }: DeparturePinIconProps) {
   return <Icon name="location-filled" size={size} className={className} />;
