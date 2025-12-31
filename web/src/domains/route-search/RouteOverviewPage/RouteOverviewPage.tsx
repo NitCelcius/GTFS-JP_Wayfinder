@@ -54,12 +54,10 @@ export function RouteOverviewPage({
   );
 
   // Calculate min/max from pre-calculated durations
-  const maxDuration = Math.max(
-    ...routesWithDurations.map((r) => r.durationMinutes)
-  );
-  const minDuration = Math.min(
-    ...routesWithDurations.map((r) => r.durationMinutes)
-  );
+  // Guard against empty array: Math.max/min on empty spread returns -Infinity/Infinity
+  const durations = routesWithDurations.map((r) => r.durationMinutes);
+  const maxDuration = durations.length > 0 ? Math.max(...durations) : 0;
+  const minDuration = durations.length > 0 ? Math.min(...durations) : 0;
 
   return (
     <div className={styles.page}>
@@ -79,9 +77,11 @@ export function RouteOverviewPage({
             </h2>
             <div className={styles.routesList}>
               {routesWithDurations.map(({ route, durationMinutes }) => {
+                // Single route or all same duration: show full progress bar (100%)
+                // Multiple routes: scale between 50-100% based on relative duration
                 const durationRange = maxDuration - minDuration;
                 const progressPercentage =
-                  durationRange === 0
+                  routesWithDurations.length <= 1 || durationRange === 0
                     ? 100
                     : PROGRESS_BASE_PERCENTAGE +
                       ((durationMinutes - minDuration) / durationRange) *
