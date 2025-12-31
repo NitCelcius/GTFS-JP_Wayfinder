@@ -10,7 +10,7 @@ interface ArrivalFlagIconProps {
  * Used to mark the destination point in route visualizations.
  */
 export function ArrivalFlagIcon({
-  size = 16,
+  size = 24,
   className,
 }: ArrivalFlagIconProps) {
   return <Icon name="flag-filled" size={size} className={className} />;
