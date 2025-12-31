@@ -89,13 +89,18 @@ function getLightness(mode: ColorMode): number {
  * - Total: 0.156
  *
  * @param text - Input string (any characters including Japanese)
- * @param base - Decay base (default 8). Higher = steeper decay
+ * @param base - Decay base (default 8). Higher = steeper decay. Must be positive.
  * @returns Hash value in range [0, 1)
+ * @throws Error if base is not positive
  */
 export function weightedTextHash(
   text: string,
   base: number = DEFAULT_HASH_BASE
 ): number {
+  if (base <= 0) {
+    throw new Error("base must be positive");
+  }
+
   if (!text || text.length === 0) {
     return 0;
   }
