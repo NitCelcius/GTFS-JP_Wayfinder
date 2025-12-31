@@ -1,4 +1,6 @@
-import { Icon, TopNavigation } from "@/components/common";
+import { Clock } from "lucide-react";
+
+import { TopNavigation } from "@/components/common";
 import { useBusStopSearchHistory } from "@/hooks/useSearchHistory";
 
 import styles from "./RecentPage.module.css";
@@ -10,7 +12,7 @@ interface AllRecentBusStopsPageProps {
 }
 
 function ClockIcon() {
-  return <Icon name="clock" size={24} aria-hidden="true" />;
+  return <Clock size={24} aria-hidden="true" />;
 }
 
 export function AllRecentBusStopsPage({
