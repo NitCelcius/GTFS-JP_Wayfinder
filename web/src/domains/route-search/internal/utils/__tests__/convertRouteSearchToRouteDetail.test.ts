@@ -22,7 +22,7 @@ describe("convertRouteSearchToRouteDetail", () => {
     );
 
     expect(result.id).toBe("trip-123");
-    expect(result.name).toBe("選択された経路");
+    expect(result.name).toBe("東駅 → 大学病院");
     expect(result.departureTime).toBe("08:15:00");
     expect(result.arrivalTime).toBe("09:00:00");
     expect(result.transferCount).toBe(0);
