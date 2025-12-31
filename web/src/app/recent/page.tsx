@@ -11,6 +11,14 @@ export default function RecentSearchPage() {
     router.push(`/bus-stop/${encodeURIComponent(id)}`);
   };
 
+  const handleViewMoreBusStops = () => {
+    router.push("/recent/bus-stops");
+  };
+
+  const handleViewMoreRoutes = () => {
+    router.push("/recent/routes");
+  };
+
   return (
     <RecentPage
       onNavigateToRoute={() => router.push("/")}
@@ -35,6 +43,8 @@ export default function RecentSearchPage() {
         });
         router.push(`/route-overview?${urlParams.toString()}`);
       }}
+      onViewMoreBusStops={handleViewMoreBusStops}
+      onViewMoreRoutes={handleViewMoreRoutes}
     />
   );
 }
