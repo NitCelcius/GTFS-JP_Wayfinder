@@ -31,10 +31,16 @@ function RecentBusStopItem({
     onSelect?.(busStop.id);
   };
 
+  // Don't show distance for recent searches
+  const displayDistance =
+    busStop.distance && busStop.distance !== "位置情報無効"
+      ? busStop.distance
+      : undefined;
+
   return (
     <BusStopCard
       title={busStop.name}
-      subtitle={busStop.distance}
+      subtitle={displayDistance}
       icon={<LocationIcon />}
       actionLabel="選択"
       onClick={handleCardClick}
