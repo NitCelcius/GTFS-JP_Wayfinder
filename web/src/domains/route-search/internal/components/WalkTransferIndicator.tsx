@@ -1,4 +1,4 @@
-import { Icon } from "@/components/common/Icon/Icon";
+import { Footprints } from "lucide-react";
 
 import styles from "./WalkTransferIndicator.module.css";
 
@@ -38,7 +38,7 @@ export function WalkTransferIndicator({
   return (
     <div className={`${styles.container} ${className ?? ""}`}>
       <div className={styles.iconWrapper}>
-        <Icon name="walk" size={20} aria-hidden="true" />
+        <Footprints size={20} aria-hidden="true" />
       </div>
       <span className={styles.text}>{transferMessage}</span>
     </div>

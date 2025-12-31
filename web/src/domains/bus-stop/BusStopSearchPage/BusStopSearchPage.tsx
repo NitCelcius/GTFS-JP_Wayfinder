@@ -1,6 +1,7 @@
+import { MapPin } from "lucide-react";
+
 import {
   BottomNavigation,
-  Icon,
   LoadingSpinner,
   TopNavigation,
 } from "@/components/common";
@@ -52,7 +53,7 @@ export function BusStopSearchPage({
     }
   };
 
-  const SearchLocationIcon = () => <Icon name="location-pin" size={24} />;
+  const SearchLocationIcon = () => <MapPin size={24} />;
 
   const handleSearch = (query: string) => {
     // Placeholder for search functionality

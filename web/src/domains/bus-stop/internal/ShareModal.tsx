@@ -1,8 +1,8 @@
 "use client";
 
+import { X } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 
-import { Icon } from "@/components/common";
 import { useEnvValue } from "@/hooks";
 
 import styles from "./ShareModal.module.css";
@@ -15,7 +15,7 @@ interface ShareModalProps {
 }
 
 function CloseIcon() {
-  return <Icon name="close" size={24} aria-hidden="true" />;
+  return <X size={24} aria-hidden="true" />;
 }
 
 export function ShareModal({

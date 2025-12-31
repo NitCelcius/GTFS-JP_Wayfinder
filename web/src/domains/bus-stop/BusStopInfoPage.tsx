@@ -1,6 +1,8 @@
+import { Info } from "lucide-react";
+
 import { useEffect, useState } from "react";
 
-import { BottomNavigation, Icon, JourneyTimeline } from "@/components/common";
+import { BottomNavigation, JourneyTimeline } from "@/components/common";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner/LoadingSpinner";
 import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
 import { useTimeDisplay } from "@/hooks";
@@ -76,7 +78,7 @@ export function BusStopInfoPage({
     }
   };
 
-  const InfoIcon = () => <Icon name="info" size={24} aria-hidden="true" />;
+  const InfoIcon = () => <Info size={24} aria-hidden="true" />;
 
   // Handle error state
   if (error && !isLoading) {

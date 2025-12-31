@@ -1,4 +1,4 @@
-import { Icon } from "@/components/common";
+import { Flag } from "lucide-react";
 
 interface ArrivalFlagIconProps {
   size?: number;
@@ -13,5 +13,5 @@ export function ArrivalFlagIcon({
   size = 24,
   className,
 }: ArrivalFlagIconProps) {
-  return <Icon name="flag-filled" size={size} className={className} />;
+  return <Flag size={size} className={className} fill="currentColor" />;
 }

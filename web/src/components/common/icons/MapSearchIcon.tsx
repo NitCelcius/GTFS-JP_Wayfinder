@@ -1,11 +1,9 @@
-import React from "react";
-
-import { Icon } from "@/components/common";
+import { MapPinned } from "lucide-react";
 
 interface MapSearchIconProps {
   size?: number;
 }
 
 export function MapSearchIcon({ size = 24 }: MapSearchIconProps) {
-  return <Icon name="map-search" size={size} />;
+  return <MapPinned size={size} />;
 }

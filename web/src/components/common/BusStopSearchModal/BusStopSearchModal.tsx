@@ -1,7 +1,8 @@
+import { AlertTriangle, MapPin, Search, X } from "lucide-react";
+
 import { useEffect } from "react";
 
 import type { StopIdAndName } from "@/api/types.gen";
-import { Icon } from "@/components/common";
 import { ArrowRightIcon, LocationPinIcon } from "@/components/icons";
 import type { BusStopSearchResult } from "@/types";
 
@@ -97,7 +98,7 @@ export function BusStopSearchModal({
             onClick={onCanceled}
             aria-label="閉じる"
           >
-            <Icon name="close" size={32} aria-hidden="true" />
+            <X size={32} aria-hidden="true" />
           </button>
         </div>
 
@@ -122,8 +123,7 @@ export function BusStopSearchModal({
             </div>
           ) : error ? (
             <div className={styles.emptyState}>
-              <Icon
-                name="alert-triangle"
+              <AlertTriangle
                 size={48}
                 className={styles.emptyIcon}
                 aria-hidden="true"
@@ -135,8 +135,7 @@ export function BusStopSearchModal({
             <div className={styles.emptyState}>
               {searchQuery.trim() ? (
                 <>
-                  <Icon
-                    name="search"
+                  <Search
                     size={48}
                     className={styles.emptyIcon}
                     aria-hidden="true"
@@ -150,8 +149,7 @@ export function BusStopSearchModal({
                 </>
               ) : (
                 <>
-                  <Icon
-                    name="location-pin"
+                  <MapPin
                     size={48}
                     className={styles.emptyIcon}
                     aria-hidden="true"

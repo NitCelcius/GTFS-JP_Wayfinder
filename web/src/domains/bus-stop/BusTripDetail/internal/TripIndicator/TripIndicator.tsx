@@ -1,6 +1,8 @@
+import { MapPin } from "lucide-react";
+
 import React from "react";
 
-import { Icon, StretchableIcon } from "@/components/common";
+import { StretchableIcon } from "@/components/common";
 import { useRouteColor } from "@/hooks";
 
 import styles from "./TripIndicator.module.css";
@@ -40,6 +42,7 @@ export const TripIndicator: React.FC<TripIndicatorProps> = ({
   return (
     <div className={styles.tripIndicatorWrapper}>
       <div className={styles.busFront}>
+        {/* bus-container-front icon is custom and cannot be replaced with Lucide */}
         <StretchableIcon
           name="bus-container-front"
           className={styles.busFrontSvg}
@@ -56,8 +59,7 @@ export const TripIndicator: React.FC<TripIndicatorProps> = ({
           <div className={styles.routeDetails}>
             <p className={styles.routeName}>{routeName}</p>
             <div className={styles.destinationRow}>
-              <Icon
-                name="location-pin"
+              <MapPin
                 size={28}
                 className={styles.locationIcon}
                 aria-hidden="true"

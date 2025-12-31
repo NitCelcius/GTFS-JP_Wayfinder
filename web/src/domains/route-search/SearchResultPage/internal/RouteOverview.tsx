@@ -1,4 +1,4 @@
-import { Icon } from "@/components/common";
+import { Share2 } from "lucide-react";
 
 import styles from "./RouteOverview.module.css";
 
@@ -10,7 +10,7 @@ interface RouteOverviewProps {
 }
 
 function ShareIcon() {
-  return <Icon name="share" size={24} aria-hidden="true" />;
+  return <Share2 size={24} aria-hidden="true" />;
 }
 
 export function RouteOverview({

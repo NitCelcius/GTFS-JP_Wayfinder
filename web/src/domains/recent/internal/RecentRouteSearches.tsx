@@ -1,4 +1,4 @@
-import { Icon } from "@/components/common";
+import { Route } from "lucide-react";
 
 import { RecentRouteSearch } from "../types";
 import styles from "./RecentRouteSearches.module.css";
@@ -17,7 +17,7 @@ interface RecentRouteSearchesProps {
 }
 
 function RouteIcon() {
-  return <Icon name="route" size={24} aria-hidden="true" />;
+  return <Route size={24} aria-hidden="true" />;
 }
 
 function RecentRouteItem({

@@ -1,5 +1,5 @@
-import { Icon } from "@/components/common";
+import { Map } from "lucide-react";
 
 export function MapIcon() {
-  return <Icon name="map" size={24} />;
+  return <Map size={24} />;
 }

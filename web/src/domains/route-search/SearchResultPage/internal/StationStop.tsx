@@ -1,6 +1,6 @@
-import React from "react";
+import { ArrowDown, Circle, Flag, MapPin } from "lucide-react";
 
-import { Icon } from "@/components/common";
+import React from "react";
 
 import { Station } from "../types";
 import styles from "./StationStop.module.css";
@@ -13,19 +13,19 @@ interface StationStopProps {
 }
 
 function PinIcon() {
-  return <Icon name="location-pin-simple" size={24} aria-hidden="true" />;
+  return <MapPin size={24} aria-hidden="true" />;
 }
 
 function LocationIcon() {
-  return <Icon name="location-dot" size={24} aria-hidden="true" />;
+  return <Circle size={24} fill="currentColor" aria-hidden="true" />;
 }
 
 function FlagIcon() {
-  return <Icon name="flag-simple" size={24} aria-hidden="true" />;
+  return <Flag size={24} aria-hidden="true" />;
 }
 
 function ArrowDownIcon() {
-  return <Icon name="arrow-down-long" size={24} aria-hidden="true" />;
+  return <ArrowDown size={24} aria-hidden="true" />;
 }
 
 export function StationStop({

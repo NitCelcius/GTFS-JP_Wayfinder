@@ -1,5 +1,5 @@
-import { Icon } from "@/components/common";
+import { Search } from "lucide-react";
 
 export function SearchIcon() {
-  return <Icon name="search" size={24} />;
+  return <Search size={24} />;
 }
