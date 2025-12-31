@@ -14,6 +14,7 @@ interface RecentRouteSearchesProps {
     toStopName: string
   ) => void;
   onViewMore?: () => void;
+  limit?: number;
 }
 
 function RouteIcon() {
@@ -57,16 +58,22 @@ function RecentRouteItem({
   );
 }
 
+export { RecentRouteItem };
+
 export function RecentRouteSearches({
   recentRoutes,
   onRouteSelect,
   onViewMore,
+  limit,
 }: RecentRouteSearchesProps) {
+  const displayedRoutes = limit ? recentRoutes.slice(0, limit) : recentRoutes;
+  const hasMore = limit && recentRoutes.length > limit;
+
   return (
     <div>
       <div className={styles.sectionHeader}>
         <h2 className={styles.heading}>行き方</h2>
-        {recentRoutes.length > 0 && (
+        {hasMore && (
           <button
             className={viewMoreStyles.viewMoreButton}
             onClick={onViewMore}
@@ -81,7 +88,7 @@ export function RecentRouteSearches({
         </div>
       ) : (
         <div>
-          {recentRoutes.map((r) => (
+          {displayedRoutes.map((r) => (
             <RecentRouteItem key={r.id} route={r} onSelect={onRouteSelect} />
           ))}
         </div>

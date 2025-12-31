@@ -11,6 +11,7 @@ interface RecentBusStopSearchesProps {
   recentBusStops: RecentBusStopSearch[];
   onBusStopSelect?: (busStopId: string) => void;
   onViewMore?: () => void;
+  limit?: number;
 }
 
 function LocationIcon() {
@@ -47,12 +48,18 @@ export function RecentBusStopSearches({
   recentBusStops,
   onBusStopSelect,
   onViewMore,
+  limit,
 }: RecentBusStopSearchesProps) {
+  const displayedBusStops = limit
+    ? recentBusStops.slice(0, limit)
+    : recentBusStops;
+  const hasMore = limit && recentBusStops.length > limit;
+
   return (
     <div>
       <div className="flex items-center justify-between mb-[var(--size-spacing-lg)]">
         <h2 className="text-[1.25rem]">バス停</h2>
-        {recentBusStops.length > 0 && (
+        {hasMore && (
           <button
             className={viewMoreStyles.viewMoreButton}
             onClick={onViewMore}
@@ -67,7 +74,7 @@ export function RecentBusStopSearches({
         </div>
       ) : (
         <div>
-          {recentBusStops.map((bs) => (
+          {displayedBusStops.map((bs) => (
             <RecentBusStopItem
               key={bs.id}
               busStop={bs}

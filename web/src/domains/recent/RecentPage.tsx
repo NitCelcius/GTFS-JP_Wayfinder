@@ -20,6 +20,8 @@ interface RecentPageProps {
     fromStopName: string,
     toStopName: string
   ) => void;
+  onViewMoreBusStops?: () => void;
+  onViewMoreRoutes?: () => void;
 }
 
 function ClockIcon() {
@@ -31,6 +33,8 @@ export function RecentPage({
   onNavigateToBusStop,
   onNavigateToBusStopInfo,
   onNavigateToRouteSearch,
+  onViewMoreBusStops,
+  onViewMoreRoutes,
 }: RecentPageProps) {
   const { searches: busStopSearches } = useBusStopSearchHistory();
   const { searches: routeSearches } = useRouteSearchHistory();
@@ -61,10 +65,13 @@ export function RecentPage({
     onNavigateToRouteSearch?.(fromStopId, toStopId, fromStopName, toStopName);
   };
 
-  const handleViewMoreBusStops = () =>
-    console.log("Navigate to more bus stop search history");
-  const handleViewMoreRoutes = () =>
-    console.log("Navigate to more route search history");
+  const handleViewMoreBusStops = () => {
+    onViewMoreBusStops?.();
+  };
+  
+  const handleViewMoreRoutes = () => {
+    onViewMoreRoutes?.();
+  };
 
   return (
     <div className={styles.page}>
@@ -76,11 +83,13 @@ export function RecentPage({
             recentBusStops={busStopSearches}
             onBusStopSelect={handleBusStopSelect}
             onViewMore={handleViewMoreBusStops}
+            limit={3}
           />
           <RecentRouteSearches
             recentRoutes={routeSearches}
             onRouteSelect={handleRouteSelect}
             onViewMore={handleViewMoreRoutes}
+            limit={3}
           />
         </div>
       </div>
