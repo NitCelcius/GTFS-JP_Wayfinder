@@ -1,5 +1,5 @@
 export {
   cacheRouteSearchResult,
   getCachedRouteSearchResult,
-  clearRouteCacheResult,
+  clearCachedRouteSearchResult,
 } from "./sessionStorageRouteSearchCache";

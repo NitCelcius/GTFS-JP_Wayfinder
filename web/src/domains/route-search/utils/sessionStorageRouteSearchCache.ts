@@ -111,7 +111,10 @@ export function getCachedRouteSearchResult(
 /**
  * Clears cached route search result
  */
-export function clearRouteCacheResult(fromStop: string, toStop: string): void {
+export function clearCachedRouteSearchResult(
+  fromStop: string,
+  toStop: string
+): void {
   try {
     const cacheKey = createCacheKey(fromStop, toStop);
     sessionStorage.removeItem(cacheKey);
