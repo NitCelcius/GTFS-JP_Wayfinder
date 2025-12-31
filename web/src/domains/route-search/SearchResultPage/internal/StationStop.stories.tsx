@@ -6,7 +6,7 @@ import { Station } from "../types";
 import { StationStop } from "./StationStop";
 
 const meta: Meta<typeof StationStop> = {
-  title: "Deprecated/RouteSearch/SearchResultPage/Internal/StationStop",
+  title: "Deprecated/Domains/RouteSearch/SearchResultPage/Internal/StationStop",
   component: StationStop,
   parameters: {
     layout: "centered",

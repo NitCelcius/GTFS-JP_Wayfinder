@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import { useSearchParams } from "next/navigation";
 
+import type { TravelOnceResponse } from "@/api/types.gen";
 import type { TripDetails } from "@/domains/route-search/SearchResultPage/types";
 import { apiClient } from "@/lib/api";
 import { getCurrentTimeString, sortTravelsByArrivalTime } from "@/lib/utils";
@@ -9,6 +10,25 @@ import type { RouteSearchResult } from "@/types";
 
 import { getCachedRouteSearchResult } from "../../utils";
 import { convertRouteSearchToTripDetails } from "../utils";
+
+/**
+ * Applies the selectedTrip pre-selection to trip details.
+ * If a specific trip was selected from route overview, pre-selects it in the details view.
+ */
+function applySelectedTripPreselection(
+  tripDetails: TripDetails,
+  travels: TravelOnceResponse[],
+  selectedTrip: string | null
+): void {
+  if (selectedTrip) {
+    const routeIndex = travels.findIndex(
+      (travel) => travel.trip_id === selectedTrip
+    );
+    if (routeIndex >= 0) {
+      tripDetails.selectedRouteId = `route-${routeIndex + 1}`;
+    }
+  }
+}
 
 export interface UseRouteSearchResult {
   tripDetails: TripDetails | null;
@@ -121,15 +141,11 @@ export function useRouteSearch(): UseRouteSearchResult {
           const convertedTripDetails =
             convertRouteSearchToTripDetails(resultWithNames);
 
-          // If a specific trip was selected from route overview, pre-select it
-          if (selectedTrip) {
-            const routeIndex = resultWithNames.travels.findIndex(
-              (travel) => travel.trip_id === selectedTrip
-            );
-            if (routeIndex >= 0) {
-              convertedTripDetails.selectedRouteId = `route-${routeIndex + 1}`;
-            }
-          }
+          applySelectedTripPreselection(
+            convertedTripDetails,
+            resultWithNames.travels,
+            selectedTrip
+          );
 
           setTripDetails(convertedTripDetails);
 
@@ -140,8 +156,6 @@ export function useRouteSearch(): UseRouteSearchResult {
 
         // Fall back to API call if cache miss or direct navigation
         if (!useCache && fromStop && toStop) {
-          setIsLoading(true);
-
           const fromName = searchParams.get("fromName") || `バス停 ${fromStop}`;
           const toName = searchParams.get("toName") || `バス停 ${toStop}`;
 
@@ -160,15 +174,11 @@ export function useRouteSearch(): UseRouteSearchResult {
             const convertedTripDetails =
               convertRouteSearchToTripDetails(resultWithNames);
 
-            // If a specific trip was selected from route overview, pre-select it
-            if (selectedTrip) {
-              const routeIndex = resultWithNames.travels.findIndex(
-                (travel) => travel.trip_id === selectedTrip
-              );
-              if (routeIndex >= 0) {
-                convertedTripDetails.selectedRouteId = `route-${routeIndex + 1}`;
-              }
-            }
+            applySelectedTripPreselection(
+              convertedTripDetails,
+              resultWithNames.travels,
+              selectedTrip
+            );
 
             setTripDetails(convertedTripDetails);
           } else {
