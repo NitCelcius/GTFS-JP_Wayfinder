@@ -107,11 +107,17 @@ export function weightedTextHash(
 
   let hash = 0;
   let divisor = base;
+  const maxDivisor = Number.MAX_SAFE_INTEGER / base;
 
   for (const char of text) {
     const codePoint = char.codePointAt(0) ?? 0;
     const value = codePoint % base;
     hash += value / divisor;
+
+    // Stop increasing divisor once it would exceed number MAX_SAFE_INTEGER.
+    if (divisor > maxDivisor) {
+      break;
+    }
     divisor *= base;
   }
 
