@@ -13,9 +13,17 @@ export const dynamic = "force-dynamic";
 export default function ResultsPage() {
   const router = useRouter();
 
+  const handleBack = () => {
+    if (typeof window !== "undefined" && window.history.length > 1) {
+      router.back();
+    } else {
+      router.push("/");
+    }
+  };
+
   return (
     <RouteDetailPageContainer
-      onBack={() => router.back()}
+      onBack={handleBack}
       onNavigateToBusStop={() => router.push("/bus-stop")}
       onNavigateToRecent={() => router.push("/recent")}
     />
