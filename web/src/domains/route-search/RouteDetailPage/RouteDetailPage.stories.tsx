@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { mockRoute } from "@/mocks";
+import { createMockRoute } from "@/mocks";
 
 import { RouteDetailPage } from "./RouteDetailPage";
 
@@ -11,7 +11,7 @@ const meta = {
     layout: "fullscreen",
   },
   args: {
-    route: mockRoute,
+    route: createMockRoute(),
     fromStation: "東駅",
     toStation: "大学病院",
     onBack: () => console.log("Back clicked"),
