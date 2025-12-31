@@ -51,7 +51,9 @@ export const TripIndicator: React.FC<TripIndicatorProps> = ({
                 className={styles.locationIcon}
                 aria-hidden="true"
               />
-              <p className={styles.destinationName}>{destinationName}行</p>
+              <p className={`${styles.destinationName} line-clamp-3`}>
+                {destinationName}行
+              </p>
             </div>
           </div>
         </div>

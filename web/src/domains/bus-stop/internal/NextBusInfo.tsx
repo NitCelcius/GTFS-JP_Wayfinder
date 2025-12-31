@@ -50,7 +50,7 @@ export function NextBusInfo({
         </div>
 
         <div className={styles.mainInfo}>
-          <div>
+          <div className="line-clamp-3">
             <span className={styles.mainInfoText}>{busInfo.destination}</span>{" "}
             <span className={styles.directionText}>{busInfo.direction}</span>
           </div>
