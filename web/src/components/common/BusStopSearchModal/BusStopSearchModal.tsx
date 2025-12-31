@@ -1,9 +1,8 @@
-import { AlertTriangle, MapPin, Search, X } from "lucide-react";
+import { AlertTriangle, ArrowRight, MapPin, Search, X } from "lucide-react";
 
 import { useEffect } from "react";
 
 import type { StopIdAndName } from "@/api/types.gen";
-import { ArrowRightIcon, LocationPinIcon } from "@/components/icons";
 import type { BusStopSearchResult } from "@/types";
 
 import styles from "./BusStopSearchModal.module.css";
@@ -177,9 +176,12 @@ export function BusStopSearchModal({
               >
                 <div className={styles.resultRow}>
                   <div className={styles.iconContainer}>
-                    <LocationPinIcon
-                      size={40}
-                      color="var(--color-action-primary)"
+                    <MapPin
+                      style={{
+                        color: "var(--color-action-primary)",
+                        width: "100%",
+                        height: "100%",
+                      }}
                     />
                   </div>
                   <div className={styles.resultMain}>
@@ -190,7 +192,7 @@ export function BusStopSearchModal({
                   </div>
                 </div>
                 <button className={styles.actionButton} aria-label="選択">
-                  <ArrowRightIcon className={styles.arrowIcon} size={32} />
+                  <ArrowRight className={styles.arrowIcon} size={32} />
                 </button>
               </div>
             ))

@@ -1,7 +1,2 @@
-export { ChevronRight } from "./ChevronRight";
-export { SearchIcon } from "./SearchIcon";
-export { WalkIcon } from "./WalkIcon";
-export { TransferIcon } from "./TransferIcon";
-export { MapIcon } from "./MapIcon";
-export { DeparturePinIcon } from "./DeparturePinIcon";
-export { ArrivalFlagIcon } from "./ArrivalFlagIcon";
+// Icons barrel - now empty as all wrappers have been replaced with direct Lucide usage
+export {};

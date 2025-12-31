@@ -1,14 +1,10 @@
+import { ArrowLeftRight, Footprints, Map, Search } from "lucide-react";
+
 import { useEffect, useRef, useState } from "react";
 
 import { ErrorFullScreen } from "@/components/common";
 import { ActionButtonBar } from "@/components/common/ActionButtonBar";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner/LoadingSpinner";
-import {
-  MapIcon,
-  SearchIcon,
-  TransferIcon,
-  WalkIcon,
-} from "@/components/common/icons";
 
 import styles from "./BusStopInfoV2.module.css";
 import { BusStopHeader } from "./internal/BusStopHeader";
@@ -98,28 +94,28 @@ export function BusStopInfoV2({
 
   const actionButtons = [
     {
-      icon: <SearchIcon />,
+      icon: <Search size={24} />,
       label: "行き先検索",
       id: "search-destinations",
       onClick: () => onRoutineSearch?.(),
       ariaLabel: "Search destinations",
     },
     {
-      icon: <WalkIcon />,
+      icon: <Footprints size={24} />,
       label: "徒歩で行く",
       id: "show-walk-directions",
       onClick: () => onWalkDirections?.(),
       ariaLabel: "Get walk directions",
     },
     {
-      icon: <TransferIcon />,
+      icon: <ArrowLeftRight size={24} />,
       label: "のりば切替",
       id: "change-transfer",
       onClick: () => onTransfer?.(),
       ariaLabel: "Transfer options",
     },
     {
-      icon: <MapIcon />,
+      icon: <Map size={24} />,
       label: "路線一覧",
       id: "view-route-list",
       onClick: () => onRouteList?.(),

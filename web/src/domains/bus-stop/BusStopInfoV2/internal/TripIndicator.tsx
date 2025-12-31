@@ -1,5 +1,6 @@
+import { ChevronRight } from "lucide-react";
+
 import { StretchableIcon } from "@/components/common";
-import { ChevronRight } from "@/components/common/icons";
 import { useRouteColor } from "@/hooks";
 
 import styles from "./TripIndicator.module.css";
@@ -75,7 +76,7 @@ export function TripIndicator({
             {stopsUntilArrival || "情報なし"}
           </span>
           <div className={styles.chevron}>
-            <ChevronRight />
+            <ChevronRight size={24} />
           </div>
         </div>
       </div>
