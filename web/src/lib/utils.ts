@@ -130,10 +130,22 @@ export function parseTimeToMinutes(timeStr: string): number {
 }
 
 /**
- * Calculate duration in minutes between two time strings (HH:MM or HH:MM:SS format)
- * Handles overnight trips (when arrival is earlier than departure)
- * @param startTime - Start time in HH:MM or HH:MM:SS format
- * @param endTime - End time in HH:MM or HH:MM:SS format
+ * Calculate duration in minutes between two time strings (HH:MM or HH:MM:SS format).
+ *
+ * Supports two time format combinations:
+ * 1. **Normalized times (0-23 hours)**: When both times use standard hours,
+ *    overnight trips are detected when arrival < departure (adds 24 hours).
+ *    Example: "23:30" to "01:00" → 90 minutes
+ *
+ * 2. **GTFS extended hours (24-47)**: When arrival uses extended hours to
+ *    represent next-day times, no overnight adjustment is needed.
+ *    Example: "23:00" to "25:30" → 150 minutes (25:30 = 1:30 AM next day)
+ *
+ * **Unsupported**: Mixed formats where departure uses extended hours (24-47)
+ * and arrival uses normalized hours (0-23), e.g., "25:30" to "01:00".
+ *
+ * @param startTime - Start time in HH:MM or HH:MM:SS format (hours 0-47)
+ * @param endTime - End time in HH:MM or HH:MM:SS format (hours 0-47)
  * @returns Duration in minutes
  */
 export function calculateDurationMinutes(
