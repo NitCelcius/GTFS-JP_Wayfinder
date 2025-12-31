@@ -1,3 +1,5 @@
+import { useCallback, useMemo } from "react";
+
 import { BottomNavigation } from "@/components/common/BottomNavigation/BottomNavigation";
 import { JourneyTimeline } from "@/components/common/JourneyTimeline/JourneyTimeline";
 import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
@@ -26,37 +28,42 @@ export function RouteDetailPage({
   const timeDisplay = useTimeDisplay();
 
   // Convert route stations to journey stops format
-  const journeyStops = route.stations.map(
-    (station: Station, index: number) => ({
-      id: `${station.stationName}-${index}`,
-      name: station.stationName,
-      type:
-        index === 0
-          ? ("origin" as const)
-          : index === route.stations.length - 1
-            ? ("destination" as const)
-            : ("intermediate" as const),
-      arrivalTime: station.arrivalTime,
-      departureTime: station.departureTime,
-      arrivalDatetime: station.arrivalDatetime,
-      departureDatetime: station.departureDatetime,
-      cost: station.cost,
-    })
+  const journeyStops = useMemo(
+    () =>
+      route.stations.map((station: Station, index: number) => ({
+        id: `${station.stationName}-${index}`,
+        name: station.stationName,
+        type:
+          index === 0
+            ? ("origin" as const)
+            : index === route.stations.length - 1
+              ? ("destination" as const)
+              : ("intermediate" as const),
+        arrivalTime: station.arrivalTime,
+        departureTime: station.departureTime,
+        arrivalDatetime: station.arrivalDatetime,
+        departureDatetime: station.departureDatetime,
+        cost: station.cost,
+      })),
+    [route.stations]
   );
 
-  const handleBottomNavClick = (tab: "bus-stop" | "route" | "recent") => {
-    switch (tab) {
-      case "bus-stop":
-        onNavigateToBusStop?.();
-        break;
-      case "recent":
-        onNavigateToRecent?.();
-        break;
-      default:
-        // Already on route page
-        break;
-    }
-  };
+  const handleBottomNavClick = useCallback(
+    (tab: "bus-stop" | "route" | "recent") => {
+      switch (tab) {
+        case "bus-stop":
+          onNavigateToBusStop?.();
+          break;
+        case "recent":
+          onNavigateToRecent?.();
+          break;
+        default:
+          // Already on route page
+          break;
+      }
+    },
+    [onNavigateToBusStop, onNavigateToRecent]
+  );
 
   return (
     <div className={styles.page}>
