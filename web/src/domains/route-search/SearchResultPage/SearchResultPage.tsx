@@ -8,11 +8,11 @@ import { ShareModal } from "@/domains/bus-stop/internal/ShareModal";
 import { WalkTransferIndicator } from "@/domains/route-search/internal/components";
 import { useTimeDisplay } from "@/hooks";
 
+import { TripSummary } from "../internal/components";
 import styles from "./SearchResultPage.module.css";
 import { RouteOverview } from "./internal/RouteOverview";
 import { RouteTabs } from "./internal/RouteTabs";
 import { SearchConditionsSummary } from "./internal/SearchConditionsSummary";
-import { TripSummary } from "./internal/TripSummary";
 import { SearchResultPageProps } from "./types";
 
 export function SearchResultPage({

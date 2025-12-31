@@ -1,4 +1,4 @@
-import { RouteOption } from "../types";
+import type { RouteOption } from "../../SearchResultPage/types";
 import styles from "./TripSummary.module.css";
 
 interface TripSummaryProps {
