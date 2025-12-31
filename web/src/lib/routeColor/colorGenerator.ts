@@ -261,7 +261,7 @@ export function textToLch(
   return {
     l: lightness,
     c: CHROMA,
-    h: ((hue % HUE_RANGE) + HUE_RANGE) % HUE_RANGE,
+    h: hue,
   };
 }
 
