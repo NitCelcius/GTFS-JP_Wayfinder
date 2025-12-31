@@ -2,7 +2,7 @@ import type { RouteSearchResult } from "@/types";
 
 import {
   cacheRouteSearchResult,
-  clearRouteCacheResult,
+  clearCachedRouteSearchResult,
   getCachedRouteSearchResult,
 } from "../sessionStorageRouteSearchCache";
 
@@ -212,11 +212,11 @@ describe("sessionStorageRouteSearchCache", () => {
     });
   });
 
-  describe("clearRouteCacheResult", () => {
+  describe("clearCachedRouteSearchResult", () => {
     it("should remove cached result", () => {
       cacheRouteSearchResult(mockRouteSearchResult, "stop1", "stop2");
 
-      clearRouteCacheResult("stop1", "stop2");
+      clearCachedRouteSearchResult("stop1", "stop2");
 
       expect(mockSessionStorage.removeItem).toHaveBeenCalledWith(
         "routeSearch:stop1:stop2"
@@ -232,7 +232,9 @@ describe("sessionStorageRouteSearchCache", () => {
         throw new Error("Storage error");
       });
 
-      expect(() => clearRouteCacheResult("stop1", "stop2")).not.toThrow();
+      expect(() =>
+        clearCachedRouteSearchResult("stop1", "stop2")
+      ).not.toThrow();
       expect(consoleWarnSpy).toHaveBeenCalled();
 
       consoleWarnSpy.mockRestore();
