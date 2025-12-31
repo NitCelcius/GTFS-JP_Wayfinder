@@ -6,12 +6,12 @@ import {
 
 describe("routeSearchInputStorage", () => {
   beforeEach(() => {
-    // Clear localStorage before each test
-    localStorage.clear();
+    // Clear sessionStorage before each test
+    sessionStorage.clear();
   });
 
   describe("saveRouteSearchInputs", () => {
-    it("should save route search inputs to localStorage", () => {
+    it("should save route search inputs to sessionStorage", () => {
       const inputs = {
         originStopId: "stop1",
         destinationStopId: "stop2",
@@ -23,7 +23,7 @@ describe("routeSearchInputStorage", () => {
 
       saveRouteSearchInputs(inputs);
 
-      const stored = localStorage.getItem("gtfs-route-search-inputs");
+      const stored = sessionStorage.getItem("gtfs-route-search-inputs");
       expect(stored).toBeDefined();
 
       const parsed = JSON.parse(stored!);
@@ -48,7 +48,7 @@ describe("routeSearchInputStorage", () => {
       };
 
       saveRouteSearchInputs(inputs);
-      const stored1 = localStorage.getItem("gtfs-route-search-inputs");
+      const stored1 = sessionStorage.getItem("gtfs-route-search-inputs");
       const parsed1 = JSON.parse(stored1!);
       const timestamp1 = parsed1.timestamp;
 
@@ -56,7 +56,7 @@ describe("routeSearchInputStorage", () => {
       jest.advanceTimersByTime(100);
       saveRouteSearchInputs(inputs);
 
-      const stored2 = localStorage.getItem("gtfs-route-search-inputs");
+      const stored2 = sessionStorage.getItem("gtfs-route-search-inputs");
       const parsed2 = JSON.parse(stored2!);
       const timestamp2 = parsed2.timestamp;
 
@@ -70,7 +70,7 @@ describe("routeSearchInputStorage", () => {
       expect(result).toBeNull();
     });
 
-    it("should retrieve saved inputs within 1 hour", () => {
+    it("should retrieve saved inputs within 5 minutes", () => {
       const inputs = {
         originStopId: "stop1",
         destinationStopId: "stop2",
@@ -92,7 +92,7 @@ describe("routeSearchInputStorage", () => {
       expect(result?.destinationCandidateStopIds).toEqual(["stop2"]);
     });
 
-    it("should return null when data is older than 1 hour", () => {
+    it("should return null when data is older than 5 minutes", () => {
       // Mock current time
       const now = 1000000000000; // Fixed timestamp
       jest.spyOn(Date, "now").mockReturnValue(now);
@@ -105,10 +105,10 @@ describe("routeSearchInputStorage", () => {
         destinationStopName: "中央公園",
         originCandidateStopIds: ["stop1"],
         destinationCandidateStopIds: ["stop2"],
-        timestamp: now - 61 * 60 * 1000, // 61 minutes ago
+        timestamp: now - 6 * 60 * 1000, // 6 minutes ago
       };
 
-      localStorage.setItem(
+      sessionStorage.setItem(
         "gtfs-route-search-inputs",
         JSON.stringify(expiredState)
       );
@@ -117,19 +117,19 @@ describe("routeSearchInputStorage", () => {
       expect(result).toBeNull();
 
       // Should also clear the expired data
-      const stored = localStorage.getItem("gtfs-route-search-inputs");
+      const stored = sessionStorage.getItem("gtfs-route-search-inputs");
       expect(stored).toBeNull();
 
       // Restore Date.now()
       jest.restoreAllMocks();
     });
 
-    it("should return data when exactly at 1 hour boundary", () => {
+    it("should return data when exactly at 5 minute boundary", () => {
       // Mock current time
       const now = 1000000000000; // Fixed timestamp
       jest.spyOn(Date, "now").mockReturnValue(now);
 
-      // Data that is exactly 1 hour old should still be returned
+      // Data that is exactly 5 minutes old should still be returned
       const boundaryState = {
         originStopId: "stop1",
         destinationStopId: "stop2",
@@ -137,10 +137,10 @@ describe("routeSearchInputStorage", () => {
         destinationStopName: "中央公園",
         originCandidateStopIds: ["stop1"],
         destinationCandidateStopIds: ["stop2"],
-        timestamp: now - 60 * 60 * 1000, // Exactly 1 hour ago
+        timestamp: now - 5 * 60 * 1000, // Exactly 5 minutes ago
       };
 
-      localStorage.setItem(
+      sessionStorage.setItem(
         "gtfs-route-search-inputs",
         JSON.stringify(boundaryState)
       );
@@ -153,15 +153,35 @@ describe("routeSearchInputStorage", () => {
     });
 
     it("should handle invalid JSON gracefully", () => {
-      localStorage.setItem("gtfs-route-search-inputs", "invalid json");
+      sessionStorage.setItem("gtfs-route-search-inputs", "invalid json");
 
       const result = getRouteSearchInputs();
       expect(result).toBeNull();
     });
+
+    it("should return null for invalid data structure", () => {
+      const invalidState = {
+        originStopId: "stop1",
+        // Missing required fields
+        timestamp: Date.now(),
+      };
+
+      sessionStorage.setItem(
+        "gtfs-route-search-inputs",
+        JSON.stringify(invalidState)
+      );
+
+      const result = getRouteSearchInputs();
+      expect(result).toBeNull();
+
+      // Should also clear the invalid data
+      const stored = sessionStorage.getItem("gtfs-route-search-inputs");
+      expect(stored).toBeNull();
+    });
   });
 
   describe("clearRouteSearchInputs", () => {
-    it("should remove saved inputs from localStorage", () => {
+    it("should remove saved inputs from sessionStorage", () => {
       const inputs = {
         originStopId: "stop1",
         destinationStopId: "stop2",
@@ -172,10 +192,10 @@ describe("routeSearchInputStorage", () => {
       };
 
       saveRouteSearchInputs(inputs);
-      expect(localStorage.getItem("gtfs-route-search-inputs")).not.toBeNull();
+      expect(sessionStorage.getItem("gtfs-route-search-inputs")).not.toBeNull();
 
       clearRouteSearchInputs();
-      expect(localStorage.getItem("gtfs-route-search-inputs")).toBeNull();
+      expect(sessionStorage.getItem("gtfs-route-search-inputs")).toBeNull();
     });
 
     it("should not throw error when nothing is stored", () => {
