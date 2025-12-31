@@ -13,6 +13,10 @@ from gtfs_jp_wayfinder.models import (
 _wf: AkitaBusWayFinder | None = None
 _wf_lock = threading.Lock()
 
+# Default date constant used for time-only representations in GTFS data.
+# This is shared with database.py's AkitaBusWayFinder.default_date
+DEFAULT_DATE = "2021-01-01"
+
 
 def initialize(data_dir: str, use_cache_graph: bool = False):
     """Initialize the singleton AkitaBusWayFinder instance.
@@ -166,13 +170,17 @@ def format_np_datetime(value: pd.Timestamp | np.datetime64 | str) -> str:
     - When times like "24:05:00" are converted to numpy datetime64, they become
       "2021-01-02T00:05:00" (normalized by numpy to the next day)
     - This function detects such cases by comparing against the default date
-      (2021-01-01) and adds 24 hours per day offset to preserve extended hours
+      (DEFAULT_DATE) and adds 24 hours per day offset to preserve extended hours
+
+    Raises:
+        ValueError: If the resulting hour calculation produces a negative value
+                   (timestamp is before the default date)
     """
     # Use pandas Timestamp for consistent formatting
     timestamp = pd.Timestamp(value)
 
-    # Default date used by the GTFS loader for time-only representations
-    default_date = pd.Timestamp("2021-01-01")
+    # Use the module-level constant for default date
+    default_date = pd.Timestamp(DEFAULT_DATE)
 
     # Calculate day offset from default date
     # If timestamp is on a later date, it means the original time was >= 24:00
@@ -180,6 +188,13 @@ def format_np_datetime(value: pd.Timestamp | np.datetime64 | str) -> str:
 
     # Calculate total hours including any day offset (for times >= 24:00)
     total_hours = timestamp.hour + (day_offset * 24)
+
+    # Validate that hours are not negative (timestamp before default date)
+    if total_hours < 0:
+        raise ValueError(
+            f"Invalid timestamp: {value} is before the default date {DEFAULT_DATE}. "
+            f"Resulting hour would be negative ({total_hours})."
+        )
 
     # Format with extended hours if applicable
     return f"{total_hours:02d}:{timestamp.minute:02d}:{timestamp.second:02d}"
