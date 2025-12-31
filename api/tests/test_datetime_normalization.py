@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import pytest
 
 from gtfs_jp_wayfinder.services import wayfinder, wayfinder_adapter
 
@@ -65,6 +66,20 @@ def test_format_np_datetime_end_of_day():
     dt = np.datetime64("2021-01-01T23:59:59")
     s = wayfinder.format_np_datetime(dt)
     assert s == "23:59:59", f"Expected '23:59:59' but got '{s}'"
+
+
+def test_format_np_datetime_before_default_date_raises():
+    """Test that timestamp before default date raises ValueError."""
+    # Timestamp before 2021-01-01 should raise ValueError for negative hours
+    dt = np.datetime64("2020-12-31T23:00:00")
+    with pytest.raises(ValueError, match="Invalid timestamp"):
+        wayfinder.format_np_datetime(dt)
+
+
+def test_default_date_constant_matches_database():
+    """Test that the DEFAULT_DATE constant is accessible and has expected value."""
+    # The constant should match the default date used in the database
+    assert wayfinder.DEFAULT_DATE == "2021-01-01"
 
 
 def test_adapter_converts_time_fields(monkeypatch):
