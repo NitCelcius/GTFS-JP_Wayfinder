@@ -5,7 +5,7 @@ import { mockSingleRouteTripDetails, mockTwoRoutesTripDetails } from "@/mocks";
 import { SearchResultPage } from "./SearchResultPage";
 
 const meta = {
-  title: "deprecated/Domains/RouteSearch/SearchResultPage",
+  title: "Deprecated/Domains/RouteSearch/SearchResultPage",
   component: SearchResultPage,
   parameters: {
     layout: "fullscreen",
