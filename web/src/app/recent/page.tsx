@@ -22,9 +22,8 @@ export default function RecentSearchPage() {
         fromStation,
         toStation
       ) => {
-        // Navigate to results page with search parameters
+        // Navigate to route-overview page for route selection
         const urlParams = new URLSearchParams({
-          search: "true",
           from: fromStopId,
           to: toStopId,
           fromName: fromStation,
@@ -34,7 +33,7 @@ export default function RecentSearchPage() {
             minute: "2-digit",
           }),
         });
-        router.push(`/results?${urlParams.toString()}`);
+        router.push(`/route-overview?${urlParams.toString()}`);
       }}
     />
   );
