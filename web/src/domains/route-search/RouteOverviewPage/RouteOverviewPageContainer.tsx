@@ -6,11 +6,11 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 import { ErrorFullScreen } from "@/components/common";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner/LoadingSpinner";
+import { cacheRouteSearchResult } from "@/domains/route-search/utils";
 import { apiClient } from "@/lib/api";
 import { getCurrentTimeString, sortTravelsByArrivalTime } from "@/lib/utils";
 import type { RouteSearchResult } from "@/types";
 
-import { cacheRouteSearchResult } from "@/domains/route-search/utils";
 import { RouteOverviewPage } from "./RouteOverviewPage";
 import type { RouteOverviewData } from "./types";
 import { convertToRouteOverviewData } from "./utils";
