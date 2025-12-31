@@ -3,9 +3,10 @@ import { JourneyTimeline } from "@/components/common/JourneyTimeline/JourneyTime
 import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
 import { useTimeDisplay } from "@/hooks";
 
-import { TripSummary } from "../SearchResultPage/internal/TripSummary";
+import type { Station } from "../SearchResultPage/types";
+import { TripSummary } from "../internal/components";
 import styles from "./RouteDetailPage.module.css";
-import type { RouteDetailPageProps, Station } from "./types";
+import type { RouteDetailPageProps } from "./types";
 
 /**
  * Route detail page showing journey information for a selected route.
