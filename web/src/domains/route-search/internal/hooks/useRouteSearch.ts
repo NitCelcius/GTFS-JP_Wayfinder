@@ -133,8 +133,9 @@ export function useRouteSearch(): UseRouteSearchResult {
 
           setTripDetails(convertedTripDetails);
 
-          // Note: Cache is not cleared here to allow back button navigation
-          // Cache will expire naturally after 5 minutes or be overwritten by new searches
+          // Note: Cache is not cleared here to allow back button navigation.
+          // The 5-minute TTL is enforced inside getCachedRouteSearchResult (see ../../utils),
+          // or the entry may be overwritten by new searches.
         }
 
         // Fall back to API call if cache miss or direct navigation
