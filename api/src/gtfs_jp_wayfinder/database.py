@@ -1,3 +1,4 @@
+import hashlib
 import logging
 import pickle
 import warnings
@@ -105,8 +106,13 @@ class AkitaBusWayFinder:
         """Get the path for the graph cache file."""
         return Path(base_dir) / ".graph_cache.pkl"
 
-    def _get_data_mtime(self, base_dir: str) -> float:
-        """Get the latest modification time of GTFS data files."""
+    def _get_data_hash(self, base_dir: str) -> str:
+        """Get SHA-256 hash of GTFS data files for cache validation.
+        
+        This method computes a combined hash of critical GTFS data files
+        to determine if the cache is still valid. Any change to these files
+        will result in a different hash, triggering cache regeneration.
+        """
         data_files = [
             "stops.txt",
             "stop_times.txt",
@@ -114,13 +120,18 @@ class AkitaBusWayFinder:
             "calendar.txt",
             "calendar_dates.txt",
         ]
-        max_mtime = 0.0
-        for filename in data_files:
+        
+        hasher = hashlib.sha256()
+        
+        for filename in sorted(data_files):  # Sort to ensure consistent ordering
             filepath = Path(base_dir) / filename
             if filepath.exists():
-                mtime = filepath.stat().st_mtime
-                max_mtime = max(max_mtime, mtime)
-        return max_mtime
+                # Read file in chunks to handle large files efficiently
+                with open(filepath, "rb") as f:
+                    for chunk in iter(lambda: f.read(8192), b""):
+                        hasher.update(chunk)
+        
+        return hasher.hexdigest()
 
     def _save_graph_cache(self, base_dir: str) -> None:
         """Save generated graphs to cache file."""
@@ -129,7 +140,7 @@ class AkitaBusWayFinder:
             "graph": self.graph,
             "graph_via_service_id": self.graph_via_service_id,
             "date_to_service_id": self.date_to_service_id,
-            "data_mtime": self._get_data_mtime(base_dir),
+            "data_hash": self._get_data_hash(base_dir),
         }
         try:
             with open(cache_path, "wb") as f:
@@ -150,13 +161,13 @@ class AkitaBusWayFinder:
             with open(cache_path, "rb") as f:
                 cache_data = pickle.load(f)
 
-            # Validate cache freshness
-            cached_mtime = cache_data.get("data_mtime", 0)
-            current_mtime = self._get_data_mtime(base_dir)
+            # Validate cache freshness using SHA-256 hash
+            cached_hash = cache_data.get("data_hash", "")
+            current_hash = self._get_data_hash(base_dir)
 
-            if current_mtime > cached_mtime:
+            if current_hash != cached_hash:
                 logger.info(
-                    "Graph cache is stale (data modified since cache creation), regenerating..."
+                    "Graph cache is stale (data has been modified), regenerating..."
                 )
                 return False
 
@@ -172,7 +183,17 @@ class AkitaBusWayFinder:
             logger.warning("Failed to load graph cache: %s", e)
             return False
 
-    def initialize(self, base_dir="../data/", cache_graph: bool = False):
+    def initialize(self, base_dir="../data/", use_cache_graph: bool = False):
+        """Initialize the wayfinder with GTFS data.
+        
+        Loads GTFS data from the specified directory and generates routing graphs.
+        If use_cache_graph is True and a valid cache exists, loads from cache instead.
+        
+        Args:
+            base_dir: Directory path containing GTFS data files (must end with /).
+            use_cache_graph: If True, use cached graph data if available and valid.
+                           If False (default), always generate graphs from scratch.
+        """
         logger.info("Loading dataframes...")
         # Agency info (timezone, etc.)
         # Try to read agency_timezone from GTFS data; fall back to Asia/Tokyo, then UTC
@@ -242,7 +263,7 @@ class AkitaBusWayFinder:
         self._build_lookup_indices()
 
         # Try to load from cache if enabled
-        if cache_graph and self._load_graph_cache(base_dir):
+        if use_cache_graph and self._load_graph_cache(base_dir):
             logger.info("Using cached graph data")
         else:
             # Generate graph from scratch
@@ -253,7 +274,7 @@ class AkitaBusWayFinder:
             self.generate_graph()
 
             # Save to cache if enabled
-            if cache_graph:
+            if use_cache_graph:
                 self._save_graph_cache(base_dir)
 
         logger.info("Preparation completed!")
