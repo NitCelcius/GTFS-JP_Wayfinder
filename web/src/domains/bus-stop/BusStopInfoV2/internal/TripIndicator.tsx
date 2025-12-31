@@ -1,5 +1,6 @@
 import { StretchableIcon } from "@/components/common";
 import { ChevronRight } from "@/components/common/icons";
+import { useRouteColor } from "@/hooks";
 
 import styles from "./TripIndicator.module.css";
 
@@ -12,6 +13,8 @@ interface TripIndicatorProps {
   timeDisplay: string;
   timeSubtext: string;
   stopsUntilArrival?: string;
+  /** Text used for color generation (typically route_name or route_id) */
+  routeColorText?: string;
   onClick?: () => void;
 }
 
@@ -24,8 +27,11 @@ export function TripIndicator({
   timeDisplay,
   timeSubtext,
   stopsUntilArrival,
+  routeColorText,
   onClick,
 }: TripIndicatorProps) {
+  const { backgroundColor, textColor } = useRouteColor(routeColorText);
+
   return (
     <a
       className={styles.container}
@@ -42,7 +48,12 @@ export function TripIndicator({
       </div>
       <div className={styles.content}>
         <div className={styles.head}>
-          <div className={styles.routeNumberBadge}>{routeNumber}</div>
+          <div
+            className={styles.routeNumberBadge}
+            style={{ backgroundColor, color: textColor }}
+          >
+            {routeNumber}
+          </div>
           <div className={styles.tripInfo}>
             <div className={styles.routeLabel}>{routeName}</div>
             <p className={`${styles.destinationLine} line-clamp-3`}>

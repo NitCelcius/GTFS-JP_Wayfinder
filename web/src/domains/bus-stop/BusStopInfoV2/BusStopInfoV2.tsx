@@ -26,6 +26,8 @@ export interface BusInfo {
   departureTime: string;
   cost?: number;
   stopsUntilArrival?: string;
+  /** Text used for color generation (typically route_name or route_id) */
+  routeColorText?: string;
 }
 
 export interface UpcomingBusInfo extends BusInfo {
@@ -163,6 +165,7 @@ export function BusStopInfoV2({
               )}
               timeSubtext={`(${pastBus.departureTime})`}
               isPast={true}
+              routeColorText={pastBus.routeColorText}
               onClick={() => onBusClick?.(pastBus)}
             />
           </div>
@@ -193,6 +196,7 @@ export function BusStopInfoV2({
               )}
               timeSubtext={`(${displayBuses[0].departureTime})`}
               stopsUntilArrival={displayBuses[0].stopsUntilArrival}
+              routeColorText={displayBuses[0].routeColorText}
               onClick={() => onBusClick?.(displayBuses[0])}
             />
 
@@ -209,6 +213,7 @@ export function BusStopInfoV2({
                   bus.minutesUntilDeparture
                 )}
                 timeSubtext={`(${bus.departureTime})`}
+                routeColorText={bus.routeColorText}
                 onClick={() => onBusClick?.(bus)}
               />
             ))}

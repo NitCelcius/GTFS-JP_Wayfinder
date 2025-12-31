@@ -23,6 +23,7 @@ export const Default: Story = {
     arrivalMinutes: 15,
     arrivalTime: "12:34",
     stopsAway: 2,
+    routeColorText: "秋田御所野線",
     stops: [
       {
         id: "stop1",
@@ -115,6 +116,7 @@ export const BusAtFirstStop: Story = {
     arrivalMinutes: 3,
     arrivalTime: "15:05",
     stopsAway: 0,
+    routeColorText: "青葉台線",
     stops: [
       {
         id: "stop1",
@@ -169,6 +171,7 @@ export const LongStopNames: Story = {
     arrivalMinutes: 25,
     arrivalTime: "16:45",
     stopsAway: 3,
+    routeColorText: "文教医療線",
     stops: [
       {
         id: "stop1",
@@ -222,6 +225,7 @@ export const ShortTrip: Story = {
     arrivalMinutes: 2,
     arrivalTime: "17:12",
     stopsAway: 1,
+    routeColorText: "南北縦断線",
     stops: [
       {
         id: "stop1",

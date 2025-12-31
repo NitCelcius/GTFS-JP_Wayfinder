@@ -101,6 +101,36 @@ describe("Converter functions", () => {
       // Should fall back to route_name (mapped to route_short_name)
       expect(result.line).toBe("都心循環線");
     });
+
+    it("should set routeColorText from route_name", () => {
+      const trip: EnrichedTripData = {
+        trip_id: "trip_001",
+        arrival_time: "14:00:00",
+        departure_time: "14:00:00",
+        arrival_datetime: "2025-11-01T14:00:00",
+        departure_datetime: "2025-11-01T14:00:00",
+        route_name: "秋田御所野線",
+        destination_display_name: "秋田駅東口",
+      };
+      const result = convertTripToBusInfo(trip);
+
+      expect(result.routeColorText).toBe("秋田御所野線");
+    });
+
+    it("should set routeColorText to undefined when route_name is null", () => {
+      const trip: EnrichedTripData = {
+        trip_id: "trip_001",
+        arrival_time: "14:00:00",
+        departure_time: "14:00:00",
+        arrival_datetime: "2025-11-01T14:00:00",
+        departure_datetime: "2025-11-01T14:00:00",
+        route_name: null,
+        destination_display_name: "秋田駅東口",
+      };
+      const result = convertTripToBusInfo(trip);
+
+      expect(result.routeColorText).toBeUndefined();
+    });
   });
 
   describe("convertBusesToBusInfoList", () => {
