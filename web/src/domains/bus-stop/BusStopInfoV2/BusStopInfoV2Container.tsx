@@ -138,6 +138,7 @@ export function BusStopInfoV2Container({
             departureTime: bus.busInfo.arrivalTime,
             cost: undefined, // TODO: Add fare info
             stopsUntilArrival: `${bus.routeJourney.length - 1}駅先に到着`,
+            routeColorText: bus.busInfo.routeColorText,
           }));
 
         setUpcomingBuses(convertedBuses);
