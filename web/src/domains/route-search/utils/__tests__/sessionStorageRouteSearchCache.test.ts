@@ -173,6 +173,103 @@ describe("sessionStorageRouteSearchCache", () => {
       );
       expect(getCachedRouteSearchResult("stop1", "stop2")).toBeNull();
 
+      // Invalid: travel missing from_stop_id
+      mockSessionStorage.setItem(
+        cacheKey,
+        JSON.stringify({
+          result: {
+            travels: [
+              {
+                trip_id: "trip-001",
+                departure_time: "08:00",
+                arrival_time: "08:45",
+                departure_datetime: "2024-01-01T08:00:00",
+                arrival_datetime: "2024-01-01T08:45:00",
+                to_stop_id: "stop2",
+                fare: 200,
+              },
+            ],
+            originStopName: "東駅",
+            destinationStopName: "大学病院",
+          },
+          timestamp: Date.now(),
+        })
+      );
+      expect(getCachedRouteSearchResult("stop1", "stop2")).toBeNull();
+
+      // Invalid: travel missing to_stop_id
+      mockSessionStorage.setItem(
+        cacheKey,
+        JSON.stringify({
+          result: {
+            travels: [
+              {
+                trip_id: "trip-001",
+                departure_time: "08:00",
+                arrival_time: "08:45",
+                departure_datetime: "2024-01-01T08:00:00",
+                arrival_datetime: "2024-01-01T08:45:00",
+                from_stop_id: "stop1",
+                fare: 200,
+              },
+            ],
+            originStopName: "東駅",
+            destinationStopName: "大学病院",
+          },
+          timestamp: Date.now(),
+        })
+      );
+      expect(getCachedRouteSearchResult("stop1", "stop2")).toBeNull();
+
+      // Invalid: travel missing fare
+      mockSessionStorage.setItem(
+        cacheKey,
+        JSON.stringify({
+          result: {
+            travels: [
+              {
+                trip_id: "trip-001",
+                departure_time: "08:00",
+                arrival_time: "08:45",
+                departure_datetime: "2024-01-01T08:00:00",
+                arrival_datetime: "2024-01-01T08:45:00",
+                from_stop_id: "stop1",
+                to_stop_id: "stop2",
+              },
+            ],
+            originStopName: "東駅",
+            destinationStopName: "大学病院",
+          },
+          timestamp: Date.now(),
+        })
+      );
+      expect(getCachedRouteSearchResult("stop1", "stop2")).toBeNull();
+
+      // Invalid: fare is not a number
+      mockSessionStorage.setItem(
+        cacheKey,
+        JSON.stringify({
+          result: {
+            travels: [
+              {
+                trip_id: "trip-001",
+                departure_time: "08:00",
+                arrival_time: "08:45",
+                departure_datetime: "2024-01-01T08:00:00",
+                arrival_datetime: "2024-01-01T08:45:00",
+                from_stop_id: "stop1",
+                to_stop_id: "stop2",
+                fare: "200",
+              },
+            ],
+            originStopName: "東駅",
+            destinationStopName: "大学病院",
+          },
+          timestamp: Date.now(),
+        })
+      );
+      expect(getCachedRouteSearchResult("stop1", "stop2")).toBeNull();
+
       // Valid cache
       cacheRouteSearchResult(mockRouteSearchResult, "stop1", "stop2");
       expect(getCachedRouteSearchResult("stop1", "stop2")).toEqual(
