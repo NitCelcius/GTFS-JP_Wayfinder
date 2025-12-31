@@ -1,7 +1,8 @@
+import { MapPin } from "lucide-react";
+
 import React from "react";
 
 import { BusStopCard } from "@/components/common";
-import { LocationIcon } from "@/components/common/icons/LocationIcon";
 
 import { BusStopListProps } from "./BusStopList";
 
@@ -26,7 +27,7 @@ export function BusStopItem({ busStop, onSelect }: BusStopItemProps) {
     <BusStopCard
       title={busStop.name}
       subtitle={busStop.distance}
-      icon={<LocationIcon size={24} />}
+      icon={<MapPin size={24} />}
       actionLabel="選択"
       onClick={handleCardClick}
       onActionClick={handleActionClick}

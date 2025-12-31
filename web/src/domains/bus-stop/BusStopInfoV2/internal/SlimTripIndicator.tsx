@@ -1,4 +1,5 @@
-import { ChevronRight } from "@/components/common/icons";
+import { ChevronRight } from "lucide-react";
+
 import { useRouteColor } from "@/hooks";
 
 import styles from "./SlimTripIndicator.module.css";
@@ -59,7 +60,7 @@ export function SlimTripIndicator({
         </p>
       </div>
       <div className={styles.chevron}>
-        <ChevronRight />
+        <ChevronRight size={24} />
       </div>
     </a>
   );

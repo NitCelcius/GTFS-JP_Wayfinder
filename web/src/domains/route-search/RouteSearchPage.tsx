@@ -1,9 +1,10 @@
+import { MapPinned } from "lucide-react";
+
 import { useState } from "react";
 
 import { BottomNavigation } from "@/components/common/BottomNavigation/BottomNavigation";
 import { RouteSearchButton } from "@/components/common/RouteSearchButton/RouteSearchButton";
 import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
-import { MapSearchIcon } from "@/components/common/icons/MapSearchIcon";
 import { getCurrentTimeString } from "@/lib/utils";
 import type { BusStopSearchResult, RouteSearchState } from "@/types";
 
@@ -148,7 +149,7 @@ export function RouteSearchPage({
 
   return (
     <div className={styles.page}>
-      <TopNavigation icon={<MapSearchIcon />} title="経路探索" />
+      <TopNavigation icon={<MapPinned size={24} />} title="経路探索" />
       <div className={styles.main}>
         <MainContent
           onSearch={handleSearch}

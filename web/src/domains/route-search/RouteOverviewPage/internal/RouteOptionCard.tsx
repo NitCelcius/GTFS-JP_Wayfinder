@@ -1,8 +1,4 @@
-import {
-  ArrivalFlagIcon,
-  ChevronRight,
-  DeparturePinIcon,
-} from "@/components/common/icons";
+import { ChevronRight, Flag, MapPin } from "lucide-react";
 
 import styles from "./RouteOptionCard.module.css";
 
@@ -73,11 +69,12 @@ export function RouteOptionCard({
             style={{ width: `${progressPercentage}%` }}
           >
             <span className={styles.departurePin}>
-              <DeparturePinIcon size={16} />
+              {" "}
+              <MapPin size={16} />
             </span>
             <div className={styles.progressLine} />
             <span className={styles.arrivalFlag}>
-              <ArrivalFlagIcon size={16} />
+              <Flag size={16} />
             </span>
           </div>
         </div>
@@ -91,7 +88,7 @@ export function RouteOptionCard({
       </div>
 
       <div className={styles.chevronContainer}>
-        <ChevronRight />
+        <ChevronRight size={24} />
       </div>
     </button>
   );
