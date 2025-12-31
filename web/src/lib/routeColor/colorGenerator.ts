@@ -110,7 +110,7 @@ export function weightedTextHash(
   const maxDivisor = Number.MAX_SAFE_INTEGER / base;
 
   for (const char of text) {
-    // Stop increasing divisor once it would exceed number MAX_SAFE_INTEGER.
+    // Stop increasing divisor once it would exceed Number.MAX_SAFE_INTEGER.
     if (divisor > maxDivisor) {
       break;
     }
