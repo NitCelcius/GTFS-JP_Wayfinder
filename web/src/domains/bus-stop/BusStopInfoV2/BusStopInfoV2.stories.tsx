@@ -29,6 +29,7 @@ const mockUpcomingBuses = [
     departureTime: "12:34",
     cost: 400,
     stopsUntilArrival: "2駅前に到着",
+    routeColorText: "秋田御所野線",
   },
   {
     tripId: "trip-002",
@@ -39,6 +40,7 @@ const mockUpcomingBuses = [
     minutesUntilDeparture: 35,
     departureTime: "12:54",
     cost: 123,
+    routeColorText: "仁井田線",
   },
   {
     tripId: "trip-003",
@@ -49,6 +51,7 @@ const mockUpcomingBuses = [
     minutesUntilDeparture: 44,
     departureTime: "13:12",
     cost: 912,
+    routeColorText: "県立プール線",
   },
   {
     tripId: "trip-004",
@@ -59,6 +62,7 @@ const mockUpcomingBuses = [
     minutesUntilDeparture: 60,
     departureTime: "13:12",
     cost: 831,
+    routeColorText: "しゃくなげ線",
   },
   {
     tripId: "trip-005",
@@ -69,6 +73,7 @@ const mockUpcomingBuses = [
     minutesUntilDeparture: 62,
     departureTime: "13:44",
     cost: 401,
+    routeColorText: "秋田御所野線",
   },
 ];
 
@@ -82,6 +87,7 @@ const mockPastBus = {
   departureTime: "12:22",
   cost: 314,
   isPast: true,
+  routeColorText: "過去",
 };
 
 export const Default: Story = {

@@ -18,6 +18,12 @@ export interface BusInfo {
   arrivalTime: string;
   arrivalDatetime: Date;
   status: string;
+  /**
+   * Text used for route color generation.
+   * Currently uses route_name (route_long_name from GTFS).
+   * TODO: Switch to route_id when API exposes it for more precise colors.
+   */
+  routeColorText?: string;
 }
 
 export interface JourneyStopData {

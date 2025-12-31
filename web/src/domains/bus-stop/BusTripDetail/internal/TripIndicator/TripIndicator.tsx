@@ -1,6 +1,7 @@
 import React from "react";
 
 import { Icon, StretchableIcon } from "@/components/common";
+import { useRouteColor } from "@/hooks";
 
 import styles from "./TripIndicator.module.css";
 
@@ -17,6 +18,8 @@ export interface TripIndicatorProps {
   arrivalTime: string;
   /** Number of stops away */
   stopsAway: number;
+  /** Text used for color generation (typically route_name or route_id) */
+  routeColorText?: string;
 }
 
 /**
@@ -30,7 +33,10 @@ export const TripIndicator: React.FC<TripIndicatorProps> = ({
   arrivalMinutes,
   arrivalTime,
   stopsAway,
+  routeColorText,
 }) => {
+  const { backgroundColor, textColor } = useRouteColor(routeColorText);
+
   return (
     <div className={styles.tripIndicatorWrapper}>
       <div className={styles.busFront}>
@@ -41,7 +47,12 @@ export const TripIndicator: React.FC<TripIndicatorProps> = ({
       </div>
       <div className={styles.tripIndicatorContainer}>
         <div className={styles.topSection}>
-          <div className={styles.routeNumber}>{routeNumber}</div>
+          <div
+            className={styles.routeNumber}
+            style={{ backgroundColor, color: textColor }}
+          >
+            {routeNumber}
+          </div>
           <div className={styles.routeDetails}>
             <p className={styles.routeName}>{routeName}</p>
             <div className={styles.destinationRow}>

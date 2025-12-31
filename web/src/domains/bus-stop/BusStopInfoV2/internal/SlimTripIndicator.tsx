@@ -1,4 +1,5 @@
 import { ChevronRight } from "@/components/common/icons";
+import { useRouteColor } from "@/hooks";
 
 import styles from "./SlimTripIndicator.module.css";
 
@@ -11,6 +12,8 @@ interface SlimTripIndicatorProps {
   timeDisplay: string;
   timeSubtext: string;
   isPast?: boolean;
+  /** Text used for color generation (typically route_name or route_id) */
+  routeColorText?: string;
   onClick?: () => void;
 }
 
@@ -23,8 +26,11 @@ export function SlimTripIndicator({
   timeDisplay,
   timeSubtext,
   isPast = false,
+  routeColorText,
   onClick,
 }: SlimTripIndicatorProps) {
+  const { backgroundColor, textColor } = useRouteColor(routeColorText);
+
   return (
     <a
       className={`${styles.container} ${isPast ? styles.past : ""}`}
@@ -33,7 +39,12 @@ export function SlimTripIndicator({
       onClick={onClick}
       data-trip-id={tripId}
     >
-      <div className={styles.routeNumberBadge}>{routeNumber}</div>
+      <div
+        className={styles.routeNumberBadge}
+        style={{ backgroundColor, color: textColor }}
+      >
+        {routeNumber}
+      </div>
       <div className={styles.content}>
         <p className={styles.firstLine}>
           <span className={styles.routeName}>{routeName}</span>

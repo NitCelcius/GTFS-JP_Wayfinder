@@ -22,6 +22,7 @@ export const Default: Story = {
     arrivalMinutes: 12,
     arrivalTime: "14:30",
     stopsAway: 2,
+    routeColorText: "都心循環線",
   },
 };
 
@@ -33,6 +34,7 @@ export const LongRouteName: Story = {
     arrivalMinutes: 25,
     arrivalTime: "16:45",
     stopsAway: 3,
+    routeColorText: "文教医療線",
   },
 };
 
@@ -44,6 +46,7 @@ export const ArrivingSoon: Story = {
     arrivalMinutes: 2,
     arrivalTime: "15:05",
     stopsAway: 0,
+    routeColorText: "青葉台線",
   },
 };
 
@@ -55,5 +58,19 @@ export const PassedStop: Story = {
     arrivalMinutes: -5,
     arrivalTime: "14:25",
     stopsAway: -2,
+    routeColorText: "都心循環線",
+  },
+};
+
+/** Without routeColorText - falls back to primaryaccent */
+export const FallbackColor: Story = {
+  args: {
+    routeNumber: "004",
+    routeName: "南北縦断線",
+    destinationName: "大学病院",
+    arrivalMinutes: 8,
+    arrivalTime: "15:20",
+    stopsAway: 4,
+    // routeColorText intentionally omitted
   },
 };

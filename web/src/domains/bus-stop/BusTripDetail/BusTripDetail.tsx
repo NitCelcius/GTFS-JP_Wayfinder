@@ -14,6 +14,8 @@ export interface BusTripDetailProps {
   arrivalTime: string;
   stopsAway: number;
   stops: Stop[];
+  /** Text used for color generation (typically route_name or route_id) */
+  routeColorText?: string;
   onBack?: () => void;
 }
 
@@ -26,6 +28,7 @@ export function BusTripDetail({
   arrivalTime,
   stopsAway,
   stops,
+  routeColorText,
   onBack,
 }: BusTripDetailProps) {
   return (
@@ -54,6 +57,7 @@ export function BusTripDetail({
           arrivalMinutes={arrivalMinutes}
           arrivalTime={arrivalTime}
           stopsAway={stopsAway}
+          routeColorText={routeColorText}
         />
       </div>
 
