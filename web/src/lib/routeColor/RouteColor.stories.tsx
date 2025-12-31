@@ -291,6 +291,7 @@ function LightDarkComparisonRow({
               flexWrap: "wrap",
               gap: "6px",
               padding: "16px",
+              // eslint-disable-next-line local/limit-inline-styles -- storybook only
               backgroundColor: "var(--background-dark, #1a1a1a)",
               borderRadius: "8px",
             }}
