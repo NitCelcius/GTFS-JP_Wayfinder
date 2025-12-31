@@ -1,30 +1,21 @@
 import { DefaultTimeFormatter } from "@/hooks/TimeFormatterBase";
-import { calculateDurationJapanese, parseTimeToMinutes } from "@/lib/utils";
+import { calculateDurationJapanese } from "@/lib/utils";
 import type { RouteSearchResult } from "@/types";
 
 import type { RouteOption, RouteOverviewData } from "./types";
 
 /**
  * Calculate relative time from now to departure (in minutes)
+ * Uses full ISO datetime to handle overnight/next-day departures correctly.
  * Positive = future departure, Negative = past departure
  */
-export function calculateRelativeTime(departureTime: string): number {
+export function calculateRelativeMinutes(departureDatetime: string): number {
   const now = new Date();
-  const currentHours = now.getHours();
-  const currentMinutes = now.getMinutes();
-  const currentTotalMinutes = currentHours * 60 + currentMinutes;
+  const departure = new Date(departureDatetime);
 
-  const depTotalMinutes = parseTimeToMinutes(departureTime);
-
-  let diff = depTotalMinutes - currentTotalMinutes;
-
-  // Handle overnight scenario (if departure is tomorrow)
-  if (diff < -720) {
-    // If difference is more than 12 hours negative, assume it's tomorrow
-    diff += 24 * 60;
-  }
-
-  return diff;
+  // Calculate difference in minutes
+  const diffMs = departure.getTime() - now.getTime();
+  return Math.floor(diffMs / (1000 * 60));
 }
 
 /**
@@ -54,7 +45,7 @@ export function convertToRouteOverviewData(
   result: RouteSearchResult
 ): RouteOverviewData {
   const routes: RouteOption[] = result.travels.map((travel, index) => {
-    const relativeMinutes = calculateRelativeTime(travel.departure_time);
+    const relativeMinutes = calculateRelativeMinutes(travel.departure_datetime);
     const relativeTimeText = formatRelativeTime(relativeMinutes);
 
     return {
