@@ -22,14 +22,8 @@
   justify-content: center;
   width: var(--size-icon-md);
 }
-.arrowIcon {
-  position: relative;
-  width: var(--size-icon-md);
-  height: var(--size-icon-md);
-}
 .arrowIconDown {
   flex: 0 0 auto;
-  transform: rotate(90deg);
 }
 .routeInput {
   box-sizing: border-box;

@@ -7,34 +7,6 @@ import type { BusStopSearchResult } from "@/types";
 
 import styles from "./RouteInputs.module.css";
 
-function LocationIcon() {
-  return (
-    <div className={styles.icon}>
-      <MapPin className={styles.iconSvg} aria-hidden="true" />
-    </div>
-  );
-}
-
-function FlagIcon() {
-  return (
-    <div className={styles.icon}>
-      <Flag className={styles.iconSvg} aria-hidden="true" />
-    </div>
-  );
-}
-
-function ArrowIcon() {
-  return (
-    <div className={styles.arrowIcon}>
-      <ArrowDown className={styles.iconSvg} aria-hidden="true" />
-    </div>
-  );
-}
-
-function SwapIcon() {
-  return <ArrowUpDown size={24} />;
-}
-
 interface RouteInputProps {
   type: "origin" | "destination";
   placeholder: string;
@@ -51,14 +23,16 @@ function RouteInput({
   onInputClick,
 }: RouteInputProps) {
   const bgClass = type === "origin" ? styles.bgOrigin : styles.bgDestination;
-  const Icon = type === "origin" ? LocationIcon : FlagIcon;
+  const IconComponent = type === "origin" ? MapPin : Flag;
   const inputClass = onInputClick
     ? `${styles.inputField} ${styles.inputFieldClickable}`
     : styles.inputField;
 
   return (
     <div className={`${styles.routeInput} ${bgClass}`}>
-      <Icon />
+      <div className={styles.icon}>
+        <IconComponent className={styles.iconSvg} aria-hidden="true" />
+      </div>
       <input
         type="text"
         className={inputClass}
@@ -124,12 +98,12 @@ export function RouteInputs({
         <div className={styles.swapButtonContainer}>
           <div className={styles.arrowContainer}>
             <div className={styles.arrowIconDown}>
-              <ArrowIcon />
+              <ArrowDown className={styles.iconSvg} aria-hidden="true" />
             </div>
           </div>
           <button className={styles.swapButton} onClick={handleSwap}>
             <div className={styles.swapIcon}>
-              <SwapIcon />
+              <ArrowUpDown size={24} aria-hidden="true" />
             </div>
             <span className={styles.swapText}>入れ替え</span>
           </button>
