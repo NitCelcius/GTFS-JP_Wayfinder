@@ -10,7 +10,7 @@ import { apiClient } from "@/lib/api";
 import { getCurrentTimeString, sortTravelsByArrivalTime } from "@/lib/utils";
 import type { RouteSearchResult } from "@/types";
 
-import { cacheRouteSearchResult } from "../utils";
+import { cacheRouteSearchResult } from "@/domains/route-search/utils";
 import { RouteOverviewPage } from "./RouteOverviewPage";
 import type { RouteOverviewData } from "./types";
 import { convertToRouteOverviewData } from "./utils";
