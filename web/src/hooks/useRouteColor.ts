@@ -4,7 +4,7 @@
  * Uses media query to detect dark mode and generates appropriate colors
  * using the route color generator.
  */
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { type RouteColorResult, textToColor } from "@/lib/routeColor";
 
@@ -57,18 +57,20 @@ export function useRouteColor(
     return () => mediaQuery.removeEventListener("change", handler);
   }, []);
 
-  // Return default if no route text
-  if (!routeText) {
-    return DEFAULT_COLOR;
-  }
+  const colorInfo = useMemo(() => {
+    if (!routeText) {
+      return DEFAULT_COLOR;
+    }
 
-  // Generate color based on current mode
-  const colorResult = textToColor(routeText, isDarkMode ? "dark" : "light");
+    const colorResult = textToColor(routeText, isDarkMode ? "dark" : "light");
 
-  return {
-    backgroundColor: colorResult.hex,
-    textColor: colorResult.textColor,
-  };
+    return {
+      backgroundColor: colorResult.hex,
+      textColor: colorResult.textColor,
+    };
+  }, [routeText, isDarkMode]);
+
+  return colorInfo;
 }
 
 /**
