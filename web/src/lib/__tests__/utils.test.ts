@@ -103,9 +103,17 @@ describe("calculateDurationMinutes", () => {
     expect(calculateDurationMinutes("00:00", "23:59")).toBe(1439);
   });
 
-  it("should handle overnight trips correctly", () => {
+  it("should handle overnight trips with normalized times (0-23 hours)", () => {
+    // When both times use normalized hours (0-23), overnight detection works via negative diff
     expect(calculateDurationMinutes("23:30", "01:00")).toBe(90); // 1h 30min
     expect(calculateDurationMinutes("22:00", "02:30")).toBe(270); // 4h 30min
+  });
+
+  it("should handle GTFS extended hours (24-47) for next-day arrivals", () => {
+    // When arrival uses GTFS extended hours, the difference is already positive
+    expect(calculateDurationMinutes("23:00", "25:30")).toBe(150); // 2h 30min (25:30 = 1:30 AM next day)
+    expect(calculateDurationMinutes("22:00", "26:00")).toBe(240); // 4h (26:00 = 2:00 AM next day)
+    expect(calculateDurationMinutes("20:00", "24:30")).toBe(270); // 4h 30min (24:30 = 0:30 AM next day)
   });
 
   it("should handle zero duration", () => {
@@ -129,9 +137,15 @@ describe("calculateDurationJapanese", () => {
     expect(calculateDurationJapanese("10:15", "12:45")).toBe("2時間30分");
   });
 
-  it("should handle overnight trips", () => {
+  it("should handle overnight trips with normalized times (0-23 hours)", () => {
     expect(calculateDurationJapanese("23:30", "01:00")).toBe("1時間30分");
     expect(calculateDurationJapanese("23:00", "01:00")).toBe("2時間");
+  });
+
+  it("should handle GTFS extended hours (24-47) for next-day arrivals", () => {
+    expect(calculateDurationJapanese("23:00", "25:30")).toBe("2時間30分"); // 25:30 = 1:30 AM next day
+    expect(calculateDurationJapanese("22:00", "26:00")).toBe("4時間"); // 26:00 = 2:00 AM next day
+    expect(calculateDurationJapanese("20:00", "24:30")).toBe("4時間30分"); // 24:30 = 0:30 AM next day
   });
 });
 
