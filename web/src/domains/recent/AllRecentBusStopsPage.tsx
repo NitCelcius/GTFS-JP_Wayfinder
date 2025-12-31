@@ -1,7 +1,5 @@
 import { Icon, TopNavigation } from "@/components/common";
-import {
-  useBusStopSearchHistory,
-} from "@/hooks/useSearchHistory";
+import { useBusStopSearchHistory } from "@/hooks/useSearchHistory";
 
 import styles from "./RecentPage.module.css";
 import { RecentBusStopSearches } from "./internal/RecentBusStopSearches";

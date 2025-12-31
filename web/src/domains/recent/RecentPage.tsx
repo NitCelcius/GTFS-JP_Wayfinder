@@ -68,7 +68,7 @@ export function RecentPage({
   const handleViewMoreBusStops = () => {
     onViewMoreBusStops?.();
   };
-  
+
   const handleViewMoreRoutes = () => {
     onViewMoreRoutes?.();
   };
