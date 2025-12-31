@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useSearchParams } from "next/navigation";
 
@@ -43,8 +43,8 @@ export function RouteDetailPageContainer({
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const loadRouteDetail = useCallback(async () => {
-    try {
+  useEffect(() => {
+    const loadRouteDetail = async () => {
       const fromStop = searchParams.get("from");
       const toStop = searchParams.get("to");
       const beginTime = searchParams.get("time");
@@ -59,82 +59,81 @@ export function RouteDetailPageContainer({
       }
 
       setIsLoading(true);
+      setError(null);
 
-      // Check sessionStorage first with validation (set by RouteOverviewPage)
-      let searchResult = getCachedRouteSearchResult(fromStop, toStop);
+      try {
+        // Check sessionStorage first with validation (set by RouteOverviewPage)
+        let searchResult = getCachedRouteSearchResult(fromStop, toStop);
 
-      // Fall back to API call if no cache
-      if (!searchResult) {
-        const time = beginTime || getCurrentTimeString();
-        const response = await apiClient.searchTimedRoutes(
-          fromStop,
-          toStop,
-          time
-        );
+        // Fall back to API call if no cache
+        if (!searchResult) {
+          const time = beginTime || getCurrentTimeString();
+          const response = await apiClient.searchTimedRoutes(
+            fromStop,
+            toStop,
+            time
+          );
 
-        if (response.error) {
-          throw new Error(`API エラー: ${JSON.stringify(response.error)}`);
+          if (response.error) {
+            throw new Error(`API エラー: ${JSON.stringify(response.error)}`);
+          }
+
+          if (!response.data?.travels || response.data.travels.length === 0) {
+            setError("経路が見つかりませんでした。");
+            return;
+          }
+
+          // Sort travels by arrival time
+          const sortedTravels = sortTravelsByArrivalTime(response.data.travels);
+
+          searchResult = {
+            travels: sortedTravels,
+            originStopName: fromName || `バス停 ${fromStop}`,
+            destinationStopName: toName || `バス停 ${toStop}`,
+            searchTime: time,
+          };
+
+          // Cache the API response for subsequent navigation
+          cacheRouteSearchResult(searchResult, fromStop, toStop);
         }
 
-        if (!response.data?.travels || response.data.travels.length === 0) {
-          setError("経路が見つかりませんでした。");
-          setIsLoading(false);
+        // Find the selected trip
+        const selectedTravel = searchResult.travels.find(
+          (travel) => travel.trip_id === selectedTrip
+        );
+
+        if (!selectedTravel) {
+          setError("選択された経路が見つかりませんでした。");
           return;
         }
 
-        // Sort travels by arrival time
-        const sortedTravels = sortTravelsByArrivalTime(response.data.travels);
+        // Convert to Route format
+        const routeDetail = convertRouteSearchToRouteDetail(
+          selectedTravel,
+          searchResult.originStopName,
+          searchResult.destinationStopName
+        );
 
-        searchResult = {
-          travels: sortedTravels,
-          originStopName: fromName || `バス停 ${fromStop}`,
-          destinationStopName: toName || `バス停 ${toStop}`,
-          searchTime: time,
-        };
+        setRoute(routeDetail);
+        setFromStation(searchResult.originStopName);
+        setToStation(searchResult.destinationStopName);
 
-        // Cache the API response for subsequent navigation
-        cacheRouteSearchResult(searchResult, fromStop, toStop);
-      }
-
-      // Find the selected trip
-      const selectedTravel = searchResult.travels.find(
-        (travel) => travel.trip_id === selectedTrip
-      );
-
-      if (!selectedTravel) {
-        setError("選択された経路が見つかりませんでした。");
+        // Note: Cache is not cleared here to allow back button navigation
+        // Cache will expire naturally after 5 minutes or be overwritten by new searches
+      } catch (error) {
+        console.error("経路詳細の読み込みエラー:", error);
+        setError(
+          error instanceof Error
+            ? error.message
+            : "経路詳細の読み込みに失敗しました。"
+        );
+      } finally {
         setIsLoading(false);
-        return;
       }
+    };
 
-      // Convert to Route format
-      const routeDetail = convertRouteSearchToRouteDetail(
-        selectedTravel,
-        searchResult.originStopName,
-        searchResult.destinationStopName
-      );
-
-      setRoute(routeDetail);
-      setFromStation(searchResult.originStopName);
-      setToStation(searchResult.destinationStopName);
-
-      // Note: Cache is not cleared here to allow back button navigation
-      // Cache will expire naturally after 5 minutes or be overwritten by new searches
-    } catch (error) {
-      console.error("経路詳細の読み込みエラー:", error);
-      setError(
-        error instanceof Error
-          ? error.message
-          : "経路詳細の読み込みに失敗しました。"
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  }, [searchParams]);
-
-  useEffect(() => {
     loadRouteDetail();
-  }, [loadRouteDetail]);
+  }, [searchParams]);
 
   if (isLoading) {
     return (
