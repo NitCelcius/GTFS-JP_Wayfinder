@@ -42,14 +42,21 @@ const HUE_RANGE = 360;
 export type ColorMode = "light" | "dark" | "auto";
 
 // Color space conversion constants
+// CIE 1931 2° standard illuminant D65 white point (normalized so Y = 100).
 const D65_WHITE = { x: 95.047, y: 100.0, z: 108.883 };
+// Standard linear sRGB → XYZ conversion matrix for D65 white point.
 const SRGB_MATRIX = {
   r: [3.2406, -1.5372, -0.4986],
   g: [-0.9689, 1.8758, 0.0415],
   b: [0.0557, -0.204, 1.057],
 };
+// 6/29 is the breakpoint used in the CIE Lab non-linear f(t) function.
 const LAB_DELTA = 6 / 29;
+// sRGB transfer function breakpoint between linear and gamma-encoded segments.
+// See IEC 61966-2-1:2003, section 4.2 (value ≈ 0.0031308).
 const SRGB_LINEAR_THRESHOLD = 0.0031308;
+// Relative luminance threshold for choosing light/dark text to satisfy WCAG contrast.
+// A luminance of ~0.179 gives a contrast ratio of ≥ 4.5:1 between text and background.
 const WCAG_LUMINANCE_THRESHOLD = 0.179;
 export const DEFAULT_HASH_BASE = 8;
 
