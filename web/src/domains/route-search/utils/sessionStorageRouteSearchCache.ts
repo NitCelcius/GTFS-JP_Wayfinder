@@ -33,7 +33,10 @@ function isValidRouteSearchResult(data: unknown): data is RouteSearchResult {
       typeof t.departure_time === "string" &&
       typeof t.arrival_time === "string" &&
       typeof t.departure_datetime === "string" &&
-      typeof t.arrival_datetime === "string"
+      typeof t.arrival_datetime === "string" &&
+      typeof t.from_stop_id === "string" &&
+      typeof t.to_stop_id === "string" &&
+      typeof t.fare === "number"
     );
   });
 }
