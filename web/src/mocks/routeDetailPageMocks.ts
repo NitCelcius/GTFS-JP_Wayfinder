@@ -32,12 +32,12 @@ export const mockRoute: Route = {
     {
       stationName: "東駅",
       departureTime: "08:00",
-      departureDatetime: new Date("2024-01-01T08:00:00"),
+      departureDatetime: new Date("2021-01-01T08:00:00"),
     },
     {
       stationName: "大学病院",
       arrivalTime: "08:45",
-      arrivalDatetime: new Date("2024-01-01T08:45:00"),
+      arrivalDatetime: new Date("2021-01-01T08:45:00"),
       cost: 200,
     },
   ],
