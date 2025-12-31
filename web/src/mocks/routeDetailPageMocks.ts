@@ -1,13 +1,13 @@
-import type { Route } from "@/domains/route-search/RouteDetailPage/types";
+import type { RouteOption } from "@/domains/route-search/SearchResultPage/types";
 import { convertRouteSearchToRouteDetail } from "@/domains/route-search/internal/utils/convertRouteSearchToRouteDetail";
 
 import { mockTravelOnceResponses } from "./routeSearchMocks";
 
 /**
- * Creates a Route mock for RouteDetailPage
+ * Creates a RouteOption mock for RouteDetailPage
  * Uses the first travel from routeSearchMocks for consistency
  */
-export function createMockRoute(): Route {
+export function createMockRoute(): RouteOption {
   return convertRouteSearchToRouteDetail(
     mockTravelOnceResponses[0],
     "東駅",
@@ -16,10 +16,10 @@ export function createMockRoute(): Route {
 }
 
 /**
- * Pre-created Route for RouteDetailPage stories
+ * Pre-created RouteOption for RouteDetailPage stories
  * Note: This is synchronous version for Storybook (which doesn't handle async well)
  */
-export const mockRoute: Route = {
+export const mockRoute: RouteOption = {
   id: "trip-001",
   name: "選択された経路",
   departureTime: "08:00",

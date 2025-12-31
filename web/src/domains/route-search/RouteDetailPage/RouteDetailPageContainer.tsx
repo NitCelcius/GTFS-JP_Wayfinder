@@ -9,10 +9,10 @@ import { LoadingSpinner } from "@/components/common/LoadingSpinner/LoadingSpinne
 import { apiClient } from "@/lib/api";
 import { getCurrentTimeString, sortTravelsByArrivalTime } from "@/lib/utils";
 
+import type { RouteOption } from "../SearchResultPage/types";
 import { convertRouteSearchToRouteDetail } from "../internal/utils";
 import { getCachedRouteSearchResult } from "../utils";
 import { RouteDetailPage } from "./RouteDetailPage";
-import type { Route } from "./types";
 
 /**
  * Props for the RouteDetailPageContainer
@@ -37,7 +37,7 @@ export function RouteDetailPageContainer({
   onNavigateToRecent,
 }: RouteDetailPageContainerProps) {
   const searchParams = useSearchParams();
-  const [route, setRoute] = useState<Route | null>(null);
+  const [route, setRoute] = useState<RouteOption | null>(null);
   const [fromStation, setFromStation] = useState<string>("");
   const [toStation, setToStation] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
