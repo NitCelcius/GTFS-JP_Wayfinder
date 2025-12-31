@@ -11,7 +11,7 @@ import { getCurrentTimeString, sortTravelsByArrivalTime } from "@/lib/utils";
 
 import type { RouteOption } from "../SearchResultPage/types";
 import { convertRouteSearchToRouteDetail } from "../internal/utils";
-import { getCachedRouteSearchResult } from "../utils";
+import { cacheRouteSearchResult, getCachedRouteSearchResult } from "../utils";
 import { RouteDetailPage } from "./RouteDetailPage";
 
 /**
@@ -92,6 +92,9 @@ export function RouteDetailPageContainer({
             destinationStopName: toName || `バス停 ${toStop}`,
             searchTime: time,
           };
+
+          // Cache the API response for subsequent navigation
+          cacheRouteSearchResult(searchResult, fromStop, toStop);
         }
 
         // Find the selected trip
