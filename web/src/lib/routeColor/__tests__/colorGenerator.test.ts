@@ -56,6 +56,23 @@ describe("weightedTextHash", () => {
     expect(base4).not.toBe(base8);
     expect(base8).not.toBe(base16);
   });
+
+  it("should throw error for zero base", () => {
+    expect(() => weightedTextHash("test", 0)).toThrow("base must be positive");
+  });
+
+  it("should throw error for negative base", () => {
+    expect(() => weightedTextHash("test", -5)).toThrow("base must be positive");
+  });
+
+  it("should handle very long strings without overflow", () => {
+    // 100 character string should not cause overflow
+    const longText = "あ".repeat(100);
+    const hash = weightedTextHash(longText);
+    expect(hash).toBeGreaterThanOrEqual(0);
+    expect(hash).toBeLessThan(1);
+    expect(Number.isFinite(hash)).toBe(true);
+  });
 });
 
 describe("textToLch", () => {
