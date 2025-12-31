@@ -5,7 +5,7 @@ import styles from "./BusStopCard.module.css";
 
 interface BusStopCardProps {
   title: string;
-  subtitle: string;
+  subtitle?: string;
   icon?: React.ReactNode;
   actionLabel: string;
   onClick?: () => void;
@@ -34,12 +34,19 @@ export function BusStopCard({
           {icon && <div className={styles.icon}>{icon}</div>}
           <div className={styles.textGroup}>
             <span className={styles.title}>{title}</span>
-            <div className={styles.subtitleRow}>
-              <span className={styles.subtitle}>{subtitle}</span>
-              {secondaryInfo && (
-                <span className={styles.secondary}>・{secondaryInfo}</span>
-              )}
-            </div>
+            {(subtitle || secondaryInfo) && (
+              <div className={styles.subtitleRow}>
+                {subtitle && (
+                  <span className={styles.subtitle}>{subtitle}</span>
+                )}
+                {secondaryInfo && (
+                  <span className={styles.secondary}>
+                    {subtitle ? "・" : ""}
+                    {secondaryInfo}
+                  </span>
+                )}
+              </div>
+            )}
           </div>
         </div>
         <div className={styles.actionWrap}>
