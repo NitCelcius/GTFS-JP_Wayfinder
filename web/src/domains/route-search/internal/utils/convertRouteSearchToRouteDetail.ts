@@ -17,7 +17,7 @@ export function convertRouteSearchToRouteDetail(
 ): RouteOption {
   return {
     id: travel.trip_id,
-    name: "選択された経路",
+    name: `${originStopName} → ${destinationStopName}`,
     departureTime: travel.departure_time,
     arrivalTime: travel.arrival_time,
     duration: calculateDurationStr(travel.departure_time, travel.arrival_time),
