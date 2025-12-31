@@ -1,7 +1,8 @@
+import { ArrowDown, ArrowUpDown, Flag, MapPin } from "lucide-react";
+
 import { useState } from "react";
 
-import svgPaths from "@/app/imports/svg-uqfc70duf5";
-import { BusStopSearchModalContainer, Icon } from "@/components/common";
+import { BusStopSearchModalContainer } from "@/components/common";
 import type { BusStopSearchResult } from "@/types";
 
 import styles from "./RouteInputs.module.css";
@@ -9,13 +10,7 @@ import styles from "./RouteInputs.module.css";
 function LocationIcon() {
   return (
     <div className={styles.icon}>
-      <svg className={styles.iconSvg} viewBox="0 0 44 44" aria-hidden="true">
-        <path
-          d={svgPaths.pb48f200}
-          fill="var(--color-foreground)"
-          shapeRendering="geometricPrecision"
-        />
-      </svg>
+      <MapPin className={styles.iconSvg} aria-hidden="true" />
     </div>
   );
 }
@@ -23,13 +18,7 @@ function LocationIcon() {
 function FlagIcon() {
   return (
     <div className={styles.icon}>
-      <svg className={styles.iconSvg} viewBox="0 0 44 44" aria-hidden="true">
-        <path
-          d={svgPaths.p32615cf0}
-          fill="var(--color-foreground)"
-          shapeRendering="geometricPrecision"
-        />
-      </svg>
+      <Flag className={styles.iconSvg} aria-hidden="true" />
     </div>
   );
 }
@@ -37,19 +26,13 @@ function FlagIcon() {
 function ArrowIcon() {
   return (
     <div className={styles.arrowIcon}>
-      <svg className={styles.iconSvg} viewBox="0 0 40 40" aria-hidden="true">
-        <path
-          d={svgPaths.p3d8ec380}
-          fill="var(--color-foreground)"
-          shapeRendering="geometricPrecision"
-        />
-      </svg>
+      <ArrowDown className={styles.iconSvg} aria-hidden="true" />
     </div>
   );
 }
 
 function SwapIcon() {
-  return <Icon name="swap" />;
+  return <ArrowUpDown size={24} />;
 }
 
 interface RouteInputProps {

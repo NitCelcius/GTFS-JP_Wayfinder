@@ -1,6 +1,4 @@
-import React from "react";
-
-import { Icon } from "@/components/common";
+import { MapPin } from "lucide-react";
 
 interface LocationPinIconProps {
   size?: number;
@@ -16,11 +14,6 @@ export function LocationPinIcon({
   style,
 }: LocationPinIconProps) {
   return (
-    <Icon
-      name="location-pin"
-      size={size}
-      className={className}
-      style={{ color, ...style }}
-    />
+    <MapPin size={size} className={className} style={{ color, ...style }} />
   );
 }

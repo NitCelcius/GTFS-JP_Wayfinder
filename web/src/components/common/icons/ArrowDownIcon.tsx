@@ -1,9 +1,9 @@
-import { Icon } from "@/components/common";
+import { ArrowDown } from "lucide-react";
 
 interface ArrowDownIconProps {
   size?: number;
 }
 
 export function ArrowDownIcon({ size = 24 }: ArrowDownIconProps) {
-  return <Icon name="arrow-down" size={size} />;
+  return <ArrowDown size={size} />;
 }

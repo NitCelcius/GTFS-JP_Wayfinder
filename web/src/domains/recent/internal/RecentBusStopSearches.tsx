@@ -1,6 +1,8 @@
+import { MapPin } from "lucide-react";
+
 import React from "react";
 
-import { BusStopCard, Icon } from "@/components/common";
+import { BusStopCard } from "@/components/common";
 
 import { RecentBusStopSearch } from "../types";
 import viewMoreStyles from "./ViewMoreButton.module.css";
@@ -12,7 +14,7 @@ interface RecentBusStopSearchesProps {
 }
 
 function LocationIcon() {
-  return <Icon name="location-pin" size={24} aria-hidden="true" />;
+  return <MapPin size={24} aria-hidden="true" />;
 }
 
 function RecentBusStopItem({

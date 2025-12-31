@@ -1,4 +1,4 @@
-import { Icon } from "@/components/common/Icon/Icon";
+import { ChevronLeft } from "lucide-react";
 
 import styles from "./BusTripDetail.module.css";
 import type { Stop } from "./internal/StopItem";
@@ -41,7 +41,7 @@ export function BusTripDetail({
             className={styles.backButton}
             aria-label="戻る"
           >
-            <Icon name="chevron-left" size={24} aria-hidden="true" />
+            <ChevronLeft size={24} aria-hidden="true" />
           </button>
           <h2 className={styles.stopName}>{stopName}</h2>
         </div>

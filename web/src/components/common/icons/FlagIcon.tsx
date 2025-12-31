@@ -1,9 +1,9 @@
-import { Icon } from "@/components/common";
+import { Flag } from "lucide-react";
 
 interface FlagIconProps {
   size?: number;
 }
 
 export function FlagIcon({ size = 24 }: FlagIconProps) {
-  return <Icon name="flag-filled" size={size} />;
+  return <Flag size={size} fill="currentColor" />;
 }

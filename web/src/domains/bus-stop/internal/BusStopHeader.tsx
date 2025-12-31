@@ -1,6 +1,4 @@
-import React from "react";
-
-import { Icon } from "@/components/common";
+import { MapPin, Share2 } from "lucide-react";
 
 import styles from "./BusStopHeader.module.css";
 
@@ -13,11 +11,11 @@ interface BusStopHeaderProps {
 }
 
 function LocationIcon() {
-  return <Icon name="location-pin" size={24} aria-hidden="true" />;
+  return <MapPin size={24} aria-hidden="true" />;
 }
 
 function ShareIcon() {
-  return <Icon name="share" size={24} aria-hidden="true" />;
+  return <Share2 size={24} aria-hidden="true" />;
 }
 
 export function BusStopHeader({

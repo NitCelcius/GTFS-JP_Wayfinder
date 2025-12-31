@@ -1,4 +1,4 @@
-import { Icon } from "@/components/common";
+import { Search } from "lucide-react";
 
 import { LoadingSpinner } from "../LoadingSpinner/LoadingSpinner";
 import styles from "./RouteSearchButton.module.css";
@@ -12,7 +12,7 @@ interface RouteSearchButtonProps {
 }
 
 function SearchIcon() {
-  return <Icon name="search" size={24} aria-hidden="true" />;
+  return <Search size={24} aria-hidden="true" />;
 }
 
 export function RouteSearchButton({

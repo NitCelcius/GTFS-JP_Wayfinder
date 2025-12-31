@@ -1,3 +1,5 @@
+import { Flag, MapPin } from "lucide-react";
+
 import React from "react";
 
 import { Icon } from "@/components/common";
@@ -39,11 +41,12 @@ export const StopItem: React.FC<StopItemProps> = ({ stop }) => {
   return (
     <div className={stopClasses}>
       {stop.isBusLocation ? (
+        // bus-front icon is custom and cannot be replaced with Lucide
         <Icon name="bus-front" size={28} aria-hidden="true" />
       ) : stop.isCurrent ? (
-        <Icon name="location-pin" size={28} aria-hidden="true" />
+        <MapPin size={28} aria-hidden="true" />
       ) : stop.isDestination ? (
-        <Icon name="flag" size={28} aria-hidden="true" />
+        <Flag size={28} aria-hidden="true" />
       ) : (
         <div className={styles.stopDot} />
       )}

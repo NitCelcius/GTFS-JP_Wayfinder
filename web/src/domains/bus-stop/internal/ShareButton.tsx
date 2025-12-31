@@ -1,10 +1,10 @@
 "use client";
 
+import { Share2, X } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 
 import { useState } from "react";
 
-import { Icon } from "@/components/common";
 import { useEnvValue } from "@/hooks";
 
 import styles from "./ShareButton.module.css";
@@ -15,11 +15,11 @@ interface ShareButtonProps {
 }
 
 function ShareIcon() {
-  return <Icon name="share" size={24} aria-hidden="true" />;
+  return <Share2 size={24} aria-hidden="true" />;
 }
 
 function CloseIcon() {
-  return <Icon name="close" size={24} aria-hidden="true" />;
+  return <X size={24} aria-hidden="true" />;
 }
 
 export function ShareButton({ busStopId, busStopName }: ShareButtonProps) {

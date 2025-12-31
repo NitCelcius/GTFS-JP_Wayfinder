@@ -1,4 +1,4 @@
-import { Icon } from "@/components/common";
+import { Footprints } from "lucide-react";
 
 import styles from "./WalkDirectionButton.module.css";
 
@@ -8,7 +8,7 @@ interface WalkDirectionButtonProps {
 }
 
 function WalkIcon() {
-  return <Icon name="walk" size={24} aria-hidden="true" />;
+  return <Footprints size={24} aria-hidden="true" />;
 }
 
 /**

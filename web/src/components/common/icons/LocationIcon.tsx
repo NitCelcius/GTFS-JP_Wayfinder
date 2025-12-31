@@ -1,9 +1,9 @@
-import { Icon } from "@/components/common";
+import { MapPin } from "lucide-react";
 
 interface LocationIconProps {
   size?: number;
 }
 
 export function LocationIcon({ size = 24 }: LocationIconProps) {
-  return <Icon name="location-filled" size={size} />;
+  return <MapPin size={size} fill="currentColor" />;
 }

@@ -1,6 +1,4 @@
-import React from "react";
-
-import { Icon } from "@/components/common";
+import { ArrowLeft } from "lucide-react";
 
 import styles from "./TopNavigation.module.css";
 
@@ -14,11 +12,7 @@ interface TopNavigationProps {
 
 function BackIcon() {
   return (
-    <Icon
-      name="arrow-back"
-      className="size-[var(--size-icon-lg)]"
-      aria-hidden="true"
-    />
+    <ArrowLeft className="size-[var(--size-icon-lg)]" aria-hidden="true" />
   );
 }
 

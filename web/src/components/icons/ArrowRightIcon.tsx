@@ -1,6 +1,4 @@
-import React from "react";
-
-import { Icon } from "@/components/common";
+import { ArrowRight } from "lucide-react";
 
 interface ArrowRightIconProps {
   size?: number;
@@ -16,11 +14,6 @@ export function ArrowRightIcon({
   style,
 }: ArrowRightIconProps) {
   return (
-    <Icon
-      name="arrow-right"
-      size={size}
-      className={className}
-      style={{ color, ...style }}
-    />
+    <ArrowRight size={size} className={className} style={{ color, ...style }} />
   );
 }

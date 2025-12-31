@@ -1,5 +1,5 @@
-import { Icon } from "@/components/common";
+import { ChevronRight as ChevronRightIcon } from "lucide-react";
 
 export function ChevronRight() {
-  return <Icon name="chevron-right" size={24} />;
+  return <ChevronRightIcon size={24} />;
 }

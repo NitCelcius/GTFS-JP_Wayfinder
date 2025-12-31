@@ -1,4 +1,4 @@
-import { Icon } from "@/components/common";
+import { MapPin } from "lucide-react";
 
 interface DeparturePinIconProps {
   size?: number;
@@ -13,5 +13,5 @@ export function DeparturePinIcon({
   size = 24,
   className,
 }: DeparturePinIconProps) {
-  return <Icon name="location-filled" size={size} className={className} />;
+  return <MapPin size={size} className={className} fill="currentColor" />;
 }

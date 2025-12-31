@@ -1,4 +1,4 @@
-import { Icon } from "@/components/common";
+import { ArrowLeftRight } from "lucide-react";
 
 import styles from "./TransferButton.module.css";
 
@@ -8,7 +8,7 @@ interface TransferButtonProps {
 }
 
 function TransferIcon() {
-  return <Icon name="transfer" aria-hidden="true" />;
+  return <ArrowLeftRight size={24} aria-hidden="true" />;
 }
 
 export function TransferButton({

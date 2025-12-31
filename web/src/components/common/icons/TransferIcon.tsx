@@ -1,5 +1,5 @@
-import { Icon } from "@/components/common";
+import { ArrowLeftRight } from "lucide-react";
 
 export function TransferIcon() {
-  return <Icon name="transfer" size={24} />;
+  return <ArrowLeftRight size={24} />;
 }

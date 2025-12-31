@@ -1,8 +1,6 @@
+import { Flag, MapPin } from "lucide-react";
+
 import React from "react";
-
-// Styles migrated to JourneyTimeline.module.css
-
-import { Icon } from "@/components/common";
 
 import styles from "./JourneyTimeline.module.css";
 
@@ -33,11 +31,11 @@ interface JourneyTimelineProps {
 }
 
 function LocationIcon() {
-  return <Icon name="location-pin" size={24} aria-hidden="true" />;
+  return <MapPin size={24} aria-hidden="true" />;
 }
 
 function FlagIcon() {
-  return <Icon name="flag" size={24} aria-hidden="true" />;
+  return <Flag size={24} aria-hidden="true" />;
 }
 
 function CircleIcon() {

@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { Search } from "lucide-react";
 
-import { Icon } from "@/components/common";
+import { useState } from "react";
 
 import styles from "./SearchInput.module.css";
 
@@ -9,7 +9,7 @@ interface SearchInputProps {
 }
 
 function SearchIcon() {
-  return <Icon name="search" size={24} aria-hidden="true" />;
+  return <Search size={24} aria-hidden="true" />;
 }
 
 export function SearchInput({ onSearch }: SearchInputProps) {

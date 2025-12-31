@@ -1,5 +1,5 @@
-import { Icon } from "@/components/common";
+import { Footprints } from "lucide-react";
 
 export function WalkIcon() {
-  return <Icon name="walk" size={24} />;
+  return <Footprints size={24} />;
 }
