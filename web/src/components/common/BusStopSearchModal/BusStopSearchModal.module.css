@@ -218,7 +218,6 @@
   width: var(--size-icon-md);
   height: var(--size-icon-md);
   background: var(--color-route-origin-bg);
-  padding: var(--size-spacing-lg);
   border-radius: var(--radius-lg);
   display: flex;
   align-items: center;
