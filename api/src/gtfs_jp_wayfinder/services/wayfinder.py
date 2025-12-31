@@ -155,14 +155,34 @@ def get_trip_info_batch(trip_ids: list[str]) -> TripInfoList:
 
 
 def format_np_datetime(value: pd.Timestamp | np.datetime64 | str) -> str:
-    """Utility to format numpy.datetime64 or pandas.Timestamp to HH:MM:S.
+    """Utility to format numpy.datetime64 or pandas.Timestamp to HH:MM:SS.
 
     This helper is exposed so adapters can convert underlying numpy/pandas
     datetime types to plain strings for Pydantic models.
+
+    GTFS-JP extended hours (24+):
+    - GTFS-JP allows times >= 24:00:00 to represent services past midnight
+      that are part of the previous day's schedule (e.g., 25:30:00 = 1:30 AM next day)
+    - When times like "24:05:00" are converted to numpy datetime64, they become
+      "2021-01-02T00:05:00" (normalized by numpy to the next day)
+    - This function detects such cases by comparing against the default date
+      (2021-01-01) and adds 24 hours per day offset to preserve extended hours
     """
     # Use pandas Timestamp for consistent formatting
     timestamp = pd.Timestamp(value)
-    return timestamp.strftime("%H:%M:%S")
+
+    # Default date used by the GTFS loader for time-only representations
+    default_date = pd.Timestamp("2021-01-01")
+
+    # Calculate day offset from default date
+    # If timestamp is on a later date, it means the original time was >= 24:00
+    day_offset = (timestamp.date() - default_date.date()).days
+
+    # Calculate total hours including any day offset (for times >= 24:00)
+    total_hours = timestamp.hour + (day_offset * 24)
+
+    # Format with extended hours if applicable
+    return f"{total_hours:02d}:{timestamp.minute:02d}:{timestamp.second:02d}"
 
 
 def get_nearby_stops(lat: float, lon: float, limit: int = 10) -> list[NearbyStopResult]:
