@@ -150,19 +150,35 @@ describe("sortTravelsByArrivalTime", () => {
     expect(sorted[2].id).toBe("1"); // 10:00
   });
 
-  it("should handle overnight arrivals correctly", () => {
+  it("should handle GTFS extended hours for next-day arrivals", () => {
     const travels = [
-      { arrival_time: "01:00", id: "overnight" }, // Early morning (next day)
-      { arrival_time: "23:30", id: "late" }, // Late evening (same day)
-      { arrival_time: "10:00", id: "morning" }, // Morning (same day)
+      { arrival_time: "25:30", id: "nextday" }, // 1:30 AM next day (GTFS format)
+      { arrival_time: "23:30", id: "late" }, // 11:30 PM same day
+      { arrival_time: "10:00", id: "morning" }, // 10:00 AM same day
     ];
 
     const sorted = sortTravelsByArrivalTime(travels);
 
-    // Expected order: morning (10:00), late (23:30), overnight (01:00 next day)
-    expect(sorted[0].id).toBe("morning");
-    expect(sorted[1].id).toBe("late");
-    expect(sorted[2].id).toBe("overnight");
+    // Expected order: morning (10:00), late (23:30), nextday (25:30 = 1:30 AM next day)
+    expect(sorted[0].id).toBe("morning"); // 600 min
+    expect(sorted[1].id).toBe("late"); // 1410 min
+    expect(sorted[2].id).toBe("nextday"); // 1530 min
+  });
+
+  it("should correctly sort mixed GTFS extended hours and regular times", () => {
+    // Test case from PR review: mixing times like ["25:30", "01:00", "10:00"]
+    const travels = [
+      { arrival_time: "25:30", id: "gtfs-nextday" }, // 1530 min (1:30 AM next day in GTFS format)
+      { arrival_time: "01:00", id: "early-morning" }, // 60 min (1:00 AM same day)
+      { arrival_time: "10:00", id: "morning" }, // 600 min
+    ];
+
+    const sorted = sortTravelsByArrivalTime(travels);
+
+    // Pure numeric sort: 01:00 (60) < 10:00 (600) < 25:30 (1530)
+    expect(sorted[0].id).toBe("early-morning"); // 60 min
+    expect(sorted[1].id).toBe("morning"); // 600 min
+    expect(sorted[2].id).toBe("gtfs-nextday"); // 1530 min
   });
 
   it("should not mutate original array", () => {
