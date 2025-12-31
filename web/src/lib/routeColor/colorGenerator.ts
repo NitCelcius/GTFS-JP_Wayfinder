@@ -110,14 +110,14 @@ export function weightedTextHash(
   const maxDivisor = Number.MAX_SAFE_INTEGER / base;
 
   for (const char of text) {
-    const codePoint = char.codePointAt(0) ?? 0;
-    const value = codePoint % base;
-    hash += value / divisor;
-
-    // Stop increasing divisor once it would exceed Number.MAX_SAFE_INTEGER.
+    // Stop increasing divisor once it would exceed number MAX_SAFE_INTEGER.
     if (divisor > maxDivisor) {
       break;
     }
+
+    const codePoint = char.codePointAt(0) ?? 0;
+    const value = codePoint % base;
+    hash += value / divisor;
     divisor *= base;
   }
 
