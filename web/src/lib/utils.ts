@@ -154,28 +154,25 @@ export function calculateDurationMinutes(
 }
 
 /**
- * Sort travels by arrival time (earliest first)
- * Handles overnight trips by treating times after midnight as next-day arrivals
- * @param travels - Array of travel objects with arrival_time property
- * @returns Sorted array of travels
+ * Sort travels by arrival time (earliest first).
+ * Supports GTFS-style time strings where next-day arrivals use extended hours (24–47).
+ * For example, "25:30" represents 1:30 AM the next day and will sort after "23:00".
+ *
+ * **Note**: This function performs simple numeric comparison on time strings only.
+ * If the API normalizes extended hours to 0-23 (with date offset in `arrival_datetime`),
+ * this function cannot distinguish overnight arrivals. In such cases, sort by
+ * `arrival_datetime` (full ISO string) instead for correct chronological ordering.
+ * TODO: See https://github.com/NitCelcius/GTFS-JP_Wayfinder/issues/186 and when resolved, check frontend can handle this
+ *
+ * @param travels - Array of travel objects with arrival_time property (HH:MM or HH:MM:SS, hours 0–47)
+ * @returns Sorted array of travels (shallow copy)
  */
 export function sortTravelsByArrivalTime<T extends { arrival_time: string }>(
   travels: T[]
 ): T[] {
   return [...travels].sort((a, b) => {
-    let aMinutes = parseTimeToMinutes(a.arrival_time);
-    let bMinutes = parseTimeToMinutes(b.arrival_time);
-
-    // If arrival time is in early morning hours (00:00-04:00), assume it's next day
-    // Add 24 hours to treat it as later than same-day arrivals
-    const EARLY_MORNING_CUTOFF = 4 * 60; // 04:00
-    if (aMinutes < EARLY_MORNING_CUTOFF) {
-      aMinutes += 24 * 60;
-    }
-    if (bMinutes < EARLY_MORNING_CUTOFF) {
-      bMinutes += 24 * 60;
-    }
-
+    const aMinutes = parseTimeToMinutes(a.arrival_time);
+    const bMinutes = parseTimeToMinutes(b.arrival_time);
     return aMinutes - bMinutes;
   });
 }
