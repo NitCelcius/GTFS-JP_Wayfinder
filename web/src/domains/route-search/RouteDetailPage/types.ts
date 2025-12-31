@@ -1,3 +1,5 @@
+import type { RouteOption } from "../SearchResultPage/types";
+
 // Re-export shared types from SearchResultPage to avoid duplication
 // RouteOption and Station are identical in structure for both pages
 export type { RouteOption as Route, Station } from "../SearchResultPage/types";
@@ -7,7 +9,7 @@ export type { RouteOption as Route, Station } from "../SearchResultPage/types";
  */
 export interface RouteDetailPageProps {
   /** Route details to display */
-  route: Route;
+  route: RouteOption;
   /** Origin station name */
   fromStation: string;
   /** Destination station name */
