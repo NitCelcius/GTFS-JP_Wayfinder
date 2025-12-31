@@ -114,7 +114,7 @@ export function weightedTextHash(
     const value = codePoint % base;
     hash += value / divisor;
 
-    // Stop increasing divisor once it would exceed number MAX_SAFE_INTEGER.
+    // Stop increasing divisor once it would exceed Number.MAX_SAFE_INTEGER.
     if (divisor > maxDivisor) {
       break;
     }
