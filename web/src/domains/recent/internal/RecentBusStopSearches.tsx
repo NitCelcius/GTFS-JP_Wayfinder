@@ -82,7 +82,7 @@ export function RecentBusStopSearches({
         <div>
           {displayedBusStops.map((bs) => (
             <RecentBusStopItem
-              key={bs.id}
+              key={bs.recordId}
               busStop={bs}
               onSelect={onBusStopSelect}
             />
