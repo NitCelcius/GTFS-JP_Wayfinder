@@ -52,8 +52,8 @@ def get_is_cache_graph_enabled():
     """Get cache graph setting from environment variable.
 
     Reads the ENABLE_GRAPH_CACHE environment variable to determine if graph caching
-    should be enabled. Accepts 'true', '1', or 'yes' (case-insensitive) as
-    truthy values. Defaults to False if not set or set to any other value.
+    should be enabled. Only accepts 'true' or 'false' (case-insensitive).
+    Defaults to 'false' if not set.
 
     When enabled, the API will cache generated NetworkX graphs to disk and
     reload them on subsequent startups, significantly reducing initialization
@@ -61,9 +61,20 @@ def get_is_cache_graph_enabled():
 
     Returns:
         bool: True if caching is enabled, False otherwise.
+
+    Raises:
+        ValueError: If ENABLE_GRAPH_CACHE is set to an invalid value (not 'true' or 'false').
     """
     cache_graph = os.getenv("ENABLE_GRAPH_CACHE", "false").lower()
-    enabled = cache_graph in ("true", "1", "yes")
+    if cache_graph not in ("true", "false"):
+        msg = (
+            f"Invalid value for ENABLE_GRAPH_CACHE: '{cache_graph}'. "
+            "Must be 'true' or 'false' (case-insensitive)."
+        )
+        logger.error(msg)
+        raise ValueError(msg)
+
+    enabled = cache_graph == "true"
     if enabled:
         logger.info("Graph caching is ENABLED")
         logger.warning(
