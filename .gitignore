@@ -2,3 +2,4 @@ node_modules
 # api/data/
 .turbo
 web/build-storybook.log
+.env.development
