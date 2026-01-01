@@ -183,7 +183,7 @@ class AkitaBusWayFinder:
             logger.warning("Failed to load graph cache: %s", e)
             return False
 
-    def initialize(self, base_dir="../data/", use_cache_graph: bool = False):
+    def initialize(self, base_dir: str = "../data/", use_cache_graph: bool = False):
         """Initialize the wayfinder with GTFS data.
         
         Loads GTFS data from the specified directory and generates routing graphs.
