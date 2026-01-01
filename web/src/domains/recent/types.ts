@@ -1,4 +1,5 @@
 export interface RecentBusStopSearch {
+  recordId: string;
   id: string;
   name: string;
   distance: string;
