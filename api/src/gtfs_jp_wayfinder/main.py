@@ -66,6 +66,9 @@ def get_is_cache_graph_enabled():
     enabled = cache_graph in ("true", "1", "yes")
     if enabled:
         logger.info("Graph caching is ENABLED")
+        logger.warning(
+            "Graph caching uses pickle serialization. Only load cache files you trust! This is not intended for production use.",
+        )
     return enabled
 
 
