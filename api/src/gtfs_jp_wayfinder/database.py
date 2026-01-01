@@ -109,16 +109,27 @@ class AkitaBusWayFinder:
     def _get_data_hash(self, base_dir: str) -> str:
         """Get SHA-256 hash of GTFS data files for cache validation.
 
-        This method computes a combined hash of critical GTFS data files
+        This method computes a combined hash of all GTFS data files
         to determine if the cache is still valid. Any change to these files
         will result in a different hash, triggering cache regeneration.
+
+        Only includes .txt files (standard GTFS format) and ignores files
+        that don't exist, as not all GTFS-JP feeds contain all files.
         """
+        # All standard GTFS and GTFS-JP files
         data_files = [
-            "stops.txt",
-            "stop_times.txt",
-            "trips.txt",
+            "agency.txt",
             "calendar.txt",
             "calendar_dates.txt",
+            "fare_attributes.txt",
+            "fare_rules.txt",
+            "feed_info.txt",
+            "routes.txt",
+            "shapes.txt",
+            "stops.txt",
+            "stop_times.txt",
+            "translations.txt",
+            "trips.txt",
         ]
 
         hasher = hashlib.sha256()
