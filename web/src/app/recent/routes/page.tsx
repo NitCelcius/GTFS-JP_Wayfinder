@@ -19,8 +19,6 @@ export default function AllRecentRoutesPageContainer() {
         fromStation,
         toStation
       ) => {
-        // Navigate to results page with search parameters
-        // URLSearchParams automatically encodes special characters for security
         const urlParams = new URLSearchParams({
           search: "true",
           from: fromStopId,
