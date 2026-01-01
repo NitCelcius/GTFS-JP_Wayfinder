@@ -78,10 +78,6 @@ const mockRouteSearches: RecentRouteSearch[] = [
   },
 ];
 
-function ClockIcon() {
-  return <Icon name="clock" size={24} aria-hidden="true" />;
-}
-
 // Default story - uses IndexedDB (disabled for chromatic VRT to avoid flakiness)
 export const Default: Story = {
   parameters: {
@@ -89,7 +85,6 @@ export const Default: Story = {
   },
 };
 
-// Story with fixed mock data for visual regression testing
 export const WithMockData: Story = {
   render: (args) => {
     const handleRouteSelect = (
@@ -109,7 +104,7 @@ export const WithMockData: Story = {
     return (
       <div className={styles.page}>
         <TopNavigation
-          icon={<ClockIcon />}
+          icon={<Icon name="clock" size={24} aria-hidden="true" />}
           title="行き方検索履歴"
           showBackButton
           onBack={args.onBack}
@@ -128,13 +123,12 @@ export const WithMockData: Story = {
   },
 };
 
-// Empty state for visual regression testing
 export const EmptyState: Story = {
   render: (args) => {
     return (
       <div className={styles.page}>
         <TopNavigation
-          icon={<ClockIcon />}
+          icon={<Icon name="clock" size={24} aria-hidden="true" />}
           title="行き方検索履歴"
           showBackButton
           onBack={args.onBack}
