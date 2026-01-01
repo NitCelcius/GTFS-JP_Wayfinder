@@ -1,4 +1,4 @@
 export { RecentPage } from "./RecentPage";
-export { AllRecentBusStopsPage } from "./AllRecentBusStopsPage";
-export { AllRecentRoutesPage } from "./AllRecentRoutesPage";
+export { RecentBusStopsContainer } from "./bus-stops/RecentBusStopsContainer";
+export { RecentRoutesContainer } from "./routes/RecentRoutesContainer";
 export type { RecentBusStopSearch, RecentRouteSearch } from "./types";

@@ -2,9 +2,9 @@
 
 import { useRouter } from "next/navigation";
 
-import { AllRecentRoutesPage } from "@/domains/recent";
+import { RecentRoutesContainer } from "@/domains/recent";
 
-export default function AllRecentRoutesPageContainer() {
+export default function RecentRoutesPageRoute() {
   const router = useRouter();
 
   const handleBack = () => {
@@ -12,7 +12,7 @@ export default function AllRecentRoutesPageContainer() {
   };
 
   return (
-    <AllRecentRoutesPage
+    <RecentRoutesContainer
       onNavigateToRouteSearch={(
         fromStopId,
         toStopId,
@@ -20,7 +20,6 @@ export default function AllRecentRoutesPageContainer() {
         toStation
       ) => {
         const urlParams = new URLSearchParams({
-          search: "true",
           from: fromStopId,
           to: toStopId,
           fromName: fromStation,

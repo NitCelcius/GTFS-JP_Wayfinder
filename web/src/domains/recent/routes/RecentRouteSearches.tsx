@@ -1,8 +1,7 @@
-import { Route } from "lucide-react";
-
+import viewMoreStyles from "../ViewMoreButton.module.css";
 import { RecentRouteSearch } from "../types";
+import { RecentRouteItem } from "./RecentRouteItem";
 import styles from "./RecentRouteSearches.module.css";
-import viewMoreStyles from "./ViewMoreButton.module.css";
 
 interface RecentRouteSearchesProps {
   recentRoutes: RecentRouteSearch[];
@@ -17,49 +16,6 @@ interface RecentRouteSearchesProps {
   limit?: number;
 }
 
-function RouteIcon() {
-  return <Route size={24} aria-hidden="true" />;
-}
-
-function RecentRouteItem({
-  route,
-  onSelect,
-}: {
-  route: RecentRouteSearch;
-  onSelect?: (
-    fromStopId: string,
-    toStopId: string,
-    fromStation: string,
-    toStation: string
-  ) => void;
-}) {
-  const handleClick = () =>
-    onSelect?.(
-      route.fromStopId,
-      route.toStopId,
-      route.fromStopName,
-      route.toStopName
-    );
-
-  return (
-    <div onClick={handleClick} className={styles.listItem}>
-      <div className={styles.itemRow}>
-        <div className={styles.iconWrap}>
-          <RouteIcon />
-        </div>
-        <div>
-          <span
-            className={styles.routeText}
-          >{`${route.fromStopName} → ${route.toStopName}`}</span>
-          <div className={styles.timestamp}>{route.searchedAt}</div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-export { RecentRouteItem };
-
 export function RecentRouteSearches({
   recentRoutes,
   onRouteSelect,
@@ -72,7 +28,6 @@ export function RecentRouteSearches({
   return (
     <div>
       <div className={styles.sectionHeader}>
-        <h2 className={styles.heading}>行き方</h2>
         {hasMore && (
           <button
             className={viewMoreStyles.viewMoreButton}
