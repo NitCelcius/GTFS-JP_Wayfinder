@@ -24,10 +24,6 @@ interface RecentPageProps {
   onViewMoreRoutes?: () => void;
 }
 
-function ClockIcon() {
-  return <Clock size={24} aria-hidden="true" />;
-}
-
 export function RecentPage({
   onNavigateToRoute,
   onNavigateToBusStop,
@@ -75,7 +71,10 @@ export function RecentPage({
 
   return (
     <div className={styles.page}>
-      <TopNavigation icon={<ClockIcon />} title="履歴" />
+      <TopNavigation
+        icon={<Clock size={24} aria-hidden="true" />}
+        title="履歴"
+      />
 
       <div className={styles.content}>
         <div className={styles.stack}>
