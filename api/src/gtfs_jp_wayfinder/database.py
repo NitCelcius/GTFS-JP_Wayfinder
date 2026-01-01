@@ -108,7 +108,7 @@ class AkitaBusWayFinder:
 
     def _get_data_hash(self, base_dir: str) -> str:
         """Get SHA-256 hash of GTFS data files for cache validation.
-        
+
         This method computes a combined hash of critical GTFS data files
         to determine if the cache is still valid. Any change to these files
         will result in a different hash, triggering cache regeneration.
@@ -120,9 +120,9 @@ class AkitaBusWayFinder:
             "calendar.txt",
             "calendar_dates.txt",
         ]
-        
+
         hasher = hashlib.sha256()
-        
+
         for filename in sorted(data_files):  # Sort to ensure consistent ordering
             filepath = Path(base_dir) / filename
             if filepath.exists():
@@ -130,7 +130,7 @@ class AkitaBusWayFinder:
                 with open(filepath, "rb") as f:
                     for chunk in iter(lambda: f.read(8192), b""):
                         hasher.update(chunk)
-        
+
         return hasher.hexdigest()
 
     def _save_graph_cache(self, base_dir: str) -> None:
@@ -185,10 +185,10 @@ class AkitaBusWayFinder:
 
     def initialize(self, base_dir: str = "../data/", use_cache_graph: bool = False):
         """Initialize the wayfinder with GTFS data.
-        
+
         Loads GTFS data from the specified directory and generates routing graphs.
         If use_cache_graph is True and a valid cache exists, loads from cache instead.
-        
+
         Args:
             base_dir: Directory path containing GTFS data files (must end with /).
             use_cache_graph: If True, use cached graph data if available and valid.
