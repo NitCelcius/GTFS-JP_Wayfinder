@@ -50,19 +50,19 @@ def get_cors_origins():
 
 def get_is_cache_graph_enabled():
     """Get cache graph setting from environment variable.
-    
-    Reads the CACHE_GRAPH environment variable to determine if graph caching
+
+    Reads the ENABLE_GRAPH_CACHE environment variable to determine if graph caching
     should be enabled. Accepts 'true', '1', or 'yes' (case-insensitive) as
     truthy values. Defaults to False if not set or set to any other value.
-    
+
     When enabled, the API will cache generated NetworkX graphs to disk and
     reload them on subsequent startups, significantly reducing initialization
     time in development mode with hot-reload.
-    
+
     Returns:
         bool: True if caching is enabled, False otherwise.
     """
-    cache_graph = os.getenv("CACHE_GRAPH", "false").lower()
+    cache_graph = os.getenv("ENABLE_GRAPH_CACHE", "false").lower()
     enabled = cache_graph in ("true", "1", "yes")
     if enabled:
         logger.info("Graph caching is ENABLED")
