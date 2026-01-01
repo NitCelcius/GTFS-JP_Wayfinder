@@ -1,53 +1,12 @@
-import { MapPin } from "lucide-react";
-
-import React from "react";
-
-import { BusStopCard } from "@/components/common";
-
+import viewMoreStyles from "../ViewMoreButton.module.css";
 import { RecentBusStopSearch } from "../types";
-import viewMoreStyles from "./ViewMoreButton.module.css";
+import { RecentBusStopItem } from "./RecentBusStopItem";
 
 interface RecentBusStopSearchesProps {
   recentBusStops: RecentBusStopSearch[];
   onBusStopSelect?: (busStopId: string) => void;
   onViewMore?: () => void;
   limit?: number;
-}
-
-function LocationIcon() {
-  return <MapPin size={24} aria-hidden="true" />;
-}
-
-function RecentBusStopItem({
-  busStop,
-  onSelect,
-}: {
-  busStop: RecentBusStopSearch;
-  onSelect?: (id: string) => void;
-}) {
-  const handleCardClick = () => onSelect?.(busStop.id);
-  const handleActionClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onSelect?.(busStop.id);
-  };
-
-  // Don't show distance for recent searches
-  const displayDistance =
-    busStop.distance && busStop.distance !== "位置情報無効"
-      ? busStop.distance
-      : undefined;
-
-  return (
-    <BusStopCard
-      title={busStop.name}
-      subtitle={displayDistance}
-      icon={<LocationIcon />}
-      actionLabel="選択"
-      onClick={handleCardClick}
-      onActionClick={handleActionClick}
-      secondaryInfo={busStop.searchedAt}
-    />
-  );
 }
 
 export function RecentBusStopSearches({
@@ -64,7 +23,6 @@ export function RecentBusStopSearches({
   return (
     <div>
       <div className="flex items-center justify-between mb-[var(--size-spacing-lg)]">
-        <h2 className="text-[1.25rem]">バス停</h2>
         {hasMore && (
           <button
             className={viewMoreStyles.viewMoreButton}

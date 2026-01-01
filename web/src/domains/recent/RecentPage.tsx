@@ -7,8 +7,8 @@ import {
 } from "@/hooks/useSearchHistory";
 
 import styles from "./RecentPage.module.css";
-import { RecentBusStopSearches } from "./internal/RecentBusStopSearches";
-import { RecentRouteSearches } from "./internal/RecentRouteSearches";
+import { RecentBusStopSearches } from "./bus-stops/RecentBusStopSearches";
+import { RecentRouteSearches } from "./routes/RecentRouteSearches";
 
 interface RecentPageProps {
   onNavigateToRoute?: () => void;

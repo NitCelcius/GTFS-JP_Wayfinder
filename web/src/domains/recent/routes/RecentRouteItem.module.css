@@ -1,22 +1,4 @@
-/* RecentRouteSearches module */
-
-.sectionHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: var(--size-spacing-lg);
-}
-
-.heading {
-  font-size: 1.25rem;
-  font-weight: 500;
-}
-
-.emptyWrapper {
-  text-align: center;
-  padding: var(--size-spacing-2xl) 0;
-  color: var(--gray-500, #6b7280);
-}
+/* RecentRouteItem module */
 
 .listItem {
   width: 100%;
@@ -35,10 +17,12 @@
   flex-direction: column;
   gap: var(--size-spacing-sm);
 }
+
 .listItem:hover {
   box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.15);
   border-color: #d1d5db;
 }
+
 .listItem:active {
   transform: scale(0.98);
 }

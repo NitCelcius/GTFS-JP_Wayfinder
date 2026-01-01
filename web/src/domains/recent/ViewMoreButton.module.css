@@ -1,0 +1,19 @@
+.viewMoreButton {
+  margin-left: auto;
+  padding: var(--size-spacing-sm) var(--size-spacing-md);
+  color: var(--color-primary);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.viewMoreButton:hover {
+  opacity: 0.8;
+}
+
+.viewMoreButton:active {
+  opacity: 0.6;
+}

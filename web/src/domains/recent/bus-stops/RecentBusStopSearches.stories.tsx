@@ -1,13 +1,14 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { RecentBusStopSearch } from "../types";
 import { RecentBusStopSearches } from "./RecentBusStopSearches";
+import { mockRecentBusStops } from "./mockData";
 
 const meta: Meta<typeof RecentBusStopSearches> = {
-  title: "Recent/Internal/RecentBusStopSearches",
+  title: "Domains/Recent/BusStops/List",
   component: RecentBusStopSearches,
   parameters: {
     layout: "centered",
+    chromatic: { disableSnapshot: true },
   },
   tags: ["autodocs"],
   argTypes: {
@@ -19,49 +20,25 @@ const meta: Meta<typeof RecentBusStopSearches> = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const sampleBusStops: RecentBusStopSearch[] = [
-  {
-    recordId: "rec-1",
-    id: "1",
-    name: "中央公園",
-    distance: "120m",
-    searchedAt: "2時間前",
-  },
-  {
-    recordId: "rec-2",
-    id: "2",
-    name: "東駅",
-    distance: "300m",
-    searchedAt: "昨日",
-  },
-  {
-    recordId: "rec-3",
-    id: "3",
-    name: "あきた芸術劇場ミルハス・にぎわい交流館 AU 前",
-    distance: "500m",
-    searchedAt: "3日前",
-  },
-];
-
 export const WithRecentSearches: Story = {
   args: {
-    recentBusStops: sampleBusStops,
+    recentBusStops: mockRecentBusStops,
     onBusStopSelect: (busStopId: string) => console.log("Selected:", busStopId),
     onViewMore: () => console.log("View more clicked"),
   },
 };
 
-export const Empty: Story = {
+export const EmptyState: Story = {
   args: {
     recentBusStops: [],
     onBusStopSelect: (busStopId: string) => console.log("Selected:", busStopId),
-    onViewMore: () => console.log("View more clicked"),
   },
 };
 
-export const SingleItem: Story = {
+export const WithLimit: Story = {
   args: {
-    recentBusStops: [sampleBusStops[0]],
+    recentBusStops: mockRecentBusStops,
+    limit: 2,
     onBusStopSelect: (busStopId: string) => console.log("Selected:", busStopId),
     onViewMore: () => console.log("View more clicked"),
   },

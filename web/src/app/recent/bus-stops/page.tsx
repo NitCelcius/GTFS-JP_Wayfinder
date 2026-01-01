@@ -2,9 +2,9 @@
 
 import { useRouter } from "next/navigation";
 
-import { AllRecentBusStopsPage } from "@/domains/recent";
+import { RecentBusStopsContainer } from "@/domains/recent";
 
-export default function AllRecentBusStopsPageContainer() {
+export default function RecentBusStopsPageRoute() {
   const router = useRouter();
 
   const gotoBusStopInfo = (id: string) => {
@@ -16,7 +16,7 @@ export default function AllRecentBusStopsPageContainer() {
   };
 
   return (
-    <AllRecentBusStopsPage
+    <RecentBusStopsContainer
       onNavigateToBusStopInfo={gotoBusStopInfo}
       onBack={handleBack}
     />
