@@ -16,12 +16,12 @@ _wf_lock = threading.Lock()
 
 def initialize(data_dir: str, use_cache_graph: bool = False):
     """Initialize the singleton AkitaBusWayFinder instance.
-    
+
     Args:
         data_dir: Directory path containing GTFS data files.
         use_cache_graph: If True, use cached graph data if available and valid.
                         If False (default), always generate graphs from scratch.
-    
+
     Returns:
         The initialized AkitaBusWayFinder instance.
     """
