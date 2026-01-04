@@ -8,7 +8,11 @@ function SearchHeader() {
       <div className={styles.searchHeaderTitle}>
         <p className={styles.searchHeaderText}>検索条件</p>
       </div>
-      <Button text="リセット" variant="reset" onClick={() => {}} />
+      <Button
+        text="リセット"
+        className={styles.resetButton}
+        onClick={() => {}}
+      />
     </div>
   );
 }

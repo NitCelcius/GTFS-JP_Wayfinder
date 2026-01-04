@@ -98,6 +98,10 @@
   text-decoration-line: underline;
   white-space: pre;
 }
+.resetButton {
+  background-color: transparent;
+  padding: var(--spacing-sm) var(--spacing-md);
+}
 .departureTimeText {
   white-space: pre;
 }
