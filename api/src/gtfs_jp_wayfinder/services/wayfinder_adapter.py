@@ -565,7 +565,9 @@ def get_stops_from_trip(
             ]
 
             # Fetch all fares at once with a single bulk operation
-            fare_map = get_fares_bulk(origin_stop_id, dest_stop_ids) if dest_stop_ids else {}
+            fare_map = (
+                get_fares_bulk(origin_stop_id, dest_stop_ids) if dest_stop_ids else {}
+            )
 
             # Populate fare field for each record
             for idx, r in enumerate(records):

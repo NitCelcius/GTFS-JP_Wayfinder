@@ -80,11 +80,7 @@ export function PlatformSwitchModal({
             <div className={styles.errorContainer}>
               <p className={styles.errorText}>{error}</p>
             </div>
-          ) : platforms.length === 0 ? (
-            <div className={styles.emptyContainer}>
-              <p>この停留所には他ののりばがありません</p>
-            </div>
-          ) : platforms.length === 1 ? (
+          ) : platforms.length <= 1 ? (
             <div className={styles.emptyContainer}>
               <p>この停留所には他ののりばがありません</p>
             </div>

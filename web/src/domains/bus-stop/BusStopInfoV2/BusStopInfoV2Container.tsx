@@ -280,8 +280,8 @@ export function BusStopInfoV2Container({
           stopName,
           busStopId,
           {
-              platformCode,
-              distance: "", // Distance will be calculated with geolocation
+            platformCode,
+            distance: "", // Distance will be calculated with geolocation
             lat,
             lon,
             currentTime: now,
@@ -290,8 +290,8 @@ export function BusStopInfoV2Container({
 
         // Convert to V2 format
         setBusStopName(busStopInfo.busStop?.name || stopName);
-          setPlatformCode(stopPlatformCode);
-          // Distance will be set by geolocation effect
+        setPlatformCode(stopPlatformCode);
+        // Distance will be set by geolocation effect
 
         // Convert buses to V2 format
         const convertedBuses: UpcomingBusInfo[] =

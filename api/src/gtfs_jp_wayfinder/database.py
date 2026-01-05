@@ -793,9 +793,7 @@ class AkitaBusWayFinder:
 
         return agencies
 
-    def get_same_name_stops(
-        self, stop_id: str
-    ) -> list[dict[str, str | float | None]]:
+    def get_same_name_stops(self, stop_id: str) -> list[dict[str, str | float | None]]:
         """Get all stops with the same name as the given stop_id.
 
         This is used for platform switching (のりば切替) functionality to find
