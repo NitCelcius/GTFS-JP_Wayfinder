@@ -186,6 +186,55 @@ export type PathResponse = {
 };
 
 /**
+ * PlatformStop
+ * A bus stop with platform information.
+ *
+ * Used for platform switching (のりば切替) functionality to show
+ * available platforms at a bus stop location.
+ */
+export type PlatformStop = {
+    /**
+     * Stop Id
+     * 停留所ID
+     */
+    stop_id: string;
+    /**
+     * Stop Name
+     * 停留所名
+     */
+    stop_name: string;
+    /**
+     * Platform Code
+     * のりば番号 (例: "1", "2"など)
+     */
+    platform_code?: string | null;
+    /**
+     * Lat
+     * 緯度 (度単位)
+     */
+    lat: number;
+    /**
+     * Lon
+     * 経度 (度単位)
+     */
+    lon: number;
+};
+
+/**
+ * SameNameStopsResponse
+ * Response containing all stops with the same name.
+ *
+ * Used for platform switching (のりば切替) functionality.
+ */
+export type SameNameStopsResponse = {
+    /**
+     * Stops
+     * 同じ名前を持つ停留所の一覧（のりば違い）
+     */
+    stops: Array<PlatformStop>;
+};
+
+/**
  * StopIdAndName
  */
 export type StopIdAndName = {
@@ -565,6 +614,40 @@ export type GetBusStopInfoStopsStopIdGetResponses = {
 };
 
 export type GetBusStopInfoStopsStopIdGetResponse = GetBusStopInfoStopsStopIdGetResponses[keyof GetBusStopInfoStopsStopIdGetResponses];
+
+export type GetSameNameStopsStopsStopIdPlatformsGetData = {
+    body?: never;
+    path: {
+        /**
+         * Stop Id
+         */
+        stop_id: string;
+    };
+    query?: never;
+    url: '/stops/{stop_id}/platforms';
+};
+
+export type GetSameNameStopsStopsStopIdPlatformsGetErrors = {
+    /**
+     * 停留所が見つからない場合
+     */
+    400: unknown;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetSameNameStopsStopsStopIdPlatformsGetError = GetSameNameStopsStopsStopIdPlatformsGetErrors[keyof GetSameNameStopsStopsStopIdPlatformsGetErrors];
+
+export type GetSameNameStopsStopsStopIdPlatformsGetResponses = {
+    /**
+     * 成功
+     */
+    200: SameNameStopsResponse;
+};
+
+export type GetSameNameStopsStopsStopIdPlatformsGetResponse = GetSameNameStopsStopsStopIdPlatformsGetResponses[keyof GetSameNameStopsStopsStopIdPlatformsGetResponses];
 
 export type SearchStopsStopsGetData = {
     body?: never;

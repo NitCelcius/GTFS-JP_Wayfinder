@@ -516,6 +516,41 @@ class Agency(BaseModel):
     }
 
 
+class PlatformStop(BaseModel):
+    """A bus stop with platform information.
+
+    Used for platform switching (のりば切替) functionality to show
+    available platforms at a bus stop location.
+    """
+
+    stop_id: str = Field(..., description="停留所ID")
+    stop_name: str = Field(..., description="停留所名")
+    platform_code: str | None = Field(None, description='のりば番号 (例: "1", "2"など)')
+    lat: float = Field(..., ge=-90, le=90, description="緯度 (度単位)")
+    lon: float = Field(..., ge=-180, le=180, description="経度 (度単位)")
+
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "stop_id": "1022_02",
+                    "stop_name": "秋田駅西口",
+                    "platform_code": "2",
+                    "lat": 39.71729,
+                    "lon": 140.12843,
+                },
+                {
+                    "stop_id": "1022_03",
+                    "stop_name": "秋田駅西口",
+                    "platform_code": "3",
+                    "lat": 39.71719,
+                    "lon": 140.12843,
+                },
+            ],
+        },
+    }
+
+
 class AgencyListResponse(BaseModel):
     """Response containing list of agencies.
 
@@ -541,6 +576,42 @@ class AgencyListResponse(BaseModel):
                             "agency_phone": None,
                             "agency_fare_url": None,
                             "agency_email": None,
+                        },
+                    ],
+                },
+            ],
+        },
+    }
+
+
+class SameNameStopsResponse(BaseModel):
+    """Response containing all stops with the same name.
+
+    Used for platform switching (のりば切替) functionality.
+    """
+
+    stops: list[PlatformStop] = Field(
+        ..., description="同じ名前を持つ停留所の一覧（のりば違い）"
+    )
+
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "stops": [
+                        {
+                            "stop_id": "1022_02",
+                            "stop_name": "秋田駅西口",
+                            "platform_code": "2",
+                            "lat": 39.71729,
+                            "lon": 140.12843,
+                        },
+                        {
+                            "stop_id": "1022_03",
+                            "stop_name": "秋田駅西口",
+                            "platform_code": "3",
+                            "lat": 39.71719,
+                            "lon": 140.12843,
                         },
                     ],
                 },

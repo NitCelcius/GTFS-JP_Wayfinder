@@ -774,3 +774,17 @@ def get_agency_info():
     if not wf_service.is_ready():
         raise RuntimeError("Wayfinder not initialized")
     return wf_service.get_agency_info()
+
+
+def get_same_name_stops(stop_id: str) -> list[dict[str, str | float | None]]:
+    """Get all stops with the same name as the given stop_id.
+
+    This is used for platform switching (のりば切替) functionality.
+
+    Args:
+        stop_id: The stop ID to find same-name stops for.
+
+    Returns:
+        List of dicts with stop_id, stop_name, platform_code, stop_lat, stop_lon.
+    """
+    return wf_service.get_same_name_stops(stop_id)

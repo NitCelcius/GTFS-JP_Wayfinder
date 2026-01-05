@@ -251,6 +251,20 @@ def test_get_same_name_stops_returns_all_connected_stops(wayfinder_instance):
     """
     Test that get_same_name_stops returns all same-name stops including the original.
     """
+    import pandas as pd
+
+    # Set up df_stops with same-name stops
+    mock_stops = pd.DataFrame(
+        {
+            "stop_id": ["akita-eki_01", "akita-eki_02", "akita-eki_03"],
+            "stop_name": ["秋田駅東口", "秋田駅東口", "秋田駅東口"],
+            "platform_code": ["1", "2", "3"],
+            "stop_lat": [39.71729, 39.71729, 39.71719],
+            "stop_lon": [140.12843, 140.12843, 140.12843],
+        }
+    )
+    wayfinder_instance.df_stops = mock_stops
+
     # Set up walk transfer pairs
     wayfinder_instance._walk_transfer_pairs = {
         ("akita-eki_01", "akita-eki_02"),
@@ -263,9 +277,10 @@ def test_get_same_name_stops_returns_all_connected_stops(wayfinder_instance):
 
     # Should return all same-name stops
     same_name_stops = wayfinder_instance.get_same_name_stops("akita-eki_01")
-    assert "akita-eki_01" in same_name_stops  # Original stop
-    assert "akita-eki_02" in same_name_stops  # Same-name stop
-    assert "akita-eki_03" in same_name_stops  # Same-name stop
+    stop_ids = [stop["stop_id"] for stop in same_name_stops]
+    assert "akita-eki_01" in stop_ids  # Original stop
+    assert "akita-eki_02" in stop_ids  # Same-name stop
+    assert "akita-eki_03" in stop_ids  # Same-name stop
     assert len(same_name_stops) == 3
 
 
@@ -275,10 +290,24 @@ def test_get_same_name_stops_returns_only_original_when_no_transfers(
     """
     Test that get_same_name_stops returns only the original stop when no walk transfers exist.
     """
+    import pandas as pd
+
+    # Set up df_stops with a unique stop
+    mock_stops = pd.DataFrame(
+        {
+            "stop_id": ["unique_stop"],
+            "stop_name": ["ユニーク停留所"],
+            "platform_code": ["1"],
+            "stop_lat": [39.71729],
+            "stop_lon": [140.12843],
+        }
+    )
+    wayfinder_instance.df_stops = mock_stops
     wayfinder_instance._walk_transfer_pairs = set()
 
     same_name_stops = wayfinder_instance.get_same_name_stops("unique_stop")
-    assert same_name_stops == ["unique_stop"]
+    assert len(same_name_stops) == 1
+    assert same_name_stops[0]["stop_id"] == "unique_stop"
 
 
 def test_get_trip_journey_uses_same_name_stop_for_fare_calculation(
@@ -289,6 +318,18 @@ def test_get_trip_journey_uses_same_name_stop_for_fare_calculation(
     when the provided from_stop_id is not directly on the trip.
     """
     import pandas as pd
+
+    # Set up df_stops with same-name stops
+    mock_stops = pd.DataFrame(
+        {
+            "stop_id": ["akita-eki_01", "akita-eki_02", "chuo-koen_01", "ion-mall_01"],
+            "stop_name": ["秋田駅東口", "秋田駅東口", "中央公園", "イオンモール"],
+            "platform_code": ["1", "2", "1", "1"],
+            "stop_lat": [39.71729, 39.71729, 39.7177, 39.718],
+            "stop_lon": [140.12843, 140.12843, 140.129, 140.130],
+        }
+    )
+    wayfinder_instance.df_stops = mock_stops
 
     # Set up walk transfer pairs: akita-eki_01 and akita-eki_02 are same-name stops
     wayfinder_instance._walk_transfer_pairs = {
