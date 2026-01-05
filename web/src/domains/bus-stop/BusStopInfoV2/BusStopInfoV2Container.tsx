@@ -28,6 +28,10 @@ export function BusStopInfoV2Container({
   const [upcomingBuses, setUpcomingBuses] = useState<UpcomingBusInfo[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [coordinates, setCoordinates] = useState<{
+    lat: number;
+    lon: number;
+  } | null>(null);
 
   useEffect(() => {
     if (!busStopId) {
@@ -83,6 +87,8 @@ export function BusStopInfoV2Container({
           if (stopData?.location) {
             lat = stopData.location.lat;
             lon = stopData.location.lon;
+            // Store coordinates for walk navigation
+            setCoordinates({ lat, lon });
           }
         } catch (stopError) {
           console.warn("Failed to fetch stop info:", stopError);
@@ -162,7 +168,30 @@ export function BusStopInfoV2Container({
       error={error}
       onBack={onBack}
       onRoutineSearch={onNavigateToRoute}
-      onWalkDirections={() => console.log("Walk directions")} // TODO: Implement transition to walk directions
+      onWalkDirections={() => {
+        if (!coordinates) {
+          console.error(
+            "Cannot open walking directions: coordinates not available"
+          );
+          return;
+        }
+        // Validate coordinates are within valid geographic ranges
+        if (
+          !isFinite(coordinates.lat) ||
+          !isFinite(coordinates.lon) ||
+          coordinates.lat < -90 ||
+          coordinates.lat > 90 ||
+          coordinates.lon < -180 ||
+          coordinates.lon > 180
+        ) {
+          console.error("Invalid coordinates:", coordinates);
+          return;
+        }
+        // Google Maps URL with walking directions from current location
+        // On mobile devices, this will typically open the native maps app
+        const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${coordinates.lat},${coordinates.lon}&travelmode=walking`;
+        window.open(mapsUrl, "_blank", "noopener,noreferrer");
+      }}
       onTransfer={() => console.log("Transfer")} // TODO: Implement transition to transfer search
       onRouteList={() => console.log("Route list")} // TODO: Implement transition to route list
       onBusClick={(bus) => {
