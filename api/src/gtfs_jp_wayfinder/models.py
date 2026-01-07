@@ -460,3 +460,73 @@ class NearbyStopsResponse(BaseModel):
             ],
         },
     }
+
+
+class Agency(BaseModel):
+    """GTFS agency information.
+
+    Represents a transit agency from agency.txt. Contains identifying information
+    and contact details for the transit provider.
+    """
+
+    agency_id: str = Field(..., description="Unique identifier for the agency")
+    agency_name: str = Field(..., description="Full name of the transit agency")
+    agency_url: str = Field(..., description="URL of the transit agency website")
+    agency_timezone: str = Field(
+        ..., description="Timezone where the transit agency is located (IANA format)"
+    )
+    agency_lang: str | None = Field(
+        None, description="Primary language used by this transit agency (ISO 639-1)"
+    )
+    agency_phone: str | None = Field(
+        None, description="Voice telephone number for the agency"
+    )
+    agency_fare_url: str | None = Field(
+        None, description="URL of a web page with fare information"
+    )
+
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "agency_id": "3410001000459",
+                    "agency_name": "秋田中央交通",
+                    "agency_url": "https://www.akita-chuoukotsu.co.jp/",
+                    "agency_timezone": "Asia/Tokyo",
+                    "agency_lang": "ja",
+                    "agency_phone": None,
+                    "agency_fare_url": None,
+                },
+            ],
+        },
+    }
+
+
+class AgencyListResponse(BaseModel):
+    """Response containing list of agencies.
+
+    Note: Currently GTFS-JP data typically contains a single agency,
+    but this structure supports multiple agencies for future compatibility.
+    """
+
+    agencies: list[Agency]
+
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "agencies": [
+                        {
+                            "agency_id": "3410001000459",
+                            "agency_name": "秋田中央交通",
+                            "agency_url": "https://www.akita-chuoukotsu.co.jp/",
+                            "agency_timezone": "Asia/Tokyo",
+                            "agency_lang": "ja",
+                            "agency_phone": None,
+                            "agency_fare_url": None,
+                        },
+                    ],
+                },
+            ],
+        },
+    }

@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from gtfs_jp_wayfinder.routers import path, stops, trips
+from gtfs_jp_wayfinder.routers import agency, path, stops, trips
 from gtfs_jp_wayfinder.services import wayfinder_adapter
 
 logger = logging.getLogger(__name__)
@@ -132,6 +132,7 @@ else:
         **cors_params,
     )
 
+app.include_router(agency.router, prefix="/agency", tags=["agency"])
 app.include_router(stops.router, prefix="/stops", tags=["stops"])
 app.include_router(trips.router, prefix="/trips", tags=["trips"])
 app.include_router(path.router, prefix="/path", tags=["path"])
