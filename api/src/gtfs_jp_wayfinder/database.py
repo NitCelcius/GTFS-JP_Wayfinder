@@ -57,6 +57,7 @@ class AkitaBusWayFinder:
         self.df_fare_id_cost = None
         self.df_trips = None
         self.df_routes = None
+        self.df_agency = None
         self.date_to_service_id = None
         self.graph = None
         self.graph_via_service_id = dict()
@@ -210,6 +211,8 @@ class AkitaBusWayFinder:
         # Try to read agency_timezone from GTFS data; fall back to Asia/Tokyo, then UTC
         try:
             agency_df = pd.read_csv(base_dir + "agency.txt")
+            # Store the agency DataFrame for later retrieval
+            self.df_agency = agency_df
             if "agency_timezone" in agency_df.columns and not agency_df.empty:
                 tz_value = str(agency_df.iloc[0]["agency_timezone"])
                 if tz_value:
@@ -538,6 +541,43 @@ class AkitaBusWayFinder:
             return str(int(platform_code))
         except (ValueError, TypeError):
             return str(platform_code)
+
+    def get_agency_info(self):
+        """Get agency information from agency.txt as a list of dicts.
+
+        Returns:
+            List of dictionaries containing agency information. Each dict contains:
+            - agency_id: Agency ID
+            - agency_name: Agency name
+            - agency_url: Agency URL
+            - agency_timezone: IANA timezone name
+            - agency_lang: Language code (optional)
+            - agency_phone: Phone number (optional)
+            - agency_fare_url: Fare information URL (optional)
+
+        Note:
+            Currently GTFS-JP data typically contains a single agency,
+            but this returns a list for future multi-agency support.
+        """
+        if self.df_agency is None or self.df_agency.empty:
+            return []
+
+        # Convert DataFrame to list of dicts, replacing NaN with None
+        agencies = []
+        for _, row in self.df_agency.iterrows():
+            agency_dict = {}
+            for col in self.df_agency.columns:
+                value = row[col]
+                # Convert pandas NA/NaN to None, and convert numpy types to Python types
+                if pd.isna(value):
+                    agency_dict[col] = None
+                elif isinstance(value, (np.integer, np.floating)):
+                    agency_dict[col] = value.item()
+                else:
+                    agency_dict[col] = str(value) if value else None
+            agencies.append(agency_dict)
+
+        return agencies
 
     # バス停の名前からidに変換する
     #   None | DataFrame[{ "stop_id": str, "stop_name": str }]

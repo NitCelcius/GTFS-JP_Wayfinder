@@ -697,3 +697,14 @@ def merge_date_and_time_to_iso(
         raise ValueError(
             f"Error merging date and time: date={reference_date}, time={time_str}"
         ) from e
+
+
+def get_agency_info():
+    """Get agency information from agency.txt.
+
+    Returns:
+        List of dictionaries containing agency information.
+    """
+    if not wf_service.is_ready():
+        raise RuntimeError("Wayfinder not initialized")
+    return wf_service.get_agency_info()

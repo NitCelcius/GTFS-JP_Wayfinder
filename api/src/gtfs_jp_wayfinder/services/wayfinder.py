@@ -219,3 +219,15 @@ def get_agency_timezone() -> str:
     if _wf is None:
         raise RuntimeError("Wayfinder not initialized")
     return _wf.agency_timezone
+
+
+def get_agency_info():
+    """Get agency information from agency.txt.
+
+    Returns:
+        List of dictionaries containing agency information. See
+        AkitaBusWayFinder.get_agency_info() for details.
+    """
+    if _wf is None:
+        raise RuntimeError("Wayfinder not initialized")
+    return _wf.get_agency_info()
