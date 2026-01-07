@@ -574,7 +574,8 @@ class AkitaBusWayFinder:
                 elif isinstance(value, (np.integer, np.floating)):
                     agency_dict[col] = value.item()
                 else:
-                    agency_dict[col] = str(value) if value else None
+                    # Preserve empty strings and other values, only convert to string
+                    agency_dict[col] = str(value)
             agencies.append(agency_dict)
 
         return agencies
