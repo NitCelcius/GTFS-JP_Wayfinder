@@ -94,7 +94,7 @@ export function RouteSearchPage({
   useEffect(() => {
     const savedInputs = getRouteSearchInputs();
     if (savedInputs) {
-      console.log("Restoring saved route search inputs:", {
+      console.debug("Restoring saved route search inputs:", {
         origin: savedInputs.originStopName,
         destination: savedInputs.destinationStopName,
         savedAt: new Date(savedInputs.timestamp).toISOString(),
