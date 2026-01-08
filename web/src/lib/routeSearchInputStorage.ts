@@ -47,18 +47,20 @@ export function saveRouteSearchInputs(state: {
  * Validate route search input state structure
  */
 function isValidRouteSearchInputState(
-  state: any
+  state: unknown
 ): state is RouteSearchInputState {
   return (
     typeof state === "object" &&
     state !== null &&
-    typeof state.originStopId === "string" &&
-    typeof state.destinationStopId === "string" &&
-    typeof state.originStopName === "string" &&
-    typeof state.destinationStopName === "string" &&
-    Array.isArray(state.originCandidateStopIds) &&
-    Array.isArray(state.destinationCandidateStopIds) &&
-    typeof state.timestamp === "number"
+    typeof (state as RouteSearchInputState).originStopId === "string" &&
+    typeof (state as RouteSearchInputState).destinationStopId === "string" &&
+    typeof (state as RouteSearchInputState).originStopName === "string" &&
+    typeof (state as RouteSearchInputState).destinationStopName === "string" &&
+    Array.isArray((state as RouteSearchInputState).originCandidateStopIds) &&
+    Array.isArray(
+      (state as RouteSearchInputState).destinationCandidateStopIds
+    ) &&
+    typeof (state as RouteSearchInputState).timestamp === "number"
   );
 }
 
@@ -88,6 +90,13 @@ export function getRouteSearchInputs(): RouteSearchInputState | null {
 
     const now = Date.now();
     const elapsed = now - state.timestamp;
+
+    // Reject future timestamps (no time machine allowed)
+    if (elapsed < 0) {
+      console.warn("Invalid route search input: timestamp is in the future");
+      clearRouteSearchInputs();
+      return null;
+    }
 
     // Check if data has expired (more than 5 minutes old)
     if (elapsed > EXPIRY_TIME_MS) {
