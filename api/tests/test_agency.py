@@ -138,5 +138,23 @@ def test_agency_endpoint_with_multiple_agencies(monkeypatch, client):
 
     data = response.json()
     assert len(data["agencies"]) == 2
-    assert data["agencies"][0]["agency_id"] == "agency_1"
-    assert data["agencies"][1]["agency_id"] == "agency_2"
+
+    # Check all properties of first agency
+    first_agency = data["agencies"][0]
+    assert first_agency["agency_id"] == "agency_1"
+    assert first_agency["agency_name"] == "First Agency"
+    assert first_agency["agency_url"] == "https://first.example.com"
+    assert first_agency["agency_timezone"] == "Asia/Tokyo"
+    assert first_agency["agency_lang"] == "ja"
+    assert first_agency["agency_phone"] is None
+    assert first_agency["agency_fare_url"] is None
+
+    # Check all properties of second agency
+    second_agency = data["agencies"][1]
+    assert second_agency["agency_id"] == "agency_2"
+    assert second_agency["agency_name"] == "Second Agency"
+    assert second_agency["agency_url"] == "https://second.example.com"
+    assert second_agency["agency_timezone"] == "Asia/Tokyo"
+    assert second_agency["agency_lang"] == "ja"
+    assert second_agency["agency_phone"] is None
+    assert second_agency["agency_fare_url"] is None

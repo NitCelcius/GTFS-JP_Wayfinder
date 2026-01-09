@@ -467,6 +467,13 @@ class Agency(BaseModel):
 
     Represents a transit agency from agency.txt. Contains identifying information
     and contact details for the transit provider.
+
+    The fields defined here match the standard GTFS specification. Some GTFS-JP
+    implementations may include additional custom fields beyond the spec.
+
+    TODO: Consider supporting retrieval of custom/extension fields that may be
+    present in some GTFS-JP implementations while maintaining type safety for
+    known fields.
     """
 
     agency_id: str = Field(..., description="Unique identifier for the agency")
@@ -507,6 +514,8 @@ class AgencyListResponse(BaseModel):
 
     Note: Currently GTFS-JP data typically contains a single agency,
     but this structure supports multiple agencies for future compatibility.
+
+    TODO: Support multiple agencies when GTFS-JP data contains multiple providers.
     """
 
     agencies: list[Agency]
