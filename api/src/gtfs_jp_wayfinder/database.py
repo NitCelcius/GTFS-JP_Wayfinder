@@ -546,8 +546,8 @@ class AkitaBusWayFinder:
         """Get agency information from agency.txt as a list of dicts.
 
         Returns:
-            List of dictionaries containing agency information. Each dict contains:
-            - agency_id: Agency ID
+            List of dictionaries containing agency information with known GTFS fields:
+            - agency_id: Agency ID (converted to string)
             - agency_name: Agency name
             - agency_url: Agency URL
             - agency_timezone: IANA timezone name
@@ -556,23 +556,45 @@ class AkitaBusWayFinder:
             - agency_fare_url: Fare information URL (optional)
 
         Note:
+            Only known GTFS/GTFS-JP fields are returned. Any additional custom fields
+            in the agency.txt file will be ignored. This ensures type safety and
+            consistency with the Agency Pydantic model.
+
             Currently GTFS-JP data typically contains a single agency,
             but this returns a list for future multi-agency support.
         """
         if self.df_agency is None or self.df_agency.empty:
             return []
 
+        # Define known GTFS agency fields that match our Pydantic model
+        known_fields = {
+            "agency_id",
+            "agency_name",
+            "agency_url",
+            "agency_timezone",
+            "agency_lang",
+            "agency_phone",
+            "agency_fare_url",
+        }
+
         # Convert DataFrame to list of dicts, replacing NaN with None
         agencies = []
         for _, row in self.df_agency.iterrows():
             agency_dict = {}
-            for col in self.df_agency.columns:
+            for col in known_fields:
+                if col not in self.df_agency.columns:
+                    # Field not present in the data, set to None if optional
+                    if col in {"agency_lang", "agency_phone", "agency_fare_url"}:
+                        agency_dict[col] = None
+                    continue
+
                 value = row[col]
                 # Convert pandas NA/NaN to None, and convert numpy types to Python types
                 if pd.isna(value):
                     agency_dict[col] = None
                 elif isinstance(value, (np.integer, np.floating)):
-                    agency_dict[col] = value.item()
+                    # Convert numeric types to their Python equivalents, then to string
+                    agency_dict[col] = str(value.item())
                 else:
                     # Preserve empty strings and other values, only convert to string
                     agency_dict[col] = str(value)
