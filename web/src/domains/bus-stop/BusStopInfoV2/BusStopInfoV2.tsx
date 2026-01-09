@@ -45,6 +45,7 @@ interface BusStopInfoV2Props {
   onTransfer?: () => void;
   onRouteList?: () => void;
   onBusClick?: (bus: UpcomingBusInfo) => void;
+  hasValidCoordinates?: boolean;
 }
 
 export function BusStopInfoV2({
@@ -61,6 +62,7 @@ export function BusStopInfoV2({
   onTransfer,
   onRouteList,
   onBusClick,
+  hasValidCoordinates = false,
 }: BusStopInfoV2Props) {
   const [displayBuses, setDisplayBuses] = useState<UpcomingBusInfo[]>([]);
   const scrollableContentRef = useRef<HTMLDivElement>(null);
@@ -100,13 +102,18 @@ export function BusStopInfoV2({
       onClick: () => onRoutineSearch?.(),
       ariaLabel: "Search destinations",
     },
-    {
-      icon: <Footprints size={24} />,
-      label: "徒歩で行く",
-      id: "show-walk-directions",
-      onClick: () => onWalkDirections?.(),
-      ariaLabel: "Get walk directions",
-    },
+    // Only show walk directions button if coordinates are available and valid
+    ...(hasValidCoordinates
+      ? [
+          {
+            icon: <Footprints size={24} />,
+            label: "徒歩で行く",
+            id: "show-walk-directions",
+            onClick: () => onWalkDirections?.(),
+            ariaLabel: "Get walk directions",
+          },
+        ]
+      : []),
     {
       icon: <ArrowLeftRight size={24} />,
       label: "のりば切替",

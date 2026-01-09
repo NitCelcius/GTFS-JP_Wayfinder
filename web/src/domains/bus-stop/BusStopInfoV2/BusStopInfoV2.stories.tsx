@@ -100,6 +100,7 @@ export const Default: Story = {
     upcomingBuses: mockUpcomingBuses,
     isLoading: false,
     error: null,
+    hasValidCoordinates: true,
     onBack: () => console.log("Back clicked"),
     onRoutineSearch: () => console.log("Search destinations clicked"),
     onWalkDirections: () => console.log("Walk directions clicked"),
@@ -137,5 +138,12 @@ export const NoPastBus: Story = {
   args: {
     ...Default.args,
     pastBus: null,
+  },
+};
+
+export const NoCoordinates: Story = {
+  args: {
+    ...Default.args,
+    hasValidCoordinates: false,
   },
 };
