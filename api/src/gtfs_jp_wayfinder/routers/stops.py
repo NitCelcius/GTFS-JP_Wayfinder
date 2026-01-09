@@ -383,6 +383,9 @@ async def get_upcoming(
             ),
         )
 
+    # Sort buses by arrival time (earliest first)
+    enriched.sort(key=lambda trip: trip.arrival_time)
+
     return models.UpcomingBusEnriched(
         stop_id=stop_id,
         reference_date=reference_date,
