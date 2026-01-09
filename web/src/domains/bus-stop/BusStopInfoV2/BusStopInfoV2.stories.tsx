@@ -140,18 +140,3 @@ export const NoPastBus: Story = {
     pastBus: null,
   },
 };
-
-export const NoCoordinates: Story = {
-  args: {
-    ...Default.args,
-    hasValidCoordinates: false,
-  },
-};
-
-export const NoWalkDirectionsCallback: Story = {
-  args: {
-    ...Default.args,
-    hasValidCoordinates: true,
-    onWalkDirections: undefined,
-  },
-};
