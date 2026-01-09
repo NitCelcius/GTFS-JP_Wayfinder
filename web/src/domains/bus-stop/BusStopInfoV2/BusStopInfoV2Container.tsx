@@ -87,8 +87,17 @@ export function BusStopInfoV2Container({
           if (stopData?.location) {
             lat = stopData.location.lat;
             lon = stopData.location.lon;
-            // Store coordinates for walk navigation
-            setCoordinates({ lat, lon });
+            // Store coordinates for walk navigation only if valid
+            if (
+              isFinite(lat) &&
+              isFinite(lon) &&
+              lat >= -90 &&
+              lat <= 90 &&
+              lon >= -180 &&
+              lon <= 180
+            ) {
+              setCoordinates({ lat, lon });
+            }
           }
         } catch (stopError) {
           console.warn("Failed to fetch stop info:", stopError);
@@ -168,23 +177,12 @@ export function BusStopInfoV2Container({
       error={error}
       onBack={onBack}
       onRoutineSearch={onNavigateToRoute}
+      hasValidCoordinates={coordinates !== null}
       onWalkDirections={() => {
         if (!coordinates) {
           console.error(
             "Cannot open walking directions: coordinates not available"
           );
-          return;
-        }
-        // Validate coordinates are within valid geographic ranges
-        if (
-          !isFinite(coordinates.lat) ||
-          !isFinite(coordinates.lon) ||
-          coordinates.lat < -90 ||
-          coordinates.lat > 90 ||
-          coordinates.lon < -180 ||
-          coordinates.lon > 180
-        ) {
-          console.error("Invalid coordinates:", coordinates);
           return;
         }
         // Google Maps URL with walking directions from current location
