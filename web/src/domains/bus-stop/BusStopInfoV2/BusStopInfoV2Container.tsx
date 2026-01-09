@@ -183,6 +183,7 @@ export function BusStopInfoV2Container({
           console.error(
             "Cannot open walking directions: coordinates not available"
           );
+          alert("位置情報が取得できませんでした。徒歩案内を表示できません。");
           return;
         }
         // Google Maps URL with walking directions from current location

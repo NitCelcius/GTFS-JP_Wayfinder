@@ -102,8 +102,8 @@ export function BusStopInfoV2({
       onClick: () => onRoutineSearch?.(),
       ariaLabel: "Search destinations",
     },
-    // Only show walk directions button if coordinates are available and valid
-    ...(hasValidCoordinates
+    // Only show walk directions button if coordinates are available, valid, and callback is provided
+    ...(hasValidCoordinates && onWalkDirections
       ? [
           {
             icon: <Footprints size={24} />,

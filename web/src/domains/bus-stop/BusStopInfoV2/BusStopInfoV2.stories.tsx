@@ -147,3 +147,11 @@ export const NoCoordinates: Story = {
     hasValidCoordinates: false,
   },
 };
+
+export const NoWalkDirectionsCallback: Story = {
+  args: {
+    ...Default.args,
+    hasValidCoordinates: true,
+    onWalkDirections: undefined,
+  },
+};
