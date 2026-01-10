@@ -551,9 +551,10 @@ class AkitaBusWayFinder:
             - agency_name: Agency name
             - agency_url: Agency URL
             - agency_timezone: IANA timezone name
-            - agency_lang: Language code (optional)
+            - agency_lang: Language code (required in GTFS-JP)
             - agency_phone: Phone number (optional)
             - agency_fare_url: Fare information URL (optional)
+            - agency_email: Email address (optional, GTFS-JP standard)
 
         Note:
             Only known GTFS/GTFS-JP fields are returned. Any additional custom fields
@@ -562,6 +563,9 @@ class AkitaBusWayFinder:
 
             Currently GTFS-JP data typically contains a single agency,
             but this returns a list for future multi-agency support.
+
+        Raises:
+            ValueError: If required fields are missing from agency.txt
         """
         if self.df_agency is None or self.df_agency.empty:
             return []
@@ -575,7 +579,18 @@ class AkitaBusWayFinder:
             "agency_lang",
             "agency_phone",
             "agency_fare_url",
+            "agency_email",
         }
+
+        # Validate that all required fields are present in the DataFrame.
+        # If any are missing, fail fast with a clear error instead of silently
+        # constructing dicts that will later fail Pydantic validation.
+        required_fields = {"agency_id", "agency_name", "agency_url", "agency_timezone", "agency_lang"}
+        missing_required = required_fields - set(self.df_agency.columns)
+        if missing_required:
+            raise ValueError(
+                f"Missing required GTFS agency fields in agency.txt: {sorted(missing_required)}"
+            )
 
         # Convert DataFrame to list of dicts, replacing NaN with None
         agencies = []
@@ -583,9 +598,10 @@ class AkitaBusWayFinder:
             agency_dict = {}
             for col in known_fields:
                 if col not in self.df_agency.columns:
-                    # Field not present in the data, set to None if optional
-                    if col in {"agency_lang", "agency_phone", "agency_fare_url"}:
-                        agency_dict[col] = None
+                    # Field not present in the data. At this point, this can only
+                    # be an optional field because required fields are validated
+                    # above. Treat missing optional columns as None.
+                    agency_dict[col] = None
                     continue
 
                 value = row[col]

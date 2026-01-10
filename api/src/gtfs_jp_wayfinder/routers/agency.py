@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 
 from gtfs_jp_wayfinder import models
 from gtfs_jp_wayfinder.services import wayfinder_adapter as adapter
@@ -43,7 +43,10 @@ async def get_agencies():
     Note: Currently returns a single agency, but the structure supports
     multiple agencies for future GTFS-JP data with multiple providers.
     """
-    agency_data = adapter.get_agency_info()
-    # Convert list of dicts to list of Agency models
-    agencies = [models.Agency(**agency) for agency in agency_data]
-    return models.AgencyListResponse(agencies=agencies)
+    try:
+        agency_data = adapter.get_agency_info()
+        # Convert list of dicts to list of Agency models
+        agencies = [models.Agency(**agency) for agency in agency_data]
+        return models.AgencyListResponse(agencies=agencies)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e)) from e
