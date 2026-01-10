@@ -47,6 +47,7 @@ class TestAgencyEndpoint:
             "agency_lang",
             "agency_phone",
             "agency_fare_url",
+            "agency_email",
         }
         assert set(agency.keys()) == expected_fields
 
@@ -79,6 +80,7 @@ def test_agency_endpoint_with_monkeypatch(monkeypatch, client):
                 "agency_lang": "en",
                 "agency_phone": "+1-555-0100",
                 "agency_fare_url": "https://test-transit.example.com/fares",
+                "agency_email": "info@test-transit.example.com",
             }
         ]
 
@@ -101,6 +103,11 @@ def test_agency_endpoint_with_monkeypatch(monkeypatch, client):
     assert agency["agency_lang"] == "en"
     assert agency["agency_phone"] == "+1-555-0100"
     assert agency["agency_fare_url"] == "https://test-transit.example.com/fares"
+    assert agency["agency_email"] == "info@test-transit.example.com"
+    assert agency["agency_timezone"] == "America/New_York"
+    assert agency["agency_lang"] == "en"
+    assert agency["agency_phone"] == "+1-555-0100"
+    assert agency["agency_fare_url"] == "https://test-transit.example.com/fares"
 
 
 def test_agency_endpoint_with_multiple_agencies(monkeypatch, client):
@@ -116,6 +123,7 @@ def test_agency_endpoint_with_multiple_agencies(monkeypatch, client):
                 "agency_lang": "ja",
                 "agency_phone": None,
                 "agency_fare_url": None,
+                "agency_email": None,
             },
             {
                 "agency_id": "agency_2",
@@ -125,6 +133,7 @@ def test_agency_endpoint_with_multiple_agencies(monkeypatch, client):
                 "agency_lang": "ja",
                 "agency_phone": None,
                 "agency_fare_url": None,
+                "agency_email": None,
             },
         ]
 
@@ -148,6 +157,7 @@ def test_agency_endpoint_with_multiple_agencies(monkeypatch, client):
     assert first_agency["agency_lang"] == "ja"
     assert first_agency["agency_phone"] is None
     assert first_agency["agency_fare_url"] is None
+    assert first_agency["agency_email"] is None
 
     # Check all properties of second agency
     second_agency = data["agencies"][1]
@@ -156,5 +166,8 @@ def test_agency_endpoint_with_multiple_agencies(monkeypatch, client):
     assert second_agency["agency_url"] == "https://second.example.com"
     assert second_agency["agency_timezone"] == "Asia/Tokyo"
     assert second_agency["agency_lang"] == "ja"
+    assert second_agency["agency_phone"] is None
+    assert second_agency["agency_fare_url"] is None
+    assert second_agency["agency_email"] is None
     assert second_agency["agency_phone"] is None
     assert second_agency["agency_fare_url"] is None

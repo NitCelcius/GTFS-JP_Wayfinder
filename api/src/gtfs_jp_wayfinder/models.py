@@ -468,8 +468,8 @@ class Agency(BaseModel):
     Represents a transit agency from agency.txt. Contains identifying information
     and contact details for the transit provider.
 
-    The fields defined here match the standard GTFS specification. Some GTFS-JP
-    implementations may include additional custom fields beyond the spec.
+    The fields defined here match the standard GTFS and GTFS-JP specifications.
+    Some GTFS-JP implementations may include additional custom fields beyond the spec.
 
     TODO: Consider supporting retrieval of custom/extension fields that may be
     present in some GTFS-JP implementations while maintaining type safety for
@@ -482,14 +482,17 @@ class Agency(BaseModel):
     agency_timezone: str = Field(
         ..., description="Timezone where the transit agency is located (IANA format)"
     )
-    agency_lang: str | None = Field(
-        None, description="Primary language used by this transit agency (ISO 639-1)"
+    agency_lang: str = Field(
+        ..., description="Primary language used by this transit agency (ISO 639-1)"
     )
     agency_phone: str | None = Field(
         None, description="Voice telephone number for the agency"
     )
     agency_fare_url: str | None = Field(
         None, description="URL of a web page with fare information"
+    )
+    agency_email: str | None = Field(
+        None, description="Email address for the agency (GTFS-JP standard field)"
     )
 
     model_config = {
@@ -503,6 +506,7 @@ class Agency(BaseModel):
                     "agency_lang": "ja",
                     "agency_phone": None,
                     "agency_fare_url": None,
+                    "agency_email": None,
                 },
             ],
         },
@@ -533,6 +537,7 @@ class AgencyListResponse(BaseModel):
                             "agency_lang": "ja",
                             "agency_phone": None,
                             "agency_fare_url": None,
+                            "agency_email": None,
                         },
                     ],
                 },
