@@ -44,6 +44,26 @@ const eslintConfig = [
     },
   },
   {
+    // Jest setup and test files need Jest globals
+    files: [
+      "jest.setup.cjs",
+      "**/__tests__/**/*.{js,ts,jsx,tsx}",
+      "**/*.test.{js,ts,jsx,tsx}",
+    ],
+    languageOptions: {
+      globals: {
+        jest: "readonly",
+        describe: "readonly",
+        it: "readonly",
+        expect: "readonly",
+        beforeEach: "readonly",
+        afterEach: "readonly",
+        beforeAll: "readonly",
+        afterAll: "readonly",
+      },
+    },
+  },
+  {
     // Enforce CSS Modules across the web/ codebase except for allowed globals
     files: ["src/**/*.{js,ts,jsx,tsx}", "app/**/*.{js,ts,jsx,tsx}"],
     plugins: {
