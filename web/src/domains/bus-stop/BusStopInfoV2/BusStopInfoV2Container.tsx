@@ -186,8 +186,6 @@ export function BusStopInfoV2Container({
           alert("位置情報が取得できませんでした。徒歩案内を表示できません。");
           return;
         }
-        // Google Maps URL with walking directions from current location
-        // On mobile devices, this will typically open the native maps app
         const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${coordinates.lat},${coordinates.lon}&travelmode=walking`;
         window.open(mapsUrl, "_blank", "noopener,noreferrer");
       }}
