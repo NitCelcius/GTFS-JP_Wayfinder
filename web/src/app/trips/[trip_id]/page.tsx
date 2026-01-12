@@ -201,6 +201,7 @@ export default function TripDetailPage() {
       arrivalTime={tripInfo.arrivalTime}
       stopsAway={tripInfo.stopsAway}
       stops={stops}
+      routeColorText={tripInfo.routeName}
       onBack={() => router.back()}
     />
   );
