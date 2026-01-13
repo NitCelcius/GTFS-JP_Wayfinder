@@ -168,6 +168,8 @@ export function BusStopInfoV2({
         {/* Past bus indicator */}
         {pastBus && (
           <div className={styles.pastSection}>
+            <div className={styles.sectionTitle}>過去のバス</div>
+            <div className={styles.sectionDivider} />
             <SlimTripIndicator
               tripId={pastBus.tripId}
               routeNumber={pastBus.routeNumber}

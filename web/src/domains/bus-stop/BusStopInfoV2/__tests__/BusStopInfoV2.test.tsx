@@ -1,6 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 
 import { BusStopInfoV2 } from "../BusStopInfoV2";
+import type { UpcomingBusInfo } from "../BusStopInfoV2";
 
 describe("BusStopInfoV2 - Walk Directions Button Visibility", () => {
   const props = {
@@ -166,5 +167,68 @@ describe("BusStopInfoV2 - ShareModal Integration", () => {
     expect(
       screen.getByText(`${mockBusStopName} - バス停情報`)
     ).toBeInTheDocument();
+  });
+});
+
+describe("BusStopInfoV2 - Past Bus Display", () => {
+  const upcomingBuses: UpcomingBusInfo[] = [
+    {
+      tripId: "trip-001",
+      routeNumber: "400",
+      routeName: "秋田御所野線",
+      destination: "秋田駅東口",
+      destinationLabel: "行",
+      minutesUntilDeparture: 15,
+      departureTime: "12:34",
+      cost: 400,
+      stopsUntilArrival: "2駅前に到着",
+      routeColorText: "秋田御所野線",
+    },
+  ];
+
+  const pastBus: UpcomingBusInfo = {
+    tripId: "trip-past",
+    routeNumber: "314",
+    routeName: "過去",
+    destination: "秋田駅東口",
+    destinationLabel: "行",
+    minutesUntilDeparture: -12,
+    departureTime: "12:22",
+    isPast: true,
+    routeColorText: "過去",
+  };
+
+  it("should display past bus section when pastBus is provided", () => {
+    render(
+      <BusStopInfoV2
+        busStopName="テストバス停"
+        pastBus={pastBus}
+        upcomingBuses={upcomingBuses}
+      />
+    );
+
+    expect(screen.getByText("過去のバス")).toBeInTheDocument();
+    expect(screen.getByText("過去")).toBeInTheDocument();
+    expect(screen.getByText("12分前")).toBeInTheDocument();
+  });
+
+  it("should not display past bus section when pastBus is null", () => {
+    render(
+      <BusStopInfoV2
+        busStopName="テストバス停"
+        pastBus={null}
+        upcomingBuses={upcomingBuses}
+      />
+    );
+
+    expect(screen.queryByText("過去のバス")).not.toBeInTheDocument();
+  });
+
+  it("should display upcoming buses section title", () => {
+    render(
+      <BusStopInfoV2 busStopName="テストバス停" upcomingBuses={upcomingBuses} />
+    );
+
+    expect(screen.getByText("今後のバス")).toBeInTheDocument();
   });
 });

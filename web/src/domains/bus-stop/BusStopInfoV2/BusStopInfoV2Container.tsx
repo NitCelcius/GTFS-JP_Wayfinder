@@ -294,12 +294,28 @@ export function BusStopInfoV2Container({
             };
           });
 
-        setUpcomingBuses(convertedBuses);
+        // Separate past buses from upcoming buses
+        const pastBuses = convertedBuses.filter(
+          (bus) => bus.minutesUntilDeparture < 0
+        );
+        const futureBuses = convertedBuses.filter(
+          (bus) => bus.minutesUntilDeparture >= 0
+        );
 
-        // Set past bus if available (first bus as reference)
-        if (convertedBuses.length > 0) {
-          setPastBus(null); // For now, we don't display past buses
+        // Set the most recent past bus (largest negative value = closest to 0)
+        if (pastBuses.length > 0) {
+          const mostRecentPastBus = pastBuses.reduce((prev, current) =>
+            current.minutesUntilDeparture > prev.minutesUntilDeparture
+              ? current
+              : prev
+          );
+          setPastBus({ ...mostRecentPastBus, isPast: true });
+        } else {
+          setPastBus(null);
         }
+
+        // Only set upcoming buses (future buses)
+        setUpcomingBuses(futureBuses);
       } catch (err) {
         if (err instanceof Error && err.name === "AbortError") {
           return;
