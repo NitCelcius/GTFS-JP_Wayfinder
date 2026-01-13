@@ -189,13 +189,13 @@ describe("BusStopInfoV2 - Past Bus Display", () => {
   const pastBus: UpcomingBusInfo = {
     tripId: "trip-past",
     routeNumber: "314",
-    routeName: "過去",
+    routeName: "秋田市内線",
     destination: "秋田駅東口",
     destinationLabel: "行",
     minutesUntilDeparture: -12,
     departureTime: "12:22",
     isPast: true,
-    routeColorText: "過去",
+    routeColorText: "秋田市内線",
   };
 
   it("should display past bus section when pastBus is provided", () => {
@@ -208,7 +208,7 @@ describe("BusStopInfoV2 - Past Bus Display", () => {
     );
 
     expect(screen.getByText("過去のバス")).toBeInTheDocument();
-    expect(screen.getByText("過去")).toBeInTheDocument();
+    expect(screen.getByText("秋田市内線")).toBeInTheDocument();
     expect(screen.getByText("12分前")).toBeInTheDocument();
   });
 

@@ -302,7 +302,11 @@ export function BusStopInfoV2Container({
           (bus) => bus.minutesUntilDeparture >= 0
         );
 
-        // Set the most recent past bus (largest negative value = closest to 0)
+        // Set the most recent past bus
+        // We find the largest negative value (closest to 0) because:
+        // - Past buses have negative minutesUntilDeparture (e.g., -5, -10, -15)
+        // - The largest negative value (-5) represents the most recently departed bus
+        // - This is the most relevant past bus for users to see
         if (pastBuses.length > 0) {
           const mostRecentPastBus = pastBuses.reduce((prev, current) =>
             current.minutesUntilDeparture > prev.minutesUntilDeparture
