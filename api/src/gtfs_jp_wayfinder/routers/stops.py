@@ -388,6 +388,7 @@ async def get_upcoming(
         )
 
     # Filter out buses that end at this stop unless include_ending=True
+    # Note: Trips with None destination_stop_id are kept (treated as passing through)
     if not include_ending:
         enriched = [
             trip
