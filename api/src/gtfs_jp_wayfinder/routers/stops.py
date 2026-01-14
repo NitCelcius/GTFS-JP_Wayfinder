@@ -220,7 +220,7 @@ async def search_stops(
     "/{stop_id}/upcoming",
     response_model=models.UpcomingBusEnriched,
     summary="停留所の発着予定取得",
-    description="指定停留所に来るバスの運行IDと到着/出発時刻を返します。`expand=trip_info` で経路情報を付与、`expand=stops` で各便の停留所情報を付与します。デフォルトでは、この停留所で終点となるバスは除外されます。",
+    description="指定停留所に来るバスの運行IDと到着/出発時刻を返します。`expand=trip_info` で経路情報を付与、`expand=stops` で各便の停留所情報を付与します。",
     responses={
         200: {
             "description": "成功",
@@ -259,8 +259,8 @@ async def get_upcoming(
         ),
     ),
     include_ending: bool = Query(
-        False,
-        description="終点となるバスを含めるかどうか。デフォルトは False（終点のバスを除外）。",
+        True,
+        description="終点となるバスを含めるかどうか。デフォルトは True（すべてのバスを表示）。",
     ),
 ):
     # Parse begin_time parameter to determine reference_date and time filter

@@ -79,6 +79,7 @@ export class ApiClient {
         path: { stop_id: stopId },
         query: {
           expand: "trip_info,stops",
+          include_ending: false,
           ...(limit && { limit }),
           ...(serviceId && { service_id: serviceId }),
           ...(beginTime && { begin_time: beginTime }),
