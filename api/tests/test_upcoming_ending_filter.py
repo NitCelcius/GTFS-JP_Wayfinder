@@ -3,8 +3,8 @@
 from gtfs_jp_wayfinder.models import TripInfo, TripInfoList
 
 
-def test_upcoming_filters_ending_buses_by_default(monkeypatch, client):
-    """Test that buses ending at the stop are filtered out by default."""
+def test_upcoming_includes_ending_buses_by_default(monkeypatch, client):
+    """Test that buses ending at the stop are included by default."""
     stop_id = "1021_01"
     
     # Mock trips - some end at this stop, some don't
@@ -75,25 +75,25 @@ def test_upcoming_filters_ending_buses_by_default(monkeypatch, client):
         mock_get_trip_info_batch,
     )
     
-    # Test default behavior (include_ending not specified = False)
+    # Test default behavior (include_ending not specified = True)
     resp = client.get(f"/stops/{stop_id}/upcoming")
     assert resp.status_code == 200
     
     data = resp.json()
     assert "buses" in data
     
-    # Should only have 2 buses (the ending one is filtered out)
-    assert len(data["buses"]) == 2
+    # Should have all 3 buses (including the ending one)
+    assert len(data["buses"]) == 3
     
-    # Verify the filtered results
+    # Verify all trips are present
     trip_ids = [bus["trip_id"] for bus in data["buses"]]
-    assert "trip_ending_here" not in trip_ids
+    assert "trip_ending_here" in trip_ids
     assert "trip_passing_through" in trip_ids
     assert "trip_ending_elsewhere" in trip_ids
 
 
-def test_upcoming_includes_ending_buses_when_requested(monkeypatch, client):
-    """Test that buses ending at the stop are included when include_ending=true."""
+def test_upcoming_filters_ending_buses_when_requested(monkeypatch, client):
+    """Test that buses ending at the stop are filtered out when include_ending=false."""
     stop_id = "1021_01"
     
     # Mock trips - some end at this stop, some don't
@@ -152,19 +152,19 @@ def test_upcoming_includes_ending_buses_when_requested(monkeypatch, client):
         mock_get_trip_info_batch,
     )
     
-    # Test with include_ending=true
-    resp = client.get(f"/stops/{stop_id}/upcoming?include_ending=true")
+    # Test with include_ending=false
+    resp = client.get(f"/stops/{stop_id}/upcoming?include_ending=false")
     assert resp.status_code == 200
     
     data = resp.json()
     assert "buses" in data
     
-    # Should have both buses
-    assert len(data["buses"]) == 2
+    # Should only have 1 bus (the ending one is filtered out)
+    assert len(data["buses"]) == 1
     
-    # Verify both trips are present
+    # Verify only the passing-through trip is present
     trip_ids = [bus["trip_id"] for bus in data["buses"]]
-    assert "trip_ending_here" in trip_ids
+    assert "trip_ending_here" not in trip_ids
     assert "trip_passing_through" in trip_ids
 
 
