@@ -1,4 +1,8 @@
+import logging
+import os
+import pickle
 import threading
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -9,6 +13,8 @@ from gtfs_jp_wayfinder.models import (
     TripInfoList,
 )
 
+logger = logging.getLogger(__name__)
+
 # Singleton instance and lock
 _wf: AkitaBusWayFinder | None = None
 _wf_lock = threading.Lock()
@@ -17,14 +23,96 @@ _wf_lock = threading.Lock()
 # This is shared with database.py's AkitaBusWayFinder.default_date
 DEFAULT_DATE = "2021-01-01"
 
+# Path to pre-built graph for serverless deployment
+PREBUILT_GRAPH_PATH = Path(__file__).parent.parent / "prebuilt_graph.pkl"
 
-def initialize(data_dir: str, use_cache_graph: bool = False):
+
+def is_serverless_mode() -> bool:
+    """Check if running in serverless mode (Vercel, AWS Lambda, etc.).
+
+    Serverless mode is enabled when:
+    1. VERCEL environment variable is set (Vercel deployment)
+    2. AWS_LAMBDA_FUNCTION_NAME is set (AWS Lambda)
+    3. A pre-built graph file exists and USE_PREBUILT_GRAPH is true
+
+    Returns:
+        True if serverless mode should be used
+    """
+    # Explicit override
+    if os.getenv("USE_PREBUILT_GRAPH", "").lower() == "true":
+        return True
+
+    # Auto-detect Vercel
+    if os.getenv("VERCEL"):
+        return True
+
+    # Auto-detect AWS Lambda
+    return bool(os.getenv("AWS_LAMBDA_FUNCTION_NAME"))
+
+
+def initialize_from_prebuilt() -> AkitaBusWayFinder:
+    """Load pre-built graph for fast serverless cold starts.
+
+    This function loads a serialized AkitaBusWayFinder state that was
+    generated during build time, enabling sub-second cold starts.
+
+    Returns:
+        Initialized AkitaBusWayFinder instance
+
+    Raises:
+        FileNotFoundError: If pre-built graph file doesn't exist
+        RuntimeError: If loading fails
+    """
+    if not PREBUILT_GRAPH_PATH.exists():
+        raise FileNotFoundError(
+            f"Pre-built graph not found at {PREBUILT_GRAPH_PATH}. "
+            "Run 'python scripts/build_graph.py' during build phase."
+        )
+
+    logger.info(f"Loading pre-built graph from {PREBUILT_GRAPH_PATH}")
+
+    try:
+        with open(PREBUILT_GRAPH_PATH, "rb") as f:
+            state = pickle.load(f)
+
+        # Create wayfinder and restore state
+        wf = AkitaBusWayFinder()
+        wf.df_stops = state["df_stops"]
+        wf.df_stop_times = state["df_stop_times"]
+        wf.df_fare_id_route = state["df_fare_id_route"]
+        wf.df_fare_id_cost = state["df_fare_id_cost"]
+        wf.df_trips = state["df_trips"]
+        wf.df_routes = state["df_routes"]
+        wf.df_agency = state["df_agency"]
+        wf.date_to_service_id = state["date_to_service_id"]
+        wf.graph = state["graph"]
+        wf.graph_via_service_id = state["graph_via_service_id"]
+        wf.agency_timezone = state["agency_timezone"]
+        wf.default_date = state["default_date"]
+        wf._walk_transfer_pairs = state["_walk_transfer_pairs"]
+        wf._trip_to_service_id = state["_trip_to_service_id"]
+        wf._stop_to_trips = state["_stop_to_trips"]
+        wf._trip_stop_times = state["_trip_stop_times"]
+
+        logger.info("Pre-built graph loaded successfully")
+        return wf
+
+    except Exception as e:
+        raise RuntimeError(f"Failed to load pre-built graph: {e}") from e
+
+
+def initialize(data_dir: str | None = None, use_cache_graph: bool = False):
     """Initialize the singleton AkitaBusWayFinder instance.
+
+    In serverless mode (Vercel, Lambda), loads from pre-built graph.
+    Otherwise, loads from GTFS data files.
 
     Args:
         data_dir: Directory path containing GTFS data files.
+                  Ignored in serverless mode.
         use_cache_graph: If True, use cached graph data if available and valid.
                         If False (default), always generate graphs from scratch.
+                        Ignored in serverless mode.
 
     Returns:
         The initialized AkitaBusWayFinder instance.
@@ -32,9 +120,19 @@ def initialize(data_dir: str, use_cache_graph: bool = False):
     global _wf
     with _wf_lock:
         if _wf is None:
-            wf = AkitaBusWayFinder()
-            wf.initialize(data_dir, use_cache_graph=use_cache_graph)
-            _wf = wf
+            if is_serverless_mode() and PREBUILT_GRAPH_PATH.exists():
+                logger.info("Serverless mode detected, loading pre-built graph")
+                _wf = initialize_from_prebuilt()
+            else:
+                if data_dir is None:
+                    raise ValueError(
+                        "data_dir is required when not in serverless mode "
+                        "or pre-built graph is not available"
+                    )
+                logger.info(f"Loading GTFS data from {data_dir}")
+                wf = AkitaBusWayFinder()
+                wf.initialize(data_dir, use_cache_graph=use_cache_graph)
+                _wf = wf
     return _wf
 
 

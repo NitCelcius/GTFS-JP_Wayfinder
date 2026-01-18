@@ -188,7 +188,7 @@ class TripTimedStop(BaseModel):
     departure_datetime: str = Field(...)
     stop_id: str
     stop_sequence: int
-    stop_headsign: str
+    stop_headsign: str | None = None
     stop_name: str | None = None
 
     model_config = {

@@ -20,6 +20,22 @@ declare global {
 
 export type { ValidEnvKey };
 
+/**
+ * Get Vercel-derived URL for the current deployment.
+ * Returns undefined if not running on Vercel.
+ */
+const getVercelUrl = (): string | undefined => {
+  if (typeof process === "undefined" || !process.env) {
+    return undefined;
+  }
+  // VERCEL_URL is the deployment URL without protocol (e.g., "my-app-123.vercel.app")
+  const vercelUrl = process.env.VERCEL_URL;
+  if (vercelUrl) {
+    return `https://${vercelUrl}`;
+  }
+  return undefined;
+};
+
 const getNextEnvValue = (key: ValidEnvKey): string | undefined => {
   // Only access process if it exists (guards against Storybook SSR or browser context)
   if (typeof process === "undefined" || !process.env) {
@@ -28,10 +44,24 @@ const getNextEnvValue = (key: ValidEnvKey): string | undefined => {
 
   switch (key) {
     case "NEXT_PUBLIC_API_BASE_URL": {
-      return process.env.NEXT_PUBLIC_API_BASE_URL;
+      const explicit = process.env.NEXT_PUBLIC_API_BASE_URL;
+      if (explicit) return explicit;
+
+      // Auto-derive from Vercel URL (API is at /api path)
+      const vercelUrl = getVercelUrl();
+      if (vercelUrl) return `${vercelUrl}/api`;
+
+      return undefined;
     }
     case "NEXT_PUBLIC_BASE_URL": {
-      return process.env.NEXT_PUBLIC_BASE_URL;
+      const explicit = process.env.NEXT_PUBLIC_BASE_URL;
+      if (explicit) return explicit;
+
+      // Auto-derive from Vercel URL
+      const vercelUrl = getVercelUrl();
+      if (vercelUrl) return vercelUrl;
+
+      return undefined;
     }
     case "NEXT_PUBLIC_USE_RELATIVE_TIME": {
       return process.env.NEXT_PUBLIC_USE_RELATIVE_TIME;

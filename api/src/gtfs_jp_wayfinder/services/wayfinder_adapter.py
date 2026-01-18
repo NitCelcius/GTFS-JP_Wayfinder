@@ -75,8 +75,14 @@ def parse_split_date_str(begin_time_str: str | None) -> tuple[datetime.date, str
     return now.date(), begin_time_str
 
 
-async def initialize(data_dir: str, use_cache_graph: bool = False):
-    """Async initialize wrapper that runs the blocking initialization in a thread."""
+async def initialize(data_dir: str | None = None, use_cache_graph: bool = False):
+    """Async initialize wrapper that runs the blocking initialization in a thread.
+
+    Args:
+        data_dir: Directory path containing GTFS data files.
+                  Can be None in serverless mode (loads from pre-built graph).
+        use_cache_graph: If True, use cached graph data if available and valid.
+    """
     global _initialized
     # if already initialized, no-op
     if wf_service.is_ready():
@@ -436,8 +442,14 @@ def get_stops_from_trip(
     """
     df = wf_service.get_stops_from_trip(trip_id)
 
-    # Convert to records first
+    # Convert to records first, replacing NaN values with None
     records = df.to_dict("records")
+
+    # Convert pandas NaN to None for Pydantic compatibility
+    for r in records:
+        for key, value in r.items():
+            if pd.isna(value):
+                r[key] = None
 
     # Collect all unique stop_ids from the records for batch processing
     stop_ids_in_trip = []

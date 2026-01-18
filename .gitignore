@@ -3,3 +3,6 @@ node_modules
 .turbo
 web/build-storybook.log
 .env.development
+# Pre-built graph for serverless deployment (generated at build time)
+api/src/gtfs_jp_wayfinder/prebuilt_graph.pkl
+.vercel

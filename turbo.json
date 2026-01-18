@@ -25,7 +25,8 @@
       ],
       "outputs": [
         "dist/**",
-        ".next/**"
+        ".next/**",
+        "!node_modules/**"
       ]
     },
     "dev": {

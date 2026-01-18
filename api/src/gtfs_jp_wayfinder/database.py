@@ -585,7 +585,13 @@ class AkitaBusWayFinder:
         # Validate that all required fields are present in the DataFrame.
         # If any are missing, fail fast with a clear error instead of silently
         # constructing dicts that will later fail Pydantic validation.
-        required_fields = {"agency_id", "agency_name", "agency_url", "agency_timezone", "agency_lang"}
+        required_fields = {
+            "agency_id",
+            "agency_name",
+            "agency_url",
+            "agency_timezone",
+            "agency_lang",
+        }
         missing_required = required_fields - set(self.df_agency.columns)
         if missing_required:
             raise ValueError(
@@ -1097,7 +1103,9 @@ class AkitaBusWayFinder:
         df_matching_routes = self.get_route_info(route_id)
         if df_matching_routes.shape[0] == 0:
             raise ValueError("No route with give route_id found")
-        return df_matching_routes["trip_headsign"].values[0]
+        value = df_matching_routes["trip_headsign"].values[0]
+        # Convert pandas NaN to None for Pydantic compatibility
+        return None if pd.isna(value) else str(value)
 
     # route_id に対応する service id を取得
     def get_service_id_from_route(self, route_id):

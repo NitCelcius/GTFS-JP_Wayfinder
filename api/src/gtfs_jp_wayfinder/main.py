@@ -13,7 +13,13 @@ logging.basicConfig(level=logging.INFO)
 
 
 def get_cors_origins():
-    """Get CORS origins from environment variable with sensible defaults."""
+    """Get CORS origins from environment variable with sensible defaults.
+
+    Priority:
+    1. Explicit CORS_ORIGINS environment variable
+    2. Auto-derive from VERCEL_URL if on Vercel
+    3. Default localhost origins for local development
+    """
     cors_origins = os.getenv("CORS_ORIGINS")
 
     if cors_origins:
@@ -30,6 +36,22 @@ def get_cors_origins():
         origins = [origin.strip() for origin in cors_origins.split(",")]
         logger.info(f"CORS origins from environment: {origins}")
         return origins
+
+    # Auto-derive from Vercel URL if available
+    vercel_url = os.getenv("VERCEL_URL")
+    if vercel_url:
+        # VERCEL_URL is the deployment URL without protocol
+        vercel_origins = [
+            f"https://{vercel_url}",
+            # Also allow the production domain if set
+        ]
+        # Add production URL if different
+        vercel_project_production_url = os.getenv("VERCEL_PROJECT_PRODUCTION_URL")
+        if vercel_project_production_url:
+            vercel_origins.append(f"https://{vercel_project_production_url}")
+
+        logger.info(f"CORS origins auto-derived from Vercel: {vercel_origins}")
+        return vercel_origins
 
     # Default origins for development
     default_origins = [
@@ -89,9 +111,25 @@ async def lifespan(_app: FastAPI):  # _app retained for FastAPI signature (ARG00
 
     This allows the turborepo "uv run python -m ..." wrapper to start the
     process without blocking the event loop while heavy I/O (pandas read) runs.
+
+    In serverless mode (Vercel), loads from pre-built graph for fast cold starts.
     """
-    data_dir = "./data/gtfs-akita-chuo-kotsu/"
-    use_cache_graph = get_is_cache_graph_enabled()
+    # Check if we're in serverless mode (pre-built graph available)
+    is_serverless = (
+        os.getenv("VERCEL") or os.getenv("USE_PREBUILT_GRAPH", "").lower() == "true"
+    )
+
+    if is_serverless:
+        # Serverless mode: data_dir is not needed, loads from pre-built graph
+        data_dir = None
+        use_cache_graph = False
+        logger.info("Serverless mode: loading pre-built graph")
+    else:
+        # Traditional mode: load from GTFS files
+        data_dir = os.getenv("GTFS_DATA_DIR", "./data/gtfs-akita-chuo-kotsu-2025/")
+        use_cache_graph = get_is_cache_graph_enabled()
+        logger.info(f"Traditional mode: loading GTFS from {data_dir}")
+
     try:
         # Use adapter's async initialize which delegates to the blocking initializer
         await wayfinder_adapter.initialize(data_dir, use_cache_graph=use_cache_graph)
