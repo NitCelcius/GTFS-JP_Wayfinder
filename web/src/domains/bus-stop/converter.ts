@@ -199,10 +199,103 @@ export function computeBestBusIndex(
 }
 
 /**
+ * Calculate distance between two geographic coordinates using Haversine formula
+ * @param lat1 - Latitude of first point (degrees)
+ * @param lon1 - Longitude of first point (degrees)
+ * @param lat2 - Latitude of second point (degrees)
+ * @param lon2 - Longitude of second point (degrees)
+ * @returns Distance in meters
+ */
+function calculateHaversineDistance(
+  lat1: number,
+  lon1: number,
+  lat2: number,
+  lon2: number
+): number {
+  const R = 6371000; // Earth's radius in meters
+  const toRad = (deg: number) => (deg * Math.PI) / 180;
+
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRad(lat1)) *
+      Math.cos(toRad(lat2)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  const distance = R * c;
+
+  return distance;
+}
+
+/**
+ * Calculate distance between user's current location and a bus stop
+ * Returns empty string if geolocation is not available or user location is not provided
+ *
+ * @param stopLat - Latitude of the bus stop
+ * @param stopLon - Longitude of the bus stop
+ * @param userPosition - User's geolocation position (optional)
+ * @returns Formatted distance string (e.g., "120m", "1.5km") or empty string
+ */
+export function calculateDistance(
+  stopLat?: number,
+  stopLon?: number,
+  userPosition?: GeolocationPosition | null
+): string {
+  // Return empty string if any required parameter is missing
+  if (
+    stopLat === undefined ||
+    stopLon === undefined ||
+    !userPosition ||
+    !userPosition.coords
+  ) {
+    return "";
+  }
+
+  const userLat = userPosition.coords.latitude;
+  const userLon = userPosition.coords.longitude;
+
+  // Validate coordinates are in valid ranges
+  if (
+    !isFinite(userLat) ||
+    !isFinite(userLon) ||
+    !isFinite(stopLat) ||
+    !isFinite(stopLon) ||
+    userLat < -90 ||
+    userLat > 90 ||
+    userLon < -180 ||
+    userLon > 180 ||
+    stopLat < -90 ||
+    stopLat > 90 ||
+    stopLon < -180 ||
+    stopLon > 180
+  ) {
+    return "";
+  }
+
+  const distanceMeters = calculateHaversineDistance(
+    userLat,
+    userLon,
+    stopLat,
+    stopLon
+  );
+
+  // Format distance (same logic as formatDistance)
+  if (distanceMeters < 1000) {
+    return `${Math.round(distanceMeters)}m`;
+  }
+  return `${(distanceMeters / 1000).toFixed(1)}km`;
+}
+
+/**
+ * @deprecated Use calculateDistance instead
  * TODO: Implement geolocation-based distance calculation
  * Currently returns mock distance value
  */
-export function calculateDistance(): string {
+export function calculateDistanceDeprecated(): string {
   return "";
 }
 

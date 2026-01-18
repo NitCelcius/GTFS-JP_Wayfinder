@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { ApiClient } from "@/lib/api";
 
 import { composeBusStopInfoWithLatestSelection } from "../composition";
-import { calculateDistance } from "../converter";
 import type {
   BusStopInfo,
   BusWithJourney,
@@ -79,8 +78,9 @@ export function useBusStopData(busStopId?: string): UseBusStopDataReturn {
           // Continue with fallback name
         }
 
-        // Calculate distance using geolocation
-        const distance = calculateDistance();
+        // Calculate distance using geolocation (deprecated path - needs refactoring)
+        // This hook needs to be updated to use the new geolocation logic
+        const distance = "";
 
         // Convert API data to domain format with intelligent bus selection
         const busStopInfo = composeBusStopInfoWithLatestSelection(
