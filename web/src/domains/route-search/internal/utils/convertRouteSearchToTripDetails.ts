@@ -4,7 +4,7 @@ import type {
   Station,
   TripDetails,
 } from "@/domains/route-search/SearchResultPage/types";
-import { calculateDurationStr } from "@/lib/utils";
+import { calculateDurationStr, trimTimeSeconds } from "@/lib/utils";
 import type { RouteSearchResult } from "@/types";
 
 /**
@@ -81,7 +81,7 @@ function buildRouteFromTravels(
       // Add origin station
       stations.push({
         stationName: resolveStopName(travel.from_stop_id, true, false),
-        departureTime: travel.departure_time,
+        departureTime: trimTimeSeconds(travel.departure_time),
         departureDatetime: new Date(travel.departure_datetime),
       });
     }
@@ -95,12 +95,12 @@ function buildRouteFromTravels(
 
     stations.push({
       stationName: resolveStopName(travel.to_stop_id, false, isLastSegment),
-      arrivalTime: travel.arrival_time,
+      arrivalTime: trimTimeSeconds(travel.arrival_time),
       arrivalDatetime: new Date(travel.arrival_datetime),
       // For transfer points, also add departure time of next segment
       ...(isTransferPoint && nextTravel
         ? {
-            departureTime: nextTravel.departure_time,
+            departureTime: trimTimeSeconds(nextTravel.departure_time),
             departureDatetime: new Date(nextTravel.departure_datetime),
             isTransfer: true,
             // Mark walk transfers
@@ -121,8 +121,8 @@ function buildRouteFromTravels(
   return {
     id: "route-1",
     name: "経路 1",
-    departureTime: firstTravel.departure_time,
-    arrivalTime: lastTravel.arrival_time,
+    departureTime: trimTimeSeconds(firstTravel.departure_time),
+    arrivalTime: trimTimeSeconds(lastTravel.arrival_time),
     duration: calculateDurationStr(
       firstTravel.departure_time,
       lastTravel.arrival_time

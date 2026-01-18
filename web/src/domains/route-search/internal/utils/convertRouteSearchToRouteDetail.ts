@@ -1,6 +1,6 @@
 import type { TravelOnceResponse } from "@/api/types.gen";
 import type { RouteOption } from "@/domains/route-search/SearchResultPage/types";
-import { calculateDurationStr } from "@/lib/utils";
+import { calculateDurationStr, trimTimeSeconds } from "@/lib/utils";
 
 /**
  * Convert a single TravelOnceResponse to RouteOption format for RouteDetailPage
@@ -18,8 +18,8 @@ export function convertRouteSearchToRouteDetail(
   return {
     id: travel.trip_id,
     name: `${originStopName} → ${destinationStopName}`,
-    departureTime: travel.departure_time,
-    arrivalTime: travel.arrival_time,
+    departureTime: trimTimeSeconds(travel.departure_time),
+    arrivalTime: trimTimeSeconds(travel.arrival_time),
     duration: calculateDurationStr(travel.departure_time, travel.arrival_time),
     transferCount: 0, // Direct route for now
     fare: travel.fare,
@@ -27,12 +27,12 @@ export function convertRouteSearchToRouteDetail(
     stations: [
       {
         stationName: originStopName,
-        departureTime: travel.departure_time,
+        departureTime: trimTimeSeconds(travel.departure_time),
         departureDatetime: new Date(travel.departure_datetime),
       },
       {
         stationName: destinationStopName,
-        arrivalTime: travel.arrival_time,
+        arrivalTime: trimTimeSeconds(travel.arrival_time),
         arrivalDatetime: new Date(travel.arrival_datetime),
         cost: travel.fare,
       },

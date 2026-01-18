@@ -80,21 +80,21 @@ describe("convertRouteSearchToTripDetails", () => {
     expect(route.transferCount).toBe(1);
 
     // Departure should be from first segment, arrival from last
-    expect(route.departureTime).toBe("08:00:00");
-    expect(route.arrivalTime).toBe("09:30:00");
+    expect(route.departureTime).toBe("08:00");
+    expect(route.arrivalTime).toBe("09:30");
 
     // Should have 3 stations: origin, transfer point, destination
     expect(route.stations).toHaveLength(3);
     expect(route.stations[0].stationName).toBe("秋田駅東口");
-    expect(route.stations[0].departureTime).toBe("08:00:00");
+    expect(route.stations[0].departureTime).toBe("08:00");
 
     // Transfer point should have both arrival and departure times
-    expect(route.stations[1].arrivalTime).toBe("08:20:00");
-    expect(route.stations[1].departureTime).toBe("09:00:00");
+    expect(route.stations[1].arrivalTime).toBe("08:20");
+    expect(route.stations[1].departureTime).toBe("09:00");
     expect(route.stations[1].isTransfer).toBe(true);
 
     expect(route.stations[2].stationName).toBe("イオンモール秋田");
-    expect(route.stations[2].arrivalTime).toBe("09:30:00");
+    expect(route.stations[2].arrivalTime).toBe("09:30");
   });
 
   it("should handle empty travels array", () => {

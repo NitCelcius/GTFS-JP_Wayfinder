@@ -1,5 +1,5 @@
 import { DefaultTimeFormatter } from "@/hooks/TimeFormatterBase";
-import { calculateDurationJapanese } from "@/lib/utils";
+import { calculateDurationJapanese, trimTimeSeconds } from "@/lib/utils";
 import type { RouteSearchResult } from "@/types";
 
 import type { RouteOption, RouteOverviewData } from "./types";
@@ -50,8 +50,8 @@ export function convertToRouteOverviewData(
 
     return {
       id: `route-${index}`,
-      departureTime: travel.departure_time,
-      arrivalTime: travel.arrival_time,
+      departureTime: trimTimeSeconds(travel.departure_time),
+      arrivalTime: trimTimeSeconds(travel.arrival_time),
       duration: calculateDurationJapanese(
         travel.departure_time,
         travel.arrival_time

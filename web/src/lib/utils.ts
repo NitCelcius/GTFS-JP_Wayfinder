@@ -77,6 +77,19 @@ export const truncateText = (text: string, maxLength: number): string => {
 };
 
 /**
+ * Trim time string from HH:MM:SS format to HH:MM format
+ * @param timeStr - Time string in HH:MM:SS format (e.g., "14:30:00")
+ * @returns Time string in HH:MM format (e.g., "14:30")
+ */
+export const trimTimeSeconds = (timeStr: string): string => {
+  // Handle HH:MM:SS format by taking first 5 characters
+  if (timeStr.length >= 5 && timeStr.includes(":")) {
+    return timeStr.slice(0, 5);
+  }
+  return timeStr;
+};
+
+/**
  * Get the current time as a string in HH:MM:SS format
  * @returns Current time formatted as "HH:MM:SS"
  */
