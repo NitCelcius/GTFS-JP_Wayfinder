@@ -1,0 +1,76 @@
+# Development and build caches
+.ruff_cache/
+**/.ruff_cache/
+# Build outputs that will be regenerated
+api/dist/
+# Vercel deployment ignore file
+# ================================
+
+# Development and build caches
+.turbo/
+**/.turbo/
+node_modules/
+**/node_modules/
+__pycache__/
+*.pyc
+.pytest_cache/
+**/.next/cache
+.venv/
+**/.venv/
+uv.lock
+
+# Local development files
+.env.development
+.env.local
+.env*.local
+
+# Test artifacts
+playwright-report/
+test-results/
+coverage/
+web/storybook-static/
+
+# Build outputs that will be regenerated
+web/build-storybook.log
+
+# Git metadata
+.git/
+
+# Local GTFS data (will be downloaded during build)
+api/data/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# All test files
+api/tests/
+web/src/tests/
+
+# Documentation and config files not needed at runtime
+*.md
+!api/README.md
+.githooks/
+.github/
+
+# Docker files (not needed on Vercel)
+docker-compose.yml
+api/docker-compose.yml
+web/docker-compose.yml
+Dockerfile
+api/Dockerfile
+web/Dockerfile
+
+# Storybook
+web/.storybook/
+.storybook/
+
+# Mise config (local tool version manager)
+mise.toml

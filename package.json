@@ -8,6 +8,7 @@
     "dev:network": "turbo run dev:network",
     "start": "turbo run start",
     "build": "turbo run build",
+    "build:vercel": "cd api && uv sync --no-dev && uv run --no-sync python scripts/build_graph.py && node -e \"require('fs').rmSync('.venv',{ recursive: true, force: true })\" && cd ../web && pnpm build && node -e \"require('fs').rmSync('.next/cache',{ recursive: true, force: true })\"",
     "test": "turbo run test",
     "lint": "turbo run lint",
     "lint:fix": "turbo run lint:fix",
@@ -26,6 +27,7 @@
   "devDependencies": {
     "@hey-api/openapi-ts": "^0.83.1",
     "concurrently": "^9.2.1",
+    "next": "15.5.7",
     "turbo": "^2.5.6"
   }
 }

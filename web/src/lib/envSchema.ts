@@ -1,5 +1,9 @@
 /**
  * Environment variable schema. Define all env variables here
+ *
+ * For Vercel deployment:
+ * - NEXT_PUBLIC_API_BASE_URL auto-derives from VERCEL_URL if not explicitly set
+ * - NEXT_PUBLIC_BASE_URL auto-derives from VERCEL_URL if not explicitly set
  */
 
 type RequiredEnvVar = {
@@ -12,7 +16,7 @@ type OptionalEnvVar<TDefault extends string = never> = {
 };
 
 export const ENV_SCHEMA = {
-  // Required variables
+  // Required variables (but have smart defaults on Vercel)
   NEXT_PUBLIC_API_BASE_URL: {
     required: true,
   } as const satisfies RequiredEnvVar,
