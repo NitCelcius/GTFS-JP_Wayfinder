@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GTFS-JP Wayfinder - デプロイ</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+    <span id="themeIcon">☀️</span>
+  </button>
+
+  <header class="header-bg">
+    <div class="container header-content">
+      <h1>🚌 GTFS-JP Wayfinder</h1>
+      <p class="subtitle">Vercel に GTFS-JP Wayfinder のAPI と Web アプリをデプロイします。</p>
+
+      <!-- Demo Section -->
+      <div class="demo-section">
+        <a href="https://gtfs-jp-wayfinder-web.vercel.app" target="_blank" class="demo-btn">
+          👀 デモを見る
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <div class="intro-section">
+    <h1>使ってみる</h1>
+    <p>3ステップで、あなた専用のアプリを作れます</p>
+  </div>
+
+  <div class="container">
+    <div class="card">
+      <h2><span class="step-badge">1</span> 設定</h2>
+
+      <div class="form-group">
+        <label>
+          プロジェクト名
+          <button class="tip-btn" onclick="toggleTip('tip-prefix')">?</button>
+        </label>
+        <input type="text" id="projectName" placeholder="gtfs-jp-wayfinder-xxxxxxxx" oninput="updateComputedValues()"
+          required>
+        <div class="computed-values compact">
+          <div><span class="key">Web URL:</span> <span class="value" id="webUrl">-</span></div>
+          <div><span class="key">API URL:</span> <span class="value" id="apiUrl">-</span></div>
+        </div>
+        <div class="tooltip" id="tip-prefix">
+          Vercel プロジェクトのベース名です。最終的な名前は次のようになります。<br>
+          • <strong>[プロジェクト名]-web</strong>（フロントエンド）<br>
+          • <strong>[プロジェクト名]-api</strong>（バックエンド）
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>
+          GTFS-JP データのダウンロードURL(必須)
+          <button class="tip-btn" onclick="toggleTip('tip-gtfs')">?</button>
+        </label>
+        <input type="url" id="gtfsDataUrl" placeholder="https://example.com/gtfs-data.zip"
+          oninput="updateDeployButtons()" required>
+        <div class="hint">GTFS データの .zip ファイルが配置されている URL を入力してください。このURLにアクセスして .zip
+          ファイルがダウンロードできる必要があります。</div>
+        <div class="tooltip" id="tip-gtfs">
+          .zip 形式の GTFS データをダウンロードできるURLを指定してください。ただし、以下の条件を満たす必要があります。一部、GTFSデータにも対応しています。<br>
+          <ul>
+            <li>認証なしで公開アクセス可能</li>
+            <li>stops.txt、routes.txt などを含む標準 GTFS 形式</li>
+          </ul>
+          <br>
+          データソース
+          <ul>
+            <li><a href="https://gtfs.jp/" target="_blank">GTFS-JP ポータル</a></li>
+            <li>各交通事業者のオープンデータポータル</li>
+          </ul>
+        </div>
+      </div>
+
+      <button class="advanced-toggle" onclick="toggleAdvanced()">
+        <span id="advancedArrow">▶</span> 詳細オプション
+      </button>
+
+      <div class="advanced-section" id="advancedSection">
+        <div class="form-group">
+          <label>
+            Web プロジェクト名
+            <button class="tip-btn" onclick="toggleTip('tip-web-name')">?</button>
+          </label>
+          <input type="text" id="customWebName" placeholder="自動生成されます" oninput="updateComputedValues()">
+          <div class="hint">空欄の場合は [プロジェクト名]-web が使用されます</div>
+          <div class="tooltip" id="tip-web-name">
+            Web フロントエンドについて、Vercel で使うプロジェクト名を指定できます。
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>
+            API プロジェクト名
+            <button class="tip-btn" onclick="toggleTip('tip-api-name')">?</button>
+          </label>
+          <input type="text" id="customApiName" placeholder="自動生成されます" oninput="updateComputedValues()">
+          <div class="hint">空欄の場合は [プロジェクト名]-api が使用されます</div>
+          <div class="tooltip" id="tip-api-name">
+            API バックエンドについて、Vercel で使うプロジェクト名を指定できます。
+          </div>
+        </div>
+
+        <div class="form-group form-section">
+          <label>
+            カスタム Web ドメイン（任意）
+            <button class="tip-btn" onclick="toggleTip('tip-web-domain')">?</button>
+          </label>
+          <input type="text" id="customWebDomain" placeholder="Vercel デフォルトを使用" oninput="updateComputedValues()">
+          <div class="tooltip" id="tip-web-domain">
+            カスタムドメインがある場合はここに入力してください（例：<code>transit.example.com</code>）。
+            CORS 設定とベース URL に使用されます。
+            <br><br>
+            <a href="https://vercel.com/docs/projects/domains" target="_blank">Vercel のカスタムドメインについて →</a>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>
+            カスタム API ドメイン（任意）
+            <button class="tip-btn" onclick="toggleTip('tip-api-domain')">?</button>
+          </label>
+          <input type="text" id="customApiDomain" placeholder="Vercel デフォルトを使用" oninput="updateComputedValues()">
+          <div class="tooltip" id="tip-api-domain">
+            API 用のカスタムドメインがある場合はここに入力してください（例：<code>api.transit.example.com</code>）。
+            <br><br>
+            <a href="https://vercel.com/docs/projects/domains" target="_blank">Vercel のカスタムドメインについて →</a>
+          </div>
+        </div>
+
+        <div class="form-group checkbox-group">
+          <input type="checkbox" id="enableBasicAuth">
+          <label for="enableBasicAuth" class="checkbox-label">
+            Basic 認証を有効化（ステージング用）
+            <button class="tip-btn" onclick="toggleTip('tip-basic-auth')">?</button>
+          </label>
+          <div class="tooltip" id="tip-basic-auth">
+            HTTP Basic 認証を行います。ステージングやプレビュー環境に便利です。
+            <br><br>
+            有効にすると、サイトにアクセスする際にユーザー名とパスワードの入力が必要になります。
+          </div>
+        </div>
+
+        <div id="basicAuthFields">
+          <div class="form-group">
+            <label>ユーザー名</label>
+            <input type="text" id="basicAuthUsername" placeholder="admin">
+          </div>
+          <div class="form-group">
+            <label>パスワード</label>
+            <input type="password" id="basicAuthPassword" placeholder="••••••••">
+          </div>
+        </div>
+
+        <div class="form-group form-section">
+          <label>
+            グラフキャッシュ
+            <button class="tip-btn" onclick="toggleTip('tip-graph-cache')">?</button>
+          </label>
+          <div class="checkbox-group">
+            <input type="checkbox" id="enableGraphCache">
+            <label for="enableGraphCache" class="checkbox-label">キャッシュを有効化（本番環境推奨）</label>
+          </div>
+          <div class="tooltip" id="tip-graph-cache">
+            起動が高速になります。
+            <br>
+            事前に処理が必要なデータについて、サーバー側に処理結果を保存します。
+            <br>
+            ただし、セキュリティ上本番環境での使用を推奨します。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: Deploy Web -->
+    <div class="card">
+      <h2><span class="step-badge" id="step1Badge">2</span> Web フロントエンドをデプロイ</h2>
+      <p class="step-description">Web アプリケーションをデプロイします。以下のDeployボタンをクリックしてください。</p>
+
+      <div class="deploy-btn-wrapper">
+        <a id="deployWebBtn" class="deploy-btn-styled disabled" href="#" target="_blank">
+          <img src="https://vercel.com/button" alt="Deploy Web with Vercel">
+        </a>
+      </div>
+      <p class="deploy-note">
+        環境変数は自動で設定されます。必要な場合は編集してください。
+        <a href="https://github.com/NitCelcius/GTFS-JP_Wayfinder" target="_blank" class="readme-link">README.md</a> を参照
+      </p>
+    </div>
+
+    <!-- Step 3: Deploy API -->
+    <div class="card">
+      <h2><span class="step-badge" id="step2Badge">3</span> API バックエンドをデプロイ</h2>
+      <p class="step-description">最後に、バックエンドをデプロイします。以下のDeployボタンをクリックしてください。</p>
+
+      <div class="deploy-btn-wrapper">
+        <a id="deployApiBtn" class="deploy-btn-styled disabled" href="#" target="_blank">
+          <img src="https://vercel.com/button" alt="Deploy API with Vercel">
+        </a>
+      </div>
+      <p class="deploy-note">
+        環境変数は自動で設定されます。必要な場合は編集してください。
+        <a href="https://github.com/NitCelcius/GTFS-JP_Wayfinder" target="_blank" class="readme-link">README.md</a> を参照
+      </p>
+    </div>
+
+    <!-- Completion -->
+    <div class="card completion-card" id="completionCard">
+      <div class="completion-emoji">🎉</div>
+      <h2>お疲れさまでした！</h2>
+      <p class="completion-message">
+        デプロイが完了したら、あなただけの交通経路探索アプリが使えます。<br>
+        さっそく試してみましょう！
+      </p>
+      <a id="tryAppBtn" href="#" target="_blank" class="try-btn">
+        🚀 使ってみる
+      </a>
+    </div>
+
+    <footer>
+      <p>
+        <a href="https://github.com/NitCelcius/GTFS-JP_Wayfinder" target="_blank">View on GitHub</a> ·
+        Made with ❤️ for public transit
+      </p>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
