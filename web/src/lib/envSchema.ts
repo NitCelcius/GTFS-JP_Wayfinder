@@ -27,6 +27,10 @@ export const ENV_SCHEMA = {
     required: false,
     default: "false",
   } as const satisfies OptionalEnvVar<"true" | "false">,
+  NEXT_PUBLIC_MINIMUM_DIST_INDICATOR: {
+    required: false,
+    default: "10",
+  } as const satisfies OptionalEnvVar<"10">,
   NODE_ENV: {
     required: false,
     default: "development",

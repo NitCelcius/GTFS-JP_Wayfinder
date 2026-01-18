@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 
 import { useRouter } from "next/navigation";
 
+import { useGeolocation } from "@/hooks/useGeolocation";
 import { ApiClient } from "@/lib/api";
+import { getEnvValue } from "@/lib/envUtils";
 
 import { composeBusStopInfoWithLatestSelection } from "../composition";
 import { calculateDistance } from "../converter";
@@ -32,6 +34,9 @@ export function BusStopInfoV2Container({
     lat: number;
     lon: number;
   } | null>(null);
+
+  // Get user's current location
+  const { position: userPosition } = useGeolocation();
 
   useEffect(() => {
     if (!busStopId) {
@@ -103,8 +108,34 @@ export function BusStopInfoV2Container({
           console.warn("Failed to fetch stop info:", stopError);
         }
 
-        // Calculate distance
-        const calculatedDistance = calculateDistance();
+        // Calculate distance if user location and stop coordinates are available
+        let calculatedDistance = "";
+        if (lat !== undefined && lon !== undefined && userPosition) {
+          calculatedDistance = calculateDistance(lat, lon, userPosition);
+
+          // Only show distance if it meets the minimum threshold
+          const minDistThreshold = parseInt(
+            getEnvValue("NEXT_PUBLIC_MINIMUM_DIST_INDICATOR") || "10",
+            10
+          );
+
+          if (calculatedDistance) {
+            // Parse the distance string to get meters
+            const distanceMatch = calculatedDistance.match(
+              /^(\d+(?:\.\d+)?)(m|km)$/
+            );
+            if (distanceMatch) {
+              const [, value, unit] = distanceMatch;
+              const distanceInMeters =
+                unit === "km" ? parseFloat(value) * 1000 : parseFloat(value);
+
+              // Only include distance if >= minimum threshold
+              if (distanceInMeters < minDistThreshold) {
+                calculatedDistance = "";
+              }
+            }
+          }
+        }
 
         // Compose bus stop info
         const busStopInfo = composeBusStopInfoWithLatestSelection(
@@ -165,7 +196,7 @@ export function BusStopInfoV2Container({
     return () => {
       abortController.abort();
     };
-  }, [busStopId]);
+  }, [busStopId, userPosition]);
 
   return (
     <BusStopInfoV2

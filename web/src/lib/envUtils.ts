@@ -66,6 +66,9 @@ const getNextEnvValue = (key: ValidEnvKey): string | undefined => {
     case "NEXT_PUBLIC_USE_RELATIVE_TIME": {
       return process.env.NEXT_PUBLIC_USE_RELATIVE_TIME;
     }
+    case "NEXT_PUBLIC_MINIMUM_DIST_INDICATOR": {
+      return process.env.NEXT_PUBLIC_MINIMUM_DIST_INDICATOR;
+    }
     case "NODE_ENV": {
       return process.env.NODE_ENV;
     }
