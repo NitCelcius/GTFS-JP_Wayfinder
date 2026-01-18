@@ -140,34 +140,3 @@ export const NoPastBus: Story = {
     pastBus: null,
   },
 };
-
-export const WithDistanceFarAway: Story = {
-  name: "With Distance (Far from Stop)",
-  args: {
-    ...Default.args,
-    busStopName: "秋田駅東口",
-    distance: "1.2km",
-    platformCode: "5",
-  },
-};
-
-export const WithoutDistanceCloseBy: Story = {
-  name: "Without Distance (Close to Stop)",
-  args: {
-    ...Default.args,
-    busStopName: "市役所前",
-    distance: undefined,
-    platformCode: "2",
-  },
-};
-
-export const WithoutDistanceNoPermission: Story = {
-  name: "Without Distance (No Location Permission)",
-  args: {
-    ...Default.args,
-    busStopName: "大学病院",
-    distance: undefined,
-    platformCode: "1",
-    hasValidCoordinates: false,
-  },
-};

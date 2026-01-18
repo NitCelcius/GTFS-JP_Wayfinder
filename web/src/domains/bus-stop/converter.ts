@@ -233,30 +233,21 @@ function calculateHaversineDistance(
 
 /**
  * Calculate distance between user's current location and a bus stop
- * Returns empty string if geolocation is not available or user location is not provided
  *
  * @param stopLat - Latitude of the bus stop
  * @param stopLon - Longitude of the bus stop
- * @param userPosition - User's geolocation position (optional)
- * @returns Formatted distance string (e.g., "120m", "1.5km") or empty string
+ * @param userLat - User's current latitude
+ * @param userLon - User's current longitude
+ * @returns Formatted distance string (e.g., "120m", "1.5km")
+ * @throws Error if any required parameter is missing or coordinates are invalid
  */
 export function calculateDistance(
-  stopLat?: number,
-  stopLon?: number,
-  userPosition?: GeolocationPosition | null
+  stopLat: number,
+  stopLon: number,
+  userLat: number,
+  userLon: number
 ): string {
-  // Return empty string if any required parameter is missing
-  if (
-    stopLat === undefined ||
-    stopLon === undefined ||
-    !userPosition ||
-    !userPosition.coords
-  ) {
-    return "";
-  }
-
-  const userLat = userPosition.coords.latitude;
-  const userLon = userPosition.coords.longitude;
+  // TODO: Consider handling empty/undefined inputs at caller level for better error messages
 
   // Validate coordinates are in valid ranges
   if (
@@ -273,7 +264,9 @@ export function calculateDistance(
     stopLon < -180 ||
     stopLon > 180
   ) {
-    return "";
+    throw new Error(
+      `Invalid coordinates: user(${userLat}, ${userLon}), stop(${stopLat}, ${stopLon})`
+    );
   }
 
   const distanceMeters = calculateHaversineDistance(
@@ -288,15 +281,6 @@ export function calculateDistance(
     return `${Math.round(distanceMeters)}m`;
   }
   return `${(distanceMeters / 1000).toFixed(1)}km`;
-}
-
-/**
- * @deprecated Use calculateDistance instead
- * TODO: Implement geolocation-based distance calculation
- * Currently returns mock distance value
- */
-export function calculateDistanceDeprecated(): string {
-  return "";
 }
 
 /**

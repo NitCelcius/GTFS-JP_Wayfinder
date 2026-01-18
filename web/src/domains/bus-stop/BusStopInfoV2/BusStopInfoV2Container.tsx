@@ -110,16 +110,21 @@ export function BusStopInfoV2Container({
 
         // Calculate distance if user location and stop coordinates are available
         let calculatedDistance = "";
-        if (lat !== undefined && lon !== undefined && userPosition) {
-          calculatedDistance = calculateDistance(lat, lon, userPosition);
+        if (lat !== undefined && lon !== undefined && userPosition?.coords) {
+          try {
+            calculatedDistance = calculateDistance(
+              lat,
+              lon,
+              userPosition.coords.latitude,
+              userPosition.coords.longitude
+            );
 
-          // Only show distance if it meets the minimum threshold
-          const minDistThreshold = parseInt(
-            getEnvValue("NEXT_PUBLIC_MINIMUM_DIST_INDICATOR") || "10",
-            10
-          );
+            // Only show distance if it meets the minimum threshold
+            const minDistThreshold = parseInt(
+              getEnvValue("NEXT_PUBLIC_MINIMUM_DIST_INDICATOR") || "10",
+              10
+            );
 
-          if (calculatedDistance) {
             // Parse the distance string to get meters
             const distanceMatch = calculatedDistance.match(
               /^(\d+(?:\.\d+)?)(m|km)$/
@@ -134,6 +139,9 @@ export function BusStopInfoV2Container({
                 calculatedDistance = "";
               }
             }
+          } catch (error) {
+            console.warn("Failed to calculate distance:", error);
+            calculatedDistance = "";
           }
         }
 

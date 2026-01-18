@@ -27,15 +27,6 @@ export const Default: Story = {
   },
 };
 
-export const WithDistanceFarAway: Story = {
-  name: "With Distance (Far from Stop)",
-  args: {
-    busStopName: "秋田駅東口",
-    distance: "1.2km",
-    platformCode: "5",
-  },
-};
-
 export const WithoutDistanceCloseBy: Story = {
   name: "Without Distance (Close to Stop)",
   args: {
