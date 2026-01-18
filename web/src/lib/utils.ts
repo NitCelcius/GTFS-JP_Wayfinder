@@ -82,10 +82,12 @@ export const truncateText = (text: string, maxLength: number): string => {
  * @returns Time string in HH:MM format (e.g., "14:30")
  */
 export const trimTimeSeconds = (timeStr: string): string => {
-  // Handle HH:MM:SS format by taking first 5 characters
-  if (timeStr.length >= 5 && timeStr.includes(":")) {
+  // Validate HH:MM or HH:MM:SS format (supports GTFS extended hours 0-47)
+  if (/^\d{1,2}:\d{2}(:\d{2})?$/.test(timeStr)) {
+    // If format is HH:MM:SS, trim to HH:MM
     return timeStr.slice(0, 5);
   }
+  // Return as-is if format doesn't match (already HH:MM or invalid)
   return timeStr;
 };
 
