@@ -4,6 +4,7 @@ import {
   formatRelativeDate,
   parseTimeToMinutes,
   sortTravelsByArrivalTime,
+  trimTimeSeconds,
 } from "../utils";
 
 describe("formatRelativeDate", () => {
@@ -216,5 +217,28 @@ describe("sortTravelsByArrivalTime", () => {
     const travels = [{ arrival_time: "10:00", id: "1" }];
     const sorted = sortTravelsByArrivalTime(travels);
     expect(sorted).toEqual(travels);
+  });
+});
+
+describe("trimTimeSeconds", () => {
+  it("should trim seconds from HH:MM:SS format", () => {
+    expect(trimTimeSeconds("14:30:00")).toBe("14:30");
+    expect(trimTimeSeconds("08:15:00")).toBe("08:15");
+    expect(trimTimeSeconds("23:59:59")).toBe("23:59");
+  });
+
+  it("should handle HH:MM format (already trimmed)", () => {
+    expect(trimTimeSeconds("14:30")).toBe("14:30");
+    expect(trimTimeSeconds("08:15")).toBe("08:15");
+  });
+
+  it("should handle extended hours (GTFS format)", () => {
+    expect(trimTimeSeconds("25:30:00")).toBe("25:30");
+    expect(trimTimeSeconds("26:45:00")).toBe("26:45");
+  });
+
+  it("should return original string if format is unexpected", () => {
+    expect(trimTimeSeconds("invalid")).toBe("invalid");
+    expect(trimTimeSeconds("")).toBe("");
   });
 });

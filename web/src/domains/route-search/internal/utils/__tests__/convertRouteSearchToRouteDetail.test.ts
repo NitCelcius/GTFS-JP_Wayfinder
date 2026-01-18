@@ -23,8 +23,8 @@ describe("convertRouteSearchToRouteDetail", () => {
 
     expect(result.id).toBe("trip-123");
     expect(result.name).toBe("東駅 → 大学病院");
-    expect(result.departureTime).toBe("08:15:00");
-    expect(result.arrivalTime).toBe("09:00:00");
+    expect(result.departureTime).toBe("08:15");
+    expect(result.arrivalTime).toBe("09:00");
     expect(result.transferCount).toBe(0);
     expect(result.fare).toBe(350);
     expect(result.totalCost).toBe(350);
@@ -50,7 +50,7 @@ describe("convertRouteSearchToRouteDetail", () => {
     );
 
     // Origin station should have departure time but no arrival time
-    expect(result.stations[0].departureTime).toBe("08:15:00");
+    expect(result.stations[0].departureTime).toBe("08:15");
     expect(result.stations[0].departureDatetime).toEqual(
       new Date("2024-01-15T08:15:00")
     );
@@ -66,7 +66,7 @@ describe("convertRouteSearchToRouteDetail", () => {
     );
 
     // Destination station should have arrival time and cost but no departure time
-    expect(result.stations[1].arrivalTime).toBe("09:00:00");
+    expect(result.stations[1].arrivalTime).toBe("09:00");
     expect(result.stations[1].arrivalDatetime).toEqual(
       new Date("2024-01-15T09:00:00")
     );
