@@ -2,12 +2,17 @@
 """Build-time script to fetch GTFS data and pre-generate graph for serverless deployment.
 
 This script is designed to run during the Vercel build phase. It:
-1. Downloads GTFS data from GTFS_DATA_URL environment variable
-2. Unzips the data to a temporary location
-3. Initializes AkitaBusWayFinder and generates the routing graph
-4. Serializes the complete state to a pickle file for fast runtime loading
+1. Uses local GTFS data from api/data/gtfs-akita-chuo-kotsu by default
+2. OR downloads GTFS data from GTFS_DATA_URL environment variable if set
+3. Unzips the data to a temporary location (if downloaded)
+4. Initializes AkitaBusWayFinder and generates the routing graph
+5. Serializes the complete state to a pickle file for fast runtime loading
 
 Usage:
+    # Use local data (default)
+    python build_graph.py
+
+    # Or download from URL
     GTFS_DATA_URL=https://example.com/gtfs.zip python build_graph.py
 
 The output file (prebuilt_graph.pkl) should be bundled with the serverless function.
@@ -27,11 +32,18 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from gtfs_jp_wayfinder.database import AkitaBusWayFinder
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 logger = logging.getLogger(__name__)
 
 # Output path for the pre-built graph (relative to api/ directory)
-OUTPUT_PATH = Path(__file__).parent.parent / "src" / "gtfs_jp_wayfinder" / "prebuilt_graph.pkl"
+OUTPUT_PATH = (
+    Path(__file__).parent.parent / "src" / "gtfs_jp_wayfinder" / "prebuilt_graph.pkl"
+)
+
+# Default local GTFS data directory (relative to api/ directory)
+DEFAULT_GTFS_DIR = Path(__file__).parent.parent / "data" / "gtfs-akita-chuo-kotsu"
 
 
 def download_and_extract_gtfs(gtfs_url: str, extract_dir: str) -> str:
@@ -134,23 +146,31 @@ def main():
     """Main entry point for build-time graph generation."""
     gtfs_url = os.environ.get("GTFS_DATA_URL")
 
-    if not gtfs_url:
-        logger.error("GTFS_DATA_URL environment variable is not set")
-        logger.error("Please set it to the URL of your GTFS zip file")
-        sys.exit(1)
-
     logger.info("=" * 60)
     logger.info("GTFS Graph Builder for Serverless Deployment")
     logger.info("=" * 60)
 
-    with tempfile.TemporaryDirectory() as tmpdir:
-        # Download and extract GTFS data
-        gtfs_dir = download_and_extract_gtfs(gtfs_url, tmpdir)
+    if gtfs_url:
+        # Download and extract GTFS data from URL
+        logger.info(f"Using remote GTFS data from: {gtfs_url}")
+        with tempfile.TemporaryDirectory() as tmpdir:
+            gtfs_dir = download_and_extract_gtfs(gtfs_url, tmpdir)
+            wf = build_graph(gtfs_dir)
+            serialize_wayfinder(wf, OUTPUT_PATH)
+    else:
+        # Use local GTFS data directory
+        if not DEFAULT_GTFS_DIR.exists():
+            logger.error(f"Default GTFS data directory not found: {DEFAULT_GTFS_DIR}")
+            logger.error("Either:")
+            logger.error(f"  1. Ensure {DEFAULT_GTFS_DIR} exists with GTFS txt files")
+            logger.error(
+                "  2. Set GTFS_DATA_URL environment variable to download from URL"
+            )
+            sys.exit(1)
 
-        # Build the graph
+        logger.info(f"Using local GTFS data from: {DEFAULT_GTFS_DIR}")
+        gtfs_dir = str(DEFAULT_GTFS_DIR) + "/"
         wf = build_graph(gtfs_dir)
-
-        # Serialize for runtime loading
         serialize_wayfinder(wf, OUTPUT_PATH)
 
     logger.info("=" * 60)
