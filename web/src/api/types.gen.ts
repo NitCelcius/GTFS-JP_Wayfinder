@@ -619,6 +619,11 @@ export type GetUpcomingStopsStopIdUpcomingGetData = {
          * 開始時刻 (HH:MM:SS または ISO 8601 形式 (e.g., 2025-10-28T14:30:00). HH:MM:SS形式の場合、今日の日付が基準日として使用されます。ISO 8601形式の場合、`begin_time`で指定された日付が基準日として使用されます。
          */
         begin_time?: string | null;
+        /**
+         * Include Ending
+         * 終点となるバスを含めるかどうか。デフォルトは True（すべてのバスを表示）。
+         */
+        include_ending?: boolean;
     };
     url: '/stops/{stop_id}/upcoming';
 };
