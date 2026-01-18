@@ -3,18 +3,5 @@
   "buildCommand": "pnpm build:vercel",
   "installCommand": "pnpm install",
   "outputDirectory": "web/.next",
-  "framework": "nextjs",
-  "rewrites": [
-    {
-      "source": "/api/:path*",
-      "destination": "/api/:path*"
-    }
-  ],
-  "functions": {
-    "api/api/index.py": {
-      "runtime": "@vercel/python@4.5.1",
-      "maxDuration": 30,
-      "excludeFiles": "{web,api/data,api/tests,node_modules,.venv,.next,.turbo,storybook-static,playwright-report,test-results}/**"
-    }
-  }
+  "framework": "nextjs"
 }
