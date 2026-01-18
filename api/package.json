@@ -4,7 +4,7 @@
   "description": "",
   "private": true,
   "scripts": {
-    "install": "node -e \"const { spawnSync } = require('child_process'); const res = spawnSync('uv', ['sync', '--no-dev'], { stdio: 'inherit' }); process.exit(res.status ?? 0);\"",
+    "install": "uv sync",
     "start": "uv run python -m uvicorn src.gtfs_jp_wayfinder.main:app --host 0.0.0.0 --port ${PORT:-8002}",
     "build": "uv build",
     "lint": "uv run ruff check",
