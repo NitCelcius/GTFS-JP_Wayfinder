@@ -259,8 +259,8 @@ async def get_upcoming(
         ),
     ),
     include_ending: bool = Query(
-        True,
-        description="終点となるバスを含めるかどうか。デフォルトは True（すべてのバスを表示）。",
+        False,
+        description="終点となるバスを含めるかどうか。デフォルトは False（終点となるバスを非表示）。",
     ),
 ):
     # Parse begin_time parameter to determine reference_date and time filter

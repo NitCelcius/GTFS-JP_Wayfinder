@@ -3,8 +3,8 @@
 from gtfs_jp_wayfinder.models import TripInfo, TripInfoList
 
 
-def test_upcoming_includes_ending_buses_by_default(monkeypatch, client):
-    """Test that buses ending at the stop are included by default."""
+def test_upcoming_hides_ending_buses_by_default(monkeypatch, client):
+    """Test that buses ending at the stop are excluded by default."""
     stop_id = "1021_01"
 
     # Mock trips - some end at this stop, some don't
@@ -75,19 +75,19 @@ def test_upcoming_includes_ending_buses_by_default(monkeypatch, client):
         mock_get_trip_info_batch,
     )
 
-    # Test default behavior (include_ending not specified = True)
+    # Test default behavior (include_ending not specified = False)
     resp = client.get(f"/stops/{stop_id}/upcoming")
     assert resp.status_code == 200
 
     data = resp.json()
     assert "buses" in data
 
-    # Should have all 3 buses (including the ending one)
-    assert len(data["buses"]) == 3
+    # Should have only 2 buses (the ending one is filtered out)
+    assert len(data["buses"]) == 2
 
-    # Verify all trips are present
+    # Verify only non-ending trips are present
     trip_ids = [bus["trip_id"] for bus in data["buses"]]
-    assert "trip_ending_here" in trip_ids
+    assert "trip_ending_here" not in trip_ids
     assert "trip_passing_through" in trip_ids
     assert "trip_ending_elsewhere" in trip_ids
 
@@ -152,7 +152,7 @@ def test_upcoming_filters_ending_buses_when_requested(monkeypatch, client):
         mock_get_trip_info_batch,
     )
 
-    # Test with include_ending=false
+    # Test with explicit include_ending=false
     resp = client.get(f"/stops/{stop_id}/upcoming?include_ending=false")
     assert resp.status_code == 200
 
@@ -166,6 +166,95 @@ def test_upcoming_filters_ending_buses_when_requested(monkeypatch, client):
     trip_ids = [bus["trip_id"] for bus in data["buses"]]
     assert "trip_ending_here" not in trip_ids
     assert "trip_passing_through" in trip_ids
+
+
+def test_upcoming_includes_ending_buses_when_explicitly_requested(monkeypatch, client):
+    """Test that buses ending at the stop are included when include_ending=true."""
+    stop_id = "1021_01"
+
+    # Mock trips - some end at this stop, some don't
+    trips = [
+        "trip_ending_here",
+        "trip_passing_through",
+        "trip_ending_elsewhere",
+    ]
+
+    monkeypatch.setattr(
+        "gtfs_jp_wayfinder.services.wayfinder_adapter.get_trips_from_stop",
+        lambda stop_id, service_id=None: trips,
+    )
+
+    # Mock time data
+    time_map = {
+        "trip_ending_here": {
+            "trip_id": "trip_ending_here",
+            "arrival_time": "08:00:00",
+            "departure_time": "08:00:00",
+        },
+        "trip_passing_through": {
+            "trip_id": "trip_passing_through",
+            "arrival_time": "08:10:00",
+            "departure_time": "08:10:00",
+        },
+        "trip_ending_elsewhere": {
+            "trip_id": "trip_ending_elsewhere",
+            "arrival_time": "08:20:00",
+            "departure_time": "08:20:00",
+        },
+    }
+
+    monkeypatch.setattr(
+        "gtfs_jp_wayfinder.services.wayfinder_adapter.get_times_from_trips_and_stop_batch",
+        lambda trip_ids, stop_id, **kwargs: {
+            tid: time_map[tid] for tid in trip_ids if tid in time_map
+        },
+    )
+
+    # Mock trip info
+    def mock_get_trip_info_batch(trip_ids):
+        return TripInfoList(
+            trips=[
+                TripInfo(
+                    trip_id="trip_ending_here",
+                    route_name="Route A",
+                    destination_display_name="中央公園",
+                    destination_stop_id="1021_01",
+                ),
+                TripInfo(
+                    trip_id="trip_passing_through",
+                    route_name="Route B",
+                    destination_display_name="東駅",
+                    destination_stop_id="2000_01",
+                ),
+                TripInfo(
+                    trip_id="trip_ending_elsewhere",
+                    route_name="Route C",
+                    destination_display_name="西口",
+                    destination_stop_id="3000_01",
+                ),
+            ],
+        )
+
+    monkeypatch.setattr(
+        "gtfs_jp_wayfinder.services.wayfinder_adapter.get_trip_info_batch",
+        mock_get_trip_info_batch,
+    )
+
+    # Test with explicit include_ending=true
+    resp = client.get(f"/stops/{stop_id}/upcoming?include_ending=true")
+    assert resp.status_code == 200
+
+    data = resp.json()
+    assert "buses" in data
+
+    # Should have all 3 buses (including the ending one)
+    assert len(data["buses"]) == 3
+
+    # Verify all trips are present
+    trip_ids = [bus["trip_id"] for bus in data["buses"]]
+    assert "trip_ending_here" in trip_ids
+    assert "trip_passing_through" in trip_ids
+    assert "trip_ending_elsewhere" in trip_ids
 
 
 def test_upcoming_handles_null_destination_stop_id(monkeypatch, client):
