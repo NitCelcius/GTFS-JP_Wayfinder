@@ -10,6 +10,7 @@ import styles from "./ShareModal.module.css";
 interface ShareModalProps {
   shareUrl: string; // Full URL to share (e.g., "https://example.com/bus-stop/123" or "/results?...")
   title?: string; // Optional title for the share modal
+  description?: string; // Optional description text to display below the title
   isOpen: boolean;
   onClose: () => void;
 }
@@ -21,6 +22,7 @@ function CloseIcon() {
 export function ShareModal({
   shareUrl,
   title,
+  description,
   isOpen,
   onClose,
 }: ShareModalProps) {
@@ -73,7 +75,7 @@ export function ShareModal({
     <div className={styles.modalOverlay} onClick={onClose}>
       <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
         <div className={styles.modalHeader}>
-          <h2 className={styles.modalTitle}>バス停を共有</h2>
+          <h2 className={styles.modalTitle}>{shareTitle}</h2>
           <button
             className={styles.closeButton}
             onClick={onClose}
@@ -84,16 +86,15 @@ export function ShareModal({
         </div>
 
         <div className={styles.modalBody}>
+          {description && <p className={styles.description}>{description}</p>}
           <div className={styles.qrCodeContainer}>
-            <div className={styles.qrCodeWrapper}>
-              <QRCodeSVG
-                value={fullShareUrl}
-                size={400}
-                level="M"
-                includeMargin={false}
-                className={styles.qrCode}
-              />
-            </div>
+            <QRCodeSVG
+              value={fullShareUrl}
+              size={300}
+              level="M"
+              includeMargin={false}
+              className={styles.qrCode}
+            />
           </div>
 
           <p className={styles.urlText}>{fullShareUrl}</p>

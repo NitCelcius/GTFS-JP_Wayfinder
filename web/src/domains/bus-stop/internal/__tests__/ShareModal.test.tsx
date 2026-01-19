@@ -47,7 +47,7 @@ describe("ShareModal", () => {
       />
     );
 
-    expect(screen.getByText("バス停を共有")).toBeInTheDocument();
+    expect(screen.getByText(mockTitle)).toBeInTheDocument();
   });
 
   it("should display the QR code when modal is open", () => {
@@ -106,7 +106,7 @@ describe("ShareModal", () => {
     );
 
     // Get the modal overlay (backdrop) - it's the parent div that has the onClick handler
-    const backdrop = screen.getByText("バス停を共有").closest("div")
+    const backdrop = screen.getByText(mockTitle).closest("div")
       ?.parentElement?.parentElement;
 
     if (backdrop) {
@@ -125,7 +125,7 @@ describe("ShareModal", () => {
       />
     );
 
-    const overlay = screen.getByText("バス停を共有").closest("div")
+    const overlay = screen.getByText(mockTitle).closest("div")
       ?.parentElement?.parentElement;
     if (overlay) {
       fireEvent.click(overlay);
@@ -143,7 +143,7 @@ describe("ShareModal", () => {
       />
     );
 
-    const modalContent = screen.getByText("バス停を共有").closest("div");
+    const modalContent = screen.getByText(mockTitle).closest("div");
     if (modalContent) {
       fireEvent.click(modalContent);
       expect(mockOnClose).not.toHaveBeenCalled();
@@ -300,6 +300,6 @@ describe("ShareModal", () => {
       <ShareModal shareUrl={mockShareUrl} isOpen={true} onClose={mockOnClose} />
     );
 
-    expect(screen.getByText("バス停を共有")).toBeInTheDocument();
+    expect(screen.getByText("バス停情報")).toBeInTheDocument();
   });
 });

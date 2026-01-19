@@ -12,6 +12,7 @@ const meta: Meta<typeof ShareModal> = {
   argTypes: {
     shareUrl: { control: "text" },
     title: { control: "text" },
+    description: { control: "text" },
     isOpen: { control: "boolean" },
     onClose: { action: "closeModal" },
   },

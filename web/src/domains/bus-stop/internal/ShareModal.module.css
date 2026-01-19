@@ -16,9 +16,12 @@
   background: white;
   border-radius: var(--border-radius-lg);
   max-width: 28rem;
+  max-height: 90vh;
   width: 100%;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .modalHeader {
@@ -60,33 +63,35 @@
   flex-direction: column;
   align-items: center;
   gap: var(--spacing-lg);
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+
+.description {
+  font-size: 0.875rem;
+  color: #374151;
+  text-align: center;
+  margin: 0;
+  line-height: 1.5;
+  width: 100%;
 }
 
 .qrCodeContainer {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--spacing-md);
+  padding: var(--spacing-sm);
   background: white;
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius-md);
-  width: 100%;
-}
-
-.qrCodeWrapper {
-  padding: 5%;
-  background: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
+  flex-shrink: 0;
 }
 
 .qrCode {
-  width: 100%;
-  height: auto;
-  max-width: 400px;
   display: block;
+  width: min(70vw, 70vh, 300px);
+  height: min(70vw, 70vh, 300px);
 }
 
 .urlText {
