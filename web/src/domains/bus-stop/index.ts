@@ -5,5 +5,6 @@ export {
 } from "./BusStopSearchPage";
 export { BusStopInfoV2, BusStopInfoV2Container } from "./BusStopInfoV2";
 export { BusTripDetail, BusTripDetailContainer } from "./BusTripDetail";
+export { ShareModal } from "./internal/ShareModal";
 export * from "./types";
 export * from "./hooks";
