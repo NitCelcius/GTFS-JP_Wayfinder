@@ -621,7 +621,7 @@ export type GetUpcomingStopsStopIdUpcomingGetData = {
         begin_time?: string | null;
         /**
          * Include Ending
-         * 終点となるバスを含めるかどうか。デフォルトは True（すべてのバスを表示）。
+         * 終点となるバスを含めるかどうか。デフォルトは False（終点となるバスを非表示）。
          */
         include_ending?: boolean;
     };
