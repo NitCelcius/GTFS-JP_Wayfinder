@@ -8,6 +8,14 @@ interface TripSummaryProps {
 export function TripSummary({ route }: TripSummaryProps) {
   return (
     <div className={styles.container} data-name="TripSummary">
+      {route.relativeTimeUntilDeparture && (
+        <div className={styles.relativeTime}>
+          <p className={styles.relativeTimeText}>
+            {route.relativeTimeUntilDeparture}
+          </p>
+        </div>
+      )}
+
       <div className={styles.timeRange}>
         <div className={styles.timeText}>
           <p className={styles.timeTextContent}>
