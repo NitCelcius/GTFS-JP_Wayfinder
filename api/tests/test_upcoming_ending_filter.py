@@ -82,7 +82,7 @@ def test_upcoming_hides_ending_buses_by_default(monkeypatch, client):
     data = resp.json()
     assert "buses" in data
 
-    # Should have only 2 buses (the ending one is filtered out)
+    # Should have only 2 buses (excluding the one ending at this stop)
     assert len(data["buses"]) == 2
 
     # Verify only non-ending trips are present
