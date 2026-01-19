@@ -1,10 +1,11 @@
-import { ArrowLeftRight, Footprints, Map, Search } from "lucide-react";
+import { ArrowLeftRight, Footprints, Map, Search, Share2 } from "lucide-react";
 
 import { useEffect, useRef, useState } from "react";
 
 import { ErrorFullScreen } from "@/components/common";
 import { ActionButtonBar } from "@/components/common/ActionButtonBar";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner/LoadingSpinner";
+import { ShareModal } from "@/domains/bus-stop";
 
 import styles from "./BusStopInfoV2.module.css";
 import { BusStopHeader } from "./internal/BusStopHeader";
@@ -49,6 +50,7 @@ interface BusStopInfoV2Props {
 }
 
 export function BusStopInfoV2({
+  busStopId,
   busStopName,
   distance,
   pastBus,
@@ -65,6 +67,7 @@ export function BusStopInfoV2({
   hasValidCoordinates = false,
 }: BusStopInfoV2Props) {
   const [displayBuses, setDisplayBuses] = useState<UpcomingBusInfo[]>([]);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const scrollableContentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -120,6 +123,13 @@ export function BusStopInfoV2({
       id: "change-transfer",
       onClick: () => onTransfer?.(),
       ariaLabel: "Transfer options",
+    },
+    {
+      icon: <Share2 size={24} />,
+      label: "共有",
+      id: "share-bus-stop",
+      onClick: () => setIsShareModalOpen(true),
+      ariaLabel: "Share bus stop",
     },
     {
       icon: <Map size={24} />,
@@ -227,6 +237,16 @@ export function BusStopInfoV2({
           </div>
         )}
       </div>
+
+      {/* Share Modal */}
+      {busStopId && (
+        <ShareModal
+          isOpen={isShareModalOpen}
+          onClose={() => setIsShareModalOpen(false)}
+          shareUrl={`/bus-stop/${busStopId}`}
+          title={`${busStopName} - バス停情報`}
+        />
+      )}
     </div>
   );
 }
