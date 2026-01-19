@@ -3,6 +3,20 @@
   width: 100%;
 }
 
+.relativeTime {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--size-spacing-sm);
+}
+
+.relativeTimeText {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  line-height: normal;
+}
+
 .timeRange {
   display: flex;
   align-items: center;

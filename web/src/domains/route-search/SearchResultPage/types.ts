@@ -20,6 +20,7 @@ export interface RouteOption {
   fare?: number;
   totalCost?: number;
   stations: Station[];
+  relativeTimeUntilDeparture?: string; // Relative time description (e.g., "5分後にバス停発", "出発済み")
 }
 
 export interface TripDetails {

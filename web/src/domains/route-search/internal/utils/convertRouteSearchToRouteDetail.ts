@@ -1,4 +1,8 @@
 import type { TravelOnceResponse } from "@/api/types.gen";
+import {
+  calculateRelativeMinutes,
+  formatRelativeTime,
+} from "@/domains/route-search/RouteOverviewPage/utils";
 import type { RouteOption } from "@/domains/route-search/SearchResultPage/types";
 import { calculateDurationStr } from "@/lib/utils";
 
@@ -15,6 +19,10 @@ export function convertRouteSearchToRouteDetail(
   originStopName: string,
   destinationStopName: string
 ): RouteOption {
+  // Calculate relative time until departure
+  const relativeMinutes = calculateRelativeMinutes(travel.departure_datetime);
+  const relativeTimeText = formatRelativeTime(relativeMinutes);
+
   return {
     id: travel.trip_id,
     name: `${originStopName} → ${destinationStopName}`,
@@ -24,6 +32,7 @@ export function convertRouteSearchToRouteDetail(
     transferCount: 0, // Direct route for now
     fare: travel.fare,
     totalCost: travel.fare,
+    relativeTimeUntilDeparture: relativeTimeText,
     stations: [
       {
         stationName: originStopName,

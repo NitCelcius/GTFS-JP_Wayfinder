@@ -28,6 +28,7 @@ describe("convertRouteSearchToRouteDetail", () => {
     expect(result.transferCount).toBe(0);
     expect(result.fare).toBe(350);
     expect(result.totalCost).toBe(350);
+    expect(result.relativeTimeUntilDeparture).toBeDefined();
   });
 
   it("should create two stations with correct names", () => {
@@ -130,5 +131,47 @@ describe("convertRouteSearchToRouteDetail", () => {
     expect(result.stations[1].arrivalDatetime?.toISOString()).not.toContain(
       "Invalid"
     );
+  });
+
+  it("should calculate relative time until departure", () => {
+    // Create a departure time 10 minutes in the future
+    const futureDate = new Date();
+    futureDate.setMinutes(futureDate.getMinutes() + 10);
+
+    const futureTravelResponse: TravelOnceResponse = {
+      ...baseTravelResponse,
+      departure_datetime: futureDate.toISOString(),
+    };
+
+    const result = convertRouteSearchToRouteDetail(
+      futureTravelResponse,
+      "東駅",
+      "大学病院"
+    );
+
+    expect(result.relativeTimeUntilDeparture).toBeDefined();
+    // Should contain "バス停発" for future departure
+    expect(result.relativeTimeUntilDeparture).toContain("バス停発");
+  });
+
+  it("should handle past departure times", () => {
+    // Create a departure time 10 minutes in the past
+    const pastDate = new Date();
+    pastDate.setMinutes(pastDate.getMinutes() - 10);
+
+    const pastTravelResponse: TravelOnceResponse = {
+      ...baseTravelResponse,
+      departure_datetime: pastDate.toISOString(),
+    };
+
+    const result = convertRouteSearchToRouteDetail(
+      pastTravelResponse,
+      "東駅",
+      "大学病院"
+    );
+
+    expect(result.relativeTimeUntilDeparture).toBeDefined();
+    // Should contain "出発済み" for past departure
+    expect(result.relativeTimeUntilDeparture).toContain("出発済み");
   });
 });
