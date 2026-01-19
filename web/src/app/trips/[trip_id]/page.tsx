@@ -193,12 +193,15 @@ export default function TripDetailPage() {
 
   return (
     <BusTripDetail
+      tripId={tripId}
+      stopId={stopId}
       stopName={tripInfo.stopName}
       routeNumber={tripInfo.routeNumber}
       routeName={tripInfo.routeName}
       destinationName={tripInfo.destination}
       arrivalMinutes={tripInfo.arrivalMinutes}
       arrivalTime={tripInfo.arrivalTime}
+      departureTime={tripInfo.arrivalTime}
       stopsAway={tripInfo.stopsAway}
       stops={stops}
       routeColorText={tripInfo.routeName}
