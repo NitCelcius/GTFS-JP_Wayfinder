@@ -190,6 +190,7 @@ class TripTimedStop(BaseModel):
     stop_sequence: int
     stop_headsign: str | None = None
     stop_name: str | None = None
+    fare: int | None = None
 
     model_config = {
         "json_schema_extra": {
@@ -323,6 +324,7 @@ class PathResponse(BaseModel):
 # Enriched/batch models
 class TripInfo(BaseModel):
     trip_id: str
+    route_id: str | None = None
     route_name: str | None
     destination_display_name: str | None = None
     destination_stop_id: str | None = None
@@ -367,6 +369,7 @@ class EnrichedTrip(BaseModel):
     departure_time: str
     arrival_datetime: str = Field(...)
     departure_datetime: str = Field(...)
+    route_id: str | None = None
     route_name: str | None
     destination_display_name: str | None = None
     destination_stop_id: str | None = None

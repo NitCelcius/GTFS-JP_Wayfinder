@@ -213,6 +213,7 @@ def get_trip_info_batch(trip_ids: list[str]) -> TripInfoList:
     route_cache: dict[str, str] = {}
     dest_cache: dict[str, str] = {}
     for tid in trip_ids:
+        route_id = None
         route_name = None
         dest_name = None
         dest_stop = None
@@ -247,6 +248,7 @@ def get_trip_info_batch(trip_ids: list[str]) -> TripInfoList:
         trips.append(
             TripInfo(
                 trip_id=tid,
+                route_id=route_id,
                 route_name=route_name,
                 destination_display_name=dest_name,
                 destination_stop_id=dest_stop,
