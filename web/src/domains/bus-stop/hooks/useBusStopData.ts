@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { ApiClient } from "@/lib/api";
+import { getCurrentLocalISODatetime } from "@/lib/utils";
 
 import { composeBusStopInfoWithLatestSelection } from "../composition";
 import { calculateDistance } from "../converter";
@@ -39,9 +40,9 @@ export function useBusStopData(busStopId?: string): UseBusStopDataReturn {
         const apiClient = ApiClient.getInstance();
 
         // Pass current time to API to ensure timezone-aware bus filtering
-        // Use HH:MM:SS format which the API treats as today's date in the server timezone
-        const now = new Date();
-        const beginTime = now.toTimeString().split(" ")[0]; // "HH:MM:SS"
+        // Use ISO datetime format (YYYY-MM-DDTHH:MM:SS) so the API can extract
+        // the date and filter by the correct service_id (weekday/weekend/etc)
+        const beginTime = getCurrentLocalISODatetime();
 
         // Fetch multiple upcoming buses with trip info expanded to allow filtering
         const upcomingResponse = await apiClient.getBusStopInfoExpanded(

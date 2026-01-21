@@ -5,7 +5,10 @@ import { useSearchParams } from "next/navigation";
 import type { TravelOnceResponse } from "@/api/types.gen";
 import type { TripDetails } from "@/domains/route-search/SearchResultPage/types";
 import { apiClient } from "@/lib/api";
-import { getCurrentTimeString, sortTravelsByArrivalTime } from "@/lib/utils";
+import {
+  getCurrentLocalISODatetime,
+  sortTravelsByArrivalTime,
+} from "@/lib/utils";
 import type { RouteSearchResult } from "@/types";
 
 import { getCachedRouteSearchResult } from "../../utils";
@@ -55,7 +58,7 @@ export function useRouteSearch(): UseRouteSearchResult {
         beginTime?: string
       ): Promise<RouteSearchResult | null> => {
         try {
-          const time = beginTime || getCurrentTimeString();
+          const time = beginTime || getCurrentLocalISODatetime();
 
           const response = await apiClient.searchTimedRoutes(
             fromStop,

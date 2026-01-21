@@ -101,6 +101,22 @@ export const getCurrentTimeString = (): string => {
 };
 
 /**
+ * Get the current local datetime as an ISO-like string in YYYY-MM-DDTHH:MM:SS format
+ * Note: This uses local timezone, not UTC, to preserve the user's date context
+ * @returns Current datetime formatted as "YYYY-MM-DDTHH:MM:SS"
+ */
+export const getCurrentLocalISODatetime = (): string => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  const hours = String(now.getHours()).padStart(2, "0");
+  const minutes = String(now.getMinutes()).padStart(2, "0");
+  const seconds = String(now.getSeconds()).padStart(2, "0");
+  return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+};
+
+/**
  * Parse a time string (HH:MM or HH:MM:SS) to total minutes
  * @param timeStr - Time string in HH:MM or HH:MM:SS format
  * @returns Total minutes from the time string

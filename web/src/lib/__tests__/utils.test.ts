@@ -2,6 +2,7 @@ import {
   calculateDurationJapanese,
   calculateDurationMinutes,
   formatRelativeDate,
+  getCurrentLocalISODatetime,
   parseTimeToMinutes,
   sortTravelsByArrivalTime,
   trimTimeSeconds,
@@ -240,5 +241,41 @@ describe("trimTimeSeconds", () => {
   it("should return original string if format is unexpected", () => {
     expect(trimTimeSeconds("invalid")).toBe("invalid");
     expect(trimTimeSeconds("")).toBe("");
+  });
+});
+
+describe("getCurrentLocalISODatetime", () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  it("should return datetime in YYYY-MM-DDTHH:MM:SS format", () => {
+    jest.setSystemTime(new Date(2025, 0, 20, 14, 30, 45)); // 2025-01-20 14:30:45
+    const result = getCurrentLocalISODatetime();
+    expect(result).toBe("2025-01-20T14:30:45");
+  });
+
+  it("should pad single-digit values with zeros", () => {
+    jest.setSystemTime(new Date(2025, 0, 5, 9, 5, 3)); // 2025-01-05 09:05:03
+    const result = getCurrentLocalISODatetime();
+    expect(result).toBe("2025-01-05T09:05:03");
+  });
+
+  it("should use local timezone (not UTC)", () => {
+    // Create a date at midnight local time
+    jest.setSystemTime(new Date(2025, 5, 15, 0, 0, 0)); // 2025-06-15 00:00:00
+    const result = getCurrentLocalISODatetime();
+    // The result should be midnight in local time, not adjusted to UTC
+    expect(result).toBe("2025-06-15T00:00:00");
+  });
+
+  it("should handle end of year", () => {
+    jest.setSystemTime(new Date(2025, 11, 31, 23, 59, 59)); // 2025-12-31 23:59:59
+    const result = getCurrentLocalISODatetime();
+    expect(result).toBe("2025-12-31T23:59:59");
   });
 });
