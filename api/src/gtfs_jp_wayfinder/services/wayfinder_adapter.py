@@ -720,3 +720,87 @@ def get_agency_info():
     if not wf_service.is_ready():
         raise RuntimeError("Wayfinder not initialized")
     return wf_service.get_agency_info()
+
+
+def get_service_ids_for_date(date_str: str) -> list[str]:
+    """Get the list of service IDs that are active on a given date.
+
+    This function enables date-based calendar filtering by looking up which
+    service IDs are valid for a specific date. This is essential for filtering
+    out trips that don't run on the requested day (e.g., weekday buses on weekend).
+
+    Args:
+        date_str: Date string in either YYYY-MM-DD (ISO) or YYYYMMDD (GTFS) format.
+
+    Returns:
+        List of service IDs active on the given date. Returns empty list if no
+        services are scheduled for that date.
+
+    Raises:
+        RuntimeError: If wayfinder is not initialized.
+        ValueError: If date format is invalid.
+    """
+    if not wf_service.is_ready():
+        raise RuntimeError("Wayfinder not initialized")
+    return wf_service.get_service_ids_for_date(date_str)
+
+
+def get_trip_service_id(trip_id: str) -> str:
+    """Get the service_id for a specific trip.
+
+    Args:
+        trip_id: The trip ID to look up.
+
+    Returns:
+        The service_id associated with this trip.
+
+    Raises:
+        RuntimeError: If wayfinder is not initialized.
+        ValueError: If trip_id is not found.
+    """
+    if not wf_service.is_ready():
+        raise RuntimeError("Wayfinder not initialized")
+    return wf_service.get_trip_service_id(trip_id)
+
+
+def get_service_ids_for_datetime(dt: datetime.datetime | str | None = None) -> list[str]:
+    """Get the list of service IDs that are active for a given datetime.
+
+    This is a convenience function that extracts the date from a datetime
+    and looks up the applicable service IDs. If no datetime is provided,
+    uses the current date in the agency timezone.
+
+    Args:
+        dt: Datetime object, ISO datetime string, or None for current time.
+
+    Returns:
+        List of service IDs active on the date. Returns empty list if no
+        services are scheduled for that date.
+
+    Raises:
+        RuntimeError: If wayfinder is not initialized.
+        ValueError: If datetime format is invalid.
+    """
+    if not wf_service.is_ready():
+        raise RuntimeError("Wayfinder not initialized")
+
+    tz = _get_agency_zone()
+
+    if dt is None:
+        # Use current date in agency timezone
+        date_obj = datetime.datetime.now(tz).date()
+    elif isinstance(dt, datetime.datetime):
+        date_obj = dt.date()
+    elif isinstance(dt, str):
+        # Parse ISO datetime or date string
+        try:
+            if "T" in dt:
+                date_obj = datetime.datetime.fromisoformat(dt).date()
+            else:
+                date_obj = datetime.date.fromisoformat(dt)
+        except ValueError as e:
+            raise ValueError(f"Invalid datetime format: {dt}") from e
+    else:
+        raise ValueError(f"Unexpected type for dt: {type(dt)}")
+
+    return wf_service.get_service_ids_for_date(date_obj.isoformat())

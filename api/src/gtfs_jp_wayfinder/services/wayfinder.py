@@ -329,3 +329,88 @@ def get_agency_info():
     if _wf is None:
         raise RuntimeError("Wayfinder not initialized")
     return _wf.get_agency_info()
+
+
+def get_service_ids_for_date(date_str: str) -> list[str]:
+    """Get the list of service IDs that are active on a given date.
+
+    This function enables date-based calendar filtering by looking up which
+    service IDs are valid for a specific date. This is essential for filtering
+    out trips that don't run on the requested day (e.g., weekday buses on weekend).
+
+    Args:
+        date_str: Date string in either YYYY-MM-DD (ISO) or YYYYMMDD (GTFS) format.
+
+    Returns:
+        List of service IDs active on the given date. Returns empty list if no
+        services are scheduled for that date.
+
+    Raises:
+        RuntimeError: If wayfinder is not initialized.
+        ValueError: If date format is invalid.
+
+    Examples:
+        >>> get_service_ids_for_date("2025-01-20")  # Monday
+        ["平日"]
+        >>> get_service_ids_for_date("2025-01-19")  # Sunday
+        ["土日祝"]
+        >>> get_service_ids_for_date("20250120")  # GTFS format
+        ["平日"]
+    """
+    if _wf is None:
+        raise RuntimeError("Wayfinder not initialized")
+
+    if _wf.date_to_service_id is None:
+        raise RuntimeError("Calendar data not loaded")
+
+    # Normalize date format to YYYYMMDD (GTFS format)
+    normalized_date = _normalize_date_to_gtfs_format(date_str)
+
+    return _wf.date_to_service_id.get(normalized_date, [])
+
+
+def get_trip_service_id(trip_id: str) -> str:
+    """Get the service_id for a specific trip.
+
+    Args:
+        trip_id: The trip ID to look up.
+
+    Returns:
+        The service_id associated with this trip.
+
+    Raises:
+        RuntimeError: If wayfinder is not initialized.
+        ValueError: If trip_id is not found.
+    """
+    if _wf is None:
+        raise RuntimeError("Wayfinder not initialized")
+    return _wf.get_trip_service_id(trip_id)
+
+
+def _normalize_date_to_gtfs_format(date_str: str) -> str:
+    """Normalize date string to GTFS format (YYYYMMDD).
+
+    Accepts:
+    - ISO format: YYYY-MM-DD (e.g., "2025-01-20")
+    - GTFS format: YYYYMMDD (e.g., "20250120")
+
+    Args:
+        date_str: Date string in either format.
+
+    Returns:
+        Date string in YYYYMMDD format.
+
+    Raises:
+        ValueError: If date format is invalid.
+    """
+    # Remove any dashes to convert ISO to GTFS format
+    normalized = date_str.replace("-", "")
+
+    # Validate format (should be 8 digits)
+    if len(normalized) != 8 or not normalized.isdigit():
+        raise ValueError(
+            f"Invalid date format: '{date_str}'. "
+            "Expected YYYY-MM-DD or YYYYMMDD format."
+        )
+
+    return normalized
