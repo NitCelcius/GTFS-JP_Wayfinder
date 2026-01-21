@@ -39,33 +39,6 @@ const baseRoute: RouteOption = {
   ],
 };
 
-export const WithRelativeTimeFuture: Story = {
-  args: {
-    route: {
-      ...baseRoute,
-      relativeTimeUntilDeparture: "5分後にバス停発",
-    },
-  },
-};
-
-export const WithRelativeTimePast: Story = {
-  args: {
-    route: {
-      ...baseRoute,
-      relativeTimeUntilDeparture: "10分前に出発済み",
-    },
-  },
-};
-
-export const WithRelativeTimeSoon: Story = {
-  args: {
-    route: {
-      ...baseRoute,
-      relativeTimeUntilDeparture: "まもなく出発",
-    },
-  },
-};
-
 export const WithoutRelativeTime: Story = {
   args: {
     route: baseRoute,
@@ -79,18 +52,6 @@ export const WithMultipleTransfers: Story = {
       relativeTimeUntilDeparture: "15分後にバス停発",
       transferCount: 2,
       totalCost: 700,
-    },
-  },
-};
-
-export const LongDuration: Story = {
-  args: {
-    route: {
-      ...baseRoute,
-      departureTime: "08:15:00",
-      arrivalTime: "10:30:00",
-      duration: "2時間15分",
-      relativeTimeUntilDeparture: "3分後にバス停発",
     },
   },
 };
