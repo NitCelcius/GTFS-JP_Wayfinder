@@ -112,6 +112,11 @@ async def get_connections(
 async def get_journey(
     trip_id: str = Query(..., description="運行ID"),
     from_stop_id: str = Query(..., description="起点の停留所ID"),
+    reference_date: str | None = Query(
+        None,
+        description="参照日付 (YYYY-MM-DD形式)。指定しない場合はデフォルト日付を使用。",
+        pattern=r"^\d{4}-\d{2}-\d{2}$",
+    ),
 ):
     try:
         journey = (
@@ -122,8 +127,8 @@ async def get_journey(
         if journey is None:
             raise HTTPException(status_code=404, detail="not found")
 
-        # Determine reference_date (use default date from adapter)
-        reference_date = adapter.get_default_date()
+        # Determine reference_date: use provided date or fall back to default
+        effective_date = reference_date or adapter.get_default_date()
 
         records = []
         for x in journey.itertuples():
@@ -136,10 +141,10 @@ async def get_journey(
 
             # Calculate datetime fields
             arrival_datetime = adapter.merge_date_and_time_to_iso(
-                reference_date, arrival_time_str
+                effective_date, arrival_time_str
             )
             departure_datetime = adapter.merge_date_and_time_to_iso(
-                reference_date, departure_time_str
+                effective_date, departure_time_str
             )
 
             records.append(
