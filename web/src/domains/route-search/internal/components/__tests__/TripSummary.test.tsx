@@ -31,7 +31,9 @@ describe("TripSummary", () => {
   it("should render departure and arrival times", () => {
     render(<TripSummary route={baseRoute} />);
 
-    expect(screen.getByText(/08:15:00 → 09:00:00 \(45分\)/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/08:15:00 → 09:00:00 \(45分\)/)
+    ).toBeInTheDocument();
   });
 
   it("should render transfer count and total cost", () => {
