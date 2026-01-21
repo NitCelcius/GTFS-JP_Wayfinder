@@ -39,7 +39,7 @@ export const StopItem: React.FC<StopItemProps> = ({ stop }) => {
   const currentLabel = stop.isCurrent ? "現在地" : undefined;
 
   return (
-    <div className={stopClasses}>
+    <div className={stopClasses} data-bus-location={stop.isBusLocation}>
       {stop.isBusLocation ? (
         // bus-front icon is custom and cannot be replaced with Lucide
         <Icon name="bus-front" size={28} aria-hidden="true" />

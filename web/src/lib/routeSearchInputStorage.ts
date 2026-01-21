@@ -47,18 +47,22 @@ export function saveRouteSearchInputs(state: {
  * Validate route search input state structure
  */
 function isValidRouteSearchInputState(
-  state: any
+  state: unknown
 ): state is RouteSearchInputState {
+  if (typeof state !== "object" || state === null) {
+    return false;
+  }
+
+  const obj = state as Record<string, unknown>;
+
   return (
-    typeof state === "object" &&
-    state !== null &&
-    typeof state.originStopId === "string" &&
-    typeof state.destinationStopId === "string" &&
-    typeof state.originStopName === "string" &&
-    typeof state.destinationStopName === "string" &&
-    Array.isArray(state.originCandidateStopIds) &&
-    Array.isArray(state.destinationCandidateStopIds) &&
-    typeof state.timestamp === "number"
+    typeof obj.originStopId === "string" &&
+    typeof obj.destinationStopId === "string" &&
+    typeof obj.originStopName === "string" &&
+    typeof obj.destinationStopName === "string" &&
+    Array.isArray(obj.originCandidateStopIds) &&
+    Array.isArray(obj.destinationCandidateStopIds) &&
+    typeof obj.timestamp === "number"
   );
 }
 
