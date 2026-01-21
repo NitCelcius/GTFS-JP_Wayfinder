@@ -13,7 +13,7 @@ TZ_SUFFIX = "+09:00"
 client = TestClient(app)
 
 
-def test_upcoming_stops_have_datetime_fields(monkeypatch, client):
+def test_upcoming_stops_have_datetime_fields(monkeypatch, client, mock_service_id_lookup):
     """Test that stops in expand=stops have arrival_datetime and departure_datetime fields."""
     stop_id = "S100"
 
@@ -129,7 +129,7 @@ def test_upcoming_stops_have_datetime_fields(monkeypatch, client):
     assert stop2["departure_datetime"] == f"{today}T08:47:00{TZ_SUFFIX}"
 
 
-def test_upcoming_with_begin_time_iso_format(monkeypatch, client):
+def test_upcoming_with_begin_time_iso_format(monkeypatch, client, mock_service_id_lookup):
     """Test that stops respect the begin_time ISO format for datetime fields."""
     stop_id = "S100"
     test_date = "2025-12-25"

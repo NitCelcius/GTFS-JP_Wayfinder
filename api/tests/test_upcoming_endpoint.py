@@ -15,6 +15,13 @@ def test_upcoming_hardcoded(monkeypatch, client):
 
     trips = [b["trip_id"] for b in expected["buses"]]
 
+    # Mock service_id lookup to return a valid service_id
+    # (otherwise the endpoint returns empty for dates outside GTFS calendar)
+    monkeypatch.setattr(
+        "gtfs_jp_wayfinder.services.wayfinder_adapter.get_service_ids_for_date",
+        lambda date_str: ["平日"],
+    )
+
     # patch adapter functions to return the trips and their times from `expected`
     monkeypatch.setattr(
         "gtfs_jp_wayfinder.services.wayfinder_adapter.get_trips_from_stop",

@@ -8,7 +8,9 @@ from gtfs_jp_wayfinder.models import TripInfo, TripInfoList
 client = TestClient(app)
 
 
-def test_upcoming_buses_sorted_by_arrival_time(monkeypatch, client):
+def test_upcoming_buses_sorted_by_arrival_time(
+    monkeypatch, client, mock_service_id_lookup
+):
     """Test that buses are returned sorted by arrival time (earliest first)."""
     stop_id = "S100"
 
@@ -105,7 +107,9 @@ def test_upcoming_buses_sorted_by_arrival_time(monkeypatch, client):
     )
 
 
-def test_upcoming_sorting_with_same_arrival_times(monkeypatch, client):
+def test_upcoming_sorting_with_same_arrival_times(
+    monkeypatch, client, mock_service_id_lookup
+):
     """Test sorting behavior when multiple buses have the same arrival time.
 
     When arrival times are equal, the sort should be stable (maintain original order).
@@ -195,7 +199,9 @@ def test_upcoming_sorting_with_same_arrival_times(monkeypatch, client):
     assert middle_trips == {"trip_b", "trip_c"}
 
 
-def test_upcoming_sorting_with_overnight_times(monkeypatch, client):
+def test_upcoming_sorting_with_overnight_times(
+    monkeypatch, client, mock_service_id_lookup
+):
     """Test sorting with GTFS extended hours (24:00, 25:00, etc.) for overnight trips."""
     stop_id = "S300"
 

@@ -1,6 +1,13 @@
 def test_upcoming_variants(monkeypatch, client):
     stop_id = "S100"
 
+    # Mock service_id lookup to return a valid service_id
+    # (otherwise the endpoint returns empty for dates outside GTFS calendar)
+    monkeypatch.setattr(
+        "gtfs_jp_wayfinder.services.wayfinder_adapter.get_service_ids_for_date",
+        lambda date_str: ["平日"],
+    )
+
     monkeypatch.setattr(
         "gtfs_jp_wayfinder.services.wayfinder_adapter.get_trips_from_stop",
         lambda stop, s=None: None,

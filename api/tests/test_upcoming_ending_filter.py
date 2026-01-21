@@ -3,7 +3,9 @@
 from gtfs_jp_wayfinder.models import TripInfo, TripInfoList
 
 
-def test_upcoming_includes_ending_buses_by_default(monkeypatch, client):
+def test_upcoming_includes_ending_buses_by_default(
+    monkeypatch, client, mock_service_id_lookup
+):
     """Test that buses ending at the stop are included by default."""
     stop_id = "1021_01"
 
@@ -92,7 +94,9 @@ def test_upcoming_includes_ending_buses_by_default(monkeypatch, client):
     assert "trip_ending_elsewhere" in trip_ids
 
 
-def test_upcoming_filters_ending_buses_when_requested(monkeypatch, client):
+def test_upcoming_filters_ending_buses_when_requested(
+    monkeypatch, client, mock_service_id_lookup
+):
     """Test that buses ending at the stop are filtered out when include_ending=false."""
     stop_id = "1021_01"
 
@@ -168,7 +172,9 @@ def test_upcoming_filters_ending_buses_when_requested(monkeypatch, client):
     assert "trip_passing_through" in trip_ids
 
 
-def test_upcoming_handles_null_destination_stop_id(monkeypatch, client):
+def test_upcoming_handles_null_destination_stop_id(
+    monkeypatch, client, mock_service_id_lookup
+):
     """Test that trips with null destination_stop_id are not filtered out."""
     stop_id = "1021_01"
 

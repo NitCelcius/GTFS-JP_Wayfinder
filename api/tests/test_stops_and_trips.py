@@ -147,10 +147,8 @@ def test_get_stop_with_platform_code_and_location(monkeypatch, client):
 
 
 def test_trips_batch_limit_enforced(monkeypatch, client):
-    # ensure env variable default is 10
-    import os
-
-    os.environ["API_BATCH_MAX_TRIP_IDS"] = "3"
+    # Use monkeypatch to set env variable - it will auto-restore after test
+    monkeypatch.setenv("API_BATCH_MAX_TRIP_IDS", "3")
 
     # payload with 4 trip ids should be rejected
     resp = client.post("/trips/batch", json={"trip_ids": ["a", "b", "c", "d"]})
