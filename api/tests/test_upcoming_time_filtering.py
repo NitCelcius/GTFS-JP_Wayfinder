@@ -13,6 +13,13 @@ def test_upcoming_with_begin_time_filters_past_buses(monkeypatch, client):
     """Test that begin_time parameter filters out buses that have already departed."""
     stop_id = "S100"
 
+    # Mock service_id lookup to return a valid service_id
+    # (otherwise the endpoint returns empty for dates outside GTFS calendar)
+    monkeypatch.setattr(
+        "gtfs_jp_wayfinder.services.wayfinder_adapter.get_service_ids_for_date",
+        lambda date_str: ["平日"],
+    )
+
     # Mock trips with various departure times
     all_trips = ["trip_early", "trip_current", "trip_later"]
     monkeypatch.setattr(
@@ -134,6 +141,13 @@ def test_upcoming_with_begin_time_filters_past_buses(monkeypatch, client):
 def test_upcoming_without_begin_time_no_filtering(monkeypatch, client):
     """Test that without begin_time, no time filtering is applied."""
     stop_id = "S100"
+
+    # Mock service_id lookup to return a valid service_id
+    # (otherwise the endpoint returns empty for dates outside GTFS calendar)
+    monkeypatch.setattr(
+        "gtfs_jp_wayfinder.services.wayfinder_adapter.get_service_ids_for_date",
+        lambda date_str: ["平日"],
+    )
 
     # Track whether min_arrival_time is None
     received_params = []

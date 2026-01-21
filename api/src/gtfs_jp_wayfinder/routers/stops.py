@@ -256,6 +256,7 @@ async def get_upcoming(
             "開始時刻 (HH:MM:SS または ISO 8601 形式 (e.g., 2025-10-28T14:30:00). "
             "HH:MM:SS形式の場合、今日の日付が基準日として使用されます。"
             "ISO 8601形式の場合、`begin_time`で指定された日付が基準日として使用されます。"
+            "日付情報は、カレンダーに基づいた運行日フィルタリングにも使用されます。"
         ),
     ),
     include_ending: bool = Query(
@@ -273,6 +274,25 @@ async def get_upcoming(
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e)) from e
 
+    # Auto-detect service_id(s) from the reference date if not explicitly provided
+    # This ensures we only return buses that actually run on the requested day
+    effective_service_ids: list[str] = []
+    if service_id is not None:
+        # Explicit service_id takes precedence
+        effective_service_ids = [service_id]
+    else:
+        # Auto-detect from reference date
+        detected_service_ids = adapter.get_service_ids_for_date(reference_date)
+        if detected_service_ids:
+            effective_service_ids = detected_service_ids
+        else:
+            # Date is outside calendar range - return empty result
+            return models.UpcomingBusEnriched(
+                stop_id=stop_id,
+                reference_date=reference_date,
+                buses=[],
+            )
+
     # validate expand tokens
     tokens = parse_expand(expand)
 
@@ -288,16 +308,27 @@ async def get_upcoming(
             detail=f"limit too large; max is {max_batch}",
         )
 
-    trips = adapter.get_trips_from_stop(stop_id, service_id)
-    if trips is None:
+    # Get trips from stop, aggregating from all active service_ids
+    trips_list: list[str] = []
+    seen_trips: set[str] = set()
+    for sid in effective_service_ids:
+        try:
+            trips = adapter.get_trips_from_stop(stop_id, sid)
+            if trips is not None:
+                for trip in trips:
+                    if trip not in seen_trips:
+                        seen_trips.add(trip)
+                        trips_list.append(trip)
+        except ValueError:
+            # No trips found for this service_id at this stop - continue
+            pass
+
+    if not trips_list:
         return models.UpcomingBusEnriched(
             stop_id=stop_id,
             reference_date=reference_date,
             buses=[],
         )
-
-    # Convert to list for processing
-    trips_list = list(trips)
 
     # OPTIMIZATION 1: Batch fetch all arrival/departure times at once instead of N individual queries
     # Pass min_arrival_time to filter out buses that have already departed

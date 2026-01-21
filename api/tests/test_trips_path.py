@@ -116,7 +116,7 @@ def test_path_search_and_travels(monkeypatch, client):
     assert body["travels"][0]["trip_id"] == "t-1"
 
 
-def test_upcoming_variants(monkeypatch, client):
+def test_upcoming_variants(monkeypatch, client, mock_service_id_lookup):
     stop_id = "S100"
 
     # no trips

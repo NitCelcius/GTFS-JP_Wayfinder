@@ -77,7 +77,9 @@ def test_timed_search_with_hh_mm_ss_includes_reference_date(monkeypatch, client)
     assert "travels" in body
 
 
-def test_upcoming_trips_includes_reference_date(monkeypatch, client):
+def test_upcoming_trips_includes_reference_date(
+    monkeypatch, client, mock_service_id_lookup
+):
     """Test that /stops/{stop_id}/upcoming includes reference_date in response."""
     trips = ["trip1", "trip2"]
 

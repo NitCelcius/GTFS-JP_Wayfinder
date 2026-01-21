@@ -41,3 +41,18 @@ def setup_test_environment():
     yield
 
     # Cleanup if needed (though environment variables will be reset after test process ends)
+
+
+@pytest.fixture
+def mock_service_id_lookup(monkeypatch):
+    """Mock service_id lookup to return a valid service_id for any date.
+
+    This fixture should be used by tests that mock the /upcoming endpoint
+    to prevent empty results for dates outside the GTFS calendar range.
+    Without this mock, the endpoint will return empty results for any date
+    outside the GTFS calendar (e.g., today's date if it's beyond the calendar end).
+    """
+    monkeypatch.setattr(
+        "gtfs_jp_wayfinder.services.wayfinder_adapter.get_service_ids_for_date",
+        lambda date_str: ["平日"],
+    )

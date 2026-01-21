@@ -6,7 +6,7 @@ client = TestClient(app)
 TZ_SUFFIX = "+09:00"
 
 
-def test_upcoming_stops_expansion(monkeypatch, client):
+def test_upcoming_stops_expansion(monkeypatch, client, mock_service_id_lookup):
     """Test that expand=stops properly populates the stops field"""
     stop_id = "S100"
 
@@ -81,7 +81,7 @@ def test_upcoming_stops_expansion(monkeypatch, client):
     assert body2["buses"][0]["stops"][1]["stop_name"] == "Next Stop Name"
 
 
-def test_upcoming_combined_expansion(monkeypatch, client):
+def test_upcoming_combined_expansion(monkeypatch, client, mock_service_id_lookup):
     """Test that expand=trip_info,stops works correctly together"""
     stop_id = "S100"
 
