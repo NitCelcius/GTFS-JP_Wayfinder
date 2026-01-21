@@ -55,9 +55,9 @@ export function convertTripToBusInfo(trip: EnrichedTripData): BusInfo {
     arrivalTime: formatTime(trip.arrival_time),
     arrivalDatetime,
     status: "当バス停着",
-    // Use route_name for color generation (route_long_name from GTFS)
-    // TODO: Switch to route_id when API exposes it for more precise colors
-    routeColorText: trip.route_name ?? undefined,
+    // Use route_id for color generation (precise unique identifier per route)
+    // Falls back to route_name if route_id is not available
+    routeColorText: trip.route_id ?? trip.route_name ?? undefined,
   };
 }
 

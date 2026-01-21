@@ -142,5 +142,6 @@ function convertBusDataToTripDetail(
     arrivalTime: busInfo.arrivalTime,
     stopsAway,
     stops,
+    routeColorText: busInfo.routeColorText,
   };
 }

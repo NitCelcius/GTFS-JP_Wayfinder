@@ -20,8 +20,8 @@ export interface BusInfo {
   status: string;
   /**
    * Text used for route color generation.
-   * Currently uses route_name (route_long_name from GTFS).
-   * TODO: Switch to route_id when API exposes it for more precise colors.
+   * Uses route_id (unique identifier per route) for precise color differentiation.
+   * Falls back to route_name if route_id is not available.
    */
   routeColorText?: string;
 }

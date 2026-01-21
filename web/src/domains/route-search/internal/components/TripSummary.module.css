@@ -11,10 +11,11 @@
 }
 
 .relativeTimeText {
-  font-size: 0.875rem;
+  font-size: 1.25rem;
   font-weight: 600;
   color: var(--color-primary);
   line-height: normal;
+  margin: 0.5rem;
 }
 
 .timeRange {
@@ -42,7 +43,8 @@
 .timeTextContent {
   line-height: normal;
   white-space: pre;
-  font-size: 0.95rem;
+  font-size: 1rem;
+  margin: 0;
 }
 
 .details {
@@ -69,5 +71,6 @@
 .detailsTextContent {
   line-height: normal;
   white-space: pre;
-  font-size: 0.875rem;
+  font-size: 1rem;
+  margin: 0;
 }
