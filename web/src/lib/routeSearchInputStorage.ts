@@ -49,18 +49,20 @@ export function saveRouteSearchInputs(state: {
 function isValidRouteSearchInputState(
   state: unknown
 ): state is RouteSearchInputState {
+  if (typeof state !== "object" || state === null) {
+    return false;
+  }
+
+  const obj = state as Record<string, unknown>;
+
   return (
-    typeof state === "object" &&
-    state !== null &&
-    typeof (state as RouteSearchInputState).originStopId === "string" &&
-    typeof (state as RouteSearchInputState).destinationStopId === "string" &&
-    typeof (state as RouteSearchInputState).originStopName === "string" &&
-    typeof (state as RouteSearchInputState).destinationStopName === "string" &&
-    Array.isArray((state as RouteSearchInputState).originCandidateStopIds) &&
-    Array.isArray(
-      (state as RouteSearchInputState).destinationCandidateStopIds
-    ) &&
-    typeof (state as RouteSearchInputState).timestamp === "number"
+    typeof obj.originStopId === "string" &&
+    typeof obj.destinationStopId === "string" &&
+    typeof obj.originStopName === "string" &&
+    typeof obj.destinationStopName === "string" &&
+    Array.isArray(obj.originCandidateStopIds) &&
+    Array.isArray(obj.destinationCandidateStopIds) &&
+    typeof obj.timestamp === "number"
   );
 }
 
