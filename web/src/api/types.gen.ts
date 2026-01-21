@@ -98,6 +98,10 @@ export type EnrichedTrip = {
      */
     departure_datetime: string;
     /**
+     * Route Id
+     */
+    route_id?: string | null;
+    /**
      * Route Name
      */
     route_name: string | null;
@@ -326,6 +330,10 @@ export type TripInfo = {
      */
     trip_id: string;
     /**
+     * Route Id
+     */
+    route_id?: string | null;
+    /**
      * Route Name
      */
     route_name: string | null;
@@ -423,6 +431,10 @@ export type TripTimedStop = {
      * Stop Name
      */
     stop_name?: string | null;
+    /**
+     * Fare
+     */
+    fare?: number | null;
 };
 
 /**

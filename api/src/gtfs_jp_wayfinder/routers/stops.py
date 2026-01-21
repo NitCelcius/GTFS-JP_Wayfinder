@@ -378,6 +378,7 @@ async def get_upcoming(
                 departure_time=b.departure_time,
                 arrival_datetime=b.arrival_datetime,
                 departure_datetime=b.departure_datetime,
+                route_id=tinfo.route_id if tinfo else None,
                 route_name=tinfo.route_name if tinfo else None,
                 destination_display_name=tinfo.destination_display_name
                 if tinfo
@@ -390,11 +391,7 @@ async def get_upcoming(
     # Filter out buses that end at this stop unless include_ending=True
     # Note: Trips with None destination_stop_id are kept (treated as passing through)
     if not include_ending:
-        enriched = [
-            trip
-            for trip in enriched
-            if trip.destination_stop_id != stop_id
-        ]
+        enriched = [trip for trip in enriched if trip.destination_stop_id != stop_id]
 
     # Sort buses by arrival time (earliest first)
     enriched.sort(key=lambda trip: trip.arrival_time)

@@ -19,12 +19,21 @@ def test_trip_stops(monkeypatch):
                 "stop_id": "S1",
                 "stop_sequence": 1,
                 "stop_headsign": "Central",
+                "stop_name": None,
+                "fare": None,
             },
         ]
+
+    def fake_default_date():
+        return "2025-10-29"
 
     monkeypatch.setattr(
         "gtfs_jp_wayfinder.services.wayfinder_adapter.get_stops_from_trip",
         fake_stops,
+    )
+    monkeypatch.setattr(
+        "gtfs_jp_wayfinder.services.wayfinder_adapter.get_default_date",
+        fake_default_date,
     )
 
     resp = client.get("/trips/t1/stops")

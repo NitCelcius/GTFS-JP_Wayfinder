@@ -536,6 +536,23 @@ def get_stops_from_trip(
                 except Exception:
                     r["stop_name"] = None
 
+    # Calculate fares from the first stop to each stop
+    if records:
+        first_stop_id = records[0].get("stop_id")
+        if first_stop_id:
+            for r in records:
+                dest_stop_id = r.get("stop_id")
+                if dest_stop_id and dest_stop_id != first_stop_id:
+                    try:
+                        fare = get_fare_by_stops(first_stop_id, dest_stop_id)
+                        r["fare"] = fare
+                    except Exception:
+                        # If fare lookup fails, leave as None
+                        r["fare"] = None
+                else:
+                    # First stop or invalid stop_id has no fare
+                    r["fare"] = None
+
     return records
 
 
