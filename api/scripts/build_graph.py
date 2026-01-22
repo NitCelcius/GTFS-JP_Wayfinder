@@ -43,7 +43,7 @@ OUTPUT_PATH = (
 )
 
 # Default local GTFS data directory (relative to api/ directory)
-DEFAULT_GTFS_DIR = Path(__file__).parent.parent / "data" / "gtfs-akita-chuo-kotsu"
+DEFAULT_GTFS_DIR = Path(__file__).parent.parent / "data" / "gtfs-akita-chuo-kotsu-2025"
 
 
 def download_and_extract_gtfs(gtfs_url: str, extract_dir: str) -> str:
