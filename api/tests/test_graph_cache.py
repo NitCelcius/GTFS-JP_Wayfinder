@@ -181,3 +181,87 @@ class TestGraphCache:
         # Clean up
         if cache_path.exists():
             cache_path.unlink()
+
+    def test_cache_includes_walk_transfer_pairs(self, gtfs_data_dir):
+        """Test that _walk_transfer_pairs is correctly saved and loaded from cache."""
+        # Clean up any existing cache first
+        wf = AkitaBusWayFinder()
+        cache_path = wf._get_cache_path(gtfs_data_dir)
+        if cache_path.exists():
+            cache_path.unlink()
+
+        # Create mock graph data with walk transfer pairs
+        wf.graph = nx.DiGraph()
+        wf.graph.add_edge("S1", "S2")
+        wf.graph_via_service_id = {"SVC1": nx.DiGraph()}
+        wf.graph_via_service_id["SVC1"].add_edge("S1", "S2")
+        wf.date_to_service_id = {"20210101": ["SVC1"]}
+        # Add walk transfer pairs
+        wf._walk_transfer_pairs = {
+            ("akita-eki_01", "akita-eki_02"),
+            ("akita-eki_02", "akita-eki_01"),
+            ("akita-eki_01", "akita-eki_03"),
+            ("akita-eki_03", "akita-eki_01"),
+        }
+
+        # Save cache
+        wf._save_graph_cache(gtfs_data_dir)
+
+        # Verify cache file exists
+        assert cache_path.exists()
+
+        # Load cache in a new instance
+        wf2 = AkitaBusWayFinder()
+        loaded = wf2._load_graph_cache(gtfs_data_dir)
+
+        assert loaded is True
+        # Verify walk transfer pairs were loaded
+        assert wf2._walk_transfer_pairs == wf._walk_transfer_pairs
+        assert ("akita-eki_01", "akita-eki_02") in wf2._walk_transfer_pairs
+        assert ("akita-eki_02", "akita-eki_01") in wf2._walk_transfer_pairs
+        assert ("akita-eki_01", "akita-eki_03") in wf2._walk_transfer_pairs
+        assert ("akita-eki_03", "akita-eki_01") in wf2._walk_transfer_pairs
+
+        # Verify is_walk_transfer works correctly after cache load
+        assert wf2.is_walk_transfer("akita-eki_01", "akita-eki_02") is True
+        assert wf2.is_walk_transfer("akita-eki_02", "akita-eki_01") is True
+        assert wf2.is_walk_transfer("S1", "S2") is False  # Not a walk transfer
+
+        # Clean up
+        if cache_path.exists():
+            cache_path.unlink()
+
+    def test_cache_load_without_walk_transfer_pairs_uses_empty_set(self, gtfs_data_dir):
+        """
+        Test that loading a cache without _walk_transfer_pairs (legacy cache)
+        correctly initializes an empty set.
+        """
+        import pickle
+
+        wf = AkitaBusWayFinder()
+        cache_path = wf._get_cache_path(gtfs_data_dir)
+
+        # Create a legacy cache file without _walk_transfer_pairs
+        legacy_cache_data = {
+            "graph": nx.DiGraph(),
+            "graph_via_service_id": {},
+            "date_to_service_id": {},
+            "data_hash": wf._get_data_hash(gtfs_data_dir),
+            # Note: No _walk_transfer_pairs key
+        }
+        with open(cache_path, "wb") as f:
+            pickle.dump(legacy_cache_data, f)
+
+        # Load cache
+        wf2 = AkitaBusWayFinder()
+        loaded = wf2._load_graph_cache(gtfs_data_dir)
+
+        assert loaded is True
+        # Should have empty set (not None or missing attribute)
+        assert wf2._walk_transfer_pairs == set()
+        # is_walk_transfer should work and return False for any pair
+        assert wf2.is_walk_transfer("any_stop", "other_stop") is False
+
+        # Clean up
+        if cache_path.exists():
+            cache_path.unlink()

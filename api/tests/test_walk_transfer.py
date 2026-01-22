@@ -269,7 +269,9 @@ def test_get_same_name_stops_returns_all_connected_stops(wayfinder_instance):
     assert len(same_name_stops) == 3
 
 
-def test_get_same_name_stops_returns_only_original_when_no_transfers(wayfinder_instance):
+def test_get_same_name_stops_returns_only_original_when_no_transfers(
+    wayfinder_instance,
+):
     """
     Test that get_same_name_stops returns only the original stop when no walk transfers exist.
     """
@@ -345,3 +347,184 @@ def test_get_trip_journey_uses_same_name_stop_for_fare_calculation(
     # Verify fare calculations used akita-eki_01 as the origin (not akita-eki_02)
     for from_id, _to_id in fare_calls:
         assert from_id == "akita-eki_01", f"Expected origin akita-eki_01, got {from_id}"
+
+
+def test_initial_walk_transfer_times_backfilled_to_first_bus_departure(
+    wayfinder_instance, monkeypatch
+):
+    """
+    Test that initial walk transfers (before the first bus) have their times
+    backfilled to match the first bus's departure time.
+
+    This ensures that when a user searches from a platform that requires
+    a walk transfer to reach the bus, the walk transfer time shows when
+    they actually need to be there (bus departure) rather than the query's
+    begin_time.
+    """
+
+    # Setup: mock is_walk_transfer - first segment is a walk transfer
+    def mock_is_walk_transfer(from_stop, to_stop):
+        return from_stop == "akita-eki_01" and to_stop == "akita-eki_02"
+
+    monkeypatch.setattr(wayfinder_instance, "is_walk_transfer", mock_is_walk_transfer)
+
+    # Mock get_trips_from_stops
+    def mock_get_trips_from_stops(from_stop, to_stop, service_id):
+        if from_stop == "akita-eki_02" and to_stop == "ion-mall_01":
+            return ["trip_001"]
+        return []
+
+    monkeypatch.setattr(
+        wayfinder_instance, "get_trips_from_stops", mock_get_trips_from_stops
+    )
+
+    # Mock get_trip_times - bus departs at 07:00, arrives at 07:28
+    def mock_get_trip_times(from_stop, to_stop, trip_id):
+        if trip_id == "trip_001":
+            return (
+                wayfinder_instance.time_str_to_np_datetime("07:00:00"),
+                wayfinder_instance.time_str_to_np_datetime("07:28:00"),
+            )
+        return (None, None)
+
+    monkeypatch.setattr(wayfinder_instance, "get_trip_times", mock_get_trip_times)
+
+    # Mock get_fare_from_stops
+    monkeypatch.setattr(wayfinder_instance, "get_fare_from_stops", lambda *args: 520)
+
+    # Set default date
+    wayfinder_instance.default_date = "2021-01-01"
+
+    # Query with begin_time at 00:46 (early morning, before first bus)
+    path = ["akita-eki_01", "akita-eki_02", "ion-mall_01"]
+    begin_time = wayfinder_instance.time_str_to_np_datetime("00:46:00")
+    service_id = "weekday"
+
+    travels = wayfinder_instance.get_timed_travels_from_path(
+        path, service_id, begin_time
+    )
+
+    # Should have 2 travels: walk transfer + bus
+    assert len(travels) == 2
+
+    # First travel is walk transfer
+    walk_transfer = travels[0]
+    assert walk_transfer.trip_id == WALK_TRANSFER_TRIP_ID
+    assert walk_transfer.is_walk_transfer is True
+    assert walk_transfer.from_stop_id == "akita-eki_01"
+    assert walk_transfer.to_stop_id == "akita-eki_02"
+
+    # Walk transfer times should be backfilled to match bus departure (07:00)
+    # NOT the query's begin_time (00:46)
+    bus_travel = travels[1]
+    assert walk_transfer.departure_time == bus_travel.departure_time, (
+        "Walk transfer departure should match bus departure"
+    )
+    assert walk_transfer.arrival_time == bus_travel.departure_time, (
+        "Walk transfer arrival should match bus departure"
+    )
+
+    # Verify the bus times are correct
+    assert bus_travel.trip_id == "trip_001"
+    assert bus_travel.is_walk_transfer is False
+
+
+def test_initial_walk_transfer_times_not_backfilled_when_no_bus(
+    wayfinder_instance, monkeypatch
+):
+    """
+    Test that when there's only walk transfers and no bus trips available,
+    the walk transfer times remain at the original begin_time.
+    """
+
+    # Setup: mock is_walk_transfer
+    def mock_is_walk_transfer(from_stop, to_stop):
+        return from_stop == "akita-eki_01" and to_stop == "akita-eki_02"
+
+    monkeypatch.setattr(wayfinder_instance, "is_walk_transfer", mock_is_walk_transfer)
+
+    # Mock get_trips_from_stops to return no trips (no bus available)
+    def mock_get_trips_from_stops(from_stop, to_stop, service_id):
+        return []  # No buses available
+
+    monkeypatch.setattr(
+        wayfinder_instance, "get_trips_from_stops", mock_get_trips_from_stops
+    )
+
+    # Set default date
+    wayfinder_instance.default_date = "2021-01-01"
+
+    # Query with a path that has walk transfer followed by a segment with no buses
+    path = ["akita-eki_01", "akita-eki_02", "ion-mall_01"]
+    begin_time = wayfinder_instance.time_str_to_np_datetime("23:00:00")
+    service_id = "weekday"
+
+    travels = wayfinder_instance.get_timed_travels_from_path(
+        path, service_id, begin_time
+    )
+
+    # Should return empty list when no bus is available
+    assert len(travels) == 0
+
+
+def test_multiple_initial_walk_transfers_all_backfilled(
+    wayfinder_instance, monkeypatch
+):
+    """
+    Test that multiple consecutive initial walk transfers are all backfilled
+    to match the first bus's departure time.
+    """
+
+    # Setup: mock is_walk_transfer - first two segments are walk transfers
+    def mock_is_walk_transfer(from_stop, to_stop):
+        return (from_stop == "akita-eki_01" and to_stop == "akita-eki_02") or (
+            from_stop == "akita-eki_02" and to_stop == "akita-eki_03"
+        )
+
+    monkeypatch.setattr(wayfinder_instance, "is_walk_transfer", mock_is_walk_transfer)
+
+    # Mock get_trips_from_stops
+    def mock_get_trips_from_stops(from_stop, to_stop, service_id):
+        if from_stop == "akita-eki_03" and to_stop == "ion-mall_01":
+            return ["trip_001"]
+        return []
+
+    monkeypatch.setattr(
+        wayfinder_instance, "get_trips_from_stops", mock_get_trips_from_stops
+    )
+
+    # Mock get_trip_times - bus departs at 08:30
+    def mock_get_trip_times(from_stop, to_stop, trip_id):
+        if trip_id == "trip_001":
+            return (
+                wayfinder_instance.time_str_to_np_datetime("08:30:00"),
+                wayfinder_instance.time_str_to_np_datetime("09:00:00"),
+            )
+        return (None, None)
+
+    monkeypatch.setattr(wayfinder_instance, "get_trip_times", mock_get_trip_times)
+    monkeypatch.setattr(wayfinder_instance, "get_fare_from_stops", lambda *args: 300)
+    wayfinder_instance.default_date = "2021-01-01"
+
+    # Query with begin_time at 06:00
+    path = ["akita-eki_01", "akita-eki_02", "akita-eki_03", "ion-mall_01"]
+    begin_time = wayfinder_instance.time_str_to_np_datetime("06:00:00")
+    service_id = "weekday"
+
+    travels = wayfinder_instance.get_timed_travels_from_path(
+        path, service_id, begin_time
+    )
+
+    # Should have 3 travels: 2 walk transfers + 1 bus
+    assert len(travels) == 3
+
+    # Both walk transfers should have times backfilled to bus departure (08:30)
+    bus_departure = travels[2].departure_time  # The bus segment
+    for i in range(2):  # First two segments are walk transfers
+        assert travels[i].is_walk_transfer is True
+        assert travels[i].departure_time == bus_departure, (
+            f"Walk transfer {i} departure should match bus departure"
+        )
+        assert travels[i].arrival_time == bus_departure, (
+            f"Walk transfer {i} arrival should match bus departure"
+        )
