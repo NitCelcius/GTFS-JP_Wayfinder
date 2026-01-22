@@ -126,7 +126,7 @@ async def lifespan(_app: FastAPI):  # _app retained for FastAPI signature (ARG00
         logger.info("Serverless mode: loading pre-built graph")
     else:
         # Traditional mode: load from GTFS files
-        data_dir = os.getenv("GTFS_DATA_DIR", "./data/gtfs-akita-chuo-kotsu/")
+        data_dir = os.getenv("GTFS_DATA_DIR", "./data/gtfs-akita-chuo-kotsu-2025/")
         use_cache_graph = get_is_cache_graph_enabled()
         logger.info(f"Traditional mode: loading GTFS from {data_dir}")
 
