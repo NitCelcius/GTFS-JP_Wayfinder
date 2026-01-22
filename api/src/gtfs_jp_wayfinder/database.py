@@ -440,6 +440,24 @@ class AkitaBusWayFinder:
         """Check if the transition between two stops is a walk transfer (same-name stops)."""
         return (from_stop_id, to_stop_id) in self._walk_transfer_pairs
 
+    def get_same_name_stops(self, stop_id: str) -> list[str]:
+        """Get all stop IDs that share the same name as the given stop (via walk transfers).
+
+        Returns a list of stop IDs that can be reached via walk transfer from the given stop.
+        This includes the original stop_id itself.
+
+        Args:
+            stop_id: The stop ID to find same-name stops for.
+
+        Returns:
+            List of stop IDs including the original and all same-name variants.
+        """
+        same_name_stops = [stop_id]
+        for from_stop, to_stop in self._walk_transfer_pairs:
+            if from_stop == stop_id:
+                same_name_stops.append(to_stop)
+        return same_name_stops
+
     def generate_calendar(self, base_dir):
         df_base_calendar = pd.read_csv(base_dir + "calendar.txt")
         df_calendar_dates = pd.read_csv(base_dir + "calendar_dates.txt")
@@ -1021,16 +1039,29 @@ class AkitaBusWayFinder:
     # TODO: 要命名
     def get_trip_journey(self, trip_id, from_stop_id) -> pd.DataFrame:
         trip_stops = self.get_stops_from_trip(trip_id)["stop_id"]
+        trip_stops_set = set(trip_stops)
+
+        # Find effective origin: if from_stop_id is not on the trip,
+        # check if a same-name stop (walk transfer) is on the trip
+        effective_origin = from_stop_id
+        if from_stop_id not in trip_stops_set:
+            # Check same-name stops (connected via walk transfer)
+            same_name_stops = self.get_same_name_stops(from_stop_id)
+            for candidate_stop in same_name_stops:
+                if candidate_stop in trip_stops_set:
+                    effective_origin = candidate_stop
+                    break
+
         stops_list = []
         fare_list = []
         arrival_time_list = []
         departure_time_list = []
 
         for dest_stop_id in trip_stops:
-            if dest_stop_id == from_stop_id:
+            if dest_stop_id == effective_origin:
                 fare = 0  # 同じバス停なら0円
             else:
-                fare = self.get_fare_from_stops(from_stop_id, dest_stop_id)
+                fare = self.get_fare_from_stops(effective_origin, dest_stop_id)
             time_df = self.get_time_from_trip_and_stop(trip_id, dest_stop_id)
             arrival_time = time_df["arrival_time"]
             departure_time = time_df["departure_time"]
