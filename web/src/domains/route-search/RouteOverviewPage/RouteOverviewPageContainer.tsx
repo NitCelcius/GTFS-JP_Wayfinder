@@ -8,7 +8,7 @@ import { ErrorFullScreen } from "@/components/common";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner/LoadingSpinner";
 import { cacheRouteSearchResult } from "@/domains/route-search/utils";
 import { apiClient } from "@/lib/api";
-import { getCurrentTimeString, sortTravelsByArrivalTime } from "@/lib/utils";
+import { getCurrentTimeString } from "@/lib/utils";
 import type { RouteSearchResult } from "@/types";
 
 import { RouteOverviewPage } from "./RouteOverviewPage";
@@ -80,11 +80,10 @@ export function RouteOverviewPageContainer({
           return;
         }
 
-        // Sort travels by arrival time (earliest first)
-        const sortedTravels = sortTravelsByArrivalTime(response.data.travels);
-
+        // Use travels as-is from the API - they are already in correct segment order
+        // The API returns segments of a single journey, not multiple alternative routes
         const result: RouteSearchResult = {
-          travels: sortedTravels,
+          travels: response.data.travels,
           originStopName: fromName || `バス停 ${fromStop}`,
           destinationStopName: toName || `バス停 ${toStop}`,
           searchTime: time,
