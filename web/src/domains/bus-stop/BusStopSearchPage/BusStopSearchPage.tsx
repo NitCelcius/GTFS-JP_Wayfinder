@@ -30,7 +30,7 @@ interface BusStopSearchPageProps {
 
 // Fallback bus stop (秋田駅東口) when location is unavailable
 const fallbackNearestBusStop: BusStop = {
-  id: "1021_01",
+  id: "1021 1",
   name: "秋田駅東口",
   distance: "位置情報無効",
 };
