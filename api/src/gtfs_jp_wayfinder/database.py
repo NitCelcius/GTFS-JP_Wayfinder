@@ -335,7 +335,7 @@ class AkitaBusWayFinder:
                 zip(
                     stop_name_translations["translation"],
                     stop_name_translations["field_value"],
-                    strict=False,
+                    strict=True,
                 )
             )
 
