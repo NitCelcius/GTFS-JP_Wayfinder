@@ -152,6 +152,7 @@ class AkitaBusWayFinder:
             "graph": self.graph,
             "graph_via_service_id": self.graph_via_service_id,
             "date_to_service_id": self.date_to_service_id,
+            "_walk_transfer_pairs": self._walk_transfer_pairs,
             "data_hash": self._get_data_hash(base_dir),
         }
         try:
@@ -187,6 +188,7 @@ class AkitaBusWayFinder:
             self.graph = cache_data["graph"]
             self.graph_via_service_id = cache_data["graph_via_service_id"]
             self.date_to_service_id = cache_data["date_to_service_id"]
+            self._walk_transfer_pairs = cache_data.get("_walk_transfer_pairs", set())
 
             logger.info("Graph cache loaded successfully from %s", cache_path)
             return True
@@ -672,7 +674,8 @@ class AkitaBusWayFinder:
             )
 
         # Filter by service_id using cached lookup
-        if service_id is not None:
+        # Note: treat empty string same as None (no filtering)
+        if service_id is not None and service_id != "":
             candidates = [
                 x for x in candidates if self.get_trip_service_id(x) == service_id
             ]
@@ -883,6 +886,9 @@ class AkitaBusWayFinder:
         cur_time = begin_time
         prev_stop = None
         travel_list = []
+        # Track indices of initial walk transfers that need time backfill
+        initial_walk_transfer_indices: list[int] = []
+        found_first_bus = False
 
         for current_stop in path:
             if prev_stop is None:
@@ -894,7 +900,9 @@ class AkitaBusWayFinder:
             # Check if this is a walk transfer (same-name stops)
             if self.is_walk_transfer(prev_stop, current_stop):
                 logger.info("Walk transfer detected: %s -> %s", prev_stop, current_stop)
-                # Walk transfers are instant - no trip needed, no fare, same time
+                # Walk transfers are instant - no trip needed, no fare
+                # For initial walk transfers (before first bus), use placeholder times
+                # that will be backfilled once we find the first bus departure
                 travel_list.append(
                     TravelOnce(
                         trip_id=WALK_TRANSFER_TRIP_ID,
@@ -906,6 +914,9 @@ class AkitaBusWayFinder:
                         is_walk_transfer=True,
                     ),
                 )
+                # Track initial walk transfers for time backfill
+                if not found_first_bus:
+                    initial_walk_transfer_indices.append(len(travel_list) - 1)
                 # cur_time stays the same for walk transfers
                 prev_stop = current_stop
                 continue
@@ -981,6 +992,28 @@ class AkitaBusWayFinder:
                     is_walk_transfer=False,
                 ),
             )
+
+            # Backfill initial walk transfer times to match first bus departure
+            if not found_first_bus and initial_walk_transfer_indices:
+                logger.info(
+                    "Backfilling %d initial walk transfer(s) with departure time %s",
+                    len(initial_walk_transfer_indices),
+                    dep_time,
+                )
+                for idx in initial_walk_transfer_indices:
+                    old_travel = travel_list[idx]
+                    travel_list[idx] = TravelOnce(
+                        trip_id=old_travel.trip_id,
+                        arrival_time=dep_time,
+                        departure_time=dep_time,
+                        fare=old_travel.fare,
+                        from_stop_id=old_travel.from_stop_id,
+                        to_stop_id=old_travel.to_stop_id,
+                        is_walk_transfer=old_travel.is_walk_transfer,
+                    )
+                initial_walk_transfer_indices.clear()
+
+            found_first_bus = True
             cur_time = arr_time
             prev_stop = current_stop
         return travel_list
