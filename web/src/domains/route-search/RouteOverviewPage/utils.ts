@@ -37,36 +37,94 @@ export function formatRelativeTime(minutes: number): string {
 }
 
 /**
+ * Build a single RouteOption from all travel segments.
+ *
+ * The timed_search API returns an array of travel segments representing
+ * a single journey that may involve walk transfers between platforms.
+ * All segments together form one complete journey from origin to destination.
+ *
+ * @param travels Array of travel segments from the API
+ * @param originStopName Display name for the origin stop
+ * @param destinationStopName Display name for the destination stop
+ * @param routeIndex Index for generating unique route ID (default: 0)
+ * @returns A single RouteOption combining all segments, or null if no travels
+ */
+function buildRouteFromTravels(
+  travels: RouteSearchResult["travels"],
+  originStopName: string,
+  destinationStopName: string,
+  routeIndex: number = 0 // TODO: handle multiple routes in future
+): RouteOption | null {
+  if (travels.length === 0) {
+    return null;
+  }
+
+  // Filter out walk transfers to get only bus segments
+  const busSegments = travels.filter((t) => !t.is_walk_transfer);
+
+  // Use the first bus segment's trip_id as the route identifier
+  // If there are no bus segments (unusual case), use the first travel's trip_id
+  const primaryTripId =
+    busSegments.length > 0 ? busSegments[0].trip_id : travels[0].trip_id;
+
+  // Overall journey: departure from first segment, arrival from last segment
+  const firstTravel = travels[0];
+  const lastTravel = travels[travels.length - 1];
+
+  // Total fare is sum of all segment fares
+  const totalFare = travels.reduce(
+    (sum, travel) => sum + (travel.fare ?? 0),
+    0
+  );
+
+  // Transfer count = number of bus segments - 1
+  // Walk transfers between platforms don't count as "real" transfers
+  const transferCount = Math.max(0, busSegments.length - 1);
+
+  const relativeMinutes = calculateRelativeMinutes(
+    firstTravel.departure_datetime
+  );
+  const relativeTimeText = formatRelativeTime(relativeMinutes);
+
+  return {
+    id: `route-${routeIndex + 1}`,
+    departureTime: trimTimeSeconds(firstTravel.departure_time),
+    arrivalTime: trimTimeSeconds(lastTravel.arrival_time),
+    duration: calculateDurationJapanese(
+      firstTravel.departure_time,
+      lastTravel.arrival_time
+    ),
+    fare: totalFare,
+    transfers: transferCount,
+    tripId: primaryTripId,
+    originStation: originStopName,
+    destinationStation: destinationStopName,
+    relativeTimeUntilDeparture: relativeTimeText,
+  };
+}
+
+/**
  * Convert RouteSearchResult from API to RouteOverviewData for UI
+ *
+ * The API returns all travel segments for a single journey. These segments
+ * represent the complete route including any walk transfers between platforms.
+ * This function combines them into a single route option with the correct
+ * total fare and overall departure/arrival times.
+ *
  * @param result - Raw route search result from the API
  * @returns Formatted route overview data ready for UI display
  */
 export function convertToRouteOverviewData(
   result: RouteSearchResult
 ): RouteOverviewData {
-  const routes: RouteOption[] = result.travels.map((travel, index) => {
-    const relativeMinutes = calculateRelativeMinutes(travel.departure_datetime);
-    const relativeTimeText = formatRelativeTime(relativeMinutes);
+  const route = buildRouteFromTravels(
+    result.travels,
+    result.originStopName,
+    result.destinationStopName
+  );
 
-    return {
-      id: `route-${index}`,
-      departureTime: trimTimeSeconds(travel.departure_time),
-      arrivalTime: trimTimeSeconds(travel.arrival_time),
-      duration: calculateDurationJapanese(
-        travel.departure_time,
-        travel.arrival_time
-      ),
-      fare: travel.fare,
-      // Known limitation: Transfer count is currently hardcoded to 0
-      // The API response does not yet include information about transfers/connections
-      // This should be calculated once the API provides segment/leg data for each route
-      transfers: 0,
-      tripId: travel.trip_id,
-      originStation: result.originStopName,
-      destinationStation: result.destinationStopName,
-      relativeTimeUntilDeparture: relativeTimeText,
-    };
-  });
+  // Only include the route if we have travels
+  const routes: RouteOption[] = route ? [route] : [];
 
   return {
     fromStation: result.originStopName,
