@@ -245,3 +245,103 @@ def test_get_timed_travels_from_path_includes_walk_transfers(
     assert walk_transfer.departure_time == walk_transfer.arrival_time
     assert walk_transfer.from_stop_id == "akita-eki_01"
     assert walk_transfer.to_stop_id == "akita-eki_02"
+
+
+def test_get_same_name_stops_returns_all_connected_stops(wayfinder_instance):
+    """
+    Test that get_same_name_stops returns all same-name stops including the original.
+    """
+    # Set up walk transfer pairs
+    wayfinder_instance._walk_transfer_pairs = {
+        ("akita-eki_01", "akita-eki_02"),
+        ("akita-eki_02", "akita-eki_01"),
+        ("akita-eki_01", "akita-eki_03"),
+        ("akita-eki_03", "akita-eki_01"),
+        ("akita-eki_02", "akita-eki_03"),
+        ("akita-eki_03", "akita-eki_02"),
+    }
+
+    # Should return all same-name stops
+    same_name_stops = wayfinder_instance.get_same_name_stops("akita-eki_01")
+    assert "akita-eki_01" in same_name_stops  # Original stop
+    assert "akita-eki_02" in same_name_stops  # Same-name stop
+    assert "akita-eki_03" in same_name_stops  # Same-name stop
+    assert len(same_name_stops) == 3
+
+
+def test_get_same_name_stops_returns_only_original_when_no_transfers(wayfinder_instance):
+    """
+    Test that get_same_name_stops returns only the original stop when no walk transfers exist.
+    """
+    wayfinder_instance._walk_transfer_pairs = set()
+
+    same_name_stops = wayfinder_instance.get_same_name_stops("unique_stop")
+    assert same_name_stops == ["unique_stop"]
+
+
+def test_get_trip_journey_uses_same_name_stop_for_fare_calculation(
+    wayfinder_instance, monkeypatch
+):
+    """
+    Test that get_trip_journey correctly uses a same-name stop for fare calculation
+    when the provided from_stop_id is not directly on the trip.
+    """
+    import pandas as pd
+
+    # Set up walk transfer pairs: akita-eki_01 and akita-eki_02 are same-name stops
+    wayfinder_instance._walk_transfer_pairs = {
+        ("akita-eki_01", "akita-eki_02"),
+        ("akita-eki_02", "akita-eki_01"),
+    }
+
+    # Mock get_stops_from_trip to return stops including akita-eki_01 (but NOT akita-eki_02)
+    mock_trip_stops = pd.DataFrame(
+        {
+            "stop_id": ["akita-eki_01", "chuo-koen_01", "ion-mall_01"],
+            "trip_id": ["trip_001", "trip_001", "trip_001"],
+            "stop_sequence": [1, 2, 3],
+            "arrival_time": ["10:00:00", "10:15:00", "10:30:00"],
+            "departure_time": ["10:00:00", "10:15:00", "10:30:00"],
+            "stop_headsign": ["", "", ""],
+        }
+    )
+    monkeypatch.setattr(
+        wayfinder_instance, "get_stops_from_trip", lambda trip_id: mock_trip_stops
+    )
+
+    # Mock get_fare_from_stops to track what origin is used
+    fare_calls = []
+
+    def mock_get_fare(from_id, to_id):
+        fare_calls.append((from_id, to_id))
+        return 200
+
+    monkeypatch.setattr(wayfinder_instance, "get_fare_from_stops", mock_get_fare)
+
+    # Mock get_time_from_trip_and_stop
+    def mock_get_time(trip_id, stop_id):
+        return {
+            "arrival_time": wayfinder_instance.time_str_to_np_datetime("10:00:00"),
+            "departure_time": wayfinder_instance.time_str_to_np_datetime("10:00:00"),
+        }
+
+    monkeypatch.setattr(
+        wayfinder_instance, "get_time_from_trip_and_stop", mock_get_time
+    )
+
+    # Set default date for time conversion
+    wayfinder_instance.default_date = "2021-01-01"
+
+    # Call get_trip_journey with akita-eki_02 (which is NOT on the trip, but same-name as akita-eki_01)
+    result = wayfinder_instance.get_trip_journey("trip_001", "akita-eki_02")
+
+    # Verify the result has entries
+    assert len(result) == 3
+
+    # Verify fare for the first stop (akita-eki_01) is 0 because it's the effective origin
+    # (walk transfer from akita-eki_02 to akita-eki_01)
+    assert result[result["stop_id"] == "akita-eki_01"]["fare"].values[0] == 0
+
+    # Verify fare calculations used akita-eki_01 as the origin (not akita-eki_02)
+    for from_id, _to_id in fare_calls:
+        assert from_id == "akita-eki_01", f"Expected origin akita-eki_01, got {from_id}"
