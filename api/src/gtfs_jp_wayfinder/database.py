@@ -80,6 +80,10 @@ class AkitaBusWayFinder:
             else EuclideanDistanceCalculator()
         )
 
+        # Translation support: maps translation (e.g., hiragana) -> original stop_name
+        # This enables searching stops by their translated names (e.g., searching "あおばだい" finds "青葉台")
+        self._translation_to_stop_name: dict[str, str] = {}
+
     # 文字列の時刻情報を numpy の datetime64 に変換する
     # 簡便な比較用のため日付を default_date にしているが無意味なので注意
     def time_str_to_np_datetime(self, time_str) -> np.datetime64:
@@ -275,6 +279,9 @@ class AkitaBusWayFinder:
         # 日付から service id に変換
         self.date_to_service_id = None
 
+        # Load translations.txt for searchable stop name translations (e.g., hiragana)
+        self._load_stop_name_translations(base_dir)
+
         logger.info("Building lookup indices for performance...")
         self._build_lookup_indices()
 
@@ -294,6 +301,51 @@ class AkitaBusWayFinder:
                 self._save_graph_cache(base_dir)
 
         logger.info("Preparation completed!")
+
+    def _load_stop_name_translations(self, base_dir: str) -> None:
+        """Load stop name translations from translations.txt.
+
+        This method loads translations for stop names (e.g., hiragana readings)
+        from the GTFS-JP translations.txt file. This enables searching for stops
+        using their translated names (e.g., searching "あおばだい" will find "青葉台").
+
+        The translations are stored in _translation_to_stop_name dict mapping
+        translation -> original stop_name.
+
+        Args:
+            base_dir: Directory path containing GTFS data files.
+        """
+        translations_path = Path(base_dir) / "translations.txt"
+        if not translations_path.exists():
+            logger.info("No translations.txt found; skipping translation loading")
+            return
+
+        try:
+            df_translations = pd.read_csv(translations_path)
+
+            # Filter for stop_name translations only
+            # GTFS-JP translations.txt format: table_name,field_name,field_value,language,translation
+            stop_name_translations = df_translations[
+                (df_translations["table_name"] == "stops")
+                & (df_translations["field_name"] == "stop_name")
+            ]
+
+            # Build translation -> original stop_name mapping
+            self._translation_to_stop_name = dict(
+                zip(
+                    stop_name_translations["translation"],
+                    stop_name_translations["field_value"],
+                    strict=False,
+                )
+            )
+
+            logger.info(
+                "Loaded %d stop name translations",
+                len(self._translation_to_stop_name),
+            )
+        except Exception as e:
+            logger.warning("Failed to load translations.txt: %s", e)
+            self._translation_to_stop_name = {}
 
     def _build_lookup_indices(self):
         """Build lookup indices for faster query performance.
@@ -648,13 +700,43 @@ class AkitaBusWayFinder:
     #   None | DataFrame[{ "stop_id": str, "stop_name": str }]
     def get_stop_id(self, stop_name, exact=False):
         if exact:
+            # Exact match: first try direct stop_name match
             ret = self.df_stops[self.df_stops["stop_name"] == stop_name][
                 ["stop_id", "stop_name"]
             ]
+
+            # If no results, check if the query matches a translation (e.g., hiragana)
+            if ret.empty and stop_name in self._translation_to_stop_name:
+                original_name = self._translation_to_stop_name[stop_name]
+                ret = self.df_stops[self.df_stops["stop_name"] == original_name][
+                    ["stop_id", "stop_name"]
+                ]
         else:
+            # Partial match: search in stop_name column
             ret = self.df_stops[self.df_stops["stop_name"].str.contains(stop_name)][
                 ["stop_id", "stop_name"]
             ]
+
+            # Also search for partial matches in translations
+            # Find all original names where the translation contains the query
+            matching_original_names = [
+                original_name
+                for translation, original_name in self._translation_to_stop_name.items()
+                if stop_name in translation
+            ]
+
+            if matching_original_names:
+                # Get stops that match these original names (but aren't already in ret)
+                translation_matches = self.df_stops[
+                    self.df_stops["stop_name"].isin(matching_original_names)
+                    & ~self.df_stops["stop_name"].str.contains(stop_name)
+                ][["stop_id", "stop_name"]]
+
+                # Combine results
+                ret = pd.concat([ret, translation_matches], ignore_index=True)
+                # Remove duplicates based on stop_id
+                ret = ret.drop_duplicates(subset=["stop_id"])
+
         return ret
 
     # 2つをつなぐ路線IDのリストを取得
