@@ -11,7 +11,7 @@ import styles from "./BusStopInfoPage.module.css";
 import { useBusStopData } from "./hooks";
 import { BusStopHeader } from "./internal/BusStopHeader";
 import { NextBusInfo } from "./internal/NextBusInfo";
-import { ShareModal } from "./internal/ShareModal";
+import { ShareModal } from "./ShareModal";
 import { TransferButton } from "./internal/TransferButton";
 import { WalkDirectionButton } from "./internal/WalkDirectionButton";
 

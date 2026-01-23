@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { ShareModal } from "./ShareModal";
 
 const meta: Meta<typeof ShareModal> = {
-  title: "BusStop/Internal/ShareModal",
+  title: "BusStop/ShareModal",
   component: ShareModal,
   parameters: {
     layout: "centered",
