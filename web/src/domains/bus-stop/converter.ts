@@ -199,36 +199,30 @@ export function computeBestBusIndex(
 }
 
 /**
- * Calculate distance between two geographic coordinates using Haversine formula
- * @param lat1 - Latitude of first point (degrees)
- * @param lon1 - Longitude of first point (degrees)
- * @param lat2 - Latitude of second point (degrees)
- * @param lon2 - Longitude of second point (degrees)
- * @returns Distance in meters
+ * Calculate distance between two coordinates using Haversine formula
+ * @param lat1 First latitude
+ * @param lon1 First longitude
+ * @param lat2 Second latitude
+ * @param lon2 Second longitude
+ * @returns Distance in kilometers
  */
-function calculateHaversineDistance(
+export function calculateDistanceBetweenCoords(
   lat1: number,
   lon1: number,
   lat2: number,
   lon2: number
 ): number {
-  const R = 6371000; // Earth's radius in meters
-  const toRad = (deg: number) => (deg * Math.PI) / 180;
-
-  const dLat = toRad(lat2 - lat1);
-  const dLon = toRad(lon2 - lon1);
-
+  const R = 6371; // Radius of the Earth in km
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
   const a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(toRad(lat1)) *
-      Math.cos(toRad(lat2)) *
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
       Math.sin(dLon / 2) *
       Math.sin(dLon / 2);
-
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  const distance = R * c;
-
-  return distance;
+  return R * c;
 }
 
 /**
@@ -240,6 +234,7 @@ function calculateHaversineDistance(
  * @param userLon - User's current longitude
  * @returns Formatted distance string (e.g., "120m", "1.5km")
  * @throws Error if any required parameter is missing or coordinates are invalid
+ * @deprecated Use calculateDistanceBetweenCoords with formatDistance instead
  */
 export function calculateDistance(
   stopLat: number,
@@ -247,8 +242,6 @@ export function calculateDistance(
   userLat: number,
   userLon: number
 ): string {
-  // TODO: Consider handling empty/undefined inputs at caller level for better error messages
-
   // Validate coordinates are in valid ranges
   if (
     !isFinite(userLat) ||
@@ -269,14 +262,16 @@ export function calculateDistance(
     );
   }
 
-  const distanceMeters = calculateHaversineDistance(
+  // Use the consolidated function and convert km to meters for formatting
+  const distanceKm = calculateDistanceBetweenCoords(
     userLat,
     userLon,
     stopLat,
     stopLon
   );
+  const distanceMeters = distanceKm * 1000;
 
-  // Format distance (same logic as formatDistance)
+  // Format distance
   if (distanceMeters < 1000) {
     return `${Math.round(distanceMeters)}m`;
   }
@@ -297,7 +292,7 @@ export function convertNearbyStopToBusStop(nearbyStop: NearbyStop): BusStop {
 /**
  * Format distance in km to a user-friendly string
  */
-function formatDistance(distanceKm: number): string {
+export function formatDistance(distanceKm: number): string {
   if (distanceKm < 1) {
     return `${Math.round(distanceKm * 1000)}m`;
   }
