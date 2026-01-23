@@ -88,6 +88,7 @@ export function ShareModal({
         <div className={styles.modalBody}>
           {description && <p className={styles.description}>{description}</p>}
           <div className={styles.qrCodeContainer}>
+            {/* size prop sets the QR code rendering resolution (canvas size) */}
             <QRCodeSVG
               value={fullShareUrl}
               size={300}
