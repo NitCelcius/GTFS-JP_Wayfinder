@@ -256,7 +256,7 @@ describe("parseGtfsTime", () => {
   });
 
   it("should parse basic time format", () => {
-    const baseDate = new Date("2025-10-31T10:00:00+09:00");
+    const baseDate = new Date(2025, 9, 31, 10, 0, 0); // Local timezone: Oct 31, 2025, 10:00
     jest.setSystemTime(baseDate);
 
     const result = parseGtfsTime("14:30:00", baseDate);
@@ -266,7 +266,7 @@ describe("parseGtfsTime", () => {
   });
 
   it("should handle extended hours (24+)", () => {
-    const baseDate = new Date("2025-10-31T10:00:00+09:00");
+    const baseDate = new Date(2025, 9, 31, 10, 0, 0); // Local timezone: Oct 31, 2025, 10:00
     jest.setSystemTime(baseDate);
 
     const result = parseGtfsTime("25:30:00", baseDate);
@@ -277,7 +277,7 @@ describe("parseGtfsTime", () => {
 
   it("should wrap past times to tomorrow", () => {
     // Current time is 15:00, bus time is 14:00 (1 hour ago)
-    const baseDate = new Date("2025-10-31T15:00:00+09:00");
+    const baseDate = new Date(2025, 9, 31, 15, 0, 0); // Local timezone: Oct 31, 2025, 15:00
     jest.setSystemTime(baseDate);
 
     const result = parseGtfsTime("14:00:00", baseDate);
@@ -288,7 +288,7 @@ describe("parseGtfsTime", () => {
 
   it("should not wrap future times", () => {
     // Current time is 10:00, bus time is 14:00 (4 hours from now)
-    const baseDate = new Date("2025-10-31T10:00:00+09:00");
+    const baseDate = new Date(2025, 9, 31, 10, 0, 0); // Local timezone: Oct 31, 2025, 10:00
     jest.setSystemTime(baseDate);
 
     const result = parseGtfsTime("14:00:00", baseDate);
@@ -298,7 +298,7 @@ describe("parseGtfsTime", () => {
   });
 
   it("should throw error for invalid format", () => {
-    const baseDate = new Date("2025-10-31T10:00:00+09:00");
+    const baseDate = new Date(2025, 9, 31, 10, 0, 0);
     expect(() => parseGtfsTime("invalid", baseDate)).toThrow(
       "Invalid time format"
     );
@@ -316,7 +316,7 @@ describe("parseGtfsTimeNoWrap", () => {
   });
 
   it("should parse basic time format", () => {
-    const baseDate = new Date("2025-10-31T10:00:00+09:00");
+    const baseDate = new Date(2025, 9, 31, 10, 0, 0); // Local timezone: Oct 31, 2025, 10:00
     jest.setSystemTime(baseDate);
 
     const result = parseGtfsTimeNoWrap("14:30:00", baseDate);
@@ -326,7 +326,7 @@ describe("parseGtfsTimeNoWrap", () => {
   });
 
   it("should handle extended hours (24+)", () => {
-    const baseDate = new Date("2025-10-31T10:00:00+09:00");
+    const baseDate = new Date(2025, 9, 31, 10, 0, 0); // Local timezone: Oct 31, 2025, 10:00
     jest.setSystemTime(baseDate);
 
     const result = parseGtfsTimeNoWrap("25:30:00", baseDate);
@@ -337,7 +337,7 @@ describe("parseGtfsTimeNoWrap", () => {
 
   it("should NOT wrap past times to tomorrow", () => {
     // Current time is 15:00, bus time is 14:00 (1 hour ago)
-    const baseDate = new Date("2025-10-31T15:00:00+09:00");
+    const baseDate = new Date(2025, 9, 31, 15, 0, 0); // Local timezone: Oct 31, 2025, 15:00
     jest.setSystemTime(baseDate);
 
     const result = parseGtfsTimeNoWrap("14:00:00", baseDate);
@@ -349,7 +349,7 @@ describe("parseGtfsTimeNoWrap", () => {
 
   it("should allow calculating negative time differences", () => {
     // Current time is 15:00, bus time is 14:00
-    const baseDate = new Date("2025-10-31T15:00:00+09:00");
+    const baseDate = new Date(2025, 9, 31, 15, 0, 0); // Local timezone: Oct 31, 2025, 15:00
     jest.setSystemTime(baseDate);
 
     const arrivalTime = parseGtfsTimeNoWrap("14:00:00", baseDate);
@@ -379,7 +379,7 @@ describe("calculateCurrentBusLocation", () => {
 
   it("should return -1 when bus has not departed yet", () => {
     // Current time is 13:50, first stop is at 13:59
-    const now = new Date("2025-10-31T13:50:00+09:00");
+    const now = new Date(2025, 9, 31, 13, 50, 0); // Local timezone: Oct 31, 2025, 13:50
     jest.setSystemTime(now);
 
     const result = calculateCurrentBusLocation(mockStops, now);
@@ -388,7 +388,7 @@ describe("calculateCurrentBusLocation", () => {
 
   it("should return 0 when bus is at or just passed first stop", () => {
     // Current time is 13:59:30 (just after first stop at 13:59)
-    const now = new Date("2025-10-31T13:59:30+09:00");
+    const now = new Date(2025, 9, 31, 13, 59, 30); // Local timezone: Oct 31, 2025, 13:59:30
     jest.setSystemTime(now);
 
     const result = calculateCurrentBusLocation(mockStops, now);
@@ -397,7 +397,7 @@ describe("calculateCurrentBusLocation", () => {
 
   it("should return correct index when bus is en route", () => {
     // Current time is 14:07 (between stop 3 at 14:05 and stop 4 at 14:10)
-    const now = new Date("2025-10-31T14:07:00+09:00");
+    const now = new Date(2025, 9, 31, 14, 7, 0); // Local timezone: Oct 31, 2025, 14:07
     jest.setSystemTime(now);
 
     const result = calculateCurrentBusLocation(mockStops, now);
@@ -406,7 +406,7 @@ describe("calculateCurrentBusLocation", () => {
 
   it("should return last index when bus has completed the trip", () => {
     // Current time is 14:20 (after all stops)
-    const now = new Date("2025-10-31T14:20:00+09:00");
+    const now = new Date(2025, 9, 31, 14, 20, 0); // Local timezone: Oct 31, 2025, 14:20
     jest.setSystemTime(now);
 
     const result = calculateCurrentBusLocation(mockStops, now);
@@ -415,7 +415,7 @@ describe("calculateCurrentBusLocation", () => {
 
   it("should correctly calculate remaining stops", () => {
     // Current time is 14:07 (bus at stop 3, user waiting at stop 5)
-    const now = new Date("2025-10-31T14:07:00+09:00");
+    const now = new Date(2025, 9, 31, 14, 7, 0); // Local timezone: Oct 31, 2025, 14:07
     jest.setSystemTime(now);
 
     const busLocationIndex = calculateCurrentBusLocation(mockStops, now);
@@ -426,7 +426,7 @@ describe("calculateCurrentBusLocation", () => {
   });
 
   it("should handle empty stops array", () => {
-    const now = new Date("2025-10-31T14:00:00+09:00");
+    const now = new Date(2025, 9, 31, 14, 0, 0); // Local timezone: Oct 31, 2025, 14:00
     jest.setSystemTime(now);
 
     const result = calculateCurrentBusLocation([], now);
