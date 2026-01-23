@@ -25,6 +25,52 @@ WALK_TRANSFER_TRIP_ID = "WALK_TRANSFER"
 logger = logging.getLogger(__name__)
 
 
+def katakana_to_hiragana(text: str) -> str:
+    """Convert katakana characters to hiragana.
+
+    Args:
+        text: String potentially containing katakana characters.
+
+    Returns:
+        String with katakana characters converted to hiragana.
+    """
+    result = []
+    for char in text:
+        # Katakana range: U+30A0 to U+30FF
+        # Hiragana range: U+3040 to U+309F
+        # Offset: 0x60 (96 in decimal)
+        code = ord(char)
+        if 0x30A0 <= code <= 0x30FF:
+            # Convert katakana to hiragana by subtracting offset
+            result.append(chr(code - 0x60))
+        else:
+            result.append(char)
+    return "".join(result)
+
+
+def hiragana_to_katakana(text: str) -> str:
+    """Convert hiragana characters to katakana.
+
+    Args:
+        text: String potentially containing hiragana characters.
+
+    Returns:
+        String with hiragana characters converted to katakana.
+    """
+    result = []
+    for char in text:
+        # Hiragana range: U+3040 to U+309F
+        # Katakana range: U+30A0 to U+30FF
+        # Offset: 0x60 (96 in decimal)
+        code = ord(char)
+        if 0x3040 <= code <= 0x309F:
+            # Convert hiragana to katakana by adding offset
+            result.append(chr(code + 0x60))
+        else:
+            result.append(char)
+    return "".join(result)
+
+
 @dataclass
 class TravelOnce:
     trip_id: str | list[str]
@@ -305,12 +351,12 @@ class AkitaBusWayFinder:
     def _load_stop_name_translations(self, base_dir: str) -> None:
         """Load stop name translations from translations.txt.
 
-        This method loads translations for stop names (e.g., hiragana readings)
+        This method loads translations for stop names (e.g., hiragana/katakana readings, English names)
         from the GTFS-JP translations.txt file. This enables searching for stops
-        using their translated names (e.g., searching "あおばだい" will find "青葉台").
+        using their translated names (e.g., searching "あおばだい", "アオバダイ", or "Aobadai" will find "青葉台").
 
         The translations are stored in _translation_to_stop_name dict mapping
-        translation -> original stop_name.
+        translation -> original stop_name. Supports bidirectional hiragana/katakana conversion.
 
         Args:
             base_dir: Directory path containing GTFS data files.
@@ -323,21 +369,84 @@ class AkitaBusWayFinder:
         try:
             df_translations = pd.read_csv(translations_path)
 
-            # Filter for stop_name translations only
-            # GTFS-JP translations.txt format: table_name,field_name,field_value,language,translation
-            stop_name_translations = df_translations[
-                (df_translations["table_name"] == "stops")
-                & (df_translations["field_name"] == "stop_name")
-            ]
+            # Check which format we have based on available columns
+            has_field_value = "field_value" in df_translations.columns
+            has_record_id = "record_id" in df_translations.columns
 
-            # Build translation -> original stop_name mapping
-            self._translation_to_stop_name = dict(
-                zip(
-                    stop_name_translations["translation"],
-                    stop_name_translations["field_value"],
-                    strict=True,
+            translations_dict = {}
+
+            if has_field_value and not has_record_id:
+                # Old format (2024): table_name,field_name,field_value,language,translation
+                # translation contains the hiragana/katakana, field_value contains the original name
+                stop_name_translations = df_translations[
+                    (df_translations["table_name"] == "stops")
+                    & (df_translations["field_name"] == "stop_name")
+                ]
+
+                # Build translation -> original stop_name mapping with bidirectional conversion
+                for _, row in stop_name_translations.iterrows():
+                    translation = row["translation"]
+                    stop_name = row["field_value"]
+                    language = row.get("language", "")
+
+                    # Store the original translation
+                    translations_dict[translation] = stop_name
+
+                    # If it's hiragana/katakana, also store the converted version
+                    if "Hrkt" in language or "hiragana" in language.lower():
+                        # Convert hiragana to katakana and vice versa
+                        katakana_version = hiragana_to_katakana(translation)
+                        hiragana_version = katakana_to_hiragana(translation)
+                        translations_dict[katakana_version] = stop_name
+                        translations_dict[hiragana_version] = stop_name
+
+                self._translation_to_stop_name = translations_dict
+
+            elif has_record_id:
+                # New format (2025): table_name,field_name,language,translation,record_id,record_sub_id,field_value
+                # translation contains the translated text, record_id is the stop_id
+                # We need to join with stops DataFrame to get the actual stop_name
+
+                # Filter for stop_name translations (ja-Hrkt for hiragana/katakana, en for English)
+                stop_name_translations = df_translations[
+                    (df_translations["table_name"] == "stops")
+                    & (df_translations["field_name"] == "stop_name")
+                    & (df_translations["language"].isin(["ja-Hrkt", "en"]))
+                ].copy()
+
+                # Join with stops DataFrame to get the actual stop_name
+                # record_id in translations corresponds to stop_id in stops
+                stop_name_translations = stop_name_translations.merge(
+                    self.df_stops[["stop_id", "stop_name"]],
+                    left_on="record_id",
+                    right_on="stop_id",
+                    how="inner",
                 )
-            )
+
+                # Build translation -> original stop_name mapping
+                for _, row in stop_name_translations.iterrows():
+                    translation = row["translation"]
+                    stop_name = row["stop_name"]
+                    language = row["language"]
+
+                    # Store the original translation
+                    translations_dict[translation] = stop_name
+
+                    # For ja-Hrkt (hiragana/katakana), store both hiragana and katakana versions
+                    if language == "ja-Hrkt":
+                        katakana_version = hiragana_to_katakana(translation)
+                        hiragana_version = katakana_to_hiragana(translation)
+                        translations_dict[katakana_version] = stop_name
+                        translations_dict[hiragana_version] = stop_name
+
+                self._translation_to_stop_name = translations_dict
+
+            else:
+                logger.warning(
+                    "Unrecognized translations.txt format; skipping translation loading"
+                )
+                self._translation_to_stop_name = {}
+                return
 
             logger.info(
                 "Loaded %d stop name translations",
