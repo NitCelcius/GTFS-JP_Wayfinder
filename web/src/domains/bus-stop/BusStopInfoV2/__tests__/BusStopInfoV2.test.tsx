@@ -46,7 +46,8 @@ describe("BusStopInfoV2 - Walk Directions Button Visibility", () => {
     render(<BusStopInfoV2 {...props} hasValidCoordinates={false} />);
 
     expect(screen.getByLabelText("Search destinations")).toBeInTheDocument();
-    expect(screen.getByLabelText("Transfer options")).toBeInTheDocument();
+    // TODO: temporarily removed transfer button for demonstration version
+    // expect(screen.getByLabelText("Transfer options")).toBeInTheDocument();
     expect(screen.getByLabelText("View route list")).toBeInTheDocument();
   });
 });
