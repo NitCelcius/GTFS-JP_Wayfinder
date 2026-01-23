@@ -38,6 +38,8 @@ export default function TripDetailPage() {
     arrivalTime: string;
     arrivalMinutes: number;
     stopsAway: number;
+    routeId?: string;
+    routeColorText?: string;
   } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -77,9 +79,10 @@ export default function TripDetailPage() {
         const stopsData = tripStopsResponse.data;
 
         // Get current stop info if stopId is provided
-        let currentStopInfo = null;
         let currentStopIndex = -1;
         let currentStopName = "バス停";
+        let arrivalMinutes = 0;
+        let arrivalTime = "";
 
         if (stopId) {
           currentStopIndex = stopsData.findIndex(
@@ -88,45 +91,27 @@ export default function TripDetailPage() {
           if (currentStopIndex >= 0) {
             const currentStop = stopsData[currentStopIndex];
             currentStopName = currentStop.stop_name || stopId;
+            arrivalTime = currentStop.arrival_time;
 
-            // Fetch passing info for the current stop
-            try {
-              const passingResponse = await apiClient.getTripPassing(
-                tripId,
-                stopId,
-                abortController.signal
-              );
-
-              if (passingResponse.data) {
-                currentStopInfo = passingResponse.data;
-              }
-            } catch (passingError) {
-              console.warn("Failed to fetch passing info:", passingError);
-            }
-          }
-        }
-
-        // Calculate arrival minutes if we have current stop info
-        let arrivalMinutes = 0;
-        let arrivalTime = "";
-        if (currentStopInfo) {
-          arrivalTime = trimTimeSeconds(currentStopInfo.arrival_time);
-          // Parse arrival_time to calculate minutes until arrival
-          if (currentStopInfo.arrival_time) {
-            try {
+            // Calculate arrival minutes from the stop's datetime
+            if (currentStop.arrival_datetime) {
+              // API returns datetime with reference date (e.g., "2021-01-01T12:53:00")
+              // Extract time and combine with today's date for accurate calculation
+              const arrivalDate = new Date(currentStop.arrival_datetime);
               const now = new Date();
-              const arrivalDate = parseGtfsTime(
-                currentStopInfo.arrival_time,
-                now
+
+              // Create a new date with today's date but the arrival time
+              const todayArrival = new Date(
+                now.getFullYear(),
+                now.getMonth(),
+                now.getDate(),
+                arrivalDate.getHours(),
+                arrivalDate.getMinutes(),
+                arrivalDate.getSeconds()
               );
-              const diffMs = arrivalDate.getTime() - now.getTime();
+
+              const diffMs = todayArrival.getTime() - now.getTime();
               arrivalMinutes = Math.max(0, Math.round(diffMs / 60000));
-            } catch (error) {
-              console.warn(
-                "Failed to parse arrival time:",
-                currentStopInfo.arrival_time,
-                error
-              );
             }
           }
         }
@@ -172,9 +157,11 @@ export default function TripDetailPage() {
           routeName: tripData.route_name || "",
           destination: tripData.destination_display_name || "終点",
           stopName: currentStopName,
-          arrivalTime,
+          arrivalTime: trimTimeSeconds(arrivalTime),
           arrivalMinutes,
           stopsAway,
+          routeId: tripData.route_id ?? undefined,
+          routeColorText: tripData.route_id ?? tripData.route_name ?? undefined,
         });
       } catch (err) {
         if (err instanceof Error && err.name === "AbortError") {
@@ -338,7 +325,7 @@ export default function TripDetailPage() {
       departureTime={tripInfo.arrivalTime}
       stopsAway={tripInfo.stopsAway}
       stops={stops}
-      routeColorText={tripInfo.routeName}
+      routeColorText={tripInfo.routeColorText}
       onBack={() => router.back()}
     />
   );
