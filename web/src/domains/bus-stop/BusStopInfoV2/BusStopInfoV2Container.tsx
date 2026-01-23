@@ -1,13 +1,12 @@
+"use client";
+
 import { useEffect, useState } from "react";
 
 import { useRouter } from "next/navigation";
 
-import { useGeolocation } from "@/hooks/useGeolocation";
 import { ApiClient } from "@/lib/api";
-import { getEnvValue } from "@/lib/envUtils";
 
 import { composeBusStopInfoWithLatestSelection } from "../composition";
-import { calculateDistance } from "../converter";
 import type { StopNameListData, UpcomingBusEnrichedData } from "../types";
 import { BusStopInfoV2 } from "./BusStopInfoV2";
 import type { UpcomingBusInfo } from "./BusStopInfoV2";
@@ -16,29 +15,156 @@ interface BusStopInfoV2ContainerProps {
   busStopId?: string;
   onBack?: () => void;
   onNavigateToRoute?: () => void;
+  initialData?: {
+    upcomingData: UpcomingBusEnrichedData | null;
+    stopData: StopNameListData | null;
+  };
 }
 
 export function BusStopInfoV2Container({
   busStopId,
   onBack,
   onNavigateToRoute,
+  initialData,
 }: BusStopInfoV2ContainerProps) {
   const router = useRouter();
   const [busStopName, setBusStopName] = useState<string>("");
   const [distance, setDistance] = useState<string>("");
   const [pastBus, setPastBus] = useState<UpcomingBusInfo | null>(null);
   const [upcomingBuses, setUpcomingBuses] = useState<UpcomingBusInfo[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(!initialData?.upcomingData);
   const [error, setError] = useState<string | null>(null);
   const [coordinates, setCoordinates] = useState<{
     lat: number;
     lon: number;
   } | null>(null);
+  const [userLocation, setUserLocation] = useState<{
+    lat: number;
+    lon: number;
+  } | null>(null);
 
-  // Get user's current location
-  const { position: userPosition } = useGeolocation();
-
+  // Process initial data from SSR if available
   useEffect(() => {
+    if (initialData?.upcomingData && initialData?.stopData) {
+      const now = new Date();
+
+      const upcomingData = initialData.upcomingData;
+      const stopData = initialData.stopData;
+
+      let stopName = busStopId || "";
+      let platformCode: string | null = null;
+      let lat: number | undefined;
+      let lon: number | undefined;
+
+      if (stopData?.stop_names && stopData.stop_names.length > 0) {
+        stopName = stopData.stop_names[0];
+      }
+      if (stopData?.platform_code) {
+        platformCode = stopData.platform_code;
+      }
+      if (stopData?.location) {
+        lat = stopData.location.lat;
+        lon = stopData.location.lon;
+        // Store coordinates for walk navigation only if valid
+        if (
+          isFinite(lat) &&
+          isFinite(lon) &&
+          lat >= -90 &&
+          lat <= 90 &&
+          lon >= -180 &&
+          lon <= 180
+        ) {
+          setCoordinates({ lat, lon });
+        }
+      }
+
+      // Compose bus stop info without distance (will be calculated on client with geolocation)
+      const busStopInfo = composeBusStopInfoWithLatestSelection(
+        upcomingData,
+        stopName,
+        busStopId || "",
+        {
+          platformCode,
+          distance: "", // No distance yet
+          lat,
+          lon,
+          currentTime: now,
+        }
+      );
+
+      // Convert to V2 format
+      setBusStopName(busStopInfo.busStop?.name || stopName);
+
+      // Convert buses to V2 format
+      const convertedBuses: UpcomingBusInfo[] =
+        busStopInfo.busesWithJourneys.map((bus) => ({
+          tripId: bus.busInfo.tripId,
+          routeNumber: bus.busInfo.line,
+          routeName: bus.busInfo.system || "",
+          destination: bus.busInfo.destination,
+          destinationLabel: bus.busInfo.direction,
+          minutesUntilDeparture: Math.round(
+            (bus.busInfo.arrivalDatetime.getTime() - now.getTime()) / 60000
+          ),
+          departureTime: bus.busInfo.arrivalTime,
+          cost: undefined, // TODO: Add fare info
+          stopsUntilArrival: `${bus.routeJourney.length - 1}駅先に到着`,
+          routeColorText: bus.busInfo.routeColorText,
+        }));
+
+      setUpcomingBuses(convertedBuses);
+      setIsLoading(false);
+
+      // Set past bus if available (first bus as reference)
+      if (convertedBuses.length > 0) {
+        setPastBus(null); // For now, we don't display past buses
+      }
+    }
+  }, [initialData, busStopId]);
+
+  // Fetch geolocation on client side (separate from main data)
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setUserLocation({
+          lat: position.coords.latitude,
+          lon: position.coords.longitude,
+        });
+
+        // Calculate distance if we have coordinates
+        if (coordinates) {
+          const distanceKm = calculateDistanceBetweenCoords(
+            position.coords.latitude,
+            position.coords.longitude,
+            coordinates.lat,
+            coordinates.lon
+          );
+          setDistance(formatDistance(distanceKm));
+        }
+      },
+      (error) => {
+        console.warn("Geolocation error:", error);
+        // Don't set error, just continue without distance
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 300000, // 5 minutes
+      }
+    );
+  }, [coordinates]);
+
+  // Fallback: Fetch data client-side if no initial data provided (for backward compatibility)
+  useEffect(() => {
+    if (initialData?.upcomingData) {
+      // Already have SSR data, skip client-side fetch
+      return;
+    }
+
     if (!busStopId) {
       setError("Bus stop ID is required");
       return;
@@ -108,42 +234,8 @@ export function BusStopInfoV2Container({
           console.warn("Failed to fetch stop info:", stopError);
         }
 
-        // Calculate distance if user location and stop coordinates are available
-        let calculatedDistance = "";
-        if (lat !== undefined && lon !== undefined && userPosition?.coords) {
-          try {
-            calculatedDistance = calculateDistance(
-              lat,
-              lon,
-              userPosition.coords.latitude,
-              userPosition.coords.longitude
-            );
-
-            // Only show distance if it meets the minimum threshold
-            const minDistThreshold = parseInt(
-              getEnvValue("NEXT_PUBLIC_MINIMUM_DIST_INDICATOR") || "10",
-              10
-            );
-
-            // Parse the distance string to get meters
-            const distanceMatch = calculatedDistance.match(
-              /^(\d+(?:\.\d+)?)(m|km)$/
-            );
-            if (distanceMatch) {
-              const [, value, unit] = distanceMatch;
-              const distanceInMeters =
-                unit === "km" ? parseFloat(value) * 1000 : parseFloat(value);
-
-              // Only include distance if >= minimum threshold
-              if (distanceInMeters < minDistThreshold) {
-                calculatedDistance = "";
-              }
-            }
-          } catch (error) {
-            console.warn("Failed to calculate distance:", error);
-            calculatedDistance = "";
-          }
-        }
+        // Calculate distance
+        // Distance will be calculated separately with geolocation
 
         // Compose bus stop info
         const busStopInfo = composeBusStopInfoWithLatestSelection(
@@ -152,7 +244,7 @@ export function BusStopInfoV2Container({
           busStopId,
           {
             platformCode,
-            distance: calculatedDistance,
+            distance: "", // Distance will be calculated with geolocation
             lat,
             lon,
             currentTime: now,
@@ -161,7 +253,7 @@ export function BusStopInfoV2Container({
 
         // Convert to V2 format
         setBusStopName(busStopInfo.busStop?.name || stopName);
-        setDistance(busStopInfo.busStop?.distance || calculatedDistance);
+        // Distance will be set by geolocation effect
 
         // Convert buses to V2 format
         const convertedBuses: UpcomingBusInfo[] =
@@ -225,7 +317,35 @@ export function BusStopInfoV2Container({
     return () => {
       abortController.abort();
     };
-  }, [busStopId, userPosition]);
+  }, [busStopId, initialData]);
+
+  // Helper function to calculate distance between two coordinates
+  const calculateDistanceBetweenCoords = (
+    lat1: number,
+    lon1: number,
+    lat2: number,
+    lon2: number
+  ): number => {
+    const R = 6371; // Radius of the Earth in km
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLon = ((lon2 - lon1) * Math.PI) / 180;
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos((lat1 * Math.PI) / 180) *
+        Math.cos((lat2 * Math.PI) / 180) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  };
+
+  // Helper function to format distance
+  const formatDistance = (distanceKm: number): string => {
+    if (distanceKm < 1) {
+      return `${Math.round(distanceKm * 1000)}m`;
+    }
+    return `${distanceKm.toFixed(1)}km`;
+  };
 
   return (
     <BusStopInfoV2
@@ -236,9 +356,9 @@ export function BusStopInfoV2Container({
       upcomingBuses={upcomingBuses}
       isLoading={isLoading}
       error={error}
-      onBack={onBack}
-      onRoutineSearch={onNavigateToRoute}
-      hasValidCoordinates={coordinates !== null}
+      onBack={onBack || (() => router.push("/bus-stop"))}
+      onRoutineSearch={onNavigateToRoute || (() => router.push("/"))}
+      hasValidCoordinates={coordinates !== null && userLocation !== null}
       onWalkDirections={() => {
         if (!coordinates) {
           console.error(
