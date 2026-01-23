@@ -101,6 +101,127 @@ export const getCurrentTimeString = (): string => {
 };
 
 /**
+ * Parse GTFS time string (HH:MM:SS) to a Date object.
+ * Handles extended hours (>= 24 means next day) and past time wrapping.
+ *
+ * @param timeString - GTFS time string in HH:MM:SS format (hours can be >= 24)
+ * @param baseDate - Base date to use for the returned Date object
+ * @returns Date object representing the GTFS time
+ * @throws Error if time format is invalid or contains invalid values
+ *
+ * @example
+ * // Regular time
+ * parseGtfsTime("14:30:00", new Date()) // today at 14:30
+ *
+ * // Extended hours (next day)
+ * parseGtfsTime("25:30:00", new Date()) // tomorrow at 1:30 AM
+ *
+ * // Past time wrapping (if current time is 15:00 and time is 14:00, assumes tomorrow)
+ * parseGtfsTime("14:00:00", new Date()) // tomorrow at 14:00 (if current time > 14:00)
+ */
+export function parseGtfsTime(timeString: string, baseDate: Date): Date {
+  const timeParts = timeString.split(":");
+  if (timeParts.length < 2) {
+    throw new Error(`Invalid time format: ${timeString}`);
+  }
+
+  let hours = parseInt(timeParts[0], 10);
+  const minutes = parseInt(timeParts[1], 10);
+  const seconds = timeParts.length >= 3 ? parseInt(timeParts[2], 10) : 0;
+
+  // Validate parsed values
+  if (
+    Number.isNaN(hours) ||
+    Number.isNaN(minutes) ||
+    Number.isNaN(seconds) ||
+    hours < 0 ||
+    minutes < 0 ||
+    minutes >= 60 ||
+    seconds < 0 ||
+    seconds >= 60
+  ) {
+    throw new Error(`Invalid time value: ${timeString}`);
+  }
+
+  // Determine if the GTFS time uses extended hours (hours >= 24)
+  const isExtendedHours = hours >= 24;
+
+  // Handle GTFS extended hours (hours >= 24 means next day)
+  let daysToAdd = 0;
+  if (isExtendedHours) {
+    daysToAdd = Math.floor(hours / 24);
+    hours = hours % 24;
+  }
+
+  const result = new Date(
+    baseDate.getFullYear(),
+    baseDate.getMonth(),
+    baseDate.getDate() + daysToAdd,
+    hours,
+    minutes,
+    seconds,
+    0
+  );
+
+  // If the time is in the past and not using extended hours, assume it's for tomorrow
+  if (!isExtendedHours && result < baseDate) {
+    result.setDate(result.getDate() + 1);
+  }
+
+  return result;
+}
+
+/**
+ * Calculate which stop the bus is currently at or between.
+ * Returns the index of the stop the bus is currently at or has most recently passed.
+ *
+ * @param stopsData - Array of stops with arrival_time in GTFS format
+ * @param currentTime - Current time to compare against
+ * @returns Index of current/most recent stop, or -1 if before first stop
+ *
+ * @example
+ * const stops = [
+ *   { stop_id: "1", arrival_time: "14:00:00" },
+ *   { stop_id: "2", arrival_time: "14:30:00" },
+ *   { stop_id: "3", arrival_time: "15:00:00" }
+ * ];
+ * // If current time is 14:45
+ * calculateCurrentBusLocation(stops, new Date()) // returns 1 (stop 2)
+ */
+export function calculateCurrentBusLocation<T extends { arrival_time: string }>(
+  stopsData: T[],
+  currentTime: Date
+): number {
+  let currentLocationIndex = -1;
+
+  for (let i = 0; i < stopsData.length; i++) {
+    try {
+      const stopArrivalTime = parseGtfsTime(
+        stopsData[i].arrival_time,
+        currentTime
+      );
+
+      // If this stop's arrival time is in the future, the bus is between previous and this stop
+      if (stopArrivalTime > currentTime) {
+        // Return the previous stop index (or -1 if this is the first stop)
+        return Math.max(-1, i - 1);
+      }
+
+      // This stop has been passed
+      currentLocationIndex = i;
+    } catch {
+      console.warn(
+        `Failed to parse arrival time for stop ${i}:`,
+        stopsData[i].arrival_time
+      );
+    }
+  }
+
+  // If all stops are in the past, return the last stop (bus has completed the trip)
+  return currentLocationIndex;
+}
+
+/**
  * Parse a time string (HH:MM or HH:MM:SS) to total minutes
  * @param timeStr - Time string in HH:MM or HH:MM:SS format
  * @returns Total minutes from the time string
