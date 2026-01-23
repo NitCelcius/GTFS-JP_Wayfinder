@@ -18,8 +18,10 @@ export interface TripIndicatorProps {
   arrivalMinutes: number;
   /** Arrival time as HH:MM string */
   arrivalTime: string;
-  /** Number of stops away */
+  /** Number of stops from origin to user's stop (for past buses) */
   stopsAway: number;
+  /** Number of stops between current bus location and user's stop (null = bus hasn't departed) */
+  stopsUntilArrival?: number | null;
   /** Text used for color generation (typically route_name or route_id) */
   routeColorText?: string;
 }
@@ -35,9 +37,30 @@ export const TripIndicator: React.FC<TripIndicatorProps> = ({
   arrivalMinutes,
   arrivalTime,
   stopsAway,
+  stopsUntilArrival,
   routeColorText,
 }) => {
   const { backgroundColor, textColor } = useRouteColor(routeColorText);
+
+  // Determine which message to show based on bus state:
+  // - Past bus (arrivalMinutes < 0): Show "X駅先に到着" (traveled X stops from origin)
+  // - En-route bus (stopsUntilArrival is number >= 0): Show "X駅前に到着" or "まもなく到着"
+  // - Not yet departed (stopsUntilArrival is null): Don't show anything
+  const renderStopsAwayMessage = () => {
+    if (arrivalMinutes < 0) {
+      // Past bus - show how many stops it traveled from origin
+      return stopsAway === 0 ? "まもなく到着" : `${stopsAway}駅先に到着`;
+    } else if (stopsUntilArrival !== null && stopsUntilArrival !== undefined) {
+      // En-route bus - show actual stops until arrival
+      return stopsUntilArrival === 0
+        ? "まもなく到着"
+        : `${stopsUntilArrival}駅前に到着`;
+    }
+    // Bus hasn't departed yet - don't show anything
+    return null;
+  };
+
+  const stopsAwayMessage = renderStopsAwayMessage();
 
   return (
     <div className={styles.tripIndicatorWrapper}>
@@ -70,14 +93,20 @@ export const TripIndicator: React.FC<TripIndicatorProps> = ({
         </div>
         <div className={styles.arrivalInfo}>
           <div className={styles.arrivalSection}>
-            <span className={styles.arrivalLabel}>到着予定</span>
-            <span className={styles.arrivalMinutes}>{arrivalMinutes}</span>
-            <span className={styles.arrivalUnit}>分後</span>
+            <span className={styles.arrivalLabel}>
+              {arrivalMinutes < 0 ? "到着済み" : "到着予定"}
+            </span>
+            <span className={styles.arrivalMinutes}>
+              {Math.abs(arrivalMinutes)}
+            </span>
+            <span className={styles.arrivalUnit}>
+              {arrivalMinutes < 0 ? "分前" : "分後"}
+            </span>
             <span className={styles.arrivalTime}>({arrivalTime})</span>
           </div>
-          <p className={styles.stopsAway}>
-            {stopsAway === 0 ? "まもなく到着" : `${stopsAway}駅先に到着`}
-          </p>
+          {stopsAwayMessage && (
+            <p className={styles.stopsAway}>{stopsAwayMessage}</p>
+          )}
         </div>
       </div>
     </div>

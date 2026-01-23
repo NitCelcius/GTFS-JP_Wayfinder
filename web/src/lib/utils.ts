@@ -120,6 +120,34 @@ export const getCurrentTimeString = (): string => {
  * parseGtfsTime("14:00:00", new Date()) // tomorrow at 14:00 (if current time > 14:00)
  */
 export function parseGtfsTime(timeString: string, baseDate: Date): Date {
+  return parseGtfsTimeInternal(timeString, baseDate, true);
+}
+
+/**
+ * Parse a GTFS time string without wrapping past times to tomorrow.
+ * Use this when you need to compare times within a single trip (e.g., calculating bus location).
+ *
+ * @param timeString - Time string in HH:MM:SS or HH:MM format (GTFS format allows hours >= 24)
+ * @param baseDate - Base date to use for the time (only date part is used)
+ * @returns Date object representing the time on the base date
+ */
+export function parseGtfsTimeNoWrap(timeString: string, baseDate: Date): Date {
+  return parseGtfsTimeInternal(timeString, baseDate, false);
+}
+
+/**
+ * Internal implementation of GTFS time parsing.
+ *
+ * @param timeString - Time string in HH:MM:SS or HH:MM format
+ * @param baseDate - Base date to use for the time
+ * @param wrapPastToTomorrow - If true, past times are assumed to be tomorrow
+ * @returns Date object representing the time
+ */
+function parseGtfsTimeInternal(
+  timeString: string,
+  baseDate: Date,
+  wrapPastToTomorrow: boolean
+): Date {
   const timeParts = timeString.split(":");
   if (timeParts.length < 2) {
     throw new Error(`Invalid time format: ${timeString}`);
@@ -163,8 +191,8 @@ export function parseGtfsTime(timeString: string, baseDate: Date): Date {
     0
   );
 
-  // If the time is in the past and not using extended hours, assume it's for tomorrow
-  if (!isExtendedHours && result < baseDate) {
+  // If wrapping is enabled and the time is in the past (not using extended hours), assume it's for tomorrow
+  if (wrapPastToTomorrow && !isExtendedHours && result < baseDate) {
     result.setDate(result.getDate() + 1);
   }
 
@@ -196,7 +224,9 @@ export function calculateCurrentBusLocation<T extends { arrival_time: string }>(
 
   for (let i = 0; i < stopsData.length; i++) {
     try {
-      const stopArrivalTime = parseGtfsTime(
+      // Use parseGtfsTimeNoWrap to compare times within the same trip
+      // without wrapping past times to tomorrow
+      const stopArrivalTime = parseGtfsTimeNoWrap(
         stopsData[i].arrival_time,
         currentTime
       );
