@@ -4,7 +4,7 @@ import { BottomNavigation } from "@/components/common/BottomNavigation/BottomNav
 import { JourneyTimeline } from "@/components/common/JourneyTimeline/JourneyTimeline";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner/LoadingSpinner";
 import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
-import { ShareModal } from "@/domains/bus-stop/internal/ShareModal";
+import { ShareModal } from "@/domains/bus-stop";
 import { WalkTransferIndicator } from "@/domains/route-search/internal/components";
 import { useTimeDisplay } from "@/hooks";
 
