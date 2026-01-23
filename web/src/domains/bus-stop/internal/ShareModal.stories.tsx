@@ -30,6 +30,7 @@ export const Default: Story = {
     title: "バス停情報",
     isOpen: true,
     onClose: () => console.log("Modal closed"),
+    description: "このバス停の情報を共有します。",
   },
 };
 
