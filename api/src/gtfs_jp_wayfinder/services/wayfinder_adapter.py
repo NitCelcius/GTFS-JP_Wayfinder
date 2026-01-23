@@ -536,22 +536,29 @@ def get_stops_from_trip(
                 except Exception:
                     r["stop_name"] = None
 
-    # Calculate fares from the first stop to each stop
+    # Calculate fares from the first stop to each stop using bulk fetch
     if records:
         first_stop_id = records[0].get("stop_id")
         if first_stop_id:
+            # Collect all destination stop IDs (excluding the first stop)
+            dest_stop_ids = [
+                r.get("stop_id")
+                for r in records
+                if r.get("stop_id") and r.get("stop_id") != first_stop_id
+            ]
+
+            # Fetch all fares at once with a single bulk operation
+            fare_map = get_fares_bulk(first_stop_id, dest_stop_ids)
+
+            # Populate fare field for each record
             for r in records:
                 dest_stop_id = r.get("stop_id")
-                if dest_stop_id and dest_stop_id != first_stop_id:
-                    try:
-                        fare = get_fare_by_stops(first_stop_id, dest_stop_id)
-                        r["fare"] = fare
-                    except Exception:
-                        # If fare lookup fails, leave as None
-                        r["fare"] = None
-                else:
-                    # First stop or invalid stop_id has no fare
+                if not dest_stop_id or dest_stop_id == first_stop_id:
+                    # First stop has no fare
                     r["fare"] = None
+                else:
+                    # Use pre-fetched fare from bulk operation
+                    r["fare"] = fare_map.get(dest_stop_id)
 
     return records
 
@@ -607,6 +614,19 @@ async def get_stops_from_trips_parallel(
 
 def get_fare_by_stops(from_id: str, to_id: str) -> int:
     return wf_service.get_fare_by_stops(from_id, to_id)
+
+
+def get_fares_bulk(from_id: str, to_ids: list[str]) -> dict[str, int | None]:
+    """Get fares for multiple destination stops from a single origin.
+
+    Args:
+        from_id: Origin stop ID
+        to_ids: List of destination stop IDs
+
+    Returns:
+        Dictionary mapping destination stop ID to fare amount (or None if not found)
+    """
+    return wf_service.get_fares_bulk(from_id, to_ids)
 
 
 def get_trip_info_batch(trip_ids: list[str]) -> TripInfoList:
