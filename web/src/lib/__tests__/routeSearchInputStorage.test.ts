@@ -37,7 +37,7 @@ describe("routeSearchInputStorage", () => {
       expect(typeof parsed.timestamp).toBe("number");
     });
 
-    it("should update timestamp on each save", () => {
+    it("should update timestamp on each save", async () => {
       const inputs = {
         originStopId: "stop1",
         destinationStopId: "stop2",
@@ -52,15 +52,15 @@ describe("routeSearchInputStorage", () => {
       const parsed1 = JSON.parse(stored1!);
       const timestamp1 = parsed1.timestamp;
 
-      // Wait a bit and save again
-      jest.advanceTimersByTime(100);
+      // Wait a bit with real delay to ensure timestamp changes
+      await new Promise((resolve) => setTimeout(resolve, 10));
       saveRouteSearchInputs(inputs);
 
       const stored2 = sessionStorage.getItem("gtfs-route-search-inputs");
       const parsed2 = JSON.parse(stored2!);
       const timestamp2 = parsed2.timestamp;
 
-      expect(timestamp2).toBeGreaterThanOrEqual(timestamp1);
+      expect(timestamp2).toBeGreaterThan(timestamp1);
     });
   });
 

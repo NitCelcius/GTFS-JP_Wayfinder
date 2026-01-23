@@ -55,13 +55,18 @@ function isValidRouteSearchInputState(
 
   const obj = state as Record<string, unknown>;
 
+  // Validate that candidate arrays contain only strings
+  const isStringArray = (arr: unknown): arr is string[] => {
+    return Array.isArray(arr) && arr.every((item) => typeof item === "string");
+  };
+
   return (
     typeof obj.originStopId === "string" &&
     typeof obj.destinationStopId === "string" &&
     typeof obj.originStopName === "string" &&
     typeof obj.destinationStopName === "string" &&
-    Array.isArray(obj.originCandidateStopIds) &&
-    Array.isArray(obj.destinationCandidateStopIds) &&
+    isStringArray(obj.originCandidateStopIds) &&
+    isStringArray(obj.destinationCandidateStopIds) &&
     typeof obj.timestamp === "number"
   );
 }

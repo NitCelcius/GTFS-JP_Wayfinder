@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 
@@ -10,76 +10,11 @@ import { BusTripDetail } from "@/domains/bus-stop";
 import type { Stop } from "@/domains/bus-stop/BusTripDetail/internal/StopItem";
 import { apiClient } from "@/lib/api";
 import { extractRouteNumber } from "@/lib/routeNumber";
-import { trimTimeSeconds } from "@/lib/utils";
-
-/**
- * Parse GTFS time string (HH:MM:SS) to a Date object.
- * Handles extended hours (>= 24 means next day).
- */
-function parseGtfsTime(timeString: string, baseDate: Date): Date {
-  const timeParts = timeString.split(":");
-  if (timeParts.length < 2) {
-    throw new Error(`Invalid time format: ${timeString}`);
-  }
-
-  let hours = parseInt(timeParts[0], 10);
-  const minutes = parseInt(timeParts[1], 10);
-  const seconds = timeParts.length >= 3 ? parseInt(timeParts[2], 10) : 0;
-
-  // Handle GTFS extended hours (hours >= 24 means next day)
-  let daysToAdd = 0;
-  if (hours >= 24) {
-    daysToAdd = Math.floor(hours / 24);
-    hours = hours % 24;
-  }
-
-  return new Date(
-    baseDate.getFullYear(),
-    baseDate.getMonth(),
-    baseDate.getDate() + daysToAdd,
-    hours,
-    minutes,
-    seconds,
-    0
-  );
-}
-
-/**
- * Calculate which stop the bus is currently at or between.
- * Returns the index of the stop the bus is currently at or has most recently passed.
- */
-function calculateCurrentBusLocation(
-  stopsData: TripTimedStop[],
-  currentTime: Date
-): number {
-  let currentLocationIndex = -1;
-
-  for (let i = 0; i < stopsData.length; i++) {
-    try {
-      const stopArrivalTime = parseGtfsTime(
-        stopsData[i].arrival_time,
-        currentTime
-      );
-
-      // If this stop's arrival time is in the future, the bus is between previous and this stop
-      if (stopArrivalTime > currentTime) {
-        // Return the previous stop index (or -1 if this is the first stop)
-        return Math.max(-1, i - 1);
-      }
-
-      // This stop has been passed
-      currentLocationIndex = i;
-    } catch {
-      console.warn(
-        `Failed to parse arrival time for stop ${i}:`,
-        stopsData[i].arrival_time
-      );
-    }
-  }
-
-  // If all stops are in the past, return the last stop (bus has completed the trip)
-  return currentLocationIndex;
-}
+import {
+  calculateCurrentBusLocation,
+  parseGtfsTime,
+  trimTimeSeconds,
+} from "@/lib/utils";
 
 export default function TripDetailPage() {
   const router = useRouter();
@@ -108,6 +43,7 @@ export default function TripDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const [rawStopsData, setRawStopsData] = useState<TripTimedStop[]>([]);
   const [busLocationIndex, setBusLocationIndex] = useState<number>(-1);
+  const hasAutoScrolledRef = useRef(false);
 
   useEffect(() => {
     if (!tripId) {
@@ -177,40 +113,20 @@ export default function TripDetailPage() {
           arrivalTime = trimTimeSeconds(currentStopInfo.arrival_time);
           // Parse arrival_time to calculate minutes until arrival
           if (currentStopInfo.arrival_time) {
-            const now = new Date();
-
-            // Parse the time string (HH:MM:SS format)
-            const timeParts = currentStopInfo.arrival_time.split(":");
-            if (timeParts.length >= 2) {
-              let hours = parseInt(timeParts[0], 10);
-              const minutes = parseInt(timeParts[1], 10);
-
-              // Handle GTFS extended hours (hours >= 24 means next day)
-              let daysToAdd = 0;
-              if (hours >= 24) {
-                daysToAdd = Math.floor(hours / 24);
-                hours = hours % 24;
-              }
-
-              // Create arrival datetime with today's date and the parsed time
-              const arrivalDate = new Date(
-                now.getFullYear(),
-                now.getMonth(),
-                now.getDate() + daysToAdd,
-                hours,
-                minutes,
-                0,
-                0
+            try {
+              const now = new Date();
+              const arrivalDate = parseGtfsTime(
+                currentStopInfo.arrival_time,
+                now
               );
-
-              // If the arrival time is in the past (e.g., current time is 15:00 and arrival is 14:00),
-              // assume it's for tomorrow
-              if (arrivalDate < now && daysToAdd === 0) {
-                arrivalDate.setDate(arrivalDate.getDate() + 1);
-              }
-
               const diffMs = arrivalDate.getTime() - now.getTime();
               arrivalMinutes = Math.max(0, Math.round(diffMs / 60000));
+            } catch (error) {
+              console.warn(
+                "Failed to parse arrival time:",
+                currentStopInfo.arrival_time,
+                error
+              );
             }
           }
         }
@@ -306,7 +222,7 @@ export default function TripDetailPage() {
       );
 
       // Update arrival minutes if we have current stop info
-      if (tripInfo && stopId) {
+      if (stopId) {
         const currentStopIndex = rawStopsData.findIndex(
           (s) => s.stop_id === stopId
         );
@@ -338,22 +254,31 @@ export default function TripDetailPage() {
     const msUntilNextMinute =
       (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
 
+    // Track interval so we can clean it up when the effect is disposed
+    let interval: ReturnType<typeof setInterval> | null = null;
+
     // First timeout to sync with minute boundary
     const syncTimeout = setTimeout(() => {
       updateBusLocation();
       // Then set up regular interval
-      const interval = setInterval(updateBusLocation, 60000); // 60 seconds
-      return () => clearInterval(interval);
+      interval = setInterval(updateBusLocation, 60000); // 60 seconds
     }, msUntilNextMinute);
 
     return () => {
       clearTimeout(syncTimeout);
+      if (interval !== null) {
+        clearInterval(interval);
+      }
     };
-  }, [rawStopsData, stopId, tripInfo]);
+  }, [rawStopsData, stopId]);
 
-  // Scroll to bus location when it changes
+  // Scroll to bus location on initial load only
   useEffect(() => {
-    if (busLocationIndex >= 0 && stops.length > 0) {
+    if (
+      busLocationIndex >= 0 &&
+      stops.length > 0 &&
+      !hasAutoScrolledRef.current
+    ) {
       // Use a small delay to ensure DOM has updated
       const scrollTimer = setTimeout(() => {
         // Find the stop element with isBusLocation true
@@ -365,6 +290,7 @@ export default function TripDetailPage() {
             behavior: "smooth",
             block: "center",
           });
+          hasAutoScrolledRef.current = true;
         }
       }, 100);
 
