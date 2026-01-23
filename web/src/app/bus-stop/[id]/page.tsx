@@ -1,8 +1,9 @@
-import { createServerApiClient } from "@/lib/apiServer";
 import type {
-  UpcomingBusEnrichedData,
   StopNameListData,
+  UpcomingBusEnrichedData,
 } from "@/domains/bus-stop/types";
+import { createServerApiClient } from "@/lib/apiServer";
+
 import { BusStopInfoPageWrapper } from "./BusStopInfoPageWrapper";
 
 interface PageProps {
@@ -48,5 +49,7 @@ export default async function BusStopInfoPageRoute({ params }: PageProps) {
     // Continue with null data, container will handle error state
   }
 
-  return <BusStopInfoPageWrapper busStopId={busStopId} initialData={initialData} />;
+  return (
+    <BusStopInfoPageWrapper busStopId={busStopId} initialData={initialData} />
+  );
 }

@@ -7,10 +7,7 @@ import { useRouter } from "next/navigation";
 import { ApiClient } from "@/lib/api";
 
 import { composeBusStopInfoWithLatestSelection } from "../composition";
-import {
-  calculateDistanceBetweenCoords,
-  formatDistance,
-} from "../converter";
+import { calculateDistanceBetweenCoords, formatDistance } from "../converter";
 import type { StopNameListData, UpcomingBusEnrichedData } from "../types";
 import { BusStopInfoV2 } from "./BusStopInfoV2";
 import type { UpcomingBusInfo } from "./BusStopInfoV2";

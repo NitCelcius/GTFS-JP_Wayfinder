@@ -2,12 +2,12 @@
  * Server-side API client for use in Server Components (Next.js App Router)
  * This file does NOT have "use client" directive and can be used in SSR
  */
-
 import {
   getBusStopInfoStopsStopIdGet,
   getUpcomingStopsStopIdUpcomingGet,
 } from "@/api";
 import { createClient } from "@/api/client";
+
 import { getEnvValue } from "./envUtils";
 
 /**
