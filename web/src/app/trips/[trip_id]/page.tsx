@@ -62,9 +62,10 @@ export default function TripDetailPage() {
         setError(null);
 
         // Fetch trip info and stops in parallel
+        // Pass stopId to getTripStops so fares are calculated from the current stop
         const [tripInfoResponse, tripStopsResponse] = await Promise.all([
           apiClient.getTripInfo(tripId, abortController.signal),
-          apiClient.getTripStops(tripId, abortController.signal),
+          apiClient.getTripStops(tripId, stopId, abortController.signal),
         ]);
 
         if (tripInfoResponse.error || !tripInfoResponse.data) {

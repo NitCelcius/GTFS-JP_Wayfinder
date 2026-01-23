@@ -192,13 +192,19 @@ async def get_trip(trip_id: str):
     "/{trip_id}/stops",
     response_model=list[models.TripTimedStop],
     summary="運行の停留所一覧取得",
-    description="運行に紐づく停留所と時刻の一覧を返します。",
+    description="運行に紐づく停留所と時刻の一覧を返します。from_stop_idを指定すると、その停留所からの運賃が計算されます。",
 )
-async def trip_stops(trip_id: str):
+async def trip_stops(
+    trip_id: str,
+    from_stop_id: str | None = Query(
+        None,
+        description="運賃計算の起点となる停留所ID。指定した場合、この停留所から各停留所までの運賃が計算されます。",
+    ),
+):
     try:
         # Use default date to populate datetime fields
         reference_date = adapter.get_default_date()
-        records = adapter.get_stops_from_trip(trip_id, reference_date)
+        records = adapter.get_stops_from_trip(trip_id, reference_date, from_stop_id)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e)) from e
     return records

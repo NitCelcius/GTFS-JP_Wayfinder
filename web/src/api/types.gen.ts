@@ -845,7 +845,13 @@ export type TripStopsTripsTripIdStopsGetData = {
          */
         trip_id: string;
     };
-    query?: never;
+    query?: {
+        /**
+         * From Stop Id
+         * 運賃計算の起点となる停留所ID。指定した場合、この停留所から各停留所までの運賃が計算されます。
+         */
+        from_stop_id?: string | null;
+    };
     url: '/trips/{trip_id}/stops';
 };
 
