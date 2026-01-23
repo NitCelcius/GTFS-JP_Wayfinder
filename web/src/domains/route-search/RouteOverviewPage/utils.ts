@@ -62,10 +62,15 @@ function buildRouteFromTravels(
   // Filter out walk transfers to get only bus segments
   const busSegments = travels.filter((t) => !t.is_walk_transfer);
 
+  // Special case: if there are no bus segments (only walk transfers),
+  // it means origin and destination are the same stop with different platforms
+  // Return null to indicate this should be handled specially by the UI
+  if (busSegments.length === 0) {
+    return null;
+  }
+
   // Use the first bus segment's trip_id as the route identifier
-  // If there are no bus segments (unusual case), use the first travel's trip_id
-  const primaryTripId =
-    busSegments.length > 0 ? busSegments[0].trip_id : travels[0].trip_id;
+  const primaryTripId = busSegments[0].trip_id;
 
   // Overall journey: departure from first segment, arrival from last segment
   const firstTravel = travels[0];
@@ -77,8 +82,10 @@ function buildRouteFromTravels(
     0
   );
 
-  // Transfer count = number of bus segments - 1
-  // Walk transfers between platforms don't count as "real" transfers
+  // Transfer count = number of buses needed - 1
+  // This represents how many times you need to change buses.
+  // Walk transfers between platforms (same-name stops) don't count as transfers.
+  // Example: If you take bus A then bus B, that's 2 buses = 1 transfer.
   const transferCount = Math.max(0, busSegments.length - 1);
 
   const relativeMinutes = calculateRelativeMinutes(

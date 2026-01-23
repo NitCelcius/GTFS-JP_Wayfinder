@@ -454,11 +454,11 @@ class AkitaBusWayFinder:
         Returns:
             List of stop IDs including the original and all same-name variants.
         """
-        same_name_stops = [stop_id]
+        same_name_stops: set[str] = {stop_id}
         for from_stop, to_stop in self._walk_transfer_pairs:
             if from_stop == stop_id:
-                same_name_stops.append(to_stop)
-        return same_name_stops
+                same_name_stops.add(to_stop)
+        return list(same_name_stops)
 
     def generate_calendar(self, base_dir):
         df_base_calendar = pd.read_csv(base_dir + "calendar.txt")
@@ -660,6 +660,17 @@ class AkitaBusWayFinder:
     # 2つをつなぐ路線IDのリストを取得
     # 修正: from -> to の順番でなければ受け付けない
     def get_trips_from_stops(self, from_id, to_id, service_id=None):
+        """Get trip IDs connecting two stops.
+
+        Args:
+            from_id: Origin stop ID
+            to_id: Destination stop ID
+            service_id: Optional service ID to filter trips.
+                       If None or empty string "", no service_id filtering is applied.
+
+        Returns:
+            List of trip IDs that connect the two stops in the specified order.
+        """
         res = []
 
         # Use pre-built stop->trips index for O(1) lookup instead of DataFrame filter
@@ -1084,6 +1095,15 @@ class AkitaBusWayFinder:
                 if candidate_stop in trip_stops_set:
                     effective_origin = candidate_stop
                     break
+
+            # If no same-name stop is found on the trip, raise an error
+            if effective_origin == from_stop_id:
+                same_name_list = ", ".join(same_name_stops)
+                raise ValueError(
+                    f"Stop {from_stop_id} and its same-name variants [{same_name_list}] "
+                    f"are not on trip {trip_id}. "
+                    f"Please select a stop that is on this trip's route."
+                )
 
         stops_list = []
         fare_list = []
