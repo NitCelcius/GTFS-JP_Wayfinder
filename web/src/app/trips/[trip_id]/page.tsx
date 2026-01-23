@@ -12,7 +12,7 @@ import { apiClient } from "@/lib/api";
 import { extractRouteNumber } from "@/lib/routeNumber";
 import {
   calculateCurrentBusLocation,
-  parseGtfsTime,
+  parseGtfsTimeNoWrap,
   trimTimeSeconds,
 } from "@/lib/utils";
 
@@ -27,7 +27,11 @@ export default function TripDetailPage() {
     typeof params?.trip_id === "string"
       ? decodeURIComponent(params.trip_id)
       : "";
-  const stopId = searchParams.get("stop_id") || undefined;
+  // Decode stop_id: handle + as space (URL query string convention) and decode URI components
+  const stopIdRaw = searchParams.get("stop_id");
+  const stopId = stopIdRaw
+    ? decodeURIComponent(stopIdRaw.replace(/\+/g, " "))
+    : undefined;
 
   const [stops, setStops] = useState<Stop[]>([]);
   const [tripInfo, setTripInfo] = useState<{
@@ -38,6 +42,7 @@ export default function TripDetailPage() {
     arrivalTime: string;
     arrivalMinutes: number;
     stopsAway: number;
+    stopsUntilArrival: number | null; // null = bus hasn't departed, number = stops between bus and user's stop
     routeId?: string;
     routeColorText?: string;
   } | null>(null);
@@ -94,40 +99,54 @@ export default function TripDetailPage() {
             currentStopName = currentStop.stop_name || stopId;
             arrivalTime = currentStop.arrival_time;
 
-            // Calculate arrival minutes from the stop's datetime
-            if (currentStop.arrival_datetime) {
-              // API returns datetime with reference date (e.g., "2021-01-01T12:53:00")
-              // Extract time and combine with today's date for accurate calculation
-              const arrivalDate = new Date(currentStop.arrival_datetime);
-              const now = new Date();
-
-              // Create a new date with today's date but the arrival time
-              const todayArrival = new Date(
-                now.getFullYear(),
-                now.getMonth(),
-                now.getDate(),
-                arrivalDate.getHours(),
-                arrivalDate.getMinutes(),
-                arrivalDate.getSeconds()
-              );
-
-              const diffMs = todayArrival.getTime() - now.getTime();
-              arrivalMinutes = Math.max(0, Math.round(diffMs / 60000));
+            // Calculate arrival minutes using GTFS time parsing
+            // Use parseGtfsTimeNoWrap to allow negative values for past buses
+            if (currentStop.arrival_time) {
+              try {
+                const now = new Date();
+                const arrivalDate = parseGtfsTimeNoWrap(
+                  currentStop.arrival_time,
+                  now
+                );
+                const diffMs = arrivalDate.getTime() - now.getTime();
+                arrivalMinutes = Math.round(diffMs / 60000);
+              } catch (error) {
+                console.error("Failed to parse arrival time:", error);
+                arrivalMinutes = 0;
+              }
             }
           }
         }
 
         // Calculate stops away (from first stop to current stop)
+        // This represents how many stops the bus travels from its origin to reach this stop
         const stopsAway = currentStopIndex >= 0 ? currentStopIndex : 0;
 
         // Store raw stops data for bus location calculation
         setRawStopsData(stopsData);
 
         // Calculate current bus location based on arrival times
-        const busLocationIndex = calculateCurrentBusLocation(
-          stopsData,
-          new Date()
-        );
+        const now = new Date();
+        const busLocationIndex = calculateCurrentBusLocation(stopsData, now);
+
+        // Calculate stopsUntilArrival for en-route buses
+        // - null if bus hasn't departed (busLocationIndex === -1)
+        // - 0 if bus has passed or is at user's stop
+        // - positive number = actual stops between bus and user's stop
+        let stopsUntilArrival: number | null;
+        if (busLocationIndex === -1) {
+          // Bus hasn't departed yet
+          stopsUntilArrival = null;
+        } else if (currentStopIndex < 0) {
+          // Current stop not found
+          stopsUntilArrival = null;
+        } else if (busLocationIndex >= currentStopIndex) {
+          // Bus has passed or is at user's stop
+          stopsUntilArrival = 0;
+        } else {
+          // Bus is en route, calculate actual stops until arrival
+          stopsUntilArrival = currentStopIndex - busLocationIndex;
+        }
 
         // Convert stops to component format
         const formattedStops: Stop[] = stopsData.map((stop, index) => ({
@@ -161,6 +180,7 @@ export default function TripDetailPage() {
           arrivalTime: trimTimeSeconds(arrivalTime),
           arrivalMinutes,
           stopsAway,
+          stopsUntilArrival,
           routeId: tripData.route_id ?? undefined,
           routeColorText: tripData.route_id ?? tripData.route_name ?? undefined,
         });
@@ -209,23 +229,42 @@ export default function TripDetailPage() {
         }))
       );
 
-      // Update arrival minutes if we have current stop info
+      // Update arrival minutes and stopsUntilArrival if we have current stop info
       if (stopId) {
         const currentStopIndex = rawStopsData.findIndex(
           (s) => s.stop_id === stopId
         );
         if (currentStopIndex >= 0) {
           try {
-            const arrivalDate = parseGtfsTime(
-              rawStopsData[currentStopIndex].arrival_time,
-              now
-            );
-            const diffMs = arrivalDate.getTime() - now.getTime();
-            const newArrivalMinutes = Math.max(0, Math.round(diffMs / 60000));
+            const currentStop = rawStopsData[currentStopIndex];
+            if (currentStop.arrival_time) {
+              const arrivalDate = parseGtfsTimeNoWrap(
+                currentStop.arrival_time,
+                now
+              );
+              const diffMs = arrivalDate.getTime() - now.getTime();
+              const newArrivalMinutes = Math.round(diffMs / 60000);
 
-            setTripInfo((prev) =>
-              prev ? { ...prev, arrivalMinutes: newArrivalMinutes } : null
-            );
+              // Calculate updated stopsUntilArrival based on new bus location
+              let newStopsUntilArrival: number | null;
+              if (newBusLocationIndex === -1) {
+                newStopsUntilArrival = null;
+              } else if (newBusLocationIndex >= currentStopIndex) {
+                newStopsUntilArrival = 0;
+              } else {
+                newStopsUntilArrival = currentStopIndex - newBusLocationIndex;
+              }
+
+              setTripInfo((prev) =>
+                prev
+                  ? {
+                      ...prev,
+                      arrivalMinutes: newArrivalMinutes,
+                      stopsUntilArrival: newStopsUntilArrival,
+                    }
+                  : null
+              );
+            }
           } catch (error) {
             console.warn("Failed to update arrival minutes:", error);
           }
@@ -325,6 +364,7 @@ export default function TripDetailPage() {
       arrivalTime={tripInfo.arrivalTime}
       departureTime={tripInfo.arrivalTime}
       stopsAway={tripInfo.stopsAway}
+      stopsUntilArrival={tripInfo.stopsUntilArrival}
       stops={stops}
       routeColorText={tripInfo.routeColorText}
       onBack={() => router.back()}

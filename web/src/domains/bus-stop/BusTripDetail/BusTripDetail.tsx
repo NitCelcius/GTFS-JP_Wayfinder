@@ -20,6 +20,8 @@ export interface BusTripDetailProps {
   arrivalTime: string;
   departureTime?: string;
   stopsAway: number;
+  /** Number of stops between current bus location and user's stop (null = bus hasn't departed) */
+  stopsUntilArrival?: number | null;
   stops: Stop[];
   /** Text used for color generation (typically route_name or route_id) */
   routeColorText?: string;
@@ -37,6 +39,7 @@ export function BusTripDetail({
   arrivalTime,
   departureTime,
   stopsAway,
+  stopsUntilArrival,
   stops,
   routeColorText,
   onBack,
@@ -78,6 +81,7 @@ export function BusTripDetail({
           arrivalMinutes={arrivalMinutes}
           arrivalTime={arrivalTime}
           stopsAway={stopsAway}
+          stopsUntilArrival={stopsUntilArrival}
           routeColorText={routeColorText}
         />
       </div>

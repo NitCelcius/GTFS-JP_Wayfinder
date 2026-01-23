@@ -17,6 +17,23 @@ function parseDateTime(datetimeString: string): Date {
 }
 
 /**
+ * Calculate minutes until a given arrival datetime from now
+ * @param arrivalDatetimeString - ISO datetime string from API (e.g., "2021-01-01T12:53:00")
+ * @param currentTime - Optional current time reference (defaults to now)
+ * @returns Number of minutes until arrival (negative for past times)
+ * @throws Error if datetime string is invalid
+ */
+export function calculateMinutesUntilArrival(
+  arrivalDatetimeString: string,
+  currentTime?: Date
+): number {
+  const arrivalDatetime = parseDateTime(arrivalDatetimeString);
+  const now = currentTime || new Date();
+  const diffMs = arrivalDatetime.getTime() - now.getTime();
+  return Math.round(diffMs / 60000);
+}
+
+/**
  * Convert API time string (HH:MM:SS) to display format (HH:MM)
  */
 export function formatTime(timeString: string): string {

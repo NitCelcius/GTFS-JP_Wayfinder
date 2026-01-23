@@ -7,7 +7,11 @@ import { useRouter } from "next/navigation";
 import { ApiClient } from "@/lib/api";
 
 import { composeBusStopInfoWithLatestSelection } from "../composition";
-import { calculateDistanceBetweenCoords, formatDistance } from "../converter";
+import {
+  calculateDistanceBetweenCoords,
+  calculateMinutesUntilArrival,
+  formatDistance,
+} from "../converter";
 import type { StopNameListData, UpcomingBusEnrichedData } from "../types";
 import { BusStopInfoV2 } from "./BusStopInfoV2";
 import type { UpcomingBusInfo } from "./BusStopInfoV2";
@@ -180,11 +184,12 @@ export function BusStopInfoV2Container({
 
         const apiClient = ApiClient.getInstance();
 
-        // Get current time in HH:MM:SS format
+        // Get time 30 minutes ago to include recently departed buses
         const now = new Date();
-        const beginTime = now.toTimeString().split(" ")[0];
+        const pastTime = new Date(now.getTime() - 30 * 60 * 1000); // 30 minutes ago
+        const beginTime = pastTime.toTimeString().split(" ")[0];
 
-        // Fetch upcoming buses with trip info
+        // Fetch upcoming buses with trip info (includes buses from 30 min ago)
         const upcomingResponse = await apiClient.getBusStopInfoExpanded(
           busStopId,
           undefined,
@@ -264,18 +269,51 @@ export function BusStopInfoV2Container({
               (stop) => stop.type === "current"
             );
 
-            // Calculate stops until arrival at this stop
-            // currentStopIndex represents position of this stop in the route
+            // Calculate bus location based on arrival times
+            // Find the last stop the bus has passed (arrivalDatetime <= now)
+            let busLocationIndex = -1;
+            for (let i = 0; i < bus.routeJourney.length; i++) {
+              const stopArrivalTime = bus.routeJourney[i].arrivalDatetime;
+              if (stopArrivalTime <= now) {
+                busLocationIndex = i;
+              } else {
+                break; // Future stops
+              }
+            }
+
+            // Calculate minutes until departure at user's stop
+            const minutesUntilDeparture = calculateMinutesUntilArrival(
+              bus.busInfo.arrivalDatetime.toISOString(),
+              now
+            );
+
+            // Calculate stops until arrival based on bus state:
+            // - Past bus (minutesUntilDeparture < 0): Show "X駅先に到着" (stops from origin)
+            // - En-route bus: Show "X駅前に到着" (remaining stops)
+            // - Not yet departed: Don't show anything
             let stopsUntilArrival: string;
             if (currentStopIndex === -1) {
-              // Current stop not found in journey - shouldn't happen but handle gracefully
+              // Current stop not found in journey
               stopsUntilArrival = "位置情報なし";
-            } else if (currentStopIndex === 0) {
-              // This stop is the first stop on the route
+            } else if (minutesUntilDeparture < 0) {
+              // Past bus - show how many stops it traveled from origin
+              stopsUntilArrival =
+                currentStopIndex === 0
+                  ? "まもなく到着"
+                  : `${currentStopIndex}駅先に到着`;
+            } else if (busLocationIndex === -1) {
+              // Bus hasn't departed yet - don't show stops info
+              stopsUntilArrival = "";
+            } else if (busLocationIndex >= currentStopIndex) {
+              // Bus has passed or is at user's stop
               stopsUntilArrival = "まもなく到着";
             } else {
-              // Show number of stops from start to this stop
-              stopsUntilArrival = `${currentStopIndex}駅先に到着`;
+              // En-route bus - show remaining stops until arrival
+              const remainingStops = currentStopIndex - busLocationIndex;
+              stopsUntilArrival =
+                remainingStops === 0
+                  ? "まもなく到着"
+                  : `${remainingStops}駅前に到着`;
             }
 
             return {
@@ -284,9 +322,7 @@ export function BusStopInfoV2Container({
               routeName: bus.busInfo.system || "",
               destination: bus.busInfo.destination,
               destinationLabel: bus.busInfo.direction,
-              minutesUntilDeparture: Math.round(
-                (bus.busInfo.arrivalDatetime.getTime() - now.getTime()) / 60000
-              ),
+              minutesUntilDeparture,
               departureTime: bus.busInfo.arrivalTime,
               cost: undefined, // TODO: Add fare info
               stopsUntilArrival,
