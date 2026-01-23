@@ -53,6 +53,11 @@ def test_trip_passing_and_fare(monkeypatch):
             "fare": 200,
         },
     )
+    # Mock get_default_date as it's called by the endpoint
+    monkeypatch.setattr(
+        "gtfs_jp_wayfinder.services.wayfinder_adapter.get_default_date",
+        lambda: "2025-10-29",
+    )
 
     resp = client.get("/trips/t1/passing?stop_id=S1")
     assert resp.status_code == 200

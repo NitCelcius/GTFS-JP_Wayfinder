@@ -786,6 +786,56 @@ class AkitaBusWayFinder:
         route_and_fares = self.get_fare_route_by_stops(from_id, to_id)
         return self.get_fare_from_id(route_and_fares["fare_id"].values[0]).item()
 
+    def get_fares_bulk(self, from_id: str, to_ids: list[str]) -> dict[str, int | None]:
+        """Get fares for multiple destination stops from a single origin.
+
+        Args:
+            from_id: Origin stop ID
+            to_ids: List of destination stop IDs
+
+        Returns:
+            Dictionary mapping destination stop ID to fare amount (or None if not found)
+        """
+        if not to_ids:
+            return {}
+
+        # Query fare_rules for all destinations at once
+        df_fare = self.df_fare_id_route
+        matches = df_fare[
+            (df_fare["origin_id"] == from_id) & (df_fare["destination_id"].isin(to_ids))
+        ]
+
+        # Reverse direction fallback
+        reverse_matches = df_fare[
+            (df_fare["origin_id"].isin(to_ids)) & (df_fare["destination_id"] == from_id)
+        ]
+
+        # Merge results (forward takes precedence)
+        fare_ids = {}
+        for _, row in reverse_matches.iterrows():
+            fare_ids[row["origin_id"]] = row["fare_id"]
+        for _, row in matches.iterrows():
+            fare_ids[row["destination_id"]] = row["fare_id"]
+
+        # Bulk lookup fare amounts
+        result: dict[str, int | None] = {}
+        if fare_ids:
+            df_fares = self.df_fare_id_cost[
+                self.df_fare_id_cost["fare_id"].isin(list(fare_ids.values()))
+            ]
+            fare_prices = dict(zip(df_fares["fare_id"], df_fares["price"], strict=True))
+
+            for to_id in to_ids:
+                fare_id = fare_ids.get(to_id)
+                if fare_id is not None and fare_id in fare_prices:
+                    result[to_id] = int(fare_prices[fare_id])
+                else:
+                    result[to_id] = None
+        else:
+            result = {to_id: None for to_id in to_ids}
+
+        return result
+
     # 経路を検索する ("乗り換えるべきバス停" が出る)
     # NetworkXNoPath: 経路が見つからない場合
 

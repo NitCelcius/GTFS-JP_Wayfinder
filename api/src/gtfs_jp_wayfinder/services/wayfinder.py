@@ -207,6 +207,21 @@ def get_fare_by_stops(from_id: str, to_id: str):
     return _wf.get_fare_from_id(fare_id).item()
 
 
+def get_fares_bulk(from_id: str, to_ids: list[str]) -> dict[str, int | None]:
+    """Get fares for multiple destinations from a single origin.
+
+    Args:
+        from_id: Origin stop ID
+        to_ids: List of destination stop IDs
+
+    Returns:
+        Dictionary mapping destination stop ID to fare amount (or None if not found)
+    """
+    if _wf is None:
+        raise RuntimeError("Wayfinder not initialized")
+    return _wf.get_fares_bulk(from_id, to_ids)
+
+
 def get_trip_info_batch(trip_ids: list[str]) -> TripInfoList:
     # Batch helper: dedupe route lookups
     trips: list[TripInfo] = []
