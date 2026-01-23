@@ -165,20 +165,41 @@ export function BusStopInfoV2Container({
 
         // Convert buses to V2 format
         const convertedBuses: UpcomingBusInfo[] =
-          busStopInfo.busesWithJourneys.map((bus) => ({
-            tripId: bus.busInfo.tripId,
-            routeNumber: bus.busInfo.line,
-            routeName: bus.busInfo.system || "",
-            destination: bus.busInfo.destination,
-            destinationLabel: bus.busInfo.direction,
-            minutesUntilDeparture: Math.round(
-              (bus.busInfo.arrivalDatetime.getTime() - now.getTime()) / 60000
-            ),
-            departureTime: bus.busInfo.arrivalTime,
-            cost: undefined, // TODO: Add fare info
-            stopsUntilArrival: `${bus.routeJourney.length - 1}駅先に到着`,
-            routeColorText: bus.busInfo.routeColorText,
-          }));
+          busStopInfo.busesWithJourneys.map((bus) => {
+            // Find the current stop (this page's stop) in the journey
+            const currentStopIndex = bus.routeJourney.findIndex(
+              (stop) => stop.type === "current"
+            );
+
+            // Calculate stops until arrival at this stop
+            // currentStopIndex represents position of this stop in the route
+            let stopsUntilArrival: string;
+            if (currentStopIndex === -1) {
+              // Current stop not found in journey - shouldn't happen but handle gracefully
+              stopsUntilArrival = "位置情報なし";
+            } else if (currentStopIndex === 0) {
+              // This stop is the first stop on the route
+              stopsUntilArrival = "まもなく到着";
+            } else {
+              // Show number of stops from start to this stop
+              stopsUntilArrival = `${currentStopIndex}駅先に到着`;
+            }
+
+            return {
+              tripId: bus.busInfo.tripId,
+              routeNumber: bus.busInfo.line,
+              routeName: bus.busInfo.system || "",
+              destination: bus.busInfo.destination,
+              destinationLabel: bus.busInfo.direction,
+              minutesUntilDeparture: Math.round(
+                (bus.busInfo.arrivalDatetime.getTime() - now.getTime()) / 60000
+              ),
+              departureTime: bus.busInfo.arrivalTime,
+              cost: undefined, // TODO: Add fare info
+              stopsUntilArrival,
+              routeColorText: bus.busInfo.routeColorText,
+            };
+          });
 
         setUpcomingBuses(convertedBuses);
 

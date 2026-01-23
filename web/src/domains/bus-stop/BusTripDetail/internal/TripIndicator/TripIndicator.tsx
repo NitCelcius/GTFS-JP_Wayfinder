@@ -49,28 +49,26 @@ export const TripIndicator: React.FC<TripIndicatorProps> = ({
         />
       </div>
       <div className={styles.tripIndicatorContainer}>
-        <div className={styles.topSection}>
-          <div
-            className={styles.routeNumber}
-            style={{ backgroundColor, color: textColor }}
-          >
-            {routeNumber}
-          </div>
-          <div className={styles.routeDetails}>
-            <p className={styles.routeName}>{routeName}</p>
-            <div className={styles.destinationRow}>
-              <MapPin
-                size={28}
-                className={styles.locationIcon}
-                aria-hidden="true"
-              />
-              <p className={`${styles.destinationName} line-clamp-3`}>
-                {destinationName}行
-              </p>
-            </div>
+        <div
+          className={styles.routeNumber}
+          style={{ backgroundColor, color: textColor }}
+        >
+          {routeNumber}
+        </div>
+        <div className={styles.routeDetails}>
+          <div className={styles.routeInfoRow}>
+            {routeNumber !== routeName && (
+              <span className={styles.routeName}>{routeName}</span>
+            )}
+            <MapPin
+              size={16}
+              className={styles.locationIcon}
+              aria-hidden="true"
+            />
+            <span className={styles.destinationName}>{destinationName}行</span>
           </div>
         </div>
-        <div className={styles.bottomSection}>
+        <div className={styles.arrivalInfo}>
           <div className={styles.arrivalSection}>
             <span className={styles.arrivalLabel}>到着予定</span>
             <span className={styles.arrivalMinutes}>{arrivalMinutes}</span>
@@ -78,11 +76,7 @@ export const TripIndicator: React.FC<TripIndicatorProps> = ({
             <span className={styles.arrivalTime}>({arrivalTime})</span>
           </div>
           <p className={styles.stopsAway}>
-            {stopsAway === 0
-              ? "まもなく到着"
-              : stopsAway < 0
-                ? `${Math.abs(stopsAway)}駅先に到着`
-                : `${stopsAway}駅前に到着`}
+            {stopsAway === 0 ? "まもなく到着" : `${stopsAway}駅先に到着`}
           </p>
         </div>
       </div>
