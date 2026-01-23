@@ -103,15 +103,23 @@ describe("composeBusStopInfoWithBestSelection", () => {
     expect(result.bestBusIndex).toBe(0);
   });
 
-  it("should return error for empty bus list", () => {
+  it("should handle empty bus list gracefully", () => {
     const mockData: UpcomingBusEnrichedData = {
       stop_id: "1021_01",
       buses: [],
     };
 
-    expect(() =>
-      composeBusStopInfoWithLatestSelection(mockData, "Test Stop", "1021_01")
-    ).toThrow(RangeError);
+    const result = composeBusStopInfoWithLatestSelection(
+      mockData,
+      "Test Stop",
+      "1021_01"
+    );
+
+    // Should return valid result with empty buses array and bestBusIndex 0
+    expect(result.busesWithJourneys).toEqual([]);
+    expect(result.bestBusIndex).toBe(0);
+    expect(result.busStop.id).toBe("1021_01");
+    expect(result.busStop.name).toBe("Test Stop");
   });
 
   describe("Time-sensitive scenarios (API should pre-filter via begin_time)", () => {
