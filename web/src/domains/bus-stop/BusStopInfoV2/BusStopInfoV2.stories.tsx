@@ -80,14 +80,14 @@ const mockUpcomingBuses = [
 const mockPastBus = {
   tripId: "trip-past",
   routeNumber: "314",
-  routeName: "過去",
+  routeName: "秋田市内線",
   destination: "秋田駅東口",
   destinationLabel: "行",
-  minutesUntilDeparture: 12,
+  minutesUntilDeparture: -12,
   departureTime: "12:22",
   cost: 314,
   isPast: true,
-  routeColorText: "過去",
+  routeColorText: "秋田市内線",
 };
 
 export const Default: Story = {
@@ -138,5 +138,33 @@ export const NoPastBus: Story = {
   args: {
     ...Default.args,
     pastBus: null,
+  },
+};
+
+export const WithPastBus: Story = {
+  args: {
+    busStopId: "stop-001",
+    busStopName: "中央公園",
+    distance: "約250m",
+    platformCode: "3",
+    pastBus: mockPastBus,
+    upcomingBuses: mockUpcomingBuses,
+    isLoading: false,
+    error: null,
+    hasValidCoordinates: true,
+    onBack: () => console.log("Back clicked"),
+    onRoutineSearch: () => console.log("Search destinations clicked"),
+    onWalkDirections: () => console.log("Walk directions clicked"),
+    onTransfer: () => console.log("Transfer clicked"),
+    onRouteList: () => console.log("Route list clicked"),
+    onBusClick: (bus) => console.log("Bus clicked:", bus),
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Displays a past bus section (過去のバス) above upcoming buses. The past bus is initially hidden via auto-scroll and can be revealed by scrolling up. The past bus has a gray background and shows time as 'N分前' (N minutes ago).",
+      },
+    },
   },
 };

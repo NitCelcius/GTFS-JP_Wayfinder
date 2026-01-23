@@ -302,24 +302,29 @@ export function BusStopInfoV2Container({
           (bus) => bus.minutesUntilDeparture >= 0
         );
 
-        // Set the most recent past bus
-        // We find the largest negative value (closest to 0) because:
-        // - Past buses have negative minutesUntilDeparture (e.g., -5, -10, -15)
-        // - The largest negative value (-5) represents the most recently departed bus
-        // - This is the most relevant past bus for users to see
-        if (pastBuses.length > 0) {
-          const mostRecentPastBus = pastBuses.reduce((prev, current) =>
-            current.minutesUntilDeparture > prev.minutesUntilDeparture
-              ? current
-              : prev
-          );
-          setPastBus({ ...mostRecentPastBus, isPast: true });
-        } else {
-          setPastBus(null);
-        }
-
-        // Only set upcoming buses (future buses)
+        // Set upcoming buses immediately (priority for UX)
         setUpcomingBuses(futureBuses);
+        setIsLoading(false);
+
+        // Defer past bus loading to improve perceived performance
+        // This allows upcoming buses to be displayed first
+        setTimeout(() => {
+          // Set the most recent past bus
+          // We find the largest negative value (closest to 0) because:
+          // - Past buses have negative minutesUntilDeparture (e.g., -5, -10, -15)
+          // - The largest negative value (-5) represents the most recently departed bus
+          // - This is the most relevant past bus for users to see
+          if (pastBuses.length > 0) {
+            const mostRecentPastBus = pastBuses.reduce((prev, current) =>
+              current.minutesUntilDeparture > prev.minutesUntilDeparture
+                ? current
+                : prev
+            );
+            setPastBus({ ...mostRecentPastBus, isPast: true });
+          } else {
+            setPastBus(null);
+          }
+        }, 100);
       } catch (err) {
         if (err instanceof Error && err.name === "AbortError") {
           return;
@@ -328,7 +333,6 @@ export function BusStopInfoV2Container({
         setError(
           err instanceof Error ? err.message : "Failed to load bus stop data"
         );
-      } finally {
         setIsLoading(false);
       }
     };
