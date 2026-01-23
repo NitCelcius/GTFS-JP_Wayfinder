@@ -50,7 +50,7 @@ export function SlimTripIndicator({
         <p className={styles.firstLine}>
           <span className={styles.routeName}>{routeName}</span>
         </p>
-        <p className={`${styles.destinationLine} line-clamp-3`}>
+        <p className={`${styles.destinationLine} line-clamp-2`}>
           <span className={styles.destination}>{destination}</span>
           <span className={styles.destinationLabel}>{destinationLabel}</span>
         </p>
