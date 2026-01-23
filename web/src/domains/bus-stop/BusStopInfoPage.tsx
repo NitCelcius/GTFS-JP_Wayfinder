@@ -8,10 +8,10 @@ import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
 import { useTimeDisplay } from "@/hooks";
 
 import styles from "./BusStopInfoPage.module.css";
+import { ShareModal } from "./ShareModal";
 import { useBusStopData } from "./hooks";
 import { BusStopHeader } from "./internal/BusStopHeader";
 import { NextBusInfo } from "./internal/NextBusInfo";
-import { ShareModal } from "./ShareModal";
 import { TransferButton } from "./internal/TransferButton";
 import { WalkDirectionButton } from "./internal/WalkDirectionButton";
 
