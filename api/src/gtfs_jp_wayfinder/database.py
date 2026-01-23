@@ -1220,7 +1220,13 @@ class AkitaBusWayFinder:
 
     # route_id に関連する情報をぜんぶ取得する
     def get_route_info(self, route_id):
-        df_matching_trips = self.df_trips[self.df_trips["route_id"] == route_id]
+        # Convert route_id to match dataframe type (may be string or int)
+        try:
+            route_id_lookup = int(route_id)
+        except (ValueError, TypeError):
+            route_id_lookup = route_id
+
+        df_matching_trips = self.df_trips[self.df_trips["route_id"] == route_id_lookup]
         if df_matching_trips.shape[0] == 0:
             raise ValueError("No trip with given trip_id found")
         return df_matching_trips
@@ -1238,8 +1244,21 @@ class AkitaBusWayFinder:
         if df_matching_routes.shape[0] == 0:
             raise ValueError("No route with give route_id found")
         value = df_matching_routes["trip_headsign"].values[0]
-        # Convert pandas NaN to None for Pydantic compatibility
-        return None if pd.isna(value) else str(value)
+        # Convert pandas NaN to None, then fallback to route_long_name if empty
+        if pd.isna(value) or str(value).strip() == "":
+            # Fallback to route_long_name from routes table
+            # Convert route_id to match dataframe type (may be string or int)
+            try:
+                route_id_lookup = int(route_id)
+            except (ValueError, TypeError):
+                route_id_lookup = route_id
+
+            route_info = self.df_routes[self.df_routes["route_id"] == route_id_lookup]
+            if route_info.shape[0] > 0:
+                route_name = route_info["route_long_name"].values[0]
+                return None if pd.isna(route_name) else str(route_name)
+            return None
+        return str(value)
 
     # route_id に対応する service id を取得
     def get_service_id_from_route(self, route_id):
@@ -1247,9 +1266,19 @@ class AkitaBusWayFinder:
 
     # route_id に対応する短縮名(「なんとか線」を取得)
     def get_route_name_from_route(self, route_id):
-        return self.df_routes[self.df_routes["route_id"] == route_id][
+        # Convert route_id to match dataframe type (may be string or int)
+        try:
+            # Try as int if possible (for numeric route IDs)
+            route_id_lookup = int(route_id)
+        except (ValueError, TypeError):
+            # Keep as string if not numeric
+            route_id_lookup = route_id
+
+        value = self.df_routes[self.df_routes["route_id"] == route_id_lookup][
             "route_long_name"
         ].values[0]
+        # Convert pandas NaN to None for Pydantic compatibility
+        return None if pd.isna(value) else str(value)
 
     def get_nearby_stops(
         self,
