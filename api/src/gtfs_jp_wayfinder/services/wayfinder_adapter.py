@@ -428,6 +428,7 @@ def get_destination_id_from_trip(trip_id: str):
 def get_stops_from_trip(
     trip_id: str,
     reference_date: str | None = None,
+    from_stop_id: str | None = None,
 ) -> list[dict]:
     """Return list of dicts representing timed stops, converting numpy datetime to HH:MM:SS strings.
 
@@ -439,6 +440,9 @@ def get_stops_from_trip(
         reference_date: Optional ISO date string (e.g., "2025-10-28") used to generate
                         arrival_datetime and departure_datetime fields. If None, these
                         fields will not be included in the output.
+        from_stop_id: Optional stop ID to use as the origin for fare calculations.
+                      If provided, fares are calculated from this stop to subsequent stops.
+                      If None, fares are calculated from the first stop of the trip.
     """
     df = wf_service.get_stops_from_trip(trip_id)
 
@@ -536,25 +540,38 @@ def get_stops_from_trip(
                 except Exception:
                     r["stop_name"] = None
 
-    # Calculate fares from the first stop to each stop using bulk fetch
+    # Calculate fares using bulk fetch
+    # Use from_stop_id if provided, otherwise use the first stop of the trip
     if records:
-        first_stop_id = records[0].get("stop_id")
-        if first_stop_id:
-            # Collect all destination stop IDs (excluding the first stop)
+        # Determine the origin stop for fare calculation
+        origin_stop_id = from_stop_id
+        origin_stop_index = 0
+
+        if from_stop_id:
+            # Find the index of from_stop_id in the records
+            for idx, r in enumerate(records):
+                if r.get("stop_id") == from_stop_id:
+                    origin_stop_index = idx
+                    break
+        else:
+            origin_stop_id = records[0].get("stop_id")
+
+        if origin_stop_id:
+            # Collect destination stop IDs (stops after the origin stop)
             dest_stop_ids = [
                 r.get("stop_id")
-                for r in records
-                if r.get("stop_id") and r.get("stop_id") != first_stop_id
+                for r in records[origin_stop_index + 1 :]
+                if r.get("stop_id")
             ]
 
             # Fetch all fares at once with a single bulk operation
-            fare_map = get_fares_bulk(first_stop_id, dest_stop_ids)
+            fare_map = get_fares_bulk(origin_stop_id, dest_stop_ids) if dest_stop_ids else {}
 
             # Populate fare field for each record
-            for r in records:
+            for idx, r in enumerate(records):
                 dest_stop_id = r.get("stop_id")
-                if not dest_stop_id or dest_stop_id == first_stop_id:
-                    # First stop has no fare
+                if idx <= origin_stop_index:
+                    # Stops at or before origin have no fare (already passed or current stop)
                     r["fare"] = None
                 else:
                     # Use pre-fetched fare from bulk operation

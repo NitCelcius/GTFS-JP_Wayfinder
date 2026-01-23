@@ -187,10 +187,17 @@ export class ApiClient {
     }
   }
 
-  async getTripStops(tripId: string, signal?: AbortSignal) {
+  async getTripStops(
+    tripId: string,
+    fromStopId?: string,
+    signal?: AbortSignal
+  ) {
     try {
       return await tripStopsTripsTripIdStopsGet({
         path: { trip_id: tripId },
+        query: {
+          ...(fromStopId && { from_stop_id: fromStopId }),
+        },
         ...(signal && { request: { signal } }),
         client: this.generatedClient,
       });

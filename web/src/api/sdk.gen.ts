@@ -134,7 +134,7 @@ export const getTripTripsTripIdGet = <ThrowOnError extends boolean = false>(opti
 
 /**
  * 運行の停留所一覧取得
- * 運行に紐づく停留所と時刻の一覧を返します。
+ * 運行に紐づく停留所と時刻の一覧を返します。from_stop_idを指定すると、その停留所からの運賃が計算されます。
  */
 export const tripStopsTripsTripIdStopsGet = <ThrowOnError extends boolean = false>(options: Options<TripStopsTripsTripIdStopsGetData, ThrowOnError>) => {
     return (options.client ?? client).get<TripStopsTripsTripIdStopsGetResponses, TripStopsTripsTripIdStopsGetErrors, ThrowOnError>({
