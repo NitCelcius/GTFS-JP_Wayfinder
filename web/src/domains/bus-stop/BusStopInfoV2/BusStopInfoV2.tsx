@@ -201,9 +201,7 @@ export function BusStopInfoV2({
             {/* First bus with full card */}
             <TripIndicator
               tripId={displayBuses[0].tripId}
-              routeNumber={
-                displayBuses[0].cost?.toString() || displayBuses[0].routeNumber
-              }
+              routeNumber={displayBuses[0].routeNumber}
               routeName={displayBuses[0].routeName}
               destination={displayBuses[0].destination}
               destinationLabel={displayBuses[0].destinationLabel}
@@ -221,7 +219,7 @@ export function BusStopInfoV2({
               <SlimTripIndicator
                 key={bus.tripId}
                 tripId={bus.tripId}
-                routeNumber={bus.cost?.toString() || bus.routeNumber}
+                routeNumber={bus.routeNumber}
                 routeName={bus.routeName}
                 destination={bus.destination}
                 destinationLabel={bus.destinationLabel}
