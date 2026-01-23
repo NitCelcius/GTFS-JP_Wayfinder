@@ -226,14 +226,13 @@ def get_trip_info_batch(trip_ids: list[str]) -> TripInfoList:
     # Batch helper: dedupe route lookups
     trips: list[TripInfo] = []
     route_cache: dict[str, str] = {}
-    dest_cache: dict[str, str] = {}
     for tid in trip_ids:
         route_id = None
         route_name = None
         dest_name = None
         dest_stop = None
         try:
-            route_id = get_route_id_from_trip(tid)
+            route_id = str(get_route_id_from_trip(tid))
             if route_id in route_cache:
                 route_name = route_cache[route_id]
             else:
@@ -243,22 +242,19 @@ def get_trip_info_batch(trip_ids: list[str]) -> TripInfoList:
                     route_name = rn
                 except Exception:
                     route_name = None
-            if route_id in dest_cache:
-                dest_name = dest_cache[route_id]
-            else:
-                try:
-                    dn = get_destination_display_name_from_route(route_id)
-                    dest_cache[route_id] = dn
-                    dest_name = dn
-                except Exception:
-                    dest_name = None
+            # Get destination from trip's final stop (not cached by route, as it varies per trip)
+            try:
+                dest_stop = get_destination_id_from_trip(tid)
+                if dest_stop:
+                    stop_names = get_stop_names(dest_stop)
+                    dest_name = (
+                        stop_names[0] if stop_names and len(stop_names) > 0 else None
+                    )
+            except Exception:
+                dest_name = None
         except Exception:
             # missing trip or other issue; leave fields None
             pass
-        try:
-            dest_stop = get_destination_id_from_trip(tid)
-        except Exception:
-            dest_stop = None
 
         trips.append(
             TripInfo(
