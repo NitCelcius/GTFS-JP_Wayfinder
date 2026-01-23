@@ -1,27 +1,52 @@
-"use client";
+import { createServerApiClient } from "@/lib/apiServer";
+import type {
+  UpcomingBusEnrichedData,
+  StopNameListData,
+} from "@/domains/bus-stop/types";
+import { BusStopInfoPageWrapper } from "./BusStopInfoPageWrapper";
 
-import { useParams, useRouter } from "next/navigation";
+interface PageProps {
+  params: Promise<{ id: string }>;
+}
 
-import { BusStopInfoV2Container } from "@/domains/bus-stop";
+export default async function BusStopInfoPageRoute({ params }: PageProps) {
+  const resolvedParams = await params;
+  const busStopId = decodeURIComponent(resolvedParams.id);
 
-export default function BusStopInfoPageRoute() {
-  const router = useRouter();
-  const params = useParams();
+  // Fetch bus stop data server-side
+  const initialData: {
+    upcomingData: UpcomingBusEnrichedData | null;
+    stopData: StopNameListData | null;
+  } = {
+    upcomingData: null,
+    stopData: null,
+  };
 
-  // Next.js useParams() should automatically decode URL parameters,
-  // but ensure we have the decoded value
-  let busStopId: string | undefined;
-  if (typeof params?.id === "string") {
-    // Decode the parameter to ensure spaces are handled correctly
-    // (in case useParams() doesn't decode it properly in some cases)
-    busStopId = decodeURIComponent(params.id);
+  try {
+    const apiServer = createServerApiClient();
+
+    // Get current time in HH:MM:SS format
+    const now = new Date();
+    const beginTime = now.toTimeString().split(" ")[0];
+
+    // Fetch upcoming buses with trip info (server-side)
+    const [upcomingResponse, stopResponse] = await Promise.allSettled([
+      apiServer.getBusStopInfoExpanded(busStopId, undefined, 50, beginTime),
+      apiServer.getStopInfo(busStopId, true),
+    ]);
+
+    if (upcomingResponse.status === "fulfilled") {
+      initialData.upcomingData = upcomingResponse.value
+        .data as UpcomingBusEnrichedData;
+    }
+
+    if (stopResponse.status === "fulfilled") {
+      initialData.stopData = stopResponse.value.data as StopNameListData;
+    }
+  } catch (error) {
+    console.error("Failed to fetch bus stop data server-side:", error);
+    // Continue with null data, container will handle error state
   }
 
-  return (
-    <BusStopInfoV2Container
-      busStopId={busStopId}
-      onBack={() => router.push("/bus-stop")}
-      onNavigateToRoute={() => router.push("/")}
-    />
-  );
+  return <BusStopInfoPageWrapper busStopId={busStopId} initialData={initialData} />;
 }
