@@ -72,15 +72,16 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-xs);
+  gap: var(--spacing-2xs);
   min-width: 0;
 }
 
 .routeLabel {
-  font-size: var(--subscriptlabelfontsize);
+  font-size: var(--controllabelfontsize);
   font-weight: var(--font-weight-medium);
-  color: var(--foregroundl2);
+  color: var(--foreground);
   word-wrap: break-word;
+  line-height: 1.2;
 }
 
 .destinationLine {
@@ -91,7 +92,7 @@
 
 .destination {
   font-size: var(--controllabelfontsize);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-normal);
   color: var(--foreground);
 }
 

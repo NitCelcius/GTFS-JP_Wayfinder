@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { ErrorFullScreen } from "@/components/common";
+import { trimTimeSeconds } from "@/lib/utils";
 
 import { useBusStopData } from "../hooks";
 import type { BusWithJourney } from "../types";
@@ -124,7 +125,7 @@ function convertBusDataToTripDetail(
     return {
       id: stop.id,
       name: stop.name,
-      arrivalTime: stop.arrivalTime || stop.time,
+      arrivalTime: trimTimeSeconds(stop.arrivalTime || stop.time),
       fare: stop.cost,
       isCurrent: isCurrentStop,
       isBusLocation,
@@ -139,7 +140,7 @@ function convertBusDataToTripDetail(
     routeName: busInfo.system,
     destinationName: busInfo.destination,
     arrivalMinutes,
-    arrivalTime: busInfo.arrivalTime,
+    arrivalTime: trimTimeSeconds(busInfo.arrivalTime),
     stopsAway,
     stops,
     routeColorText: busInfo.routeColorText,

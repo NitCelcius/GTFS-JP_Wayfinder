@@ -1,4 +1,4 @@
-import { ArrowLeftRight, Footprints, Map, Search, Share2 } from "lucide-react";
+import { Footprints, Map, Search, Share2 } from "lucide-react";
 
 import { useEffect, useRef, useState } from "react";
 
@@ -61,7 +61,7 @@ export function BusStopInfoV2({
   onBack,
   onRoutineSearch,
   onWalkDirections,
-  onTransfer,
+  // onTransfer,
   onRouteList,
   onBusClick,
   hasValidCoordinates = false,
@@ -117,13 +117,14 @@ export function BusStopInfoV2({
           },
         ]
       : []),
-    {
-      icon: <ArrowLeftRight size={24} />,
-      label: "のりば切替",
-      id: "change-transfer",
-      onClick: () => onTransfer?.(),
-      ariaLabel: "Transfer options",
-    },
+    // On the demonstration version, we hide the transfer button
+    // {
+    //   icon: <ArrowLeftRight size={24} />,
+    //   label: "のりば切替",
+    //   id: "change-transfer",
+    //   onClick: () => onTransfer?.(),
+    //   ariaLabel: "Transfer options",
+    // },
     {
       icon: <Share2 size={24} />,
       label: "共有",

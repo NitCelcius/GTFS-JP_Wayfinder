@@ -57,7 +57,7 @@ export function TripIndicator({
           </div>
           <div className={styles.tripInfo}>
             <div className={styles.routeLabel}>{routeName}</div>
-            <p className={`${styles.destinationLine} line-clamp-3`}>
+            <p className={`${styles.destinationLine} line-clamp-2`}>
               <span className={styles.destination}>{destination}</span>
               <span className={styles.destinationLabel}>
                 {destinationLabel}

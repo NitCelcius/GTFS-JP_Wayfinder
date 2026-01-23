@@ -5,23 +5,12 @@
   width: 100%;
 }
 
-.topSection {
-  display: flex;
-  flex-direction: row;
-}
-
-.bottomSection {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 100%;
-}
-
 .tripIndicatorContainer {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 0;
+  align-items: center;
+  gap: var(--spacing-md, 12px);
+  padding: var(--spacing-md, 12px);
   width: 100%;
   box-sizing: border-box;
   border-right: 3px solid var(--foregrounddisabled);
@@ -31,74 +20,81 @@
 
 .routeNumber {
   display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
-  padding: 1rem;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-sm, 8px) var(--spacing-md, 12px);
   background: var(--primaryaccent);
   color: black;
-  border-radius: 8px;
-  font-size: var(--headerlevel1fontsize, 28px);
-  font-weight: 400;
+  border-radius: var(--border-radius-md, 8px);
+  font-size: var(--headerlevel2fontsize, 24px);
+  font-weight: var(--font-weight-medium, 500);
   line-height: 1.2;
   flex-shrink: 0;
   box-sizing: border-box;
+  min-width: 64px;
 }
 
 .routeDetails {
   display: flex;
   flex-direction: column;
-  gap: var(--4thhalflineheight, 5px);
+  gap: var(--spacing-2xs, 4px);
   flex: 1;
   min-width: 0;
 }
 
-.routeName {
-  font-size: var(--defaulttextfontsize, 16px);
-  font-weight: 400;
-  line-height: 1.2;
-  color: var(--foregroundl2, #1c1b1f);
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  margin: 0;
-}
-
-.destinationRow {
+.routeInfoRow {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: var(--halflineheight, 9px);
-  min-height: 28px;
+  gap: var(--spacing-xs, 8px);
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.routeName {
+  font-size: var(--controllabelfontsize, 18px);
+  font-weight: var(--font-weight-medium, 500);
+  line-height: 1.2;
+  color: var(--foreground, #1c1b1f);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  flex-shrink: 1;
 }
 
 .locationIcon {
-  width: 28px;
-  height: 28px;
+  width: 16px;
+  height: 16px;
   flex-shrink: 0;
-  color: var(--foreground, black);
-  align-self: flex-start;
+  color: var(--foregroundl2, #49454f);
 }
 
 .destinationName {
-  font-size: var(--headerlevel2fontsize, 24px);
+  font-size: var(--controllabelfontsize, 18px);
   font-weight: 400;
   line-height: 1.2;
   color: var(--foreground, black);
   word-wrap: break-word;
   overflow-wrap: break-word;
-  margin: 0;
+  flex-shrink: 1;
+}
+
+.arrivalInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2xs, 4px);
+  align-items: center;
+  flex-shrink: 0;
 }
 
 .arrivalSection {
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: center;
-  gap: 10px;
-  width: 100%;
+  gap: var(--spacing-xs, 8px);
   font-weight: 400;
   line-height: 1.2;
   flex-wrap: wrap;
-  padding: 0 4px;
+  justify-content: flex-end;
 }
 
 .arrivalLabel {
@@ -135,18 +131,17 @@
 
 .stopsAway {
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
   align-items: center;
-  font-size: var(--defaulttextfontsize, 16px);
+  font-size: var(--subscriptlabelfontsize, 14px);
   font-weight: 400;
   line-height: 1.2;
-  color: var(--foreground, black);
-  text-align: center;
-  width: 100%;
+  color: var(--foregroundl2, #49454f);
+  text-align: right;
   word-wrap: break-word;
   overflow-wrap: break-word;
-  padding: 0 4px;
   margin: 0;
+  white-space: nowrap;
 }
 
 .busFront {

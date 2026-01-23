@@ -23,13 +23,14 @@
 
 .routeNumberBadge {
   min-width: 64px;
-  height: 64px;
+  /* height: 64px; */
+  padding: 0.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
   background: var(--primaryaccent);
   border-radius: var(--border-radius-md);
-  font-size: var(--headerlevel2fontsize);
+  font-size: var(--defaulttextfontsize);
   font-weight: var(--font-weight-medium);
   color: var(--foreground);
   flex-shrink: 0;
@@ -53,6 +54,7 @@
   gap: var(--spacing-sm);
   font-size: var(--subscriptlabelfontsize);
   margin: 0;
+  line-height: 1.2;
 }
 
 .destinationLine {
@@ -67,6 +69,7 @@
 .destination {
   font-weight: var(--font-weight-normal);
   color: var(--foreground);
+  font-size: var(--controllabelfontsize);
 }
 
 .destinationLabel {
