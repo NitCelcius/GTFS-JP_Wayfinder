@@ -91,4 +91,3 @@ class TestKanjiSearch:
         # All results should contain "駅" in their name
         for stop in data["stop_ids"]:
             assert "駅" in stop["stop_name"]
-
