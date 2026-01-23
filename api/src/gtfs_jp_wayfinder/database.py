@@ -393,12 +393,15 @@ class AkitaBusWayFinder:
                     translations_dict[translation] = stop_name
 
                     # If it's hiragana/katakana, also store the converted version
+                    # Only add variants that differ from the original to avoid redundant entries
                     if "Hrkt" in language or "hiragana" in language.lower():
                         # Convert hiragana to katakana and vice versa
                         katakana_version = hiragana_to_katakana(translation)
                         hiragana_version = katakana_to_hiragana(translation)
-                        translations_dict[katakana_version] = stop_name
-                        translations_dict[hiragana_version] = stop_name
+                        if katakana_version != translation:
+                            translations_dict[katakana_version] = stop_name
+                        if hiragana_version != translation:
+                            translations_dict[hiragana_version] = stop_name
 
                 self._translation_to_stop_name = translations_dict
 
@@ -433,11 +436,14 @@ class AkitaBusWayFinder:
                     translations_dict[translation] = stop_name
 
                     # For ja-Hrkt (hiragana/katakana), store both hiragana and katakana versions
+                    # Only add variants that differ from the original to avoid redundant entries
                     if language == "ja-Hrkt":
                         katakana_version = hiragana_to_katakana(translation)
                         hiragana_version = katakana_to_hiragana(translation)
-                        translations_dict[katakana_version] = stop_name
-                        translations_dict[hiragana_version] = stop_name
+                        if katakana_version != translation:
+                            translations_dict[katakana_version] = stop_name
+                        if hiragana_version != translation:
+                            translations_dict[hiragana_version] = stop_name
 
                 self._translation_to_stop_name = translations_dict
 
@@ -821,25 +827,29 @@ class AkitaBusWayFinder:
                     ["stop_id", "stop_name"]
                 ]
         else:
-            # Partial match: search in stop_name column
-            ret = self.df_stops[self.df_stops["stop_name"].str.contains(stop_name)][
-                ["stop_id", "stop_name"]
-            ]
+            # Partial match: search in stop_name column (regex=False for literal string matching)
+            ret = self.df_stops[
+                self.df_stops["stop_name"].str.contains(stop_name, regex=False)
+            ][["stop_id", "stop_name"]]
 
             # Also search for partial matches in translations
-            # Find all original names where the translation contains the query
-            matching_original_names = [
-                original_name
-                for translation, original_name in self._translation_to_stop_name.items()
-                if stop_name in translation
-            ]
+            # Only proceed if we have translations and the query is not empty
+            if stop_name and self._translation_to_stop_name:
+                # Find all original names where the translation contains the query
+                matching_original_names = [
+                    original_name
+                    for translation, original_name in self._translation_to_stop_name.items()
+                    if stop_name in translation
+                ]
 
-            if matching_original_names:
-                # Get stops that match these original names (but aren't already in ret)
-                translation_matches = self.df_stops[
-                    self.df_stops["stop_name"].isin(matching_original_names)
-                    & ~self.df_stops["stop_name"].str.contains(stop_name)
-                ][["stop_id", "stop_name"]]
+                if matching_original_names:
+                    # Get stops that match these original names (but aren't already in ret)
+                    translation_matches = self.df_stops[
+                        self.df_stops["stop_name"].isin(matching_original_names)
+                        & ~self.df_stops["stop_name"].str.contains(
+                            stop_name, regex=False
+                        )
+                    ][["stop_id", "stop_name"]]
 
                 # Combine results
                 ret = pd.concat([ret, translation_matches], ignore_index=True)
