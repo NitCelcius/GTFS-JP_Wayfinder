@@ -245,3 +245,191 @@ describe("trimTimeSeconds", () => {
     expect(trimTimeSeconds("")).toBe("");
   });
 });
+
+describe("parseGtfsTime", () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  it("should parse basic time format", () => {
+    const baseDate = new Date("2025-10-31T10:00:00+09:00");
+    jest.setSystemTime(baseDate);
+
+    const result = parseGtfsTime("14:30:00", baseDate);
+    expect(result.getHours()).toBe(14);
+    expect(result.getMinutes()).toBe(30);
+    expect(result.getDate()).toBe(31);
+  });
+
+  it("should handle extended hours (24+)", () => {
+    const baseDate = new Date("2025-10-31T10:00:00+09:00");
+    jest.setSystemTime(baseDate);
+
+    const result = parseGtfsTime("25:30:00", baseDate);
+    expect(result.getHours()).toBe(1);
+    expect(result.getMinutes()).toBe(30);
+    expect(result.getDate()).toBe(1); // Next day (November 1st)
+  });
+
+  it("should wrap past times to tomorrow", () => {
+    // Current time is 15:00, bus time is 14:00 (1 hour ago)
+    const baseDate = new Date("2025-10-31T15:00:00+09:00");
+    jest.setSystemTime(baseDate);
+
+    const result = parseGtfsTime("14:00:00", baseDate);
+    // Should be tomorrow at 14:00
+    expect(result.getDate()).toBe(1); // November 1st
+    expect(result.getHours()).toBe(14);
+  });
+
+  it("should not wrap future times", () => {
+    // Current time is 10:00, bus time is 14:00 (4 hours from now)
+    const baseDate = new Date("2025-10-31T10:00:00+09:00");
+    jest.setSystemTime(baseDate);
+
+    const result = parseGtfsTime("14:00:00", baseDate);
+    // Should be today at 14:00
+    expect(result.getDate()).toBe(31);
+    expect(result.getHours()).toBe(14);
+  });
+
+  it("should throw error for invalid format", () => {
+    const baseDate = new Date("2025-10-31T10:00:00+09:00");
+    expect(() => parseGtfsTime("invalid", baseDate)).toThrow(
+      "Invalid time format"
+    );
+    expect(() => parseGtfsTime("25", baseDate)).toThrow("Invalid time format");
+  });
+});
+
+describe("parseGtfsTimeNoWrap", () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  it("should parse basic time format", () => {
+    const baseDate = new Date("2025-10-31T10:00:00+09:00");
+    jest.setSystemTime(baseDate);
+
+    const result = parseGtfsTimeNoWrap("14:30:00", baseDate);
+    expect(result.getHours()).toBe(14);
+    expect(result.getMinutes()).toBe(30);
+    expect(result.getDate()).toBe(31);
+  });
+
+  it("should handle extended hours (24+)", () => {
+    const baseDate = new Date("2025-10-31T10:00:00+09:00");
+    jest.setSystemTime(baseDate);
+
+    const result = parseGtfsTimeNoWrap("25:30:00", baseDate);
+    expect(result.getHours()).toBe(1);
+    expect(result.getMinutes()).toBe(30);
+    expect(result.getDate()).toBe(1); // Next day (November 1st)
+  });
+
+  it("should NOT wrap past times to tomorrow", () => {
+    // Current time is 15:00, bus time is 14:00 (1 hour ago)
+    const baseDate = new Date("2025-10-31T15:00:00+09:00");
+    jest.setSystemTime(baseDate);
+
+    const result = parseGtfsTimeNoWrap("14:00:00", baseDate);
+    // Should be today at 14:00 (in the past)
+    expect(result.getDate()).toBe(31);
+    expect(result.getHours()).toBe(14);
+    expect(result < baseDate).toBe(true); // Should be in the past
+  });
+
+  it("should allow calculating negative time differences", () => {
+    // Current time is 15:00, bus time is 14:00
+    const baseDate = new Date("2025-10-31T15:00:00+09:00");
+    jest.setSystemTime(baseDate);
+
+    const arrivalTime = parseGtfsTimeNoWrap("14:00:00", baseDate);
+    const diffMs = arrivalTime.getTime() - baseDate.getTime();
+    const diffMinutes = Math.round(diffMs / 60000);
+
+    expect(diffMinutes).toBe(-60); // 1 hour ago
+  });
+});
+
+describe("calculateCurrentBusLocation", () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  const mockStops = [
+    { stop_id: "1", stop_name: "Stop 1", arrival_time: "13:59:00" },
+    { stop_id: "2", stop_name: "Stop 2", arrival_time: "14:00:00" },
+    { stop_id: "3", stop_name: "Stop 3", arrival_time: "14:05:00" },
+    { stop_id: "4", stop_name: "Stop 4", arrival_time: "14:10:00" },
+    { stop_id: "5", stop_name: "Stop 5", arrival_time: "14:15:00" },
+  ];
+
+  it("should return -1 when bus has not departed yet", () => {
+    // Current time is 13:50, first stop is at 13:59
+    const now = new Date("2025-10-31T13:50:00+09:00");
+    jest.setSystemTime(now);
+
+    const result = calculateCurrentBusLocation(mockStops, now);
+    expect(result).toBe(-1);
+  });
+
+  it("should return 0 when bus is at or just passed first stop", () => {
+    // Current time is 13:59:30 (just after first stop at 13:59)
+    const now = new Date("2025-10-31T13:59:30+09:00");
+    jest.setSystemTime(now);
+
+    const result = calculateCurrentBusLocation(mockStops, now);
+    expect(result).toBe(0);
+  });
+
+  it("should return correct index when bus is en route", () => {
+    // Current time is 14:07 (between stop 3 at 14:05 and stop 4 at 14:10)
+    const now = new Date("2025-10-31T14:07:00+09:00");
+    jest.setSystemTime(now);
+
+    const result = calculateCurrentBusLocation(mockStops, now);
+    expect(result).toBe(2); // Index of stop 3 (14:05)
+  });
+
+  it("should return last index when bus has completed the trip", () => {
+    // Current time is 14:20 (after all stops)
+    const now = new Date("2025-10-31T14:20:00+09:00");
+    jest.setSystemTime(now);
+
+    const result = calculateCurrentBusLocation(mockStops, now);
+    expect(result).toBe(4); // Index of last stop
+  });
+
+  it("should correctly calculate remaining stops", () => {
+    // Current time is 14:07 (bus at stop 3, user waiting at stop 5)
+    const now = new Date("2025-10-31T14:07:00+09:00");
+    jest.setSystemTime(now);
+
+    const busLocationIndex = calculateCurrentBusLocation(mockStops, now);
+    const userStopIndex = 4; // Stop 5
+
+    const stopsUntilArrival = userStopIndex - busLocationIndex;
+    expect(stopsUntilArrival).toBe(2); // 2 stops away
+  });
+
+  it("should handle empty stops array", () => {
+    const now = new Date("2025-10-31T14:00:00+09:00");
+    jest.setSystemTime(now);
+
+    const result = calculateCurrentBusLocation([], now);
+    expect(result).toBe(-1);
+  });
+});
