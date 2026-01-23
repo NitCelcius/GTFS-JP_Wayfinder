@@ -851,10 +851,10 @@ class AkitaBusWayFinder:
                         )
                     ][["stop_id", "stop_name"]]
 
-                # Combine results
-                ret = pd.concat([ret, translation_matches], ignore_index=True)
-                # Remove duplicates based on stop_id
-                ret = ret.drop_duplicates(subset=["stop_id"])
+                    # Combine results
+                    ret = pd.concat([ret, translation_matches], ignore_index=True)
+                    # Remove duplicates based on stop_id
+                    ret = ret.drop_duplicates(subset=["stop_id"])
 
         return ret
 
