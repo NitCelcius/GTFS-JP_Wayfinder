@@ -117,12 +117,28 @@ export function BusStopInfoV2Container({
           routeColorText: bus.busInfo.routeColorText,
         }));
 
-      setUpcomingBuses(convertedBuses);
+      // Separate past buses from upcoming buses
+      const pastBuses = convertedBuses.filter(
+        (bus) => bus.minutesUntilDeparture < 0
+      );
+      const futureBuses = convertedBuses.filter(
+        (bus) => bus.minutesUntilDeparture >= 0
+      );
+
+      // Set upcoming buses (only future buses)
+      setUpcomingBuses(futureBuses);
       setIsLoading(false);
 
-      // Set past bus if available (first bus as reference)
-      if (convertedBuses.length > 0) {
-        setPastBus(null); // For now, we don't display past buses
+      // Set the most recent past bus
+      if (pastBuses.length > 0) {
+        const mostRecentPastBus = pastBuses.reduce((prev, current) =>
+          current.minutesUntilDeparture > prev.minutesUntilDeparture
+            ? current
+            : prev
+        );
+        setPastBus({ ...mostRecentPastBus, isPast: true });
+      } else {
+        setPastBus(null);
       }
     }
   }, [initialData, busStopId]);
