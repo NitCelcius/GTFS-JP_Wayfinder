@@ -9,6 +9,8 @@ services:
       - python-lib-data:/usr/local/lib
     ports:
       - 8002:8002
+    environment:
+      - TZ=Asia/Tokyo
 
 volumes:
   python-lib-data:
