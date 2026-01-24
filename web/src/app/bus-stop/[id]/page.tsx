@@ -26,11 +26,12 @@ export default async function BusStopInfoPageRoute({ params }: PageProps) {
   try {
     const apiServer = createServerApiClient();
 
-    // Get current time in HH:MM:SS format
+    // Get time 30 minutes ago to include recently departed buses
     const now = new Date();
-    const beginTime = now.toTimeString().split(" ")[0];
+    const pastTime = new Date(now.getTime() - 30 * 60 * 1000); // 30 minutes ago
+    const beginTime = pastTime.toTimeString().split(" ")[0];
 
-    // Fetch upcoming buses with trip info (server-side)
+    // Fetch upcoming buses with trip info (includes buses from 30 min ago)
     const [upcomingResponse, stopResponse] = await Promise.allSettled([
       apiServer.getBusStopInfoExpanded(busStopId, undefined, 50, beginTime),
       apiServer.getStopInfo(busStopId, true),
