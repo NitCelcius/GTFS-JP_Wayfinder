@@ -5,9 +5,9 @@ class TestPlatformSwitching:
     """Test cases for GET /stops/{stop_id}/platforms endpoint."""
 
     def test_get_platforms_with_multiple_stops(self, monkeypatch, client):
-        """Test that endpoint returns multiple stops with same name."""
+        """Test that endpoint returns multiple related platform stops."""
 
-        def fake_get_same_name_stops(stop_id: str):
+        def fake_get_related_platforms(stop_id: str):
             if stop_id == "1022_02":
                 return [
                     {
@@ -35,8 +35,8 @@ class TestPlatformSwitching:
             raise KeyError(f"stop_id not found: {stop_id}")
 
         monkeypatch.setattr(
-            "gtfs_jp_wayfinder.services.wayfinder_adapter.get_same_name_stops",
-            fake_get_same_name_stops,
+            "gtfs_jp_wayfinder.services.wayfinder_adapter.get_related_platforms",
+            fake_get_related_platforms,
         )
 
         resp = client.get("/stops/1022_02/platforms")
@@ -59,7 +59,7 @@ class TestPlatformSwitching:
     def test_get_platforms_with_single_stop(self, monkeypatch, client):
         """Test endpoint returns single stop when there are no other platforms."""
 
-        def fake_get_same_name_stops(stop_id: str):
+        def fake_get_related_platforms(stop_id: str):
             if stop_id == "1021_01":
                 return [
                     {
@@ -73,8 +73,8 @@ class TestPlatformSwitching:
             raise KeyError(f"stop_id not found: {stop_id}")
 
         monkeypatch.setattr(
-            "gtfs_jp_wayfinder.services.wayfinder_adapter.get_same_name_stops",
-            fake_get_same_name_stops,
+            "gtfs_jp_wayfinder.services.wayfinder_adapter.get_related_platforms",
+            fake_get_related_platforms,
         )
 
         resp = client.get("/stops/1021_01/platforms")
@@ -88,12 +88,12 @@ class TestPlatformSwitching:
     def test_get_platforms_stop_not_found(self, monkeypatch, client):
         """Test endpoint returns 400 when stop_id is not found."""
 
-        def fake_get_same_name_stops(stop_id: str):
+        def fake_get_related_platforms(stop_id: str):
             raise KeyError(f"stop_id not found: {stop_id}")
 
         monkeypatch.setattr(
-            "gtfs_jp_wayfinder.services.wayfinder_adapter.get_same_name_stops",
-            fake_get_same_name_stops,
+            "gtfs_jp_wayfinder.services.wayfinder_adapter.get_related_platforms",
+            fake_get_related_platforms,
         )
 
         resp = client.get("/stops/nonexistent_stop/platforms")
@@ -104,7 +104,7 @@ class TestPlatformSwitching:
     def test_get_platforms_mixed_platform_codes(self, monkeypatch, client):
         """Test endpoint handles stops with and without platform codes."""
 
-        def fake_get_same_name_stops(stop_id: str):
+        def fake_get_related_platforms(stop_id: str):
             if stop_id == "1002_01":
                 return [
                     {
@@ -125,8 +125,8 @@ class TestPlatformSwitching:
             raise KeyError(f"stop_id not found: {stop_id}")
 
         monkeypatch.setattr(
-            "gtfs_jp_wayfinder.services.wayfinder_adapter.get_same_name_stops",
-            fake_get_same_name_stops,
+            "gtfs_jp_wayfinder.services.wayfinder_adapter.get_related_platforms",
+            fake_get_related_platforms,
         )
 
         resp = client.get("/stops/1002_01/platforms")
@@ -139,7 +139,7 @@ class TestPlatformSwitching:
     def test_get_platforms_includes_self(self, monkeypatch, client):
         """Test that the response includes the requested stop_id itself."""
 
-        def fake_get_same_name_stops(stop_id: str):
+        def fake_get_related_platforms(stop_id: str):
             if stop_id == "1022_05":
                 return [
                     {
@@ -160,8 +160,8 @@ class TestPlatformSwitching:
             raise KeyError(f"stop_id not found: {stop_id}")
 
         monkeypatch.setattr(
-            "gtfs_jp_wayfinder.services.wayfinder_adapter.get_same_name_stops",
-            fake_get_same_name_stops,
+            "gtfs_jp_wayfinder.services.wayfinder_adapter.get_related_platforms",
+            fake_get_related_platforms,
         )
 
         resp = client.get("/stops/1022_05/platforms")

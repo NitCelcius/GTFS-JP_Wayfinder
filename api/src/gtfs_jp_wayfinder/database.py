@@ -793,18 +793,24 @@ class AkitaBusWayFinder:
 
         return agencies
 
-    def get_same_name_stops(self, stop_id: str) -> list[dict[str, str | float | None]]:
-        """Get all stops with the same name as the given stop_id.
+    def get_related_platforms(
+        self, stop_id: str
+    ) -> list[dict[str, str | float | None]]:
+        """Get all related platform stops (stops with the same name but different platforms).
 
         This is used for platform switching (のりば切替) functionality to find
         other platforms at the same bus stop location.
 
         Args:
-            stop_id: The stop ID to find same-name stops for.
+            stop_id: The stop ID to find related platforms for.
 
         Returns:
-            List of dicts with keys: stop_id, stop_name, platform_code, stop_lat, stop_lon.
-            The list includes the original stop_id as well as other stops with the same name.
+            List of dicts, each containing:
+            - stop_id (str): The stop ID
+            - stop_name (str): The stop name
+            - platform_code (str | None): The platform code, or None if not set
+            - stop_lat (float): Latitude
+            - stop_lon (float): Longitude
 
         Raises:
             KeyError: If stop_id is not found.
@@ -816,11 +822,11 @@ class AkitaBusWayFinder:
 
         stop_name = matching_stop["stop_name"].values[0]
 
-        # Find all stops with the same name
-        same_name_stops = self.df_stops[self.df_stops["stop_name"] == stop_name]
+        # Find all stops with the same name (these are related platforms)
+        related_stops = self.df_stops[self.df_stops["stop_name"] == stop_name]
 
         results = []
-        for _, row in same_name_stops.iterrows():
+        for _, row in related_stops.iterrows():
             platform_code = row.get("platform_code")
             # Handle pandas NaN values and empty strings
             if pd.isna(platform_code) or platform_code == "":
@@ -1373,7 +1379,7 @@ class AkitaBusWayFinder:
         effective_origin = from_stop_id
         if from_stop_id not in trip_stops_set:
             # Check same-name stops (connected via walk transfer)
-            same_name_stops_data = self.get_same_name_stops(from_stop_id)
+            same_name_stops_data = self.get_related_platforms(from_stop_id)
             same_name_stop_ids = [stop["stop_id"] for stop in same_name_stops_data]
             for candidate_stop in same_name_stop_ids:
                 if candidate_stop in trip_stops_set:

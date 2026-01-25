@@ -186,52 +186,17 @@ export type PathResponse = {
 };
 
 /**
- * PlatformStop
- * A bus stop with platform information.
- *
- * Used for platform switching (のりば切替) functionality to show
- * available platforms at a bus stop location.
- */
-export type PlatformStop = {
-    /**
-     * Stop Id
-     * 停留所ID
-     */
-    stop_id: string;
-    /**
-     * Stop Name
-     * 停留所名
-     */
-    stop_name: string;
-    /**
-     * Platform Code
-     * のりば番号 (例: "1", "2"など)
-     */
-    platform_code?: string | null;
-    /**
-     * Lat
-     * 緯度 (度単位)
-     */
-    lat: number;
-    /**
-     * Lon
-     * 経度 (度単位)
-     */
-    lon: number;
-};
-
-/**
- * SameNameStopsResponse
- * Response containing all stops with the same name.
+ * RelatedPlatformsResponse
+ * Response containing related platform stops (stops with the same name but different platforms).
  *
  * Used for platform switching (のりば切替) functionality.
  */
-export type SameNameStopsResponse = {
+export type RelatedPlatformsResponse = {
     /**
      * Stops
-     * 同じ名前を持つ停留所の一覧（のりば違い）
+     * 関連するのりばを持つ停留所の一覧
      */
-    stops: Array<PlatformStop>;
+    stops: Array<StopWithPlatform>;
 };
 
 /**
@@ -288,6 +253,41 @@ export type StopNameList = {
      */
     platform_code?: string | null;
     location?: StopLatLon | null;
+};
+
+/**
+ * StopWithPlatform
+ * A bus stop with platform information.
+ *
+ * Used for platform switching (のりば切替) functionality to show
+ * available platforms at a bus stop location.
+ */
+export type StopWithPlatform = {
+    /**
+     * Stop Id
+     * 停留所ID
+     */
+    stop_id: string;
+    /**
+     * Stop Name
+     * 停留所名
+     */
+    stop_name: string;
+    /**
+     * Platform Code
+     * のりば番号 (例: "1", "2"など)
+     */
+    platform_code?: string | null;
+    /**
+     * Lat
+     * 緯度 (度単位)
+     */
+    lat: number;
+    /**
+     * Lon
+     * 経度 (度単位)
+     */
+    lon: number;
 };
 
 /**
@@ -615,7 +615,7 @@ export type GetBusStopInfoStopsStopIdGetResponses = {
 
 export type GetBusStopInfoStopsStopIdGetResponse = GetBusStopInfoStopsStopIdGetResponses[keyof GetBusStopInfoStopsStopIdGetResponses];
 
-export type GetSameNameStopsStopsStopIdPlatformsGetData = {
+export type GetRelatedPlatformsStopsStopIdPlatformsGetData = {
     body?: never;
     path: {
         /**
@@ -627,7 +627,7 @@ export type GetSameNameStopsStopsStopIdPlatformsGetData = {
     url: '/stops/{stop_id}/platforms';
 };
 
-export type GetSameNameStopsStopsStopIdPlatformsGetErrors = {
+export type GetRelatedPlatformsStopsStopIdPlatformsGetErrors = {
     /**
      * 停留所が見つからない場合
      */
@@ -638,16 +638,16 @@ export type GetSameNameStopsStopsStopIdPlatformsGetErrors = {
     422: HttpValidationError;
 };
 
-export type GetSameNameStopsStopsStopIdPlatformsGetError = GetSameNameStopsStopsStopIdPlatformsGetErrors[keyof GetSameNameStopsStopsStopIdPlatformsGetErrors];
+export type GetRelatedPlatformsStopsStopIdPlatformsGetError = GetRelatedPlatformsStopsStopIdPlatformsGetErrors[keyof GetRelatedPlatformsStopsStopIdPlatformsGetErrors];
 
-export type GetSameNameStopsStopsStopIdPlatformsGetResponses = {
+export type GetRelatedPlatformsStopsStopIdPlatformsGetResponses = {
     /**
      * 成功
      */
-    200: SameNameStopsResponse;
+    200: RelatedPlatformsResponse;
 };
 
-export type GetSameNameStopsStopsStopIdPlatformsGetResponse = GetSameNameStopsStopsStopIdPlatformsGetResponses[keyof GetSameNameStopsStopsStopIdPlatformsGetResponses];
+export type GetRelatedPlatformsStopsStopIdPlatformsGetResponse = GetRelatedPlatformsStopsStopIdPlatformsGetResponses[keyof GetRelatedPlatformsStopsStopIdPlatformsGetResponses];
 
 export type SearchStopsStopsGetData = {
     body?: never;

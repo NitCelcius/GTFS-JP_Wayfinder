@@ -182,8 +182,8 @@ async def get_bus_stop_info(
 
 @router.get(
     "/{stop_id}/platforms",
-    response_model=models.SameNameStopsResponse,
-    summary="同名停留所一覧の取得（のりば切替用）",
+    response_model=models.RelatedPlatformsResponse,
+    summary="関連のりば一覧の取得（のりば切替用）",
     description="同じ停留所名を持つ別ののりば（platform_code違い）を返します。のりば切替機能で使用されます。",
     responses={
         200: {
@@ -235,31 +235,31 @@ async def get_bus_stop_info(
         },
     },
 )
-async def get_same_name_stops(stop_id: str):
-    """Get all stops with the same name as the given stop_id.
+async def get_related_platforms(stop_id: str):
+    """Get all related platform stops (stops with the same name but different platform codes).
 
     This endpoint is used for platform switching (のりば切替) functionality
     to find other platforms at the same bus stop location.
     """
     try:
-        same_name_stops = adapter.get_same_name_stops(stop_id)
+        related_platforms = adapter.get_related_platforms(stop_id)
     except KeyError as e:
         raise HTTPException(status_code=400, detail=str(e)) from e
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e)) from e
 
     stops = [
-        models.PlatformStop(
+        models.StopWithPlatform(
             stop_id=stop["stop_id"],
             stop_name=stop["stop_name"],
             platform_code=stop["platform_code"],
             lat=stop["stop_lat"],
             lon=stop["stop_lon"],
         )
-        for stop in same_name_stops
+        for stop in related_platforms
     ]
 
-    return models.SameNameStopsResponse(stops=stops)
+    return models.RelatedPlatformsResponse(stops=stops)
 
 
 @router.get(

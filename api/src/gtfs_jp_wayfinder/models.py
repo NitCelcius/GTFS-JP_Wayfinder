@@ -516,7 +516,7 @@ class Agency(BaseModel):
     }
 
 
-class PlatformStop(BaseModel):
+class StopWithPlatform(BaseModel):
     """A bus stop with platform information.
 
     Used for platform switching (のりば切替) functionality to show
@@ -584,14 +584,14 @@ class AgencyListResponse(BaseModel):
     }
 
 
-class SameNameStopsResponse(BaseModel):
-    """Response containing all stops with the same name.
+class RelatedPlatformsResponse(BaseModel):
+    """Response containing related platform stops (stops with the same name but different platforms).
 
     Used for platform switching (のりば切替) functionality.
     """
 
-    stops: list[PlatformStop] = Field(
-        ..., description="同じ名前を持つ停留所の一覧（のりば違い）"
+    stops: list[StopWithPlatform] = Field(
+        ..., description="関連するのりばを持つ停留所の一覧"
     )
 
     model_config = {

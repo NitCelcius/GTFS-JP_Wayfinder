@@ -17,7 +17,7 @@ import {
   PlatformSwitchModal,
 } from "../internal/PlatformSwitchModal";
 import type {
-  SameNameStopsResponse,
+  RelatedPlatformsResponse,
   StopNameListData,
   UpcomingBusEnrichedData,
 } from "../types";
@@ -412,7 +412,7 @@ export function BusStopInfoV2Container({
     };
   }, [busStopId, initialData]);
 
-  // Fetch platforms when modal is opened
+  // Fetch related platforms when modal is opened
   const handleOpenPlatformModal = async () => {
     if (!busStopId) return;
 
@@ -422,8 +422,8 @@ export function BusStopInfoV2Container({
 
     try {
       const apiClient = ApiClient.getInstance();
-      const response = await apiClient.getSameNameStops(busStopId);
-      const data = response.data as SameNameStopsResponse;
+      const response = await apiClient.getRelatedPlatforms(busStopId);
+      const data = response.data as RelatedPlatformsResponse;
 
       if (data?.stops) {
         const platformInfoList: PlatformInfo[] = data.stops.map((stop) => ({
@@ -435,10 +435,11 @@ export function BusStopInfoV2Container({
         }));
         setPlatforms(platformInfoList);
       } else {
+        // Fallback: if API returns no stops, show empty state in modal
         setPlatforms([]);
       }
     } catch (err) {
-      console.error("Failed to fetch platforms:", err);
+      console.error("Failed to fetch related platforms:", err);
       setPlatformsError(
         err instanceof Error ? err.message : "Failed to load platforms"
       );
@@ -457,6 +458,7 @@ export function BusStopInfoV2Container({
     <>
       <BusStopInfoV2
         busStopId={busStopId}
+        // Fallback: if busStopName is not loaded yet, show busStopId; if neither, show default "バス停"
         busStopName={busStopName || busStopId || "バス停"}
         platformCode={platformCode}
         distance={distance || undefined}

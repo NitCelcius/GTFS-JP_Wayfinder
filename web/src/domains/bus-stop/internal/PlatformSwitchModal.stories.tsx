@@ -48,11 +48,39 @@ const mockPlatforms: PlatformInfo[] = [
     lat: 39.71702,
     lon: 140.12847,
   },
+  {
+    stopId: "1022_06",
+    stopName: "秋田駅西口",
+    platformCode: "6",
+    lat: 39.71729,
+    lon: 140.1283,
+  },
+  {
+    stopId: "1022_07",
+    stopName: "秋田駅西口",
+    platformCode: "7",
+    lat: 39.71719,
+    lon: 140.1283,
+  },
+  {
+    stopId: "1022_08",
+    stopName: "秋田駅西口",
+    platformCode: "8",
+    lat: 39.71706,
+    lon: 140.12834,
+  },
+  {
+    stopId: "1022_09",
+    stopName: "秋田駅西口",
+    platformCode: "9",
+    lat: 39.71696,
+    lon: 140.12834,
+  },
 ];
 
 export const Default: Story = {
   args: {
-    currentStopId: "1022_02",
+    currentStopId: "1022_05",
     platforms: mockPlatforms,
   },
 };
@@ -73,21 +101,6 @@ export const Error: Story = {
   },
 };
 
-export const SinglePlatform: Story = {
-  args: {
-    currentStopId: "1021_01",
-    platforms: [
-      {
-        stopId: "1021_01",
-        stopName: "中央公園",
-        platformCode: null,
-        lat: 39.71676,
-        lon: 140.13113,
-      },
-    ],
-  },
-};
-
 export const NoPlatformCode: Story = {
   args: {
     currentStopId: "1002_01",
@@ -105,43 +118,6 @@ export const NoPlatformCode: Story = {
         platformCode: null,
         lat: 39.6963,
         lon: 140.0857,
-      },
-    ],
-  },
-};
-
-export const ManyPlatforms: Story = {
-  args: {
-    currentStopId: "1022_05",
-    platforms: [
-      ...mockPlatforms,
-      {
-        stopId: "1022_06",
-        stopName: "秋田駅西口",
-        platformCode: "6",
-        lat: 39.71729,
-        lon: 140.1283,
-      },
-      {
-        stopId: "1022_07",
-        stopName: "秋田駅西口",
-        platformCode: "7",
-        lat: 39.71719,
-        lon: 140.1283,
-      },
-      {
-        stopId: "1022_08",
-        stopName: "秋田駅西口",
-        platformCode: "8",
-        lat: 39.71706,
-        lon: 140.12834,
-      },
-      {
-        stopId: "1022_09",
-        stopName: "秋田駅西口",
-        platformCode: "9",
-        lat: 39.71696,
-        lon: 140.12834,
       },
     ],
   },

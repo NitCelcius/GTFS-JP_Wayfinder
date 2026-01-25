@@ -3,7 +3,7 @@
 import {
   getBusStopInfoStopsStopIdGet,
   getNearbyStopsStopsNearbyGet,
-  getSameNameStopsStopsStopIdPlatformsGet,
+  getRelatedPlatformsStopsStopIdPlatformsGet,
   getTripTripsTripIdGet,
   getUpcomingStopsStopIdUpcomingGet,
   searchPathPathSearchGet,
@@ -225,21 +225,19 @@ export class ApiClient {
   }
 
   /**
-   * Get all stops with the same name as the given stop_id.
+   * Get all related platform stops (stops with the same name but different platforms).
    * Used for platform switching (のりば切替) functionality.
    */
-  async getSameNameStops(stopId: string, signal?: AbortSignal) {
+  async getRelatedPlatforms(stopId: string, signal?: AbortSignal) {
     try {
-      return await getSameNameStopsStopsStopIdPlatformsGet({
+      return await getRelatedPlatformsStopsStopIdPlatformsGet({
         path: { stop_id: stopId },
         ...(signal && { request: { signal } }),
         client: this.generatedClient,
       });
     } catch (error) {
       console.error("API Error:", error);
-      throw new Error(
-        `Failed to fetch same-name stops (platforms) for ${stopId}`
-      );
+      throw new Error(`Failed to fetch related platforms for ${stopId}`);
     }
   }
 }

@@ -61,6 +61,6 @@ export type {
   EnrichedTrip as EnrichedTripData,
   TripTimedStop as TripTimedStopData,
   StopNameList as StopNameListData,
-  PlatformStop,
-  SameNameStopsResponse,
+  StopWithPlatform,
+  RelatedPlatformsResponse,
 } from "@/api/types.gen";

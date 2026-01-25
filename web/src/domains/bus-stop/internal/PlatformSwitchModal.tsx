@@ -24,7 +24,7 @@ interface PlatformSwitchModalProps {
   onPlatformSelect: (platform: PlatformInfo) => void;
   /** The current stop_id (to highlight the current selection) */
   currentStopId?: string;
-  /** List of available platforms */
+  /** List of available platforms (must have at least one entry with a valid stopName) */
   platforms: PlatformInfo[];
   /** Whether the data is loading */
   isLoading?: boolean;
@@ -54,8 +54,10 @@ export function PlatformSwitchModal({
     onClose();
   };
 
-  // Get the stop name from the first platform (all should have the same name)
-  const stopName = platforms.length > 0 ? platforms[0].stopName : "のりば";
+  // Get the stop name from the first platform.
+  // All platforms in the list share the same name (they're related by stop name).
+  // If no platforms are available yet (loading state), we won't display the name section anyway.
+  const stopName = platforms.length > 0 ? platforms[0].stopName : "";
 
   return (
     <div className={styles.modalOverlay} onClick={onClose}>

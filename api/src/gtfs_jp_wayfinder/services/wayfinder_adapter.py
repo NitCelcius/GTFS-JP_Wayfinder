@@ -767,26 +767,43 @@ def merge_date_and_time_to_iso(
         ) from e
 
 
-def get_agency_info():
-    """Get agency information from agency.txt.
+class RelatedPlatform:
+    """Type definition for related platform data returned from database."""
+
+    stop_id: str
+    stop_name: str
+    platform_code: str | None
+    stop_lat: float
+    stop_lon: float
+
+
+def get_agency_info() -> list[dict[str, str | None]]:
+    """Get agency information from GTFS data.
 
     Returns:
-        List of dictionaries containing agency information.
+        List of dicts, each containing agency info fields from agency.txt.
+        Currently returns a single agency, but structured as a list for
+        future multi-agency support.
     """
-    if not wf_service.is_ready():
-        raise RuntimeError("Wayfinder not initialized")
     return wf_service.get_agency_info()
 
 
-def get_same_name_stops(stop_id: str) -> list[dict[str, str | float | None]]:
-    """Get all stops with the same name as the given stop_id.
+def get_related_platforms(
+    stop_id: str,
+) -> list[dict[str, str | float | None]]:
+    """Get all related platform stops (stops with the same name but different platforms).
 
     This is used for platform switching (のりば切替) functionality.
 
     Args:
-        stop_id: The stop ID to find same-name stops for.
+        stop_id: The stop ID to find related platforms for.
 
     Returns:
-        List of dicts with stop_id, stop_name, platform_code, stop_lat, stop_lon.
+        List of dicts, each containing:
+        - stop_id (str): The stop ID
+        - stop_name (str): The stop name
+        - platform_code (str | None): The platform code, or None if not set
+        - stop_lat (float): Latitude
+        - stop_lon (float): Longitude
     """
-    return wf_service.get_same_name_stops(stop_id)
+    return wf_service.get_related_platforms(stop_id)

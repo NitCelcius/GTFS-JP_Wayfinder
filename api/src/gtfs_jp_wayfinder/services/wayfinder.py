@@ -344,17 +344,24 @@ def get_agency_info():
     return _wf.get_agency_info()
 
 
-def get_same_name_stops(stop_id: str) -> list[dict[str, str | float | None]]:
-    """Get all stops with the same name as the given stop_id.
+def get_related_platforms(
+    stop_id: str,
+) -> list[dict[str, str | float | None]]:
+    """Get all related platform stops (stops with the same name but different platforms).
 
     This is used for platform switching (のりば切替) functionality.
 
     Args:
-        stop_id: The stop ID to find same-name stops for.
+        stop_id: The stop ID to find related platforms for.
 
     Returns:
-        List of dicts with stop_id, stop_name, platform_code, stop_lat, stop_lon.
+        List of dicts, each containing:
+        - stop_id (str): The stop ID
+        - stop_name (str): The stop name
+        - platform_code (str | None): The platform code, or None if not set
+        - stop_lat (float): Latitude
+        - stop_lon (float): Longitude
     """
     if _wf is None:
         raise RuntimeError("Wayfinder not initialized")
-    return _wf.get_same_name_stops(stop_id)
+    return _wf.get_related_platforms(stop_id)

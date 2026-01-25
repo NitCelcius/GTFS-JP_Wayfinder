@@ -276,7 +276,7 @@ def test_get_same_name_stops_returns_all_connected_stops(wayfinder_instance):
     }
 
     # Should return all same-name stops
-    same_name_stops = wayfinder_instance.get_same_name_stops("akita-eki_01")
+    same_name_stops = wayfinder_instance.get_related_platforms("akita-eki_01")
     stop_ids = [stop["stop_id"] for stop in same_name_stops]
     assert "akita-eki_01" in stop_ids  # Original stop
     assert "akita-eki_02" in stop_ids  # Same-name stop
@@ -305,7 +305,7 @@ def test_get_same_name_stops_returns_only_original_when_no_transfers(
     wayfinder_instance.df_stops = mock_stops
     wayfinder_instance._walk_transfer_pairs = set()
 
-    same_name_stops = wayfinder_instance.get_same_name_stops("unique_stop")
+    same_name_stops = wayfinder_instance.get_related_platforms("unique_stop")
     assert len(same_name_stops) == 1
     assert same_name_stops[0]["stop_id"] == "unique_stop"
 
