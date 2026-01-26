@@ -1,6 +1,9 @@
 "use client";
 
 import { X } from "lucide-react";
+import { createPortal } from "react-dom";
+
+import { useEffect } from "react";
 
 import styles from "./PlatformSwitchModal.module.css";
 
@@ -45,6 +48,23 @@ export function PlatformSwitchModal({
   isLoading = false,
   error = null,
 }: PlatformSwitchModalProps) {
+  // Handle Escape key to close modal
+  // TODO: Implement full keyboard accessibility (focus trap, return focus to trigger element)
+  //       This pattern should be extracted to a shared modal component for reuse across pages.
+  //       Consider using @radix-ui/react-dialog or similar for complete accessibility support.
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   const handlePlatformClick = (platform: PlatformInfo) => {
@@ -59,7 +79,8 @@ export function PlatformSwitchModal({
   // If no platforms are available yet (loading state), we won't display the name section anyway.
   const stopName = platforms.length > 0 ? platforms[0].stopName : "";
 
-  return (
+  // Use createPortal to render modal at document root to avoid z-index and overflow issues
+  return createPortal(
     <div className={styles.modalOverlay} onClick={onClose}>
       <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
         <div className={styles.modalHeader}>
@@ -117,6 +138,7 @@ export function PlatformSwitchModal({
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
