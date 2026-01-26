@@ -230,12 +230,12 @@ async def get_bus_stop_info(
                 },
             },
         },
-        400: {
+        404: {
             "description": "停留所が見つからない場合",
         },
     },
 )
-async def get_related_platforms(stop_id: str):
+async def get_related_platforms(stop_id: str) -> models.RelatedPlatformsResponse:
     """Get all related platform stops (stops with the same name but different platform codes).
 
     This endpoint is used for platform switching (のりば切替) functionality
@@ -244,9 +244,7 @@ async def get_related_platforms(stop_id: str):
     try:
         related_platforms = adapter.get_related_platforms(stop_id)
     except KeyError as e:
-        raise HTTPException(status_code=400, detail=str(e)) from e
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e)) from e
+        raise HTTPException(status_code=404, detail=str(e)) from e
 
     stops = [
         models.StopWithPlatform(

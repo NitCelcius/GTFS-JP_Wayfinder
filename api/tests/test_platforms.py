@@ -86,7 +86,7 @@ class TestPlatformSwitching:
         assert data["stops"][0]["platform_code"] is None
 
     def test_get_platforms_stop_not_found(self, monkeypatch, client):
-        """Test endpoint returns 400 when stop_id is not found."""
+        """Test endpoint returns 404 when stop_id is not found."""
 
         def fake_get_related_platforms(stop_id: str):
             raise KeyError(f"stop_id not found: {stop_id}")
@@ -97,7 +97,7 @@ class TestPlatformSwitching:
         )
 
         resp = client.get("/stops/nonexistent_stop/platforms")
-        assert resp.status_code == 400
+        assert resp.status_code == 404
         data = resp.json()
         assert "stop_id not found" in data["detail"]
 
