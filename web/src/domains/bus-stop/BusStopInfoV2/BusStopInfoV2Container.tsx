@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useRouter } from "next/navigation";
 
@@ -62,6 +62,7 @@ export function BusStopInfoV2Container({
   const [platforms, setPlatforms] = useState<PlatformInfo[]>([]);
   const [isPlatformsLoading, setIsPlatformsLoading] = useState(false);
   const [platformsError, setPlatformsError] = useState<string | null>(null);
+  const platformAbortControllerRef = useRef<AbortController | null>(null);
 
   // Process initial data from SSR if available
   useEffect(() => {
@@ -413,8 +414,12 @@ export function BusStopInfoV2Container({
   }, [busStopId, initialData]);
 
   // Fetch related platforms when modal is opened
-  const handleOpenPlatformModal = async () => {
+  const handleOpenPlatformModal = useCallback(async () => {
     if (!busStopId) return;
+
+    // Abort any in-flight request to prevent race conditions
+    platformAbortControllerRef.current?.abort();
+    platformAbortControllerRef.current = new AbortController();
 
     setIsPlatformModalOpen(true);
     setIsPlatformsLoading(true);
@@ -422,7 +427,10 @@ export function BusStopInfoV2Container({
 
     try {
       const apiClient = ApiClient.getInstance();
-      const response = await apiClient.getRelatedPlatforms(busStopId);
+      const response = await apiClient.getRelatedPlatforms(
+        busStopId,
+        platformAbortControllerRef.current.signal
+      );
       const data = response.data as RelatedPlatformsResponse;
 
       if (data?.stops) {
@@ -439,6 +447,10 @@ export function BusStopInfoV2Container({
         setPlatforms([]);
       }
     } catch (err) {
+      // Ignore AbortError - request was intentionally cancelled
+      if (err instanceof Error && err.name === "AbortError") {
+        return;
+      }
       console.error("Failed to fetch related platforms:", err);
       setPlatformsError(
         err instanceof Error ? err.message : "Failed to load platforms"
@@ -446,13 +458,16 @@ export function BusStopInfoV2Container({
     } finally {
       setIsPlatformsLoading(false);
     }
-  };
+  }, [busStopId]);
 
-  const handlePlatformSelect = (platform: PlatformInfo) => {
-    // Navigate to the selected platform's bus stop page
-    router.push(`/bus-stop/${platform.stopId}`);
-    setIsPlatformModalOpen(false);
-  };
+  const handlePlatformSelect = useCallback(
+    (platform: PlatformInfo) => {
+      // Navigate to the selected platform's bus stop page
+      router.push(`/bus-stop/${platform.stopId}`);
+      setIsPlatformModalOpen(false);
+    },
+    [router]
+  );
 
   return (
     <>
