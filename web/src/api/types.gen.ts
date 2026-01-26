@@ -631,7 +631,7 @@ export type GetRelatedPlatformsStopsStopIdPlatformsGetErrors = {
     /**
      * 停留所が見つからない場合
      */
-    400: unknown;
+    404: unknown;
     /**
      * Validation Error
      */
