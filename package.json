@@ -27,7 +27,7 @@
   "devDependencies": {
     "@hey-api/openapi-ts": "^0.83.1",
     "concurrently": "^9.2.1",
-    "next": "15.5.7",
+    "next": "15.5.9",
     "turbo": "^2.5.6"
   }
 }
