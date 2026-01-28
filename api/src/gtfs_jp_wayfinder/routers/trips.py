@@ -3,11 +3,11 @@ import os
 
 import numpy as np
 from fastapi import APIRouter, HTTPException, Query
-from pandas import to_datetime
 
 from gtfs_jp_wayfinder import models
 from gtfs_jp_wayfinder.services import wayfinder as wf_service
 from gtfs_jp_wayfinder.services import wayfinder_adapter as adapter
+from gtfs_jp_wayfinder.utils.datetime import np_datetime_to_time_str
 
 router = APIRouter()
 
@@ -24,22 +24,6 @@ def np_datetime_to_datetime_time(val: np.datetime64) -> datetime.time:
         return pyobj.time()
 
     raise TypeError(f"Cannot convert value of type {type(val)} to datetime.time")
-
-
-def _np_datetime_to_time_str(np_datetime: np.datetime64) -> str:
-    """Convert numpy.datetime64 to HH:MM:SS string format.
-
-    Returns ValueError if conversion fails.
-    """
-
-    try:
-        # Convert to pandas datetime for better handling
-        pd_datetime = to_datetime(np_datetime)
-
-        # Extract time in HH:MM:SS format
-        return pd_datetime.strftime("%H:%M:%S")
-    except Exception as e:
-        raise ValueError("Invalid numpy.datetime64 value") from e
 
 
 @router.post(
@@ -127,8 +111,8 @@ async def get_journey(
 
         records = []
         for x in journey.itertuples():
-            arrival_time_str = _np_datetime_to_time_str(x.arrival_time)
-            departure_time_str = _np_datetime_to_time_str(x.departure_time)
+            arrival_time_str = np_datetime_to_time_str(x.arrival_time)
+            departure_time_str = np_datetime_to_time_str(x.departure_time)
 
             if not arrival_time_str or not departure_time_str:
                 # Skip this record if times are missing (required fields)

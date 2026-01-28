@@ -3,26 +3,9 @@ from pandas import to_datetime
 
 from gtfs_jp_wayfinder import models
 from gtfs_jp_wayfinder.services import wayfinder_adapter as adapter
+from gtfs_jp_wayfinder.utils.datetime import np_datetime_to_time_str
 
 router = APIRouter()
-
-
-def _np_datetime_to_time_str(np_datetime) -> str | None:
-    """Convert numpy.datetime64 to HH:MM:SS string format.
-
-    Returns None if the input is None or conversion fails.
-    """
-    if np_datetime is None:
-        return None
-
-    try:
-        # Convert to pandas datetime for better handling
-        pd_datetime = to_datetime(np_datetime)
-
-        # Extract time in HH:MM:SS format
-        return pd_datetime.strftime("%H:%M:%S")
-    except Exception:
-        return None
 
 
 @router.get(
@@ -87,8 +70,8 @@ async def timed_search(
         # Convert TravelOnce objects to TravelOnceResponse with string times
         travel_responses = []
         for travel in travels:
-            departure_time_str = _np_datetime_to_time_str(travel.departure_time)
-            arrival_time_str = _np_datetime_to_time_str(travel.arrival_time)
+            departure_time_str = np_datetime_to_time_str(travel.departure_time)
+            arrival_time_str = np_datetime_to_time_str(travel.arrival_time)
 
             if not departure_time_str or not arrival_time_str:
                 # Skip this travel if times are missing (required fields)
