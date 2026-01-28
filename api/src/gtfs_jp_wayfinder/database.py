@@ -609,24 +609,6 @@ class AkitaBusWayFinder:
         """Check if the transition between two stops is a walk transfer (same-name stops)."""
         return (from_stop_id, to_stop_id) in self._walk_transfer_pairs
 
-    def get_same_name_stops(self, stop_id: str) -> list[str]:
-        """Get all stop IDs that share the same name as the given stop (via walk transfers).
-
-        Returns a list of stop IDs that can be reached via walk transfer from the given stop.
-        This includes the original stop_id itself.
-
-        Args:
-            stop_id: The stop ID to find same-name stops for.
-
-        Returns:
-            List of stop IDs including the original and all same-name variants.
-        """
-        same_name_stops: set[str] = {stop_id}
-        for from_stop, to_stop in self._walk_transfer_pairs:
-            if from_stop == stop_id:
-                same_name_stops.add(to_stop)
-        return list(same_name_stops)
-
     def generate_calendar(self, base_dir):
         df_base_calendar = pd.read_csv(base_dir + "calendar.txt")
         df_calendar_dates = pd.read_csv(base_dir + "calendar_dates.txt")
@@ -810,6 +792,62 @@ class AkitaBusWayFinder:
             agencies.append(agency_dict)
 
         return agencies
+
+    def get_related_platforms(
+        self, stop_id: str
+    ) -> list[dict[str, str | float | None]]:
+        """Get all related platform stops (stops with the same name but different platforms).
+
+        This is used for platform switching (のりば切替) functionality to find
+        other platforms at the same bus stop location.
+
+        Args:
+            stop_id: The stop ID to find related platforms for.
+
+        Returns:
+            List of dicts, each containing:
+            - stop_id (str): The stop ID
+            - stop_name (str): The stop name
+            - platform_code (str | None): The platform code, or None if not set
+            - stop_lat (float): Latitude
+            - stop_lon (float): Longitude
+
+        Raises:
+            KeyError: If stop_id is not found.
+        """
+        # First, get the stop name for the given stop_id
+        matching_stop = self.df_stops[self.df_stops["stop_id"] == stop_id]
+        if matching_stop.empty:
+            raise KeyError(f"stop_id not found: {stop_id}")
+
+        stop_name = matching_stop["stop_name"].values[0]
+
+        # Find all stops with the same name (these are related platforms)
+        related_stops = self.df_stops[self.df_stops["stop_name"] == stop_name]
+
+        results = []
+        for _, row in related_stops.iterrows():
+            platform_code = row.get("platform_code")
+            # Handle pandas NaN values and empty strings
+            if pd.isna(platform_code) or platform_code == "":
+                platform_code = None
+            elif not isinstance(platform_code, str):
+                try:
+                    platform_code = str(int(platform_code))
+                except (ValueError, TypeError):
+                    platform_code = str(platform_code)
+
+            results.append(
+                {
+                    "stop_id": row["stop_id"],
+                    "stop_name": row["stop_name"],
+                    "platform_code": platform_code,
+                    "stop_lat": float(row["stop_lat"]),
+                    "stop_lon": float(row["stop_lon"]),
+                }
+            )
+
+        return results
 
     # バス停の名前からidに変換する
     #   None | DataFrame[{ "stop_id": str, "stop_name": str }]
@@ -1341,15 +1379,16 @@ class AkitaBusWayFinder:
         effective_origin = from_stop_id
         if from_stop_id not in trip_stops_set:
             # Check same-name stops (connected via walk transfer)
-            same_name_stops = self.get_same_name_stops(from_stop_id)
-            for candidate_stop in same_name_stops:
+            same_name_stops_data = self.get_related_platforms(from_stop_id)
+            same_name_stop_ids = [stop["stop_id"] for stop in same_name_stops_data]
+            for candidate_stop in same_name_stop_ids:
                 if candidate_stop in trip_stops_set:
                     effective_origin = candidate_stop
                     break
 
             # If no same-name stop is found on the trip, raise an error
             if effective_origin == from_stop_id:
-                same_name_list = ", ".join(same_name_stops)
+                same_name_list = ", ".join(same_name_stop_ids)
                 raise ValueError(
                     f"Stop {from_stop_id} and its same-name variants [{same_name_list}] "
                     f"are not on trip {trip_id}. "

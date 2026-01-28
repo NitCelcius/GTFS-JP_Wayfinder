@@ -181,6 +181,86 @@ async def get_bus_stop_info(
 
 
 @router.get(
+    "/{stop_id}/platforms",
+    response_model=models.RelatedPlatformsResponse,
+    summary="関連のりば一覧の取得（のりば切替用）",
+    description="同じ停留所名を持つ別ののりば（platform_code違い）を返します。のりば切替機能で使用されます。",
+    responses={
+        200: {
+            "description": "成功",
+            "content": {
+                "application/json": {
+                    "examples": {
+                        "with_platforms": {
+                            "summary": "のりばがある停留所",
+                            "value": {
+                                "stops": [
+                                    {
+                                        "stop_id": "1022_02",
+                                        "stop_name": "秋田駅西口",
+                                        "platform_code": "2",
+                                        "lat": 39.71729,
+                                        "lon": 140.12843,
+                                    },
+                                    {
+                                        "stop_id": "1022_03",
+                                        "stop_name": "秋田駅西口",
+                                        "platform_code": "3",
+                                        "lat": 39.71719,
+                                        "lon": 140.12843,
+                                    },
+                                ],
+                            },
+                        },
+                        "single_stop": {
+                            "summary": "のりばが一つしかない停留所",
+                            "value": {
+                                "stops": [
+                                    {
+                                        "stop_id": "1021_01",
+                                        "stop_name": "中央公園",
+                                        "platform_code": None,
+                                        "lat": 39.71676,
+                                        "lon": 140.13113,
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+            },
+        },
+        404: {
+            "description": "停留所が見つからない場合",
+        },
+    },
+)
+async def get_related_platforms(stop_id: str) -> models.RelatedPlatformsResponse:
+    """Get all related platform stops (stops with the same name but different platform codes).
+
+    This endpoint is used for platform switching (のりば切替) functionality
+    to find other platforms at the same bus stop location.
+    """
+    try:
+        related_platforms = adapter.get_related_platforms(stop_id)
+    except KeyError as e:
+        raise HTTPException(status_code=404, detail=str(e)) from e
+
+    stops = [
+        models.StopWithPlatform(
+            stop_id=stop["stop_id"],
+            stop_name=stop["stop_name"],
+            platform_code=stop["platform_code"],
+            lat=stop["stop_lat"],
+            lon=stop["stop_lon"],
+        )
+        for stop in related_platforms
+    ]
+
+    return models.RelatedPlatformsResponse(stops=stops)
+
+
+@router.get(
     "/",
     response_model=models.StopIdResponse,
     summary="停留所検索",

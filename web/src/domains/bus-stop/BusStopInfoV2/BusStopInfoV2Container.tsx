@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useRouter } from "next/navigation";
 
@@ -12,7 +12,15 @@ import {
   calculateMinutesUntilArrival,
   formatDistance,
 } from "../converter";
-import type { StopNameListData, UpcomingBusEnrichedData } from "../types";
+import {
+  type PlatformInfo,
+  PlatformSwitchModal,
+} from "../internal/PlatformSwitchModal";
+import type {
+  RelatedPlatformsResponse,
+  StopNameListData,
+  UpcomingBusEnrichedData,
+} from "../types";
 import { BusStopInfoV2 } from "./BusStopInfoV2";
 import type { UpcomingBusInfo } from "./BusStopInfoV2";
 
@@ -34,6 +42,7 @@ export function BusStopInfoV2Container({
 }: BusStopInfoV2ContainerProps) {
   const router = useRouter();
   const [busStopName, setBusStopName] = useState<string>("");
+  const [platformCode, setPlatformCode] = useState<string | null>(null);
   const [distance, setDistance] = useState<string>("");
   const [pastBus, setPastBus] = useState<UpcomingBusInfo | null>(null);
   const [upcomingBuses, setUpcomingBuses] = useState<UpcomingBusInfo[]>([]);
@@ -47,6 +56,13 @@ export function BusStopInfoV2Container({
     lat: number;
     lon: number;
   } | null>(null);
+
+  // Platform switching modal state
+  const [isPlatformModalOpen, setIsPlatformModalOpen] = useState(false);
+  const [platforms, setPlatforms] = useState<PlatformInfo[]>([]);
+  const [isPlatformsLoading, setIsPlatformsLoading] = useState(false);
+  const [platformsError, setPlatformsError] = useState<string | null>(null);
+  const platformAbortControllerRef = useRef<AbortController | null>(null);
 
   // Process initial data from SSR if available
   useEffect(() => {
@@ -221,7 +237,7 @@ export function BusStopInfoV2Container({
 
         // Get stop info (name, platform_code and location)
         let stopName = busStopId;
-        let platformCode: string | null = null;
+        let stopPlatformCode: string | null = null;
         let lat: number | undefined;
         let lon: number | undefined;
         try {
@@ -235,7 +251,7 @@ export function BusStopInfoV2Container({
             stopName = stopData.stop_names[0];
           }
           if (stopData?.platform_code) {
-            platformCode = stopData.platform_code;
+            stopPlatformCode = stopData.platform_code;
           }
           if (stopData?.location) {
             lat = stopData.location.lat;
@@ -275,6 +291,7 @@ export function BusStopInfoV2Container({
 
         // Convert to V2 format
         setBusStopName(busStopInfo.busStop?.name || stopName);
+        setPlatformCode(stopPlatformCode);
         // Distance will be set by geolocation effect
 
         // Convert buses to V2 format
@@ -396,38 +413,107 @@ export function BusStopInfoV2Container({
     };
   }, [busStopId, initialData]);
 
+  // Fetch related platforms when modal is opened
+  const handleOpenPlatformModal = useCallback(async () => {
+    if (!busStopId) return;
+
+    // Abort any in-flight request to prevent race conditions
+    platformAbortControllerRef.current?.abort();
+    platformAbortControllerRef.current = new AbortController();
+
+    setIsPlatformModalOpen(true);
+    setIsPlatformsLoading(true);
+    setPlatformsError(null);
+
+    try {
+      const apiClient = ApiClient.getInstance();
+      const response = await apiClient.getRelatedPlatforms(
+        busStopId,
+        platformAbortControllerRef.current.signal
+      );
+      const data = response.data as RelatedPlatformsResponse;
+
+      if (data?.stops) {
+        const platformInfoList: PlatformInfo[] = data.stops.map((stop) => ({
+          stopId: stop.stop_id,
+          stopName: stop.stop_name,
+          platformCode: stop.platform_code ?? null,
+          lat: stop.lat,
+          lon: stop.lon,
+        }));
+        setPlatforms(platformInfoList);
+      } else {
+        // Fallback: if API returns no stops, show empty state in modal
+        setPlatforms([]);
+      }
+    } catch (err) {
+      // Ignore AbortError - request was intentionally cancelled
+      if (err instanceof Error && err.name === "AbortError") {
+        return;
+      }
+      console.error("Failed to fetch related platforms:", err);
+      setPlatformsError(
+        err instanceof Error ? err.message : "Failed to load platforms"
+      );
+    } finally {
+      setIsPlatformsLoading(false);
+    }
+  }, [busStopId]);
+
+  const handlePlatformSelect = useCallback(
+    (platform: PlatformInfo) => {
+      // Navigate to the selected platform's bus stop page
+      router.push(`/bus-stop/${platform.stopId}`);
+      setIsPlatformModalOpen(false);
+    },
+    [router]
+  );
+
   return (
-    <BusStopInfoV2
-      busStopId={busStopId}
-      busStopName={busStopName || busStopId || "バス停"}
-      distance={distance || undefined}
-      pastBus={pastBus}
-      upcomingBuses={upcomingBuses}
-      isLoading={isLoading}
-      error={error}
-      onBack={onBack || (() => router.push("/bus-stop"))}
-      onRoutineSearch={onNavigateToRoute || (() => router.push("/"))}
-      hasValidCoordinates={coordinates !== null && userLocation !== null}
-      onWalkDirections={() => {
-        if (!coordinates) {
-          console.error(
-            "Cannot open walking directions: coordinates not available"
-          );
-          alert("位置情報が取得できませんでした。徒歩案内を表示できません。");
-          return;
-        }
-        const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${coordinates.lat},${coordinates.lon}&travelmode=walking`;
-        window.open(mapsUrl, "_blank", "noopener,noreferrer");
-      }}
-      onTransfer={() => console.log("Transfer")} // TODO: Implement transition to transfer search
-      onRouteList={() => console.log("Route list")} // TODO: Implement transition to route list
-      onBusClick={(bus) => {
-        const params = new URLSearchParams();
-        if (busStopId) {
-          params.set("stop_id", busStopId);
-        }
-        router.push(`/trips/${bus.tripId}?${params.toString()}`);
-      }}
-    />
+    <>
+      <BusStopInfoV2
+        busStopId={busStopId}
+        // Fallback: if busStopName is not loaded yet, show busStopId; if neither, show default "バス停"
+        busStopName={busStopName || busStopId || "バス停"}
+        platformCode={platformCode}
+        distance={distance || undefined}
+        pastBus={pastBus}
+        upcomingBuses={upcomingBuses}
+        isLoading={isLoading}
+        error={error}
+        onBack={onBack || (() => router.push("/bus-stop"))}
+        onRoutineSearch={onNavigateToRoute || (() => router.push("/"))}
+        hasValidCoordinates={coordinates !== null && userLocation !== null}
+        onWalkDirections={() => {
+          if (!coordinates) {
+            console.error(
+              "Cannot open walking directions: coordinates not available"
+            );
+            alert("位置情報が取得できませんでした。徒歩案内を表示できません。");
+            return;
+          }
+          const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${coordinates.lat},${coordinates.lon}&travelmode=walking`;
+          window.open(mapsUrl, "_blank", "noopener,noreferrer");
+        }}
+        onTransfer={handleOpenPlatformModal}
+        onRouteList={() => console.log("Route list")} // TODO: Implement transition to route list
+        onBusClick={(bus) => {
+          const params = new URLSearchParams();
+          if (busStopId) {
+            params.set("stop_id", busStopId);
+          }
+          router.push(`/trips/${bus.tripId}?${params.toString()}`);
+        }}
+      />
+      <PlatformSwitchModal
+        isOpen={isPlatformModalOpen}
+        onClose={() => setIsPlatformModalOpen(false)}
+        onPlatformSelect={handlePlatformSelect}
+        currentStopId={busStopId}
+        platforms={platforms}
+        isLoading={isPlatformsLoading}
+        error={platformsError}
+      />
+    </>
   );
 }
