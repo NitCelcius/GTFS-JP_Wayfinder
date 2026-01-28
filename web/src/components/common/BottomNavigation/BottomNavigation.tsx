@@ -1,6 +1,11 @@
 import { Clock, MapPin, Route } from "lucide-react";
 
+import { useRef } from "react";
+
 import styles from "./BottomNavigation.module.css";
+
+// Animation duration in milliseconds - must match CSS animation duration
+const RIPPLE_ANIMATION_DURATION = 600;
 
 function BusStopIcon() {
   return (
@@ -37,9 +42,45 @@ function NavItem({ icon, label, isActive = false, onClick }: NavItemProps) {
   const navItemClass = isActive
     ? `${styles.navItem} ${styles.navItemActive}`
     : styles.navItem;
+  const navItemRef = useRef<HTMLDivElement>(null);
+
+  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const element = navItemRef.current;
+    if (!element) return;
+
+    // Create ripple element
+    const ripple = document.createElement("span");
+    const rect = element.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    const x = e.clientX - rect.left - size / 2;
+    const y = e.clientY - rect.top - size / 2;
+
+    ripple.style.width = ripple.style.height = `${size}px`;
+    ripple.style.left = `${x}px`;
+    ripple.style.top = `${y}px`;
+
+    // Apply appropriate ripple color class
+    ripple.className = `${styles.ripple} ${isActive ? styles.rippleDisabled : styles.ripplePrimary}`;
+
+    element.appendChild(ripple);
+
+    // Remove ripple after animation completes
+    setTimeout(() => {
+      if (ripple.parentNode) {
+        ripple.remove();
+      }
+    }, RIPPLE_ANIMATION_DURATION);
+
+    onClick();
+  };
 
   return (
-    <div className={navItemClass} data-name="NavItem" onClick={onClick}>
+    <div
+      ref={navItemRef}
+      className={navItemClass}
+      data-name="NavItem"
+      onClick={handleClick}
+    >
       {icon}
       <div className={styles.navItemText}>
         <p className={styles.navItemLabel}>{label}</p>
