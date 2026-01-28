@@ -12,7 +12,7 @@ import type { BusStopSearchResult } from "@/types";
 
 import type { BusStop } from "../types";
 import styles from "./BusStopSearchPage.module.css";
-import { BusStopList, BusStopListProps } from "./internal/BusStopList";
+import { BusStopList } from "./internal/BusStopList";
 import { SearchInput } from "./internal/SearchInput";
 
 interface BusStopSearchPageProps {
@@ -113,9 +113,7 @@ export function BusStopSearchPage({
   const componentNearbyStops = nearbyStopsToDisplay.map(
     convertToComponentBusStop
   );
-  // TODO: remove mock from here if possible
-  // Show mock search results only when location permission is not granted
-  const componentSearchResults: BusStopListProps["busStops"] = [];
+
   return (
     <div className={styles.page}>
       <TopNavigation
@@ -148,18 +146,6 @@ export function BusStopSearchPage({
             />
           )}
         </div>
-
-        {/* Search Results Section (mock data only shown when location is disabled) */}
-        {componentSearchResults.length > 0 && (
-          <div className={styles.searchResults}>
-            <BusStopList
-              busStops={componentSearchResults}
-              showHeader={false}
-              headerText="検索結果"
-              onBusStopSelect={handleBusStopSelect}
-            />
-          </div>
-        )}
       </div>
 
       <BottomNavigation

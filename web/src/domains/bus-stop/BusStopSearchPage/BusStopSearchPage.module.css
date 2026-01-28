@@ -45,7 +45,3 @@
   font-size: 1rem;
   color: var(--gray-600);
 }
-.searchResults {
-  padding-top: var(--size-spacing-2xl);
-  flex: 1;
-}
