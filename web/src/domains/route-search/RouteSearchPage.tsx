@@ -10,7 +10,7 @@ import {
   saveRouteSearchInputs,
 } from "@/lib/routeSearchInputStorage";
 import { getCurrentTimeString } from "@/lib/utils";
-import type { BusStopSearchResult, RouteSearchState } from "@/types";
+import type { BusStopSearchResult } from "@/types";
 
 import styles from "./RouteSearchPage.module.css";
 import { RouteInputs } from "./internal/RouteInputs";
@@ -84,11 +84,6 @@ export function RouteSearchPage({
   >([]);
   const [destinationCandidateStopIds, setDestinationCandidateStopIds] =
     useState<string[]>([]);
-  const [routeSearchState, setRouteSearchState] = useState<RouteSearchState>({
-    isLoading: false,
-    result: null,
-    error: null,
-  });
   const [shouldSaveInputs, setShouldSaveInputs] = useState(false);
 
   // Restore saved inputs on mount (if within 5 minutes)
@@ -137,19 +132,11 @@ export function RouteSearchPage({
   const handleOriginStopSelect = (result: BusStopSearchResult) => {
     const candidateIds = result.candidate_stop_id_list;
     setOriginCandidateStopIds(candidateIds);
-    console.log("Origin bus stop selected:", {
-      stop_name: result.stop_name,
-      candidate_stop_id_list: candidateIds,
-    });
   };
 
   const handleDestinationStopSelect = (result: BusStopSearchResult) => {
     const candidateIds = result.candidate_stop_id_list;
     setDestinationCandidateStopIds(candidateIds);
-    console.log("Destination bus stop selected:", {
-      stop_name: result.stop_name,
-      candidate_stop_id_list: candidateIds,
-    });
   };
 
   const handleBottomNavClick = (tab: "bus-stop" | "route" | "recent") => {
@@ -173,11 +160,6 @@ export function RouteSearchPage({
     const destinationStopId = destinationCandidateStopIds[0];
 
     if (!originStopId || !destinationStopId) {
-      setRouteSearchState({
-        isLoading: false,
-        result: null,
-        error: "Please select valid bus stops for both origin and destination",
-      });
       return;
     }
 
@@ -196,8 +178,6 @@ export function RouteSearchPage({
       beginTime,
     };
 
-    console.log("Search initiated with params:", searchParams);
-
     onSearch?.(searchParams);
   };
 
@@ -213,7 +193,6 @@ export function RouteSearchPage({
           onDestinationChange={setDestinationValue}
           onOriginStopSelect={handleOriginStopSelect}
           onDestinationStopSelect={handleDestinationStopSelect}
-          isLoading={routeSearchState.isLoading}
         />
       </div>
       <BottomNavigation activeTab="route" onTabClick={handleBottomNavClick} />
