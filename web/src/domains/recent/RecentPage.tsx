@@ -1,6 +1,7 @@
 import { Clock } from "lucide-react";
 
 import { BottomNavigation, TopNavigation } from "@/components/common";
+import { useBottomNavigation } from "@/hooks";
 import {
   useBusStopSearchHistory,
   useRouteSearchHistory,
@@ -35,18 +36,10 @@ export function RecentPage({
   const { searches: busStopSearches } = useBusStopSearchHistory();
   const { searches: routeSearches } = useRouteSearchHistory();
 
-  const handleBottomNavClick = (tab: "bus-stop" | "route" | "recent") => {
-    switch (tab) {
-      case "bus-stop":
-        onNavigateToBusStop?.();
-        break;
-      case "route":
-        onNavigateToRoute?.();
-        break;
-      default:
-        break;
-    }
-  };
+  const handleBottomNavClick = useBottomNavigation("recent", {
+    onNavigateToBusStop,
+    onNavigateToRoute,
+  });
 
   const handleBusStopSelect = (busStopId: string) => {
     onNavigateToBusStopInfo?.(busStopId);

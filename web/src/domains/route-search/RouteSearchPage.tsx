@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { BottomNavigation } from "@/components/common/BottomNavigation/BottomNavigation";
 import { RouteSearchButton } from "@/components/common/RouteSearchButton/RouteSearchButton";
 import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
+import { useBottomNavigation } from "@/hooks";
 import {
   getRouteSearchInputs,
   saveRouteSearchInputs,
@@ -139,19 +140,10 @@ export function RouteSearchPage({
     setDestinationCandidateStopIds(candidateIds);
   };
 
-  const handleBottomNavClick = (tab: "bus-stop" | "route" | "recent") => {
-    switch (tab) {
-      case "bus-stop":
-        onNavigateToBusStop?.();
-        break;
-      case "recent":
-        onNavigateToRecent?.();
-        break;
-      default:
-        // Already on route page
-        break;
-    }
-  };
+  const handleBottomNavClick = useBottomNavigation("route", {
+    onNavigateToBusStop,
+    onNavigateToRecent,
+  });
 
   const handleSearch = async () => {
     // Use the first candidate stop ID from each selection

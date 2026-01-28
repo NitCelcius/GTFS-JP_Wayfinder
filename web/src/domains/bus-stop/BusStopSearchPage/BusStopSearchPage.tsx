@@ -8,6 +8,7 @@ import {
   LoadingSpinner,
   TopNavigation,
 } from "@/components/common";
+import { useBottomNavigation } from "@/hooks";
 import type { BusStopSearchResult } from "@/types";
 
 import type { BusStop } from "../types";
@@ -45,19 +46,10 @@ export function BusStopSearchPage({
 }: BusStopSearchPageProps) {
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
 
-  const handleBottomNavClick = (tab: "bus-stop" | "route" | "recent") => {
-    switch (tab) {
-      case "route":
-        onNavigateToRoute?.();
-        break;
-      case "recent":
-        onNavigateToRecent?.();
-        break;
-      default:
-        // Already on bus stop page
-        break;
-    }
-  };
+  const handleBottomNavClick = useBottomNavigation("bus-stop", {
+    onNavigateToRoute,
+    onNavigateToRecent,
+  });
 
   const SearchLocationIcon = () => <MapPin size={24} />;
 

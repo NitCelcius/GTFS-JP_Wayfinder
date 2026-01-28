@@ -1,5 +1,6 @@
 // Conversion logic for transforming API responses to domain types
 import { extractRouteNumber } from "@/lib/routeNumber";
+import { trimTimeSeconds } from "@/lib/utils";
 
 import type { EnrichedTripData, NearbyStop, TripTimedStopData } from "./types";
 import type { BusInfo, BusStop, JourneyStopData } from "./types";
@@ -35,10 +36,9 @@ export function calculateMinutesUntilArrival(
 
 /**
  * Convert API time string (HH:MM:SS) to display format (HH:MM)
+ * @deprecated Use trimTimeSeconds from @/lib/utils instead
  */
-export function formatTime(timeString: string): string {
-  return timeString.slice(0, 5); // "13:05:00" -> "13:05"
-}
+export const formatTime = trimTimeSeconds;
 
 /**
  * Convert EnrichedTripData to BusInfo

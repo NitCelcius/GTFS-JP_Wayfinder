@@ -6,7 +6,7 @@ import { LoadingSpinner } from "@/components/common/LoadingSpinner/LoadingSpinne
 import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
 import { ShareModal } from "@/domains/bus-stop";
 import { WalkTransferIndicator } from "@/domains/route-search/internal/components";
-import { useTimeDisplay } from "@/hooks";
+import { useBottomNavigation, useTimeDisplay } from "@/hooks";
 
 import { TripSummary } from "../internal/components";
 import styles from "./SearchResultPage.module.css";
@@ -64,19 +64,10 @@ export function SearchResultPage({
     walkTransferPlatformCode: station.platformCode,
   }));
 
-  const handleBottomNavClick = (tab: "bus-stop" | "route" | "recent") => {
-    switch (tab) {
-      case "bus-stop":
-        onNavigateToBusStop?.();
-        break;
-      case "recent":
-        onNavigateToRecent?.();
-        break;
-      default:
-        // Already on route page (results)
-        break;
-    }
-  };
+  const handleBottomNavClick = useBottomNavigation("route", {
+    onNavigateToBusStop,
+    onNavigateToRecent,
+  });
 
   const handleShareClick = () => {
     setShowShareModal(true);

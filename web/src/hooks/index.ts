@@ -10,3 +10,4 @@ export { useEnv, useEnvValue } from "./useEnv";
 export type { EnvConfig } from "./useEnv";
 export { useRouteColor, getRouteColors } from "./useRouteColor";
 export type { RouteColorInfo } from "./useRouteColor";
+export { useBottomNavigation } from "./useBottomNavigation";

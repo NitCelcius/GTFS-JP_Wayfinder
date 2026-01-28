@@ -2,6 +2,7 @@ import { useMemo } from "react";
 
 import { BottomNavigation } from "@/components/common/BottomNavigation/BottomNavigation";
 import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
+import { useBottomNavigation } from "@/hooks";
 import { calculateDurationMinutes } from "@/lib/utils";
 
 import styles from "./RouteOverviewPage.module.css";
@@ -26,19 +27,10 @@ export function RouteOverviewPage({
   onNavigateToBusStop,
   onNavigateToRecent,
 }: RouteOverviewPageProps) {
-  const handleBottomNavClick = (tab: "bus-stop" | "route" | "recent") => {
-    switch (tab) {
-      case "bus-stop":
-        onNavigateToBusStop?.();
-        break;
-      case "recent":
-        onNavigateToRecent?.();
-        break;
-      default:
-        // Already on route page
-        break;
-    }
-  };
+  const handleBottomNavClick = useBottomNavigation("route", {
+    onNavigateToBusStop,
+    onNavigateToRecent,
+  });
 
   // Calculate durations once for all routes to avoid redundant calculations
   const routesWithDurations = useMemo(

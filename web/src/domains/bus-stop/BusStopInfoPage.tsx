@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { BottomNavigation, JourneyTimeline } from "@/components/common";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner/LoadingSpinner";
 import { TopNavigation } from "@/components/common/TopNavigation/TopNavigation";
-import { useTimeDisplay } from "@/hooks";
+import { useBottomNavigation, useTimeDisplay } from "@/hooks";
 
 import styles from "./BusStopInfoPage.module.css";
 import { ShareModal } from "./ShareModal";
@@ -39,19 +39,10 @@ export function BusStopInfoPage({
     setCurrentBusIndex(bestBusIndex);
   }, [bestBusIndex]);
 
-  const handleBottomNavClick = (tab: "bus-stop" | "route" | "recent") => {
-    switch (tab) {
-      case "route":
-        onNavigateToRoute?.();
-        break;
-      case "recent":
-        onNavigateToRecent?.();
-        break;
-      default:
-        // Already on bus stop related page
-        break;
-    }
-  };
+  const handleBottomNavClick = useBottomNavigation("bus-stop", {
+    onNavigateToRoute,
+    onNavigateToRecent,
+  });
 
   const handleTransferClick = () => {
     // TODO: Implement transfer functionality
