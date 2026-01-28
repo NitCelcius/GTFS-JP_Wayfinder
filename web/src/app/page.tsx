@@ -42,11 +42,16 @@ export default function HomePage() {
   };
 
   return (
-    <div className="bg-white min-h-screen">
-      {/* Status indicator */}
+    <div className="bg-white min-h-screen flex flex-col">
+      {/* Logo section in top space */}
+      <div className="flex-1 flex items-center justify-center min-h-0">
+        <h1 className="text-4xl font-bold text-gray-800 px-4 text-center">
+          GTFS-JP Wayfinder
+        </h1>
+      </div>
 
-      {/* Main content */}
-      <div className="flex items-center justify-center min-h-[calc(100vh-80px)]">
+      {/* Main content - bottom aligned */}
+      <div className="flex-shrink-0">
         <RouteSearchPage
           onSearch={handleSearch}
           onNavigateToBusStop={() => router.push("/bus-stop")}
