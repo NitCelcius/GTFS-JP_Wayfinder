@@ -36,8 +36,21 @@ export function composeBusStopInfoWithLatestSelection(
 ): BusStopInfo {
   const { platformCode, distance, lat, lon, currentTime } = options;
 
-  // Select the best bus index based on current time
-  const bestBusIndex = computeBestBusIndex(enrichedData.buses, currentTime);
+  // Early return for empty buses array to avoid unnecessary processing
+  if (enrichedData.buses.length === 0) {
+    return {
+      busStop: {
+        id: enrichedData.stop_id,
+        name: stopName,
+        platformCode,
+        distance,
+        lat,
+        lon,
+      },
+      busesWithJourneys: [],
+      bestBusIndex: 0,
+    };
+  }
 
   // Convert all buses and pre-compute their journeys
   const busesWithJourneys = enrichedData.buses.map((trip) => ({
@@ -46,6 +59,9 @@ export function composeBusStopInfoWithLatestSelection(
       ? convertTripStopsToJourneyStops(trip.stops, stopId)
       : [],
   }));
+
+  // Select the best bus index based on current time
+  const bestBusIndex = computeBestBusIndex(enrichedData.buses, currentTime);
 
   const result: BusStopInfo = {
     busStop: {
