@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { ApiClient } from "@/lib/api";
+import { getJSTTimeString } from "@/lib/timeUtils";
 
 import { composeBusStopInfoWithLatestSelection } from "../composition";
 import type {
@@ -37,10 +38,10 @@ export function useBusStopData(busStopId?: string): UseBusStopDataReturn {
 
         const apiClient = ApiClient.getInstance();
 
-        // Pass current time to API to ensure timezone-aware bus filtering
-        // Use HH:MM:SS format which the API treats as today's date in the server timezone
-        const now = new Date();
-        const beginTime = now.toTimeString().split(" ")[0]; // "HH:MM:SS"
+        // Pass current time in JST to API to ensure correct bus filtering.
+        // The GTFS schedule is in JST; using server-local or browser time
+        // could send the wrong begin_time if the user/server is in another TZ.
+        const beginTime = getJSTTimeString();
 
         // Fetch multiple upcoming buses with trip info expanded to allow filtering
         const upcomingResponse = await apiClient.getBusStopInfoExpanded(

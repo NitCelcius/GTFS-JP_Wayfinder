@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { ApiClient } from "@/lib/api";
+import { getJSTTimeStringMinutesAgo } from "@/lib/timeUtils";
 
 import { composeBusStopInfoWithLatestSelection } from "../composition";
 import {
@@ -51,94 +52,102 @@ export function BusStopInfoV2Container({
   // Process initial data from SSR if available
   useEffect(() => {
     if (initialData?.upcomingData && initialData?.stopData) {
-      const now = new Date();
+      try {
+        const now = new Date();
 
-      const upcomingData = initialData.upcomingData;
-      const stopData = initialData.stopData;
+        const upcomingData = initialData.upcomingData;
+        const stopData = initialData.stopData;
 
-      let stopName = busStopId || "";
-      let platformCode: string | null = null;
-      let lat: number | undefined;
-      let lon: number | undefined;
+        let stopName = busStopId || "";
+        let platformCode: string | null = null;
+        let lat: number | undefined;
+        let lon: number | undefined;
 
-      if (stopData?.stop_names && stopData.stop_names.length > 0) {
-        stopName = stopData.stop_names[0];
-      }
-      if (stopData?.platform_code) {
-        platformCode = stopData.platform_code;
-      }
-      if (stopData?.location) {
-        lat = stopData.location.lat;
-        lon = stopData.location.lon;
-        // Store coordinates for walk navigation only if valid
-        if (
-          isFinite(lat) &&
-          isFinite(lon) &&
-          lat >= -90 &&
-          lat <= 90 &&
-          lon >= -180 &&
-          lon <= 180
-        ) {
-          setCoordinates({ lat, lon });
+        if (stopData?.stop_names && stopData.stop_names.length > 0) {
+          stopName = stopData.stop_names[0];
         }
-      }
-
-      // Compose bus stop info without distance (will be calculated on client with geolocation)
-      const busStopInfo = composeBusStopInfoWithLatestSelection(
-        upcomingData,
-        stopName,
-        busStopId || "",
-        {
-          platformCode,
-          distance: "", // No distance yet
-          lat,
-          lon,
-          currentTime: now,
+        if (stopData?.platform_code) {
+          platformCode = stopData.platform_code;
         }
-      );
+        if (stopData?.location) {
+          lat = stopData.location.lat;
+          lon = stopData.location.lon;
+          // Store coordinates for walk navigation only if valid
+          if (
+            isFinite(lat) &&
+            isFinite(lon) &&
+            lat >= -90 &&
+            lat <= 90 &&
+            lon >= -180 &&
+            lon <= 180
+          ) {
+            setCoordinates({ lat, lon });
+          }
+        }
 
-      // Convert to V2 format
-      setBusStopName(busStopInfo.busStop?.name || stopName);
-
-      // Convert buses to V2 format
-      const convertedBuses: UpcomingBusInfo[] =
-        busStopInfo.busesWithJourneys.map((bus) => ({
-          tripId: bus.busInfo.tripId,
-          routeNumber: bus.busInfo.line,
-          routeName: bus.busInfo.system || "",
-          destination: bus.busInfo.destination,
-          destinationLabel: bus.busInfo.direction,
-          minutesUntilDeparture: Math.round(
-            (bus.busInfo.arrivalDatetime.getTime() - now.getTime()) / 60000
-          ),
-          departureTime: bus.busInfo.arrivalTime,
-          cost: undefined, // TODO: Add fare info
-          stopsUntilArrival: `${bus.routeJourney.length - 1}駅先に到着`,
-          routeColorText: bus.busInfo.routeColorText,
-        }));
-
-      // Separate past buses from upcoming buses
-      const pastBuses = convertedBuses.filter(
-        (bus) => bus.minutesUntilDeparture < 0
-      );
-      const futureBuses = convertedBuses.filter(
-        (bus) => bus.minutesUntilDeparture >= 0
-      );
-
-      // Set upcoming buses (only future buses)
-      setUpcomingBuses(futureBuses);
-      setIsLoading(false);
-
-      // Set the most recent past bus
-      if (pastBuses.length > 0) {
-        const mostRecentPastBus = pastBuses.reduce((prev, current) =>
-          current.minutesUntilDeparture > prev.minutesUntilDeparture
-            ? current
-            : prev
+        // Compose bus stop info without distance (will be calculated on client with geolocation)
+        const busStopInfo = composeBusStopInfoWithLatestSelection(
+          upcomingData,
+          stopName,
+          busStopId || "",
+          {
+            platformCode,
+            distance: "", // No distance yet
+            lat,
+            lon,
+            currentTime: now,
+          }
         );
-        setPastBus({ ...mostRecentPastBus, isPast: true });
-      } else {
-        setPastBus(null);
+
+        // Convert to V2 format
+        setBusStopName(busStopInfo.busStop?.name || stopName);
+
+        // Convert buses to V2 format
+        const convertedBuses: UpcomingBusInfo[] =
+          busStopInfo.busesWithJourneys.map((bus) => ({
+            tripId: bus.busInfo.tripId,
+            routeNumber: bus.busInfo.line,
+            routeName: bus.busInfo.system || "",
+            destination: bus.busInfo.destination,
+            destinationLabel: bus.busInfo.direction,
+            minutesUntilDeparture: Math.round(
+              (bus.busInfo.arrivalDatetime.getTime() - now.getTime()) / 60000
+            ),
+            departureTime: bus.busInfo.arrivalTime,
+            cost: undefined, // TODO: Add fare info
+            stopsUntilArrival: `${bus.routeJourney.length - 1}駅先に到着`,
+            routeColorText: bus.busInfo.routeColorText,
+          }));
+
+        // Separate past buses from upcoming buses
+        const pastBuses = convertedBuses.filter(
+          (bus) => bus.minutesUntilDeparture < 0
+        );
+        const futureBuses = convertedBuses.filter(
+          (bus) => bus.minutesUntilDeparture >= 0
+        );
+
+        // Set upcoming buses (only future buses)
+        setUpcomingBuses(futureBuses);
+        setIsLoading(false);
+
+        // Set the most recent past bus
+        if (pastBuses.length > 0) {
+          const mostRecentPastBus = pastBuses.reduce((prev, current) =>
+            current.minutesUntilDeparture > prev.minutesUntilDeparture
+              ? current
+              : prev
+          );
+          setPastBus({ ...mostRecentPastBus, isPast: true });
+        } else {
+          setPastBus(null);
+        }
+      } catch (err) {
+        console.error("Failed to process SSR bus stop data:", err);
+        setError(
+          err instanceof Error ? err.message : "Failed to process bus stop data"
+        );
+        setIsLoading(false);
       }
     }
   }, [initialData, busStopId]);
@@ -200,10 +209,9 @@ export function BusStopInfoV2Container({
 
         const apiClient = ApiClient.getInstance();
 
-        // Get time 30 minutes ago to include recently departed buses
+        // Get time 30 minutes ago in JST to include recently departed buses
         const now = new Date();
-        const pastTime = new Date(now.getTime() - 30 * 60 * 1000); // 30 minutes ago
-        const beginTime = pastTime.toTimeString().split(" ")[0];
+        const beginTime = getJSTTimeStringMinutesAgo(30);
 
         // Fetch upcoming buses with trip info (includes buses from 30 min ago)
         const upcomingResponse = await apiClient.getBusStopInfoExpanded(

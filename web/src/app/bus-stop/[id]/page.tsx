@@ -3,6 +3,7 @@ import type {
   UpcomingBusEnrichedData,
 } from "@/domains/bus-stop/types";
 import { createServerApiClient } from "@/lib/apiServer";
+import { getJSTTimeStringMinutesAgo } from "@/lib/timeUtils";
 
 import { BusStopInfoPageWrapper } from "./BusStopInfoPageWrapper";
 
@@ -26,10 +27,8 @@ export default async function BusStopInfoPageRoute({ params }: PageProps) {
   try {
     const apiServer = createServerApiClient();
 
-    // Get time 30 minutes ago to include recently departed buses
-    const now = new Date();
-    const pastTime = new Date(now.getTime() - 30 * 60 * 1000); // 30 minutes ago
-    const beginTime = pastTime.toTimeString().split(" ")[0];
+    // Get time 30 minutes ago in JST to include recently departed buses.
+    const beginTime = getJSTTimeStringMinutesAgo(30);
 
     // Fetch upcoming buses with trip info (includes buses from 30 min ago)
     const [upcomingResponse, stopResponse] = await Promise.allSettled([
