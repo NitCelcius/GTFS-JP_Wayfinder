@@ -12,7 +12,13 @@
       "console": "integratedTerminal",
       "python": "${workspaceFolder}/api/.venv/Scripts/python.exe",
       "cwd": "${workspaceFolder}/api",
-      "justMyCode": true
+      "justMyCode": true,
+      "osx": {
+        "python": "${workspaceFolder}/api/.venv/bin/python"
+      },
+      "linux": {
+        "python": "${workspaceFolder}/api/.venv/bin/python"
+      }
     },
     {
       "name": "API (Network Debug)",
